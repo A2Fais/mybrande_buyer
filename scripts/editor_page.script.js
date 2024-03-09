@@ -649,8 +649,8 @@ class EditorScreen {
       this.canvas.requestRenderAll();
     });
 
-    if (this.logoFile) {
-      fabric.loadSVGFromString(this.logoFile, (objects, options) => {
+    const renderCanvas = (SVG) => {
+      fabric.loadSVGFromString(SVG, (objects, options) => {
         logoLayerGroup = new fabric.Group(objects, options);
 
         this.canvas.on("selection:created", () => {
@@ -667,6 +667,9 @@ class EditorScreen {
         objects.forEach((obj, idx) => {
           const sloganIdx = objects.length - 1;
           const logoIdx = objects.length - 2;
+          if (obj.id === "external_layer") {
+            return;
+          }
           if (sloganIdx === idx) {
             obj.scale(800);
             sloganNameElement = obj;
@@ -777,19 +780,17 @@ class EditorScreen {
 
         logoLayerGroup.setCoords();
         this.canvas.viewportCenterObject(logoLayerGroup);
+
         this.initialRotation = {
           centerPoint: logoLayerGroup.getCenterPoint(),
           coords: logoLayerGroup.getCoords(),
         };
-
         logoLayerGroup.scaleToWidth(widthScaleFactor);
 
         logoLayerGroup.ungroupOnCanvas();
         this.canvas.renderAll();
       });
 
-      // this.canvas.add(logoNameElement);
-      // this.canvas.add(sloganNameElement);
       logoNameElement.viewportCenter();
       sloganNameElement.viewportCenter();
 
@@ -798,7 +799,11 @@ class EditorScreen {
       });
       this.canvas.setActiveObject(selection);
       this.canvas.discardActiveObject(selection);
-      this.canvas.requestRenderAll();
+      this.canvas.renderAll();
+    };
+
+    if (this.logoFile) {
+      renderCanvas(this.logoFile);
     }
 
     const getTextCase = (text) => {
@@ -2162,9 +2167,14 @@ class EditorScreen {
         const img = fabric.util.groupSVGElements(objects, options);
         img.scaleToWidth(50);
         img.set({ left: img.left + 100 });
+        img.set("id", "external_layer");
         canvas.add(img);
         canvas.viewportCenterObjectV(img);
         canvas.requestRenderAll();
+
+        img.on("mousedown", (event) => {
+          console.log("Clicked on object with ID:", event.target.id);
+        });
       });
 
       document.getElementById("popup-parent-icons").style.display = "none";
@@ -3133,7 +3143,6 @@ class EditorScreen {
     };
 
     function setlogoPosition(position, canvas) {
-      
       switch (position) {
         case "1":
           centerAndResizeElements(
@@ -3400,10 +3409,13 @@ class EditorScreen {
       }
 
       return { bg, logoPosition, svgData: response.data };
-      
     }
 
     fetchData(this.canvas).then((bgColor, _, svgData) => {
+      if (!sessionStorage.getItem("reloaded")) {
+        sessionStorage.setItem("reloaded", "true");
+        location.reload();
+      }
       if (bgColor?.bg?.includes(",")) {
         const colorGrad = bgColor.bg.split(",");
         let color = new fabric.Gradient({
@@ -3424,7 +3436,7 @@ class EditorScreen {
         this.canvas.setBackgroundColor(bgColor.bg);
       }
 
-      this.canvas.requestRenderAll();
+      this.canvas.renderAll();
       this.alignId = +bgColor.logoPosition;
       updatePreview();
       querySelect("#loader_main").style.display = "none";
