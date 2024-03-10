@@ -15,7 +15,7 @@ export const centerAndResizeElements = (
   const objects = canvas?.getObjects();
   logoNameElement.charSpacing = 0;
   sloganNameElement.charSpacing = 0;
-  const logoMain = objects.filter((i) => !i.text);
+  const logoMain = objects.filter((i) => !i.text && i.id !== "external_layer");
 
   const timeout = 5;
 
