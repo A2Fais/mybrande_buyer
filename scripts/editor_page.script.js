@@ -381,7 +381,7 @@ class EditorScreen {
         !sloganNameElement ||
         !this.alignId
       ) {
-        return toastNotification("Data Error");
+      return toastNotification("Data Error");
       }
 
       const logoId = querySelect("#logo_id")?.value;
@@ -667,8 +667,8 @@ class EditorScreen {
         objects.forEach((obj, idx) => {
           const sloganIdx = objects.length - 1;
           const logoIdx = objects.length - 2;
-          if (obj.id === "external_layer") {
-            return;
+          if (obj.id && obj.id.includes("external_layer_")) {
+            return; 
           }
           if (sloganIdx === idx) {
             obj.scale(800);
@@ -679,7 +679,6 @@ class EditorScreen {
             logoNameElement = obj;
             obj.text = querySelect("#logoMainField").value;
           }
-          this.canvas.requestRenderAll();
 
           this.canvas.add(obj);
           const layerSection = new CreateLayerSection(this.layers);
@@ -1899,7 +1898,6 @@ class EditorScreen {
     palleteComponent.addEventListener("colorChange", (e) => {
       const { colorMode, grad1Value, grad2Value, colorAngle, solidValue } =
         e.detail;
-      console.log(e.detail);
 
       let angleColor = `${colorAngle}deg`;
       let color = null;
@@ -2157,28 +2155,36 @@ class EditorScreen {
       });
     });
 
-    document.getElementById("clip-icons").addEventListener("click", (e) => {
-      const targetSrc = e.target.src;
-      const decodedSrc = decodeURIComponent(targetSrc);
 
-      const canvas = this.canvas;
+  let layerCounter = 0;
+  let clickedObjectCoordinates = {};
 
-      fabric.loadSVGFromURL(decodedSrc, (objects, options) => {
-        const img = fabric.util.groupSVGElements(objects, options);
-        img.scaleToWidth(50);
-        img.set({ left: img.left + 100 });
-        img.set("id", "external_layer");
-        canvas.add(img);
-        canvas.viewportCenterObjectV(img);
-        canvas.requestRenderAll();
+  document.getElementById("clip-icons").addEventListener("click", (e) => {
+    const targetSrc = e.target.src;
+    const decodedSrc = decodeURIComponent(targetSrc);
 
-        img.on("mousedown", (event) => {
-          console.log("Clicked on object with ID:", event.target.id);
-        });
+    const canvas = this.canvas;
+
+    fabric.loadSVGFromURL(decodedSrc, (objects, options) => {
+      const img = fabric.util.groupSVGElements(objects, options);
+      img.scaleToWidth(50);
+      img.set({ left: img.left + 100 });
+      img.set("id", "external_layer_" + layerCounter);
+      canvas.add(img);
+      canvas.viewportCenterObjectV(img);
+      canvas.requestRenderAll();
+
+      img.on("mousedown", (event) => {
+        // event.target.set({ top: 50, left: 0 })
+        console.log("Clicked on object with ID:", event.target.id, event.target.top, event.target.left);
+        canvas.renderAll();
       });
+  });
+  
+  layerCounter++;
+  document.getElementById("popup-parent-icons").style.display = "none";
+});
 
-      document.getElementById("popup-parent-icons").style.display = "none";
-    });
 
     querySelect("#add-clip-text").addEventListener("click", (e) => {
       querySelect("#popup-parent").style.display = "block";
@@ -3376,6 +3382,7 @@ class EditorScreen {
     setlogoPosition(1, this.canvas);
 
     var logoPosition;
+    var external_layer;
     async function fetchData(canvas) {
       querySelect("#loader_main").style.display = "block";
       const logoId = querySelect("#logo_id").value;
@@ -3397,6 +3404,8 @@ class EditorScreen {
       const bg = response.data?.AllData?.logo_backgroundcolor;
       logoPosition = response.data?.AllData?.logo_position;
       const svgData = response.data?.AllData?.svg_data;
+
+      external_layer = response.data.AllData.externalLayerElements
 
       if (svgData) {
         localStorage.setItem("logo-file", svgData);

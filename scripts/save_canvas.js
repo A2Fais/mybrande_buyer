@@ -78,6 +78,11 @@ export async function saveCanvas(
     const brandColor = logoNameElement.get("fill");
     const sloganColor = sloganNameElement.get("fill");
 
+
+    const externalLayerElements = canvas.getObjects().filter((obj) => {
+      return obj.id && obj.id.includes('external_layer_');
+    })
+
     const postData = {
       buyer_logo_id: querySelect("#buyer_logo_id")?.value, // from response hidden input field
       buyer_id: querySelect("#buyer_Id")?.value, // hidden input field
@@ -85,7 +90,8 @@ export async function saveCanvas(
       brand_name: querySelect("#logoMainField").value,
       slogan: querySelect("#sloganNameField").value,
       svg_data: currentCanvasSVG,
-      logo_position: alignId,
+      /* logo_position: alignId, */
+      logo_position: 1, 
       logo_backgroundcolor: bgColor === "#efefef" ? "transparent" : bgColor,
 
       brandName_color: !brandColor.includes("#")
@@ -107,8 +113,11 @@ export async function saveCanvas(
       slogan_fontStyle: sloganNameElement.get("fontStyle"),
       slogan_letterSpace: sloganNameElement.get("charSpacing") / 10,
       slogan_droupShadow: getDropShadowValue(sloganNameElement.get("shadow")),
+      externalLayerElements: externalLayerElements,
+      externalTextElements: []
     };
-    console.log(postData);
+    
+    console.log(postData)
     try {
       const response = await axios.post(
         `https://www.mybrande.com/api/buyer/logo/store`,
