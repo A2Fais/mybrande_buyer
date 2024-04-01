@@ -15,7 +15,7 @@ export const centerAndResizeElements = (
   const objects = canvas?.getObjects().filter(i => !i.id?.includes("external_layer_"));
   logoNameElement.charSpacing = 0;
   sloganNameElement.charSpacing = 0;
-  const logoMain = objects.filter((i) => !i.text && !i.id.includes("external_layer_") && !i.id.includes("Layer_1")); 
+  const logoMain = objects.filter((i) => !i.text && !i.id.includes("external_layer_") && !i.id.includes("Layer_1"));
 
   const timeout = 5;
 
@@ -26,14 +26,14 @@ export const centerAndResizeElements = (
           (obj) =>
             obj.type === "text" &&
             obj.text.toLowerCase() ===
-              querySelect("#logoMainField").value.toLowerCase()
+            querySelect("#logoMainField").value.toLowerCase()
         );
 
         const sloganNameElement = objects.find(
           (obj) =>
             obj.type === "text" &&
             obj.text.toLowerCase() ===
-              querySelect("#sloganNameField").value.toLowerCase()
+            querySelect("#sloganNameField").value.toLowerCase()
         );
 
         logoNameElement?.set("fontSize", logoSize);
@@ -78,14 +78,14 @@ export const centerAndResizeElements = (
           (obj) =>
             obj.type === "text" &&
             obj.text.toLowerCase() ===
-              querySelect("#logoMainField").value.toLowerCase()
+            querySelect("#logoMainField").value.toLowerCase()
         );
 
         const sloganNameElement = objects.find(
           (obj) =>
             obj.type === "text" &&
             obj.text.toLowerCase() ===
-              querySelect("#sloganNameField").value.toLowerCase()
+            querySelect("#sloganNameField").value.toLowerCase()
         );
 
         logoNameElement.set("fontSize", logoSize);
@@ -110,14 +110,14 @@ export const centerAndResizeElements = (
           (obj) =>
             obj.type === "text" &&
             obj.text.toLowerCase() ===
-              querySelect("#logoMainField").value.toLowerCase()
+            querySelect("#logoMainField").value.toLowerCase()
         );
 
         const sloganNameElement = objects.find(
           (obj) =>
             obj.type === "text" &&
             obj.text.toLowerCase() ===
-              querySelect("#sloganNameField").value.toLowerCase()
+            querySelect("#sloganNameField").value.toLowerCase()
         );
 
         console.log("Left Right");
@@ -145,7 +145,6 @@ export const centerAndResizeElements = (
           logoNameElement.set("left", canvas.width / 2.4);
           sloganNameElement.set("left", logoNameElement.left);
         } else {
-          console.log("center");
           logoNameElement.viewportCenterH();
           sloganNameElement.viewportCenterH();
 
@@ -154,24 +153,24 @@ export const centerAndResizeElements = (
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-                logoNameElement.width / 2 -
-                sloganNameElement.width / 2
+              logoNameElement.width / 2 -
+              sloganNameElement.width / 2
             );
           } else if (logoNameElement.text.length <= 30) {
             logoNameElement.set("left", canvas.width - 500);
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-                logoNameElement.width / 2 -
-                sloganNameElement.width / 2
+              logoNameElement.width / 2 -
+              sloganNameElement.width / 2
             );
           } else {
             logoNameElement.set("left", canvas.width / 2.5);
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-                logoNameElement.width / 2 -
-                sloganNameElement.width / 2
+              logoNameElement.width / 2 -
+              sloganNameElement.width / 2
             );
           }
         }
@@ -188,8 +187,8 @@ export const centerAndResizeElements = (
           sloganNameElement.set(
             "left",
             logoNameElement.left +
-              logoNameElement.width / 2 -
-              sloganNameElement.width / 2
+            logoNameElement.width / 2 -
+            sloganNameElement.width / 2
           );
         }
 
@@ -208,16 +207,15 @@ export const centerAndResizeElements = (
           (obj) =>
             obj.type === "text" &&
             obj.text.toLowerCase() ===
-              querySelect("#logoMainField").value.toLowerCase()
+            querySelect("#logoMainField").value.toLowerCase()
         );
 
         const sloganNameElement = objects.find(
           (obj) =>
             obj.type === "text" &&
             obj.text.toLowerCase() ===
-              querySelect("#sloganNameField").value.toLowerCase()
+            querySelect("#sloganNameField").value.toLowerCase()
         );
-        console.log("rightLeft");
 
         logoNameElement.center();
         sloganNameElement.center();
@@ -242,8 +240,8 @@ export const centerAndResizeElements = (
           sloganNameElement.set(
             "left",
             logoNameElement.left +
-              logoNameElement.width -
-              sloganNameElement.width
+            logoNameElement.width -
+            sloganNameElement.width
           );
 
           if (letterSpaced) {
@@ -258,12 +256,11 @@ export const centerAndResizeElements = (
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-                logoNameElement.width -
-                sloganNameElement.width
+              logoNameElement.width -
+              sloganNameElement.width
             );
           }
         } else {
-          console.log("center");
 
           logoNameElement.viewportCenterH();
           sloganNameElement.viewportCenterH();
@@ -273,8 +270,8 @@ export const centerAndResizeElements = (
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-                logoNameElement.width / 2.5 -
-                sloganNameElement.width / 2.5
+              logoNameElement.width / 2.5 -
+              sloganNameElement.width / 2.5
             );
           } else if (logoNameElement.text.length <= 30) {
             console.log("<= 30");
@@ -282,25 +279,24 @@ export const centerAndResizeElements = (
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-                logoNameElement.width / 2.5 -
-                sloganNameElement.width / 2.5
+              logoNameElement.width / 2.5 -
+              sloganNameElement.width / 2.5
             );
           } else if (logoNameElement.text.length <= 40) {
-            console.log("40");
             logoNameElement.set("left", -200);
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-                logoNameElement.width / 2.5 -
-                sloganNameElement.width / 2.5
+              logoNameElement.width / 2.5 -
+              sloganNameElement.width / 2.5
             );
           } else {
             logoNameElement.set("left", canvas.width / 6);
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-                logoNameElement.width / 2 -
-                sloganNameElement.width / 2
+              logoNameElement.width / 2 -
+              sloganNameElement.width / 2
             );
           }
         }

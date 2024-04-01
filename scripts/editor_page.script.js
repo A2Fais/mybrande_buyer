@@ -1,6 +1,7 @@
 import { fabric } from "fabric";
 import { CreateLayerSection } from "./create_layer";
 import { DeleteLayer } from "./layer_remover";
+import { CanvasGuides } from "./editor-obj-dim";
 import "alwan/dist/css/alwan.min.css";
 import iro from "@jaames/iro";
 import WebFont from "webfontloader";
@@ -38,6 +39,7 @@ WebFont.load({
     }
   },
 });
+const l = console.log;
 
 class EditorScreen {
   constructor() {
@@ -46,6 +48,9 @@ class EditorScreen {
     this.magnifier = new fabric.Canvas("magnifier", {
       backgroundColor: this.canvasBG,
     });
+
+    CanvasGuides(this.canvas); // Init Canvas Guides
+
     this.textMode = querySelect('.nav-item[data-name="text"]');
     this.logoMode = querySelect('.nav-item[data-name="logo"]');
     this.uploadsMode = querySelect('.nav-item[data-name="uploads"]');
@@ -381,7 +386,7 @@ class EditorScreen {
         !sloganNameElement ||
         !this.alignId
       ) {
-      return toastNotification("Data Error");
+        return toastNotification("Data Error");
       }
 
       const logoId = querySelect("#logo_id")?.value;
@@ -668,7 +673,7 @@ class EditorScreen {
           const sloganIdx = objects.length - 1;
           const logoIdx = objects.length - 2;
           if (obj.id && obj.id.includes("external_layer_")) {
-            return; 
+            return;
           }
           if (sloganIdx === idx) {
             obj.scale(800);
@@ -2110,6 +2115,8 @@ class EditorScreen {
       const img = new Image();
       img.classList.add("clip-icon");
       img.setAttribute("id", "clip-icon");
+      icon = icon.replace(/(\r\n|\n|\r)/gm, "");
+      img.setAttribute("data-content", icon);
       img.setAttribute("data-name", name);
       const blob = new Blob([icon], { type: "image/svg+xml" });
       const svgDataUrl = URL.createObjectURL(blob);
@@ -2155,35 +2162,71 @@ class EditorScreen {
       });
     });
 
+    // Save External Layers
+    querySelect('#save-external-layer').addEventListener("click", (e) => {
+      let btn = e.target;
 
-  let layerCounter = 0;
-  let clickedObjectCoordinates = {};
-
-  document.getElementById("clip-icons").addEventListener("click", (e) => {
-    const targetSrc = e.target.src;
-    const decodedSrc = decodeURIComponent(targetSrc);
-
-    const canvas = this.canvas;
-
-    fabric.loadSVGFromURL(decodedSrc, (objects, options) => {
-      const img = fabric.util.groupSVGElements(objects, options);
-      img.scaleToWidth(50);
-      img.set({ left: img.left + 100 });
-      img.set("id", "external_layer_" + layerCounter);
-      canvas.add(img);
-      canvas.viewportCenterObjectV(img);
-      canvas.requestRenderAll();
-
-      img.on("mousedown", (event) => {
-        // event.target.set({ top: 50, left: 0 })
-        console.log("Clicked on object with ID:", event.target.id, event.target.top, event.target.left);
-        canvas.renderAll();
+      let externalLayers = this.canvas._objects.filter((obj) => {
+        return obj.id && obj.id.includes("external_layer_");
       });
-  });
-  
-  layerCounter++;
-  document.getElementById("popup-parent-icons").style.display = "none";
-});
+
+
+      // Loop Through External Layers and export this single object save into local storage 
+      let finalData = [];
+      externalLayers.forEach((layer) => {
+        let cacheWidth = layer.cacheWidth,
+          cacheHeight = layer.cacheHeight;
+        l(cacheWidth, cacheHeight)
+        let data = layer.toJSON();
+        data.id = layer.id;
+        data.layerType = layer.layerType;
+
+        if (layer.layerType == 'svg') {
+          data.svgContent = layer.svgContent;
+          data.cwidth = cacheWidth;
+          data.cheight = cacheHeight;
+        } else if (layer.layerType == 'text') {
+        }
+
+        finalData.push(data);
+      });
+
+      localStorage.setItem("external_layers", JSON.stringify(finalData));
+
+    });
+
+    let layerCounter = 0;
+    let clickedObjectCoordinates = {};
+
+    document.getElementById("clip-icons").addEventListener("click", (e) => {
+      let img = e.target,
+        content = img.getAttribute("data-content");
+      const targetSrc = img.src;
+      const decodedSrc = decodeURIComponent(targetSrc);
+
+      const canvas = this.canvas;
+
+      fabric.loadSVGFromURL(decodedSrc, (objects, options) => {
+        const img = fabric.util.groupSVGElements(objects, options);
+        img.scaleToWidth(100);
+        img.set({ left: img.left + 100, layerType: 'svg' });
+        img.set("id", "external_layer_" + layerCounter);
+        img.set("svgContent", content);
+        canvas.add(img);
+        canvas.viewportCenterObjectV(img);
+        canvas.requestRenderAll();
+
+        img.on("mousedown", (event) => {
+          // event.target.set({ top: 50, left: 0 })
+          console.log("Clicked on object with ID:", event.target.id, event.target.top, event.target.left);
+          canvas.renderAll();
+          l(event.target)
+        });
+      });
+
+      layerCounter++;
+      document.getElementById("popup-parent-icons").style.display = "none";
+    });
 
 
     querySelect("#add-clip-text").addEventListener("click", (e) => {
@@ -2200,7 +2243,9 @@ class EditorScreen {
       const IText = new fabric.IText("Add Text", { fontFamily: "Poppins" });
       this.canvas.add(IText);
       IText.center();
+      IText.set("id", "external_layer_" + Date.now());
       IText.set("left", IText.top + 50);
+      IText.set("layerType", "text")
       updatePreview();
       this.canvas.requestRenderAll();
       this.canvas.setActiveObject(IText);
@@ -3386,7 +3431,6 @@ class EditorScreen {
     async function fetchData(canvas) {
       querySelect("#loader_main").style.display = "block";
       const logoId = querySelect("#logo_id").value;
-
       if (!logoId) return toastNotification("Error!! Logo ID Not Found");
 
       let response;
@@ -3473,6 +3517,48 @@ class EditorScreen {
         this.alignId = getAttr(item, "data-align-id");
       });
     });
+
+
+
+    // Load External Layers from localstorage
+    (async () => {
+
+      const externalLayers = JSON.parse(localStorage.getItem("external_layers") || "[]");
+      if (!externalLayers.length) return false;
+
+      for (const layer of externalLayers) {
+        let { layerType } = layer;
+
+        if (layerType == 'text') {
+          let textLayer = new fabric.Text(layer.text, layer);
+          this.canvas.add(textLayer);
+        } else {
+          fabric.loadSVGFromString(layer.svgContent, (objects, options) => {
+            let img = fabric.util.groupSVGElements(objects, options);
+            img.scaleToWidth(layer.cwidth);
+            img.scaleToHeight(layer.cheight);
+            img.set({
+              left: layer.left,
+              top: layer.top,
+              angle: layer.angle,
+              scaleX: layer.scaleX,
+              scaleY: layer.scaleY,
+              opacity: layer.opacity,
+              flipX: layer.flipX,
+              flipY: layer.flipY,
+              selectable: true,
+              id: layer.id,
+              svgContent: layer.svgContent,
+              layerType: layer.layerType,
+            });
+            this.canvas.add(img);
+            this.canvas.requestRenderAll();
+          });
+        }
+
+      }
+
+    })();
   }
 }
 

@@ -12,13 +12,15 @@
 </head>
 
 <body>
-  <div id="loader_font" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #ffffff55; z-index: 2000000; display: none;">
+  <div id="loader_font"
+    style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #ffffff55; z-index: 2000000; display: none;">
     <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
       <img src="/assets/loader.gif" alt="" style="max-width: 100%; max-height: 100%;">
     </div>
   </div>
 
-  <div id="loader_main" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #ffffff55; z-index: 2000000; display: none;">
+  <div id="loader_main"
+    style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #ffffff55; z-index: 2000000; display: none;">
     <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
       <img src="/assets/loader.gif" alt="" style="max-width: 100%; max-height: 100%;">
     </div>
@@ -130,6 +132,11 @@
         <div style="display: flex; justify-content: space-evenly; gap: px;">
 
           <div style="display: flex; flex-direction: row-reverse;">
+            <button id="save-external-layer" class="btn-main" style="margin: 8px;"><i class="fas fa-download"
+                style="margin: 5px;"></i>
+              <span>Save External Layers</span>
+            </button>
+
             <button id="save-package" class="btn-main" style="margin: 8px;"><i class="fas fa-download"
                 style="margin: 5px;"></i>
               <span>Save & Download</span>
@@ -731,12 +738,14 @@
       <div class="text-settings-container">
         <!-- <input class="input-main" id="logoMainField" type="text" placeholder="Logo Name" name="" value="My Brand Name"> -->
         <!-- Raindrops fall, soil dampens, life. sdf -->
-        <input class="input-main" id="logoMainField" type="text" placeholder="Logo Name" name="" value="Raindrops fall, soil dampens, life. sdfa">
-        <input class="input-main" id="sloganNameField" type="text" placeholder="Slogan Name" name="" value="Smart It Firm for global fdsgdfsgdfsgdfg">
+        <input class="input-main" id="logoMainField" type="text" placeholder="Logo Name" name=""
+          value="Raindrops fall, soil dampens, life. sdfa">
+        <input class="input-main" id="sloganNameField" type="text" placeholder="Slogan Name" name=""
+          value="Smart It Firm for global fdsgdfsgdfsgdfg">
         <input id="api_check" type="hidden" value="2">
-        <input id="buyer_logo_id" type="hidden" name="" value="80"> // 80, 47, 79, 78 
+        <input id="buyer_logo_id" type="hidden" name="" value="58"> // 80, 47, 79, 78
         <input id="buyer_Id" type="hidden" name="" value="3">
-        <input id="logo_id" type="hidden" name="" value="80"> //368, 346, 367, 34
+        <input id="logo_id" type="hidden" name="" value="58"> //368, 346, 367, 34
         <!-- <input id="logo_id" type="hidden" name="" value="204"> -->
         <div class="layer-specific-settings">
           <span class="specific-setting" id="copyElement2">
