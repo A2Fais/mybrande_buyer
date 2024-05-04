@@ -59,7 +59,6 @@ class Palette extends HTMLElement {
     const grad2 = this.querySelector('#grad-2');
     const solid = this.querySelector('#grad-solid');
     const colorAngle = this.querySelector('#color-angle');
-
     const dispatchChangeEvent = () => {
       this.dispatchEvent(
         new CustomEvent('colorChange', {
@@ -73,7 +72,7 @@ class Palette extends HTMLElement {
         })
       );
     };
-    
+
     const $ = (item) => document.querySelector(item);
 
     const colorList = this.querySelector('#bg-color-list');
@@ -86,7 +85,7 @@ class Palette extends HTMLElement {
     //     colorList.classList.add('show');
     //   }
     // });
-    
+
     colorList.addEventListener('click', (e) => {
       this.colorMode = e.target.innerText;
       const colorMode = this.colorMode;
@@ -117,7 +116,7 @@ class Palette extends HTMLElement {
         $('#color-angle').style.display = 'none';
         $('#color-palette-gradient').style.background =
           'url(https://t3.ftcdn.net/jpg/03/76/74/78/240_F_376747823_L8il80K6c2CM1lnPYJhhJZQNl6ynX1yj.jpg)';
-      } else if (colorMode === 'None'){
+      } else if (colorMode === 'None') {
         dispatchChangeEvent();
       }
 
@@ -126,6 +125,7 @@ class Palette extends HTMLElement {
       const icon = document.createElement('i');
       icon.className = 'fa-solid fa-angle-down';
       colorModeTitle.append(icon);
+      self.dispatchEvent(new CustomEvent("colorChanged", { detail: { color: item.value } }));
     });
 
     grad1.addEventListener('input', () => {
@@ -147,11 +147,13 @@ class Palette extends HTMLElement {
       dispatchChangeEvent();
     });
 
-    // colorAngle.addEventListener('input', (e) => {
-    //   this.querySelector('#color-angle-text').innerText = `${e.target.value}deg`;
-    //   dispatchChangeEvent();
-    // });
-    
+    let self = this;
+    [solid, grad1, grad2].forEach((item) => {
+      item.addEventListener('change', () => {
+        self.dispatchEvent(new CustomEvent("colorChanged", { detail: { color: item.value } }));
+      });
+    });
+
   }
 }
 

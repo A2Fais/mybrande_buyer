@@ -39,7 +39,7 @@ function CanvasGuides(canvas) {
                 ...properties,
 
             });
-            canvas.requestRenderAll();
+            canvas.renderAll();
             return true;
         }
 
@@ -64,10 +64,7 @@ function CanvasGuides(canvas) {
             canvas.remove(positionlines[i]);
         }
     }
-    // Show points
-    function showPoint(type, point) {
-        showPositioningLine(type, point);
-    }
+
     // Hide positioning line
     function hidePositioningLine(type, point) {
         let name = point + type;
@@ -226,11 +223,17 @@ function CanvasGuides(canvas) {
         });
         return data;
     }
+    let isObjMoved = false;
     // Show positioning points of object on moving canvas
     canvas.on("object:moving", function (e) {
-        // return false;
-        let obj = e.target,
-            x = obj.left,
+        isObjMoved = true;
+        canvas.stopSavingHistory();
+        let obj = e.target;
+
+        if (obj.type == 'curved-text') obj.refreshCtx();
+
+
+        let x = obj.left,
             y = obj.top,
             width = obj.getScaledWidth(),
             height = obj.getScaledHeight(),
@@ -276,7 +279,24 @@ function CanvasGuides(canvas) {
     });
     canvas.on("mouse:up", function (e) {
         hideAllPositioningLines();
+
+        if (isObjMoved) {
+            let obj = e.target;
+            canvas.startSavingHistory();
+            isObjMoved = false;
+
+            if (obj.type == 'curved-text') obj.refreshCtx(true);
+
+        }
     });
+    canvas.on("object:scaling", function (e) {
+        let obj = e.target;
+        if (obj.type == 'curved-text') {
+            obj.refreshCtx(true);
+            obj._updateObj('scaleX', obj.scaleX);
+            obj._updateObj('scaleY', obj.scaleY);
+        }
+    })
     // Move object with keys
     document.onkeydown = function (e) {
         let obj = canvas.getActiveObject();

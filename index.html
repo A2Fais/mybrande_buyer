@@ -132,10 +132,10 @@
         <div style="display: flex; justify-content: space-evenly; gap: px;">
 
           <div style="display: flex; flex-direction: row-reverse;">
-            <button id="save-external-layer" class="btn-main" style="margin: 8px;"><i class="fas fa-download"
+            <!-- <button id="save-external-layer" class="btn-main" style="margin: 8px;"><i class="fas fa-download"
                 style="margin: 5px;"></i>
               <span>Save External Layers</span>
-            </button>
+            </button> -->
 
             <button id="save-package" class="btn-main" style="margin: 8px;"><i class="fas fa-download"
                 style="margin: 5px;"></i>
@@ -501,11 +501,19 @@
 
         <div class="setting-item" style=" width: 230px;">
           <div style="display: flex; align-items: center; justify-content: space-between;">
-            <div><span style="font-size: 14px;">Scale: </span> <span style="font-size: 14px;" id="scale-value"></span>
+            <span style="font-size: 14px;">Scale: </span>
+            <div
+              style="display: flex; align-items: center; justify-content: space-between; background-color: #eeeeee; border-radius: 5px; height: 36px;">
+              <input class="scale-value" value="1" id="scale-value"></input>
+              <div style="display: grid; gap: 2px; padding-right: 7px;">
+                <span id="scale_up" class="fa-solid fa-chevron-up arrow_icons"></span>
+                <span id="scale_down" class="fa-solid fa-chevron-down arrow_icons"></span>
+              </div>
             </div>
+
           </div>
           <div class="slider-container">
-            <input class="slider" id="progress-bar" type="range" value="" min="0" max="20">
+            <input class="slider" id="progress-bar" type="range" value="10" min="0" max="20">
           </div>
         </div>
 
@@ -951,52 +959,76 @@
           </div>
         </div>
 
-        <span style="font-weight: 600; color: var(--gray); margin-left: 5px; margin-bottom: -px; font-size: 14px">
-          Font Family
-        </span>
-        <div id="font-selector" class="font-selector">
-          <span id="font-selector-title" class="font-selector-title">Poppins
+        <!-- Select boxes -->
+        <span class="selectbox-label">Font Family</span>
+
+        <div class="ms-select-list font-family-selectbox">
+          <span class="ms-list-toggle">
+            <span class="ms-list-value" value="Poppins">Poppins</span>
             <i class="fa-solid fa-angle-down"></i>
           </span>
-          <div class="font-selector-list">
-            <li>Poppins</li>
-            <li>Inter</li>
-            <li>Roboto</li>
+
+          <div class="ms-select-list-menu"></div>
+        </div>
+
+        <span class="selectbox-label">Font Weight</span>
+
+        <div class="ms-select-list font-weight-selector">
+          <span class="ms-list-toggle">
+            <span class="ms-list-value" value="Regular">Regular</span>
+            <i class="fa-solid fa-angle-down"></i>
+          </span>
+
+          <div class="ms-select-list-menu">
+            <li value="100">Thin 100</li>
+            <li value="200">Light 200</li>
+            <li value="300">Light 300</li>
+            <li value="normal">Regular</li>
+            <li value="500">Medium 500</li>
+            <li value="600">Semi-Bold 600</li>
+            <li value="800">Bolder 800</li>
           </div>
         </div>
 
-        <span style="font-weight: 600; color: var(--gray); margin-left: 5px; margin-bottom: -px; font-size: 14px">Letter
-          Case</span>
-        <div id="case_arrow" class='case-list-item'>
-          <span id="case-list-item__title" class="case-list-item__title">Uppercase
+        <span class="selectbox-label">Font Style</span>
+
+        <div class='ms-select-list font-style-selector'>
+          <span class="ms-list-toggle">
+            <span class="ms-list-value" value="Normal">Normal</span>
             <i class="fa-solid fa-angle-down"></i>
           </span>
-          <div id="case-list-items-li" class="case-list-items-li">
-            <li>Uppercase</li>
-            <li>Lowercase</li>
-            <li>Title Case</li>
-            <li>Sentence Case</li>
+
+          <div class="ms-select-list-menu">
+            <li value="Normal">Normal</li>
+            <li value="Italic">Italic</li>
+            <li value="Underline">Underline</li>
           </div>
         </div>
 
-        <!-- <span
-                    style="font-weight: 600; color: #555; margin-left: 5px; margin-bottom: -px; font-size: 14px">Font
-                    Size</span>
-                <div class='font_size-list-item'>
-                    <span class="font_size-list-item__title">16 px
-                        <i class="fa-solid fa-angle-down"></i>
-                    </span>
-                    <div class="font_size-list-items-li">
-                    </div>
-                </div> -->
+        <span class="selectbox-label">Letter Case</span>
+
+        <div class='ms-select-list text-case-select-box'>
+          <span class="ms-list-toggle">
+            <span class="ms-list-value" value="Uppercase">Uppercase</span>
+            <i class="fa-solid fa-angle-down"></i></span>
+
+          <div class="ms-select-list-menu">
+            <li value="Uppercase">Uppercase</li>
+            <li value="Lowercase">Lowercase</li>
+            <li value="Title Case">Title Case</li>
+            <li value="Sentence Case">Sentence Case</li>
+          </div>
+        </div>
+
+
         <div class="setting-item">
-          <div style="display: flex; align-items: center;">
+          <div style="display: flex; align-items: center;justify-content: space-between;padding-right: 10px;">
             <span style="font-weight: 600; color: #555; margin-left: 5px; margin-bottom: -px; font-size: 14px">Font
               Size</span>
             <div
-              style="display: flex; align-items: center; justify-content: space-between; background-color: #eeeeee; margin-left: 43px; border-radius: 5px; height: 36px;">
+              style="display: flex; align-items: center; justify-content: space-between; background-color: #eeeeee; border-radius: 5px; height: 36px;">
               <input class="font_size" id="font_size_title"></input>
-              <div style="display: grid; gap: 2px; padding-right: px;">
+              <div style="display: grid; gap: 2px; padding-right: 7px;">
                 <span id="font_size_up" class="fa-solid fa-chevron-up arrow_icons"></span>
                 <span id="font_size_down" class="fa-solid fa-chevron-down arrow_icons"></span>
               </div>
@@ -1006,23 +1038,29 @@
             <input class="slider" id="font_size_range" type="range" value="" min="1" max="130">
           </div>
         </div>
-
-        <span style="font-weight: 600; color: #555; margin-left: 5px; margin-bottom: -px; font-size: 14px">Font
-          Style</span>
-        <div class='font_style-list-item'>
-          <span class="font_style-list-item__title">Normal
-            <i class="fa-solid fa-angle-down"></i>
-          </span>
-          <div class="font_style-list-items-li">
-            <li>Normal</li>
-            <li>Italic</li>
-            <li>Underline</li>
+        <div class="setting-item">
+          <div style="display: flex; align-items: center;justify-content: space-between;padding-right: 10px;">
+            <span style="font-weight: 600; color: #555; margin-left: 5px; margin-bottom: -px; font-size: 14px">Curve
+              Text</span>
+            <div
+              style="display: flex; align-items: center; justify-content: space-between; background-color: #eeeeee; border-radius: 5px; height: 36px;">
+              <input id="curve-text"></input>
+              <div style="display: grid; gap: 2px; padding-right: 7px;">
+                <span id="text-curve-up" class="fa-solid fa-chevron-up arrow_icons"></span>
+                <span id="text-curve-down" class="fa-solid fa-chevron-down arrow_icons"></span>
+              </div>
+            </div>
+          </div>
+          <div class="slider-container">
+            <input class="slider" id="text-curve-range" type="range" value="2500" max="5000">
           </div>
         </div>
+
+
         <div class="setting-item">
-          <span>Letter Spacing</span><span id="l_spacing_value">: 1.0</span>
+          <span>Letter Spacing</span><span id="l_spacing_value">: 0</span>
           <div class="slider-container">
-            <input class="slider" id="letter-spacing-slider" type="range" value="" min="-200" max="600">
+            <input class="slider" id="letter-spacing-slider" type="range" value="0" min="-200" max="600">
           </div>
         </div>
         <div class="setting-switch">
@@ -1462,6 +1500,7 @@
     </div>
   </div>
 
+  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
   <script src="scripts/editor_page.script.js" type="module"></script>
   <script src="scripts/color_container.js" type="module"></script>
 </body>
