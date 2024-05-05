@@ -842,6 +842,7 @@ class EditorScreen {
 
     colorPicker.on("input:end", (color) => {
       updatePreview();
+      this.canvas.save();
     })
 
     const changePickerColors = (element) => {
@@ -2629,6 +2630,7 @@ class EditorScreen {
             }
             this.canvas.renderAll();
             updatePreview();
+            this.canvas.save();
           });
         }
       });
