@@ -227,7 +227,6 @@ function CanvasGuides(canvas) {
     // Show positioning points of object on moving canvas
     canvas.on("object:moving", function (e) {
         isObjMoved = true;
-        canvas.stopSavingHistory();
         let obj = e.target;
 
         if (obj.type == 'curved-text') obj.refreshCtx();
@@ -281,8 +280,8 @@ function CanvasGuides(canvas) {
         hideAllPositioningLines();
 
         if (isObjMoved) {
+            canvas.save();
             let obj = e.target;
-            canvas.startSavingHistory();
             isObjMoved = false;
 
             if (obj.type == 'curved-text') obj.refreshCtx(true);

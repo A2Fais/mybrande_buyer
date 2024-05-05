@@ -122,7 +122,6 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
       return this._cachedCanvas;
     }
 
-    console.log("Circle data function is running", this.text, this.type);
     var text = this.text.trim().length > 1 ? this.text : "You don't set empty value in curved text",
       diameter = this.diameter,
       flipped = this.flipped,
@@ -266,7 +265,6 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
 //#endregion Text Curved 
 
 class EditorScreen {
-  startSavingHistory = false;
   constructor() {
     this.canvasBG = "#efefef";
     this.canvas = new fabric.Canvas("c", { backgroundColor: this.canvasBG });
@@ -342,14 +340,13 @@ class EditorScreen {
     this.initialRotation = null;
     this.logoOrientation = null;
     this.alignId = 1;
-
+    let self = this;
 
     querySelect("#logoMainField").addEventListener("input", (e) => {
       try {
         const val = e.target.value;
         params.set("logo", val);
         const updatedURL = url.origin + url.pathname + "?" + params.toString();
-        history.pushState({}, "", updatedURL);
       } catch (err) { }
     });
 
@@ -357,13 +354,14 @@ class EditorScreen {
       this.canvasHistory.saveHistory();
     });
 
-
+    this.canvas.save = function () {
+      self.canvasHistory.saveHistory();
+    }
     querySelect("#sloganNameField").addEventListener("input", (e) => {
       try {
         const val = e.target.value;
         params.set("slogan", val);
         const updatedURL = url.origin + url.pathname + "?" + params.toString();
-        history.pushState({}, "", updatedURL);
       } catch (error) { }
     });
 
@@ -412,6 +410,9 @@ class EditorScreen {
       this.canvas.renderAll();
       querySelect('#rotate_info').innerText = 'Rotate: 0deg';
       this.rotateRange.value = 0;
+      if (active) this.canvas.save();
+      this.canvas.renderAll();
+      this.canvas.updatePreview();
     });
 
     this.shadowChanger = (sloganNameElement, logoNameElement) => {
@@ -444,13 +445,6 @@ class EditorScreen {
       querySelect("#loader_font").style.display = "none";
     });
 
-    this.canvas.stopSavingHistory = () => {
-      this.startSavingHistory = false;
-    }
-
-    this.canvas.startSavingHistory = (save = true) => {
-      this.startSavingHistory = true;
-    }
   }
   // Hide all positioning line
   hideCanvasGuides() {
@@ -472,11 +466,9 @@ class EditorScreen {
       });
 
       querySelect("#magnifier_img").src = imageURL;
-      if (this.startSavingHistory) {
-        this.hideCanvasGuides();
-      }
-
     };
+    this.canvas.updatePreview = updatePreview;
+
 
     const setCanvasBackground = () => {
       this.canvas.setBackgroundImage(
@@ -548,7 +540,7 @@ class EditorScreen {
         loaded = this.getAttribute("data-loaded"),
         obj = self.canvas.getActiveObject(),
         currCoordinate = obj.getCenterPoint();
-
+      if (!obj) return false;
 
 
       if (loaded == 'false') {
@@ -570,13 +562,16 @@ class EditorScreen {
       obj.setCoords();
       self.canvas.requestRenderAll();
       updatePreview();
+      self.canvas.save();
+
     });
 
     // Font Case
     querySelect('.text-case-select-box').addEventListener("change", function () {
       const selectedTextElement = this.getAttribute('data-value'),
-        obj = self.canvas.getActiveObject(),
-        currCoordinate = obj.getCenterPoint(),
+        obj = self.canvas.getActiveObject();
+      if (!obj) return false;
+      let currCoordinate = obj.getCenterPoint(),
         existingFont = obj.get("fontFamily"),
         existingFill = obj.get("fill"),
         existingSelectable = obj.get("selectable"),
@@ -615,6 +610,8 @@ class EditorScreen {
 
       self.canvas.renderAll();
       updatePreview();
+      self.canvas.save();
+
     });
 
     // Font Weight
@@ -622,11 +619,11 @@ class EditorScreen {
 
       let weight = this.getAttribute('data-value'),
         obj = self.canvas.getActiveObject();
-
+      if (!obj) return false;
       obj.set('fontWeight', weight);
       self.canvas.renderAll();
-      self.canvas.startSavingHistory(false);
       updatePreview();
+      self.canvas.save();
     });
 
     // Font Style
@@ -642,8 +639,9 @@ class EditorScreen {
       }
 
       self.canvas.renderAll();
-      self.canvas.startSavingHistory(false)
       updatePreview();
+      self.canvas.save();
+
     });
 
 
@@ -659,7 +657,10 @@ class EditorScreen {
       this.rotateObject();
     });
 
-    this.rotateRange.addEventListener("change", updatePreview);
+    this.rotateRange.addEventListener("change", () => {
+      updatePreview();
+      self.canvas.save();
+    });
 
     querySelect("#rotate-bar-uploads").addEventListener("input", (e) => {
       this.isRotating = true;
@@ -740,7 +741,10 @@ class EditorScreen {
       }
     });
 
-    this.scaleRange.addEventListener("change", updatePreview);
+    this.scaleRange.addEventListener("change", function () {
+      updatePreview();
+      self.canvas.save();
+    });
 
     this.flipHorizontal.addEventListener("change", () => {
       const active = this.canvas.getActiveObject();
@@ -761,6 +765,7 @@ class EditorScreen {
       }
 
       updatePreview();
+      if (active) this.canvas.save();
     });
 
     this.flipVertical.addEventListener("change", () => {
@@ -779,6 +784,7 @@ class EditorScreen {
         active.setCoords();
 
         this.canvas.renderAll();
+        if (active) this.canvas.save();
         updatePreview();
       }
     });
@@ -796,8 +802,15 @@ class EditorScreen {
     this.canvas.on("after:render", () => {
       this.rotateObject();
       this.scaleObject();
-
     });
+    let isScaling = false;
+    this.canvas.on('object:scaling', () => { isScaling = true })
+    this.canvas.on("mouse:up", function () {
+      if (isScaling) {
+        isScaling = false;
+        self.canvas.save();
+      }
+    })
 
     let openTextPickerView = "block";
     let openPickerView = "block";
@@ -828,7 +841,6 @@ class EditorScreen {
     });
 
     colorPicker.on("input:end", (color) => {
-      this.canvas.startSavingHistory(false);
       updatePreview();
     })
 
@@ -1022,7 +1034,6 @@ class EditorScreen {
           layerSection.create(obj, idx);
 
           obj.on("mousedown", (e) => {
-            this.canvas.stopSavingHistory();
             this.isFlipY = obj.get("flipY");
             this.isFlipX = obj.get("flipX");
             querySelect("#flip-y").checked = this.isFlipY;
@@ -1303,6 +1314,7 @@ class EditorScreen {
     });
     this.letterSpacingSlider.addEventListener("change", (e) => {
       updatePreview();
+      this.canvas.save();
     });
 
     querySelect("#shadow-blur-slider")?.addEventListener("input", (e) => {
@@ -1312,6 +1324,10 @@ class EditorScreen {
       this.shadowChanger(sloganNameElement, logoNameElement);
       this.canvas.requestRenderAll();
     });
+
+    querySelect("#shadow-blur-slider")?.addEventListener("change", (e) => {
+      this.canvas.save();
+    })
 
     querySelect("#logo-shadow-blur-slider").addEventListener("input", (e) => {
       this.logoShadowBlur = e.target.value;
@@ -1332,6 +1348,7 @@ class EditorScreen {
 
     querySelect("#logo-shadow-blur-slider").addEventListener("change", (e) => {
       updatePreview();
+      this.canvas.save();
     });
 
 
@@ -1358,12 +1375,24 @@ class EditorScreen {
       this.canvas.requestRenderAll();
     });
 
+    this.shadowOffsetXSlider.addEventListener("change", (e) => {
+      this.canvas.save();
+    })
+    this.logoShadowOffsetXSlider.addEventListener("change", (e) => {
+      this.canvas.save();
+
+    })
+
+
+
     this.logoShadowOffsetXSlider.addEventListener("change", (e) => {
       updatePreview();
+      this.canvas.save();
     });
 
     this.shadowOffsetYSlider.addEventListener("change", (e) => {
       updatePreview();
+      this.canvas.save();
     });
 
     this.shadowOffsetYSlider.addEventListener("input", (e) => {
@@ -1390,6 +1419,7 @@ class EditorScreen {
 
     this.logoShadowOffsetYSlider.addEventListener("change", (e) => {
       updatePreview()
+      this.canvas.save();
     })
 
     const fontList = querySelect(".font-selector-list");
@@ -1659,8 +1689,8 @@ class EditorScreen {
 
     });
     querySelect("#font_size_range").addEventListener("change", (event) => {
-      this.canvas.startSavingHistory(false);
       updatePreview();
+      this.canvas.save();
     });
 
     querySelect("#font_size_range").addEventListener("input", (event) => {
@@ -1694,6 +1724,7 @@ class EditorScreen {
       obj._updateObj('scaleY', obj.scaleY);
 
       updatePreview();
+      this.canvas.save();
     });
 
     //#region Up and down
@@ -1745,7 +1776,6 @@ class EditorScreen {
 
       let obj = this.canvas.getActiveObject();
       if (!obj) return 0;
-      this.canvas.stopSavingHistory();
 
       let value = querySelect('#text-curve-range').value,
         percentage = value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
@@ -1794,6 +1824,7 @@ class EditorScreen {
         this.canvas.remove(obj);
         this.canvas.add(text);
         this.canvas.setActiveObject(text);
+        this.canvas.save();
       } else if (hasCurveApply && isCurvedText) {
         obj.set('diameter', value);
         obj.set('flipped', isFlipped);
@@ -1802,7 +1833,6 @@ class EditorScreen {
         obj._updateObj('scaleY', obj.scaleY);
       }
 
-      this.canvas.startSavingHistory(false);
       this.canvas.requestRenderAll();
       return percentage;
     }
@@ -1822,11 +1852,11 @@ class EditorScreen {
 
 
     querySelect("#font_size_title").addEventListener("change", (event) => {
-      this.canvas.startSavingHistory(false);
       const text = event.target.value;
       const fontSize = Number(text.split("px")[0]);
       querySelect("#font_size_range").value = fontSize;
       updatePreview();
+      this.canvas.save();
       this.canvas.requestRenderAll();
     });
 
@@ -1974,7 +2004,6 @@ class EditorScreen {
     });
 
     querySelect("#copyElement2").addEventListener("click", () => {
-      this.canvas.stopSavingHistory();
       const activeObject = this.canvas.getActiveObject();
       activeObject.clone((cloned) => {
         this.canvas.add(cloned);
@@ -1982,8 +2011,9 @@ class EditorScreen {
         cloned.left += 10;
       });
       this.canvas.renderAll();
-      this.canvas.startSavingHistory(false);
       updatePreview();
+      if (activeObject)
+        this.canvas.save();
     });
 
     querySelect("#eyeElement2").addEventListener("click", () => {
@@ -1992,32 +2022,33 @@ class EditorScreen {
       visibilty = !visibilty;
       activeObj.set("opacity", visibilty ? 1 : 0);
       this.canvas.renderAll();
-      this.canvas.startSavingHistory(false);
       updatePreview();
+      if (activeObj) this.canvas.save();
     });
 
     querySelect("#removeElement2").addEventListener("click", () => {
       const activeObj = this.canvas.getActiveObject();
       this.canvas.remove(activeObj);
       this.canvas.renderAll();
-      this.canvas.startSavingHistory(false);
       updatePreview();
+      if (activeObj) this.canvas.save();
     });
 
     querySelect("#bringDownElement2").addEventListener("click", () => {
       const selectedObject = this.canvas.getActiveObject();
       this.canvas.sendBackwards(selectedObject);
       this.canvas.renderAll();
-      this.canvas.startSavingHistory(false);
       updatePreview();
+      if (selectedObject) this.canvas.save();
     });
 
     querySelect("#bringUpElement2").addEventListener("click", () => {
       const selectedObject = this.canvas.getActiveObject();
       this.canvas.bringForward(selectedObject);
       this.canvas.renderAll();
-      this.canvas.startSavingHistory(false);
       updatePreview();
+      if (selectedObject) this.canvas.save();
+
     });
 
     querySelect("#eyeElement-uploads").addEventListener("click", () => {
@@ -2026,6 +2057,8 @@ class EditorScreen {
       visibilty = !visibilty;
       activeObj.set("visible", visibilty);
       this.canvas.requestRenderAll();
+      if (activeObj) this.canvas.save();
+
     });
 
     querySelect("#copyElement-uploads").addEventListener("click", (event) => {
@@ -2040,21 +2073,22 @@ class EditorScreen {
       const selectedObject = this.canvas.getActiveObject();
       this.canvas.bringForward(selectedObject);
       this.canvas.requestRenderAll();
+      if (selectedObject) this.canvas.save();
     });
 
     querySelect("#bringDownElement-uploads").addEventListener("click", () => {
       const selectedObject = this.canvas.getActiveObject();
       this.canvas.sendBackwards(selectedObject);
       this.canvas.requestRenderAll();
+      if (selectedObject) this.canvas.save();
     });
 
     const palleteComponent = querySelect("#bg-pallete");
     palleteComponent.addEventListener("colorChanged", () => {
-      this.canvas.startSavingHistory(false);
       updatePreview();
+      this.canvas.save();
     });
     palleteComponent.addEventListener("colorChange", (e) => {
-      this.canvas.stopSavingHistory();
       const { colorMode, grad1Value, grad2Value, colorAngle, solidValue } =
         e.detail;
 
@@ -2104,17 +2138,16 @@ class EditorScreen {
       this.canvas.remove(rect);
 
       this.canvas.requestRenderAll();
-      this.canvas.startSavingHistory(false);
 
     });
 
     const logoPalleteComponent = querySelect("#logo-pallete");
     logoPalleteComponent.addEventListener("colorChanged", () => {
-      this.canvas.startSavingHistory(false);
       updatePreview();
+      this.canvas.save();
+
     });
     logoPalleteComponent.addEventListener("colorChange", (e) => {
-      this.canvas.stopSavingHistory();
 
 
       const selectedObject = this.canvas.getActiveObject();
@@ -2143,18 +2176,16 @@ class EditorScreen {
 
       selectedObject.set("fill", color);
       this.canvas.requestRenderAll();
-      this.canvas.startSavingHistory(false);
 
     });
 
     const textPalleteComponent = querySelect("#text-pallete");
     textPalleteComponent.addEventListener("colorChanged", () => {
-      this.canvas.startSavingHistory(false);
       updatePreview();
+      this.canvas.save();
     });
 
     textPalleteComponent.addEventListener("colorChange", (e) => {
-      this.canvas.stopSavingHistory();
 
       const selectedObject = this.canvas.getActiveObject();
       const { colorMode, grad1Value, grad2Value, solidValue } = e.detail;
@@ -2180,7 +2211,6 @@ class EditorScreen {
 
       selectedObject.set("fill", color);
       this.canvas.requestRenderAll();
-      this.canvas.startSavingHistory(false);
 
     });
 
@@ -2263,15 +2293,7 @@ class EditorScreen {
       querySelect("#popup-parent-icons").style.display = "none";
     });
 
-    // clipIcons.map((icon) => {
-    //   const svgDataUrl = `data:image/svg+xml;charset=utf-8, ${encodeURIComponent(icon.svg)}`;
-    //   const img = document.createElement('img');
-    //   img.setAttribute('id', 'clip-icon');
-    //   img.classList.add('clip-icon');
-    //   img.setAttribute('name', icon.name);
-    //   img.src = svgDataUrl;
-    //   querySelect('#clip-icons').append(img);
-    // });
+
 
     const iconUrl = "https://www.mybrande.com/api/all/icons";
 
@@ -2324,6 +2346,7 @@ class EditorScreen {
         const svgImg = svgCreator(icon.icon_svg, name);
         querySelect("#clip-icons").appendChild(svgImg);
       });
+
     });
 
 
@@ -2349,16 +2372,14 @@ class EditorScreen {
         canvas.requestRenderAll();
 
         img.on("mousedown", (event) => {
-          // canvas.stopSavingHistory();
-          // event.target.set({ top: 50, left: 0 })
           console.log("Clicked on object with ID:", event.target.id, event.target.top, event.target.left);
           canvas.renderAll();
-          // canvas.startSavingHistory(false);
         });
       });
 
       layerCounter++;
       document.getElementById("popup-parent-icons").style.display = "none";
+      canvas.save();
     });
 
 
@@ -2383,6 +2404,7 @@ class EditorScreen {
       updatePreview();
       this.canvas.requestRenderAll();
       this.canvas.setActiveObject(IText);
+      this.canvas.save();
       querySelect("#popup-parent").style.display = "none";
       querySelect("#popup-parent-icons").style.display = "none";
     });
@@ -2443,6 +2465,8 @@ class EditorScreen {
       }
 
       updatePreview();
+      if (active)
+        this.canvas.save();
     });
 
     let isLogoDropShadow = false;
@@ -2515,6 +2539,8 @@ class EditorScreen {
         }
         this.canvas.requestRenderAll();
       }
+      if (active)
+        this.canvas.save();
     });
 
     let isDropShadow = false;
@@ -2976,8 +3002,8 @@ class EditorScreen {
     });
 
     colorPickerBG.on("input:end", (color) => {
-      this.canvas.startSavingHistory(false);
       updatePreview();
+      this.canvas.save();
     })
 
     solidColorEvent();
@@ -3066,6 +3092,7 @@ class EditorScreen {
           }
           this.canvas.renderAll();
           updatePreview();
+          this.canvas.save();
         });
 
         querySelect("#custom_text_colors_wrapper").append(newColor);
@@ -3108,6 +3135,7 @@ class EditorScreen {
           }
           this.canvas.renderAll();
           updatePreview();
+          this.canvas.save();
         });
 
         querySelect("#custom_bg_colors_wrapper").append(newColor);
@@ -3135,6 +3163,7 @@ class EditorScreen {
               this.canvas.renderAll();
               updatePreview();
               captureCanvasState();
+              this.canvas.save();
             }
           }
         }
@@ -3158,6 +3187,7 @@ class EditorScreen {
               this.canvas.renderAll();
               updatePreview();
               captureCanvasState();
+              this.canvas.save()
             }
           }
         }
@@ -3181,6 +3211,7 @@ class EditorScreen {
             updateColorPickers();
             this.canvas.renderAll();
             captureCanvasState();
+            this.canvas.save()
           }
           updatePreview();
         }
@@ -3260,9 +3291,8 @@ class EditorScreen {
     colorPickerText.on("input:change", changeColorPickerText);
     colorPickerText.on("input:move", changeColorPickerText);
     colorPickerText.on("input:end", () => {
-      this.canvas.startSavingHistory(false);
       updatePreview();
-      console.log("runned")
+      this.canvas.save();
     });
 
     const handleColorModeClick = (activeElement, element1, element2) => {
@@ -3643,10 +3673,9 @@ class EditorScreen {
       // Init Undo Redo
       setTimeout(() => {
         this.canvasHistory = new SaveHistory(this.canvas) // Init Undo Redo
-        this.canvas.startSavingHistory(false);
         querySelect("#loader_main").style.display = "none";
-
         updatePreview();
+        this.canvas.save(); // Save Initial History
       }, 1000);
     });
 

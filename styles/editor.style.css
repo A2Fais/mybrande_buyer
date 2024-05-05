@@ -1460,3 +1460,7 @@ body {
   margin-bottom: -px;
   font-size: 14px;
 }
+
+#magnifier_img {
+  user-select: none;
+}

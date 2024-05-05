@@ -86,7 +86,6 @@ class SaveHistory {
     }
     // Change History
     async changeHistory(playStack, saveStack) {
-        this.canvas.stopSavingHistory();
         saveStack.push(this.editorHistory.state);
         this.editorHistory.state = playStack.pop();
         // Add State To canvas
@@ -94,7 +93,7 @@ class SaveHistory {
         let stateData = this.editorHistory.state
         if (!stateData) return false;
         await this.canvasLoadFromJSON(stateData.json);
-        this.canvas.startSavingHistory(false);
+        this.canvas.updatePreview()
     }
 
     // Load Canvas From JSON

@@ -76,15 +76,6 @@ class Palette extends HTMLElement {
     const $ = (item) => document.querySelector(item);
 
     const colorList = this.querySelector('#bg-color-list');
-    // const colorModeTitle = this.querySelector('#color-mode-title');
-
-    // colorModeTitle.addEventListener('click', () => {
-    //   if (colorList.classList.contains('show')) {
-    //     colorList.classList.remove('show');
-    //   } else {
-    //     colorList.classList.add('show');
-    //   }
-    // });
 
     colorList.addEventListener('click', (e) => {
       this.colorMode = e.target.innerText;
