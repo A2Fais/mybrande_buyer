@@ -406,8 +406,10 @@ class EditorScreen {
 
     querySelect("#rotate_reset").addEventListener("click", () => {
       const active = this.canvas.getActiveObject();
+      if (!active) return true;
+      if (active.angle == 0) return false;
       rotateReset(active);
-      this.canvas.renderAll();
+      this.canvas.requestRenderAll();
       querySelect('#rotate_info').innerText = 'Rotate: 0deg';
       this.rotateRange.value = 0;
       if (active) this.canvas.save();
@@ -741,6 +743,18 @@ class EditorScreen {
       }
     });
 
+    querySelect('#scale_up').addEventListener("click", (e) => {
+      this.scaleRange.value = parseInt(this.scaleRange.value) + 1;
+      this.scaleRange.dispatchEvent(new Event("input"));
+    })
+
+    querySelect('#scale_down').addEventListener("click", (e) => {
+      this.scaleRange.value = parseInt(this.scaleRange.value) - 1;
+      this.scaleRange.dispatchEvent(new Event("input"));
+    })
+
+
+
     this.scaleRange.addEventListener("change", function () {
       updatePreview();
       self.canvas.save();
@@ -945,6 +959,12 @@ class EditorScreen {
 
         querySelect("#scale-value").value = obj.scaleValue || 1;
         querySelect('#progress-bar').value = obj.scaleValue ? obj.scaleValue * 10 : 10;
+
+        // Set Font Size
+        if (obj.fontSize) {
+          querySelect("#font_size_title").value = obj.fontSize + 'px';
+          querySelect("#font_size_range").value = obj.fontSize;
+        }
 
       }
       this.canvas.requestRenderAll();
@@ -1780,12 +1800,13 @@ class EditorScreen {
 
       let value = querySelect('#text-curve-range').value,
         percentage = value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
+
       percentage = percentage.toFixed(0);
 
       if (percentage == -0 || percentage == '-0') percentage = 0;
 
       // Percentage Limit is 90 but we can change it
-      if (percentage > 90 || percentage < -90) return percentage;
+      if (percentage > 90 || percentage < -90) return percentage * 3.6;
 
 
       let isFlipped = percentage < 0,
@@ -1835,7 +1856,10 @@ class EditorScreen {
       }
 
       this.canvas.requestRenderAll();
-      return percentage;
+
+      const angle = percentage * 3.6;
+
+      return angle;
     }
     // Get Range From Percentage
     const getRangeFromPercentage = (percentage) => {
@@ -1983,24 +2007,33 @@ class EditorScreen {
       this.canvas.requestRenderAll();
     });
 
-    querySelect("#removeElement").addEventListener("click", () => {
-      const activeObj = this.canvas.getActiveObject();
+    querySelect("#removeElement").addEventListener("click", (event) => {
+      const activeObj = this.canvas.getActiveObject(),
+        self = this;
       if (activeObj) {
+        this.canvas.save();
+        if (activeObj._objects && activeObj._objects.length) {
+          activeObj._objects.forEach(obj => {
+            self.canvas.remove(obj);
+          });
+        }
         this.canvas.remove(activeObj);
-        this.canvas.renderAll();
+        this.canvas.requestRenderAll();
       }
     });
 
 
     querySelect("#bringDownElement").addEventListener("click", () => {
       const selectedObject = this.canvas.getActiveObject();
-      this.canvas.sendBackwards(selectedObject);
+      this.canvas.sendToBack(selectedObject);
+      this.canvas.setActiveObject(selectedObject);
       this.canvas.requestRenderAll();
     });
 
     querySelect("#bringUpElement").addEventListener("click", () => {
       const selectedObject = this.canvas.getActiveObject();
-      this.canvas.bringForward(selectedObject);
+      this.canvas.sendToFront(selectedObject);
+      this.canvas.setActiveObject(selectedObject);
       this.canvas.requestRenderAll();
     });
 
@@ -2019,6 +2052,7 @@ class EditorScreen {
 
     querySelect("#eyeElement2").addEventListener("click", () => {
       const activeObj = this.canvas.getActiveObject();
+      if (!activeObj) return true;
       let visibilty = Boolean(activeObj.get("opacity"));
       visibilty = !visibilty;
       activeObj.set("opacity", visibilty ? 1 : 0);
@@ -2037,16 +2071,17 @@ class EditorScreen {
 
     querySelect("#bringDownElement2").addEventListener("click", () => {
       const selectedObject = this.canvas.getActiveObject();
-      this.canvas.sendBackwards(selectedObject);
-      this.canvas.renderAll();
+      this.canvas.sendToBack(selectedObject);
+      this.canvas.requestRenderAll();
       updatePreview();
+
       if (selectedObject) this.canvas.save();
     });
 
     querySelect("#bringUpElement2").addEventListener("click", () => {
       const selectedObject = this.canvas.getActiveObject();
-      this.canvas.bringForward(selectedObject);
-      this.canvas.renderAll();
+      this.canvas.sendToFront(selectedObject);
+      this.canvas.requestRenderAll();
       updatePreview();
       if (selectedObject) this.canvas.save();
 
@@ -2146,7 +2181,6 @@ class EditorScreen {
     logoPalleteComponent.addEventListener("colorChanged", () => {
       updatePreview();
       this.canvas.save();
-
     });
     logoPalleteComponent.addEventListener("colorChange", (e) => {
 
@@ -2154,7 +2188,7 @@ class EditorScreen {
       const selectedObject = this.canvas.getActiveObject();
       const { colorMode, grad1Value, grad2Value, solidValue, colorAngle } =
         e.detail;
-
+      console.log(selectedObject)
       let angleColor = `${colorAngle}deg`;
       let color = null;
       if (colorMode !== "Solid") {
@@ -2174,7 +2208,11 @@ class EditorScreen {
       } else {
         color = solidValue;
       }
-
+      if (selectedObject && selectedObject._objects) {
+        selectedObject._objects.forEach(i => {
+          i.set('fill', color);
+        });
+      }
       selectedObject.set("fill", color);
       this.canvas.requestRenderAll();
 
@@ -2209,7 +2247,6 @@ class EditorScreen {
       } else {
         color = solidValue;
       }
-
       selectedObject.set("fill", color);
       this.canvas.requestRenderAll();
 
@@ -2385,9 +2422,17 @@ class EditorScreen {
 
 
     querySelect("#add-clip-text").addEventListener("click", (e) => {
+      l("done")
       querySelect("#popup-parent").style.display = "block";
       querySelect("#popup-parent-icons").style.display = "none";
     });
+
+    querySelect(".close-popup-btn").addEventListener('click', (e) => {
+      querySelect("#popup-parent").style.display = "none";
+    })
+    querySelect('#trigger-clip-text').addEventListener('click', (e) => {
+      querySelect('#add-clip-text').dispatchEvent(new Event("click"));
+    })
 
     querySelect("#add-icon").addEventListener("click", () => {
       querySelect("#popup-parent").style.display = "block";
@@ -2608,6 +2653,13 @@ class EditorScreen {
           colPicker.addEventListener("click", (event) => {
             const color = rgbToHex(event.target.style.backgroundColor);
             const activeElem = this.canvas.getActiveObject();
+
+            if (activeElem && activeElem._objects)
+              activeElem._objects.forEach((obj) => {
+                obj.set("fill", color);
+                console.log(obj)
+              })
+
             activeElem.set("fill", color);
             colorPicker.color.set(color);
             querySelect("#HEX").value = color;
@@ -2630,7 +2682,8 @@ class EditorScreen {
             }
             this.canvas.renderAll();
             updatePreview();
-            this.canvas.save();
+            if (activeElem)
+              this.canvas.save();
           });
         }
       });
@@ -2665,6 +2718,11 @@ class EditorScreen {
       }
 
       const active = this.canvas.getActiveObject();
+      if (active && active._objects) {
+        active._objects.forEach(i => {
+          i.set('fill', color.rgbaString);
+        });
+      }
       active.set("fill", color.rgbaString);
 
       const logoColorPickers = querySelectAll("#color-layers-pickers");
@@ -3156,6 +3214,11 @@ class EditorScreen {
               const red = parseInt(match[1]);
               const blue = parseInt(match[3]);
               const hexColor = convertRGBtoHex(red, green, blue);
+              if (activeObj._objects) {
+                activeObj._objects.forEach(i => {
+                  i.set('fill', hexColor);
+                })
+              }
               activeObj.set("fill", hexColor);
               colorPicker.color.set(hexColor);
 

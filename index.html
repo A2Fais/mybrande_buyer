@@ -120,14 +120,8 @@
     <header class="header">
       <div class="header-elements">
         <div style="display: flex; align-items: flex-end; gap: px;">
-          <div id="back-main" style="margin-left: 120px;">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="1em" viewBox="0 0 448 512">
-              <path
-                d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L9.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
-            </svg>
-          </div>
-          <img id="header-logo" src="./assets/Logo Gold.svg" style="width: 170px; margin-left: 20px; object-fit: cover;"
-            alt="">
+          <img id="header-logo" src="./assets/Logo Gold.svg"
+            style="width: 170px; margin-left: 120px; object-fit: cover;" alt="">
         </div>
         <div style="display: flex; justify-content: space-evenly; gap: px;">
 
@@ -153,7 +147,7 @@
         </div>
       </div>
     </header>
-    <button id="add-clip-text" style="display: block; top: 120px; left: 380px; width: 40px;
+    <button id="add-clip-text" style="display: none; top: 120px; left: 380px; width: 40px;
     height: 40px;
     padding: 10px;
     position: absolute;
@@ -168,6 +162,7 @@
       style="width: 100vw; height: 100vh; background-color: #00000071; z-index: 50; position: absolute; top: 0; left: 0;">
       <div class="popup" style="display: flex; justify-content: center;">
         <div class="popup-box" id="add-popup">
+          <i class="fa fa-times close-popup-btn"></i>
           <h3>What do you want to add?</h3>
 
           <div style="display: flex; justify-content: space-evenly;">
@@ -313,6 +308,12 @@
               <i class="fa-solid fa-eye"></i>
             </div>
             <span class="nav-title">Preview</span>
+          </div>
+          <div id="trigger-clip-text" class="nav-item" tabindex="0">
+            <div class="icon-container">
+              <i class="fa fa-plus"></i>
+            </div>
+            <span class="nav-title">Add</span>
           </div>
         </div>
       </div>
@@ -487,13 +488,13 @@
         <div id="logo-shadow-offsetX" class="setting-item" style="display: none;">
           <span>Shadow OffsetX</span><span id="logo-shadow_offsetX"> :0px</span>
           <div class="slider-container">
-            <input class="slider" id="logo-shadow-offsetX-slider" type="range" value="0" min="-0" max="100">
+            <input class="slider" id="logo-shadow-offsetX-slider" type="range" value="0" min="-100" max="100">
           </div>
         </div>
         <div id="logo-shadow-offsetY" class="setting-item" style="display: none;">
           <span>Shadow OffsetY</span><span id="logo-shadow_offsetY"> :0px</span>
           <div class="slider-container">
-            <input class="slider" id="logo-shadow-offsetY-slider" type="range" value="0" min="-0" max="100">
+            <input class="slider" id="logo-shadow-offsetY-slider" type="range" value="0" min="-100" max="100">
           </div>
         </div>
         <div id="logo-shadow-border" style="border-bottom: 1px solid rgb(226, 226, 226); padding-bottom: 14px;">
@@ -1081,13 +1082,13 @@
         <div id="shadow-offsetX" class="setting-item" style="display: none;">
           <span>Shadow OffsetX</span><span id="offset_x_title"> :0px</span>
           <div class="slider-container">
-            <input class="slider" id="shadow-offsetX-slider" type="range" value="0" min="-0" max="100">
+            <input class="slider" id="shadow-offsetX-slider" type="range" value="0" min="-100" max="100">
           </div>
         </div>
         <div id="shadow-offsetY" class="setting-item" style="display: none;">
           <span>Shadow OffsetY</span><span id="offset_y_title"> :0px</span>
           <div class="slider-container">
-            <input class="slider" id="shadow-offsetY-slider" type="range" value="0" min="-0" max="100">
+            <input class="slider" id="shadow-offsetY-slider" type="range" value="0" min="-100" max="100">
           </div>
         </div>
       </div>

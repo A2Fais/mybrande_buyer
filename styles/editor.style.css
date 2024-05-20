@@ -1154,6 +1154,14 @@ input:checked+.switch-slider:before {
   text-align: center;
 }
 
+.close-popup-btn {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  font-size: 21px;
+  cursor: pointer;
+}
+
 .item-title {
   transition: ease-out 0.2s all;
 }
@@ -1318,7 +1326,7 @@ body {
 .scale-value,
 .font_size {
   margin-inline: 10px;
-  width: 28px;
+  width: 33px !important;
   text-indent: 5px;
   outline: none;
   border: none;
