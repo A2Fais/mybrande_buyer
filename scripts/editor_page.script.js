@@ -2025,6 +2025,7 @@ class EditorScreen {
           });
         }
         this.canvas.remove(activeObj);
+        this.layers.removeChild(this.layers.children[this.activeLayerIndex])
         this.canvas.requestRenderAll();
       }
     });
