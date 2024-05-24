@@ -66,7 +66,7 @@ class SaveHistory {
         if (this.editorHistory.state)
             this.editorHistory.undo.push(this.editorHistory.state);
 
-        let canvasData = this.canvas.toJSON(['id']);
+        let canvasData = this.canvas.toJSON(['id', 'layerId']);
 
         // # Filter Canvas Data
 

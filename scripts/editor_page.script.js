@@ -804,12 +804,17 @@ class EditorScreen {
     });
 
     this.layers.addEventListener("click", (e) => {
-      const target = e.target;
-      this.activeLayerIndex =
-        target.getAttribute("data_layer") ||
-        target.parentElement.getAttribute("data_layer");
-      this.activeLayerIndex &&
-        this.canvas.setActiveObject(this.canvas.item(this.activeLayerIndex));
+      const target = e.target.closest('.layer-container');
+
+      let id = target.getAttribute('data-id'),
+        obj = null;
+      this.canvas._objects.forEach(object => {
+        if (object.layerId) {
+          if (object.layerId == id) obj = object;
+        }
+      })
+      if (!obj) return false;
+      this.canvas.setActiveObject(obj);
       this.canvas.requestRenderAll();
     });
 
@@ -931,14 +936,17 @@ class EditorScreen {
             querySelect("#S").value = hslValues[1];
             querySelect("#L").value = hslValues[2];
           }
+          let layerId = layer.getAttribute("data-id");
 
-          if (idx == this.activeLayerIndex) {
-            layerSpan.scrollIntoView({ block: "center", behavior: "smooth" });
-            layerImg.classList.add("selected");
-            layerSpan.classList.add("selected");
-          } else {
-            layerImg.classList.remove("selected");
-            layerSpan.classList.remove("selected");
+          if (layerId && obj.layerId) {
+            if (layerId == obj.layerId) {
+              layerSpan.scrollIntoView({ block: "center", behavior: "smooth" });
+              layerImg.classList.add("selected");
+              layerSpan.classList.add("selected");
+            } else {
+              layerImg.classList.remove("selected");
+              layerSpan.classList.remove("selected");
+            }
           }
         });
 
@@ -948,7 +956,6 @@ class EditorScreen {
           'font-style-selector': 'fontStyle_',
           'text-case-select-box': 'letterCase',
         }
-        let obj = activeObject;
         for (const key in selectBoxes) {
           let el = querySelect(`.${key}`);
           el.setAttribute('data-value', obj[selectBoxes[key]]);
@@ -2022,19 +2029,20 @@ class EditorScreen {
       }
     });
 
-
     querySelect("#bringDownElement").addEventListener("click", () => {
       const selectedObject = this.canvas.getActiveObject();
       this.canvas.sendToBack(selectedObject);
       this.canvas.setActiveObject(selectedObject);
       this.canvas.requestRenderAll();
+      this.canvas.save();
     });
 
     querySelect("#bringUpElement").addEventListener("click", () => {
       const selectedObject = this.canvas.getActiveObject();
-      this.canvas.sendToFront(selectedObject);
+      this.canvas.bringForward(selectedObject);
       this.canvas.setActiveObject(selectedObject);
       this.canvas.requestRenderAll();
+      this.canvas.save();
     });
 
     querySelect("#copyElement2").addEventListener("click", () => {
@@ -3763,7 +3771,9 @@ class EditorScreen {
     ].forEach((item) => {
       querySelect(`#${item}`).addEventListener("click", () => {
         discardSelectionForAlignments();
-        this.alignId = getAttr(item, "data-align-id");
+        this.alignId = getAttr(`#${item}`, "data-align-id");
+
+        setlogoPosition(this.alignId, this.canvas);
       });
     });
 
