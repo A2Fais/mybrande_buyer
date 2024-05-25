@@ -46,6 +46,7 @@ class SaveHistory {
             if (self.editorHistory.undo) await self.undoChanges();
             this.style.pointerEvents = 'auto';
             undo.classList.remove('spin')
+            self.canvas.undoCB();
         });
 
         // redo
@@ -56,6 +57,8 @@ class SaveHistory {
             if (self.editorHistory.redo.length) await self.redoChanges();
             this.style.pointerEvents = 'auto';
             redo.classList.remove('spin');
+            self.canvas.undoCB();
+
         });
     }
 

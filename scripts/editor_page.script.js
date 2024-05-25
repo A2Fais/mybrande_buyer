@@ -357,6 +357,23 @@ class EditorScreen {
     this.canvas.save = function () {
       self.canvasHistory.saveHistory();
     }
+    this.canvas.undoCB = () => {
+
+      let layers = querySelectAll("#layers .layer-container");
+      layers.forEach(layer => {
+        layer.style.display = 'none';
+      });
+
+      this.canvas._objects.forEach(obj => {
+        if (obj.layerId) {
+          let layer = querySelect(`.layer-container[data-id="${obj.layerId}"]`);
+          if (!layer) return true;
+          layer.style.display = 'flex';
+          layer.querySelector('.layer-img').classList.remove('selected')
+          layer.querySelector('.layer-span').classList.remove('selected')
+        }
+      })
+    }
     querySelect("#sloganNameField").addEventListener("input", (e) => {
       try {
         const val = e.target.value;
@@ -2018,15 +2035,27 @@ class EditorScreen {
       const activeObj = this.canvas.getActiveObject(),
         self = this;
       if (activeObj) {
-        this.canvas.save();
+        this.canvas.save(); // For Position
         if (activeObj._objects && activeObj._objects.length) {
           activeObj._objects.forEach(obj => {
             self.canvas.remove(obj);
+
+            if (obj.layerId) {
+              let layerEl = querySelect(`.layer-container[data-id="${obj.layerId}"]`);
+              layerEl.style.display = 'none';
+            }
+
           });
         }
         this.canvas.remove(activeObj);
-        this.layers.removeChild(this.layers.children[this.activeLayerIndex])
+        this.canvas.save();
         this.canvas.requestRenderAll();
+
+        if (activeObj.layerId) {
+          let layerEl = querySelect(`.layer-container[data-id="${activeObj.layerId}"]`);
+          layerEl.style.display = 'none';
+        }
+
       }
     });
 
