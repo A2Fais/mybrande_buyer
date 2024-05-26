@@ -357,6 +357,23 @@ class EditorScreen {
     this.canvas.save = function () {
       self.canvasHistory.saveHistory();
     }
+    this.canvas.undoCB = () => {
+
+      let layers = querySelectAll("#layers .layer-container");
+      layers.forEach(layer => {
+        layer.style.display = 'none';
+      });
+
+      this.canvas._objects.forEach(obj => {
+        if (obj.layerId) {
+          let layer = querySelect(`.layer-container[data-id="${obj.layerId}"]`);
+          if (!layer) return true;
+          layer.style.display = 'flex';
+          layer.querySelector('.layer-img').classList.remove('selected')
+          layer.querySelector('.layer-span').classList.remove('selected')
+        }
+      })
+    }
     querySelect("#sloganNameField").addEventListener("input", (e) => {
       try {
         const val = e.target.value;
@@ -2018,15 +2035,27 @@ class EditorScreen {
       const activeObj = this.canvas.getActiveObject(),
         self = this;
       if (activeObj) {
-        this.canvas.save();
+        this.canvas.save(); // For Position
         if (activeObj._objects && activeObj._objects.length) {
           activeObj._objects.forEach(obj => {
             self.canvas.remove(obj);
+
+            if (obj.layerId) {
+              let layerEl = querySelect(`.layer-container[data-id="${obj.layerId}"]`);
+              layerEl.style.display = 'none';
+            }
+
           });
         }
         this.canvas.remove(activeObj);
-        this.layers.removeChild(this.layers.children[this.activeLayerIndex])
+        this.canvas.save();
         this.canvas.requestRenderAll();
+
+        if (activeObj.layerId) {
+          let layerEl = querySelect(`.layer-container[data-id="${activeObj.layerId}"]`);
+          layerEl.style.display = 'none';
+        }
+
       }
     });
 
@@ -3753,30 +3782,42 @@ class EditorScreen {
       }, 1000);
     });
 
-    [
-      "top_bottom_1",
-      "top_bottom_2",
-      "top_bottom_3",
-      "top_bottom_4",
-      "bottom_top_1",
-      "bottom_top_2",
-      "bottom_top_3",
-      "left_right_1",
-      "left_right_2",
-      "left_right_3",
-      "left_right_4",
-      "right_left_1",
-      "right_left_2",
-      "right_left_3",
-      "right_left_4",
-    ].forEach((item) => {
-      querySelect(`#${item}`).addEventListener("click", () => {
-        discardSelectionForAlignments();
-        this.alignId = getAttr(`#${item}`, "data-align-id");
+    let alignmentOptions = {
+      "top_bottom_1": 200,
+      "top_bottom_2": 200,
+      "top_bottom_3": 160,
+      "top_bottom_4": 200,
+      "bottom_top_1": 200,
+      "bottom_top_2": 200,
+      "bottom_top_3": 160,
+      "left_right_1": 200,
+      "left_right_2": 200,
+      "left_right_3": 160,
+      "left_right_4": 200,
+      "right_left_1": 200,
+      "right_left_2": 160,
+      "right_left_3": 200,
+      "right_left_4": 200,
+    }
+    let anythingApplied = false;
 
+    for (const singleEl in alignmentOptions) {
+      let scaleValue = alignmentOptions[singleEl];
+      querySelect(`#${singleEl}`).addEventListener("click", () => {
+        if (anythingApplied) return true;
+        discardSelectionForAlignments();
+        this.alignId = getAttr(`#${singleEl}`, "data-align-id");
+
+        scaleLogo(scaleValue);
+        anythingApplied = true;
         setlogoPosition(this.alignId, this.canvas);
+        setTimeout(() => {
+          this.canvas.save();
+          anythingApplied = false;
+        }, 100);
       });
-    });
+    }
+
 
     // Load External Layers Function
     const loadExternalLayers = (data) => {
