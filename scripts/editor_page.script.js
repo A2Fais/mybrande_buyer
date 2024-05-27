@@ -1776,12 +1776,13 @@ class EditorScreen {
     // Text Curve Up
     querySelect('#text-curve-up').addEventListener('click', (e) => {
       let input = querySelect('#curve-text'),
-        value = parseInt(input.value) || 0;
+        value = parseInt(input.getAttribute('data-percentage')) || 0;
 
       if (value <= -100) value -= 1;
       else value += 1;
       if (value > 100) return false;
-      input.value = value;
+      input.setAttribute("data-percentage", value);
+      input.value = value * 3.6;
 
       querySelect('#curve-text').dispatchEvent(new Event('change'));
     });
@@ -1789,12 +1790,13 @@ class EditorScreen {
     // Text Curve Down
     querySelect('#text-curve-down').addEventListener('click', (e) => {
       let input = querySelect('#curve-text'),
-        value = parseInt(input.value) || 0;
+        value = parseInt(input.getAttribute('data-percentage')) || 0;
       value -= 1;
 
       if (value < -100) return false;
 
-      input.value = value;
+      input.setAttribute("data-percentage", value);
+      input.value = value * 3.6;
 
       querySelect('#curve-text').dispatchEvent(new Event('change'));
     });
@@ -1803,7 +1805,7 @@ class EditorScreen {
 
     // Text Curve percentage input
     querySelect('#curve-text').addEventListener('change', function (e) {
-      let value = e.target.value,
+      let value = e.target.getAttribute('data-percentage'),
         rangeValue = getRangeFromPercentage(value);
 
 
@@ -1829,6 +1831,7 @@ class EditorScreen {
 
       if (percentage == -0 || percentage == '-0') percentage = 0;
 
+      querySelect("#curve-text").setAttribute('data-percentage', percentage)
       // Percentage Limit is 90 but we can change it
       if (percentage > 90 || percentage < -90) return percentage * 3.6;
 
@@ -1843,7 +1846,7 @@ class EditorScreen {
       let isCurvedText = obj.type == 'curved-text';
 
       if (hasCurveApply && !isCurvedText) {
-
+        l(obj)
         let props = obj.__dimensionAffectingProps,
           options = {
             ...props,
@@ -1852,12 +1855,15 @@ class EditorScreen {
             scaleX: obj.scaleX,
             scaleY: obj.scaleY,
             diameter: value,
+            fill: obj.fill,
           };
-
         const curvedText = new fabric.CurvedText(obj.text, options);
+
+        let index = this.canvas.getObjects().indexOf(obj);
 
         this.canvas.remove(obj);
         this.canvas.add(curvedText);
+        curvedText.moveTo(index);
         this.canvas.setActiveObject(curvedText);
         this.canvas.requestRenderAll();
 
@@ -1866,9 +1872,11 @@ class EditorScreen {
           ...obj,
           type: 'text',
         });
+        let index = this.canvas.getObjects().indexOf(obj);
 
         this.canvas.remove(obj);
         this.canvas.add(text);
+        text.moveTo(index);
         this.canvas.setActiveObject(text);
         this.canvas.save();
       } else if (hasCurveApply && isCurvedText) {
@@ -3881,7 +3889,7 @@ class EditorScreen {
           loaded = true;
         }
 
-        liItems += `<li value="${family}" class="font-family-item" data-loaded="${loaded}" style="font-family:${family}"><span class="text">${family}</span></li>`;
+        liItems += `<li value="${family}" class="font-family-item" data-loaded="${loaded}"><span style="font-family:${family}" class="text">${family}</span></li>`;
         count++;
       });
       querySelect('.font-family-selectbox .ms-select-list-menu').innerHTML += liItems;
