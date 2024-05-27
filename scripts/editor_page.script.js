@@ -3881,10 +3881,10 @@ class EditorScreen {
           loaded = true;
         }
 
-        liItems += `<li value="${family}" data-loaded="${loaded}" style="font-family:${family}">${family}</li>`;
+        liItems += `<li value="${family}" class="font-family-item" data-loaded="${loaded}" style="font-family:${family}"><span class="text">${family}</span></li>`;
         count++;
       });
-      querySelect('.font-family-selectbox .ms-select-list-menu').innerHTML = liItems;
+      querySelect('.font-family-selectbox .ms-select-list-menu').innerHTML += liItems;
       initMSList()
     })();
 
@@ -3945,13 +3945,40 @@ class EditorScreen {
       // Hide lists on document click
       document.onclick = function (e) {
         let target = e.target;
-        if (!target.classList.contains('ms-select-list')) {
+        if (!target.classList.contains('ms-select-list') && !target.classList.contains('live-search')) {
           msLists.forEach(list => list.classList.remove("show"));
         }
       }
 
     }
     //#endregion Ms List 
+    const liveSearch = function (element) {
+      let val = element.value.toLowerCase();
+      if (!element.hasAttribute("data-target")) return false;
+      let targetSelector = element.getAttribute("data-target");
+      let radius = element.getAttribute("data-radius") || 'body';
+      let radiusElement = element.closest(radius);
+      console.log(radiusElement);
+      if (!radiusElement) return;
+
+      let targets = radiusElement.querySelectorAll(targetSelector);
+      targets.forEach(target => {
+        let dataTarget = element.hasAttribute("data-match") ? target.querySelector(element.getAttribute("data-match")) : target;
+        let txt = dataTarget ? dataTarget.textContent : "";
+        if (txt) {
+          if (txt.toLowerCase().indexOf(val) > -1) {
+            target.style.display = "inherit";
+          } else
+            target.style.display = "none";
+        }
+      });
+    };
+
+    document.addEventListener("keyup", function (event) {
+      if (event.target.classList.contains("live-search")) {
+        liveSearch(event.target);
+      }
+    });
   }
 }
 
