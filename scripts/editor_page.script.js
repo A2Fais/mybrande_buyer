@@ -1776,12 +1776,13 @@ class EditorScreen {
     // Text Curve Up
     querySelect('#text-curve-up').addEventListener('click', (e) => {
       let input = querySelect('#curve-text'),
-        value = parseInt(input.value) || 0;
+        value = parseInt(input.getAttribute('data-percentage')) || 0;
 
       if (value <= -100) value -= 1;
       else value += 1;
       if (value > 100) return false;
-      input.value = value;
+      input.setAttribute("data-percentage", value);
+      input.value = value * 3.6;
 
       querySelect('#curve-text').dispatchEvent(new Event('change'));
     });
@@ -1789,12 +1790,13 @@ class EditorScreen {
     // Text Curve Down
     querySelect('#text-curve-down').addEventListener('click', (e) => {
       let input = querySelect('#curve-text'),
-        value = parseInt(input.value) || 0;
+        value = parseInt(input.getAttribute('data-percentage')) || 0;
       value -= 1;
 
       if (value < -100) return false;
 
-      input.value = value;
+      input.setAttribute("data-percentage", value);
+      input.value = value * 3.6;
 
       querySelect('#curve-text').dispatchEvent(new Event('change'));
     });
@@ -1803,7 +1805,7 @@ class EditorScreen {
 
     // Text Curve percentage input
     querySelect('#curve-text').addEventListener('change', function (e) {
-      let value = e.target.value,
+      let value = e.target.getAttribute('data-percentage'),
         rangeValue = getRangeFromPercentage(value);
 
 
@@ -1829,6 +1831,7 @@ class EditorScreen {
 
       if (percentage == -0 || percentage == '-0') percentage = 0;
 
+      querySelect("#curve-text").setAttribute('data-percentage', percentage)
       // Percentage Limit is 90 but we can change it
       if (percentage > 90 || percentage < -90) return percentage * 3.6;
 
@@ -1843,7 +1846,7 @@ class EditorScreen {
       let isCurvedText = obj.type == 'curved-text';
 
       if (hasCurveApply && !isCurvedText) {
-
+        l(obj)
         let props = obj.__dimensionAffectingProps,
           options = {
             ...props,
@@ -1852,12 +1855,15 @@ class EditorScreen {
             scaleX: obj.scaleX,
             scaleY: obj.scaleY,
             diameter: value,
+            fill: obj.fill,
           };
-
         const curvedText = new fabric.CurvedText(obj.text, options);
+
+        let index = this.canvas.getObjects().indexOf(obj);
 
         this.canvas.remove(obj);
         this.canvas.add(curvedText);
+        curvedText.moveTo(index);
         this.canvas.setActiveObject(curvedText);
         this.canvas.requestRenderAll();
 
@@ -1866,9 +1872,11 @@ class EditorScreen {
           ...obj,
           type: 'text',
         });
+        let index = this.canvas.getObjects().indexOf(obj);
 
         this.canvas.remove(obj);
         this.canvas.add(text);
+        text.moveTo(index);
         this.canvas.setActiveObject(text);
         this.canvas.save();
       } else if (hasCurveApply && isCurvedText) {
@@ -3881,10 +3889,10 @@ class EditorScreen {
           loaded = true;
         }
 
-        liItems += `<li value="${family}" data-loaded="${loaded}" style="font-family:${family}">${family}</li>`;
+        liItems += `<li value="${family}" class="font-family-item" data-loaded="${loaded}"><span style="font-family:${family}" class="text">${family}</span></li>`;
         count++;
       });
-      querySelect('.font-family-selectbox .ms-select-list-menu').innerHTML = liItems;
+      querySelect('.font-family-selectbox .ms-select-list-menu').innerHTML += liItems;
       initMSList()
     })();
 
@@ -3945,13 +3953,40 @@ class EditorScreen {
       // Hide lists on document click
       document.onclick = function (e) {
         let target = e.target;
-        if (!target.classList.contains('ms-select-list')) {
+        if (!target.classList.contains('ms-select-list') && !target.classList.contains('live-search')) {
           msLists.forEach(list => list.classList.remove("show"));
         }
       }
 
     }
     //#endregion Ms List 
+    const liveSearch = function (element) {
+      let val = element.value.toLowerCase();
+      if (!element.hasAttribute("data-target")) return false;
+      let targetSelector = element.getAttribute("data-target");
+      let radius = element.getAttribute("data-radius") || 'body';
+      let radiusElement = element.closest(radius);
+      console.log(radiusElement);
+      if (!radiusElement) return;
+
+      let targets = radiusElement.querySelectorAll(targetSelector);
+      targets.forEach(target => {
+        let dataTarget = element.hasAttribute("data-match") ? target.querySelector(element.getAttribute("data-match")) : target;
+        let txt = dataTarget ? dataTarget.textContent : "";
+        if (txt) {
+          if (txt.toLowerCase().indexOf(val) > -1) {
+            target.style.display = "inherit";
+          } else
+            target.style.display = "none";
+        }
+      });
+    };
+
+    document.addEventListener("keyup", function (event) {
+      if (event.target.classList.contains("live-search")) {
+        liveSearch(event.target);
+      }
+    });
   }
 }
 
