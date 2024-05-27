@@ -82,8 +82,11 @@ export const hexToHsl = (hexString) => {
 };
 
 export const rgbaToHex = (rgbaString) => {
-  const match = rgbaString.toString().match(/^rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)$/);
-  if (!match) return 'HEX';
+  let match = rgbaString.toString().match(/^rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)$/);
+  if (!match) {
+    match = rgbaString.toString().match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+    if (!match) return 'HEX';
+  }
 
   const r = parseInt(match[1]);
   const g = parseInt(match[2]);

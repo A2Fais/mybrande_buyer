@@ -922,8 +922,7 @@ class EditorScreen {
           const layerSpan = layer.querySelector(".layer-span");
 
           let fillColor;
-          const color = activeObject.get("fill");
-
+          const color = activeObject.get('fill');
           if (typeof color === "object") {
             fillColor = color.colorStops[0].color;
           } else if (color && color.includes("#")) {
