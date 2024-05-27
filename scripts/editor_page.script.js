@@ -1533,14 +1533,15 @@ class EditorScreen {
     document.onkeydown = (event) => {
       if (event.target.tagName === "INPUT") return;
       if (event.key === "Delete") {
-        const deleteLayer = new DeleteLayer(
-          event,
-          this.canvas,
-          this.layers,
-          this.activeLayerIndex
-        );
-        deleteLayer.deleteLayer();
-        localDirFile = null;
+        document.querySelector('#removeElement').dispatchEvent(new Event("click"));
+        // const deleteLayer = new DeleteLayer(
+        //   event,
+        //   this.canvas,
+        //   this.layers,
+        //   this.activeLayerIndex
+        // );
+        // deleteLayer.deleteLayer();
+        // localDirFile = null;
       }
     };
 
