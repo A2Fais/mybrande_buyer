@@ -372,7 +372,8 @@ class EditorScreen {
           layer.querySelector('.layer-img').classList.remove('selected')
           layer.querySelector('.layer-span').classList.remove('selected')
         }
-      })
+      });
+      refreshLayerNames();
     }
     querySelect("#sloganNameField").addEventListener("input", (e) => {
       try {
@@ -488,6 +489,16 @@ class EditorScreen {
     };
     this.canvas.updatePreview = updatePreview;
 
+    const refreshLayerNames = () => {
+      let layerItems = Array.from(this.layers.childNodes).filter(i => i.style.display !== 'none');
+      let count = 1;
+      layerItems.forEach((l) => {
+        let span = l.querySelector(".layer-span");
+        l.setAttribute("data_layer", count);
+        span.innerText = `Layer ${count}`;
+        count++;
+      });
+    }
 
     const setCanvasBackground = () => {
       this.canvas.setBackgroundImage(
@@ -1150,6 +1161,8 @@ class EditorScreen {
             this.canvas.requestRenderAll();
           });
         });
+
+        refreshLayerNames();
 
         var originalWidth = logoLayerGroup.width;
         var originalHeight = logoLayerGroup.height;
@@ -2006,12 +2019,21 @@ class EditorScreen {
     });
 
     querySelect("#copyElement").addEventListener("click", () => {
-      const active = this.canvas.getActiveObject();
+      let active = this.canvas.getActiveObject(),
+        layerEl = null;
+      if (active.layerId) layerEl = document.querySelector(`.layer-container[data-id="${active.layerId}"]`);
 
       if (active._objects) {
         active.clone((clonedGroup) => {
-          clonedGroup._objects.forEach((object) => {
+          clonedGroup._objects.forEach((object, i) => {
+            object.dublicate = true;
             this.canvas.add(object);
+            layerEl = document.querySelector(`.layer-container[data-id="${active._objects[i].layerId}"]`);
+
+            const layerSection = new CreateLayerSection(this.layers);
+            let idx = Array.from(this.layers.childNodes).filter(i => i.style.display !== 'none');
+            layerSection.create(object, idx.length, layerEl);
+            refreshLayerNames();
           });
           this.canvas.centerObject(clonedGroup);
           clonedGroup.set("top", 100);
@@ -2022,9 +2044,17 @@ class EditorScreen {
         });
       } else {
         active.clone((cloned) => {
+          // Add Layer 
+          cloned.set("dublicate", true);
           this.canvas.add(cloned);
           cloned.top += 10;
           cloned.left += 10;
+
+
+          const layerSection = new CreateLayerSection(this.layers);
+          let idx = Array.from(this.layers.childNodes).filter(i => i.style.display !== 'none');
+          layerSection.create(cloned, idx.length, layerEl);
+          refreshLayerNames();
         });
       }
       this.canvas.requestRenderAll();
@@ -2062,7 +2092,7 @@ class EditorScreen {
           let layerEl = querySelect(`.layer-container[data-id="${activeObj.layerId}"]`);
           layerEl.style.display = 'none';
         }
-
+        refreshLayerNames();
       }
     });
 
@@ -3452,7 +3482,7 @@ class EditorScreen {
 
     const scaleLogo = (scaleSize) => {
       const selection = new fabric.ActiveSelection(
-        this.canvas.getObjects().filter((i) => !i.text),
+        this.canvas.getObjects().filter((i) => !i.text && !i?.dublicate && !i.id?.includes("external_layer_")),
         {
           canvas: this.canvas,
         }
