@@ -2463,6 +2463,7 @@ class EditorScreen {
 
       layerCounter++;
       document.getElementById("popup-parent-icons").style.display = "none";
+      document.querySelector(".close-popup-btn").dispatchEvent(new Event("click"));
       canvas.save();
     });
 
