@@ -12,10 +12,10 @@ export const centerAndResizeElements = (
   logoNameElement,
   sloganNameElement
 ) => {
-  const objects = canvas?.getObjects().filter(i => !i.id?.includes("external_layer_"));
+  const objects = canvas?.getObjects().filter(i => !i.id?.includes("external_layer_") && !i?.dublicate);
   logoNameElement.charSpacing = 0;
   sloganNameElement.charSpacing = 0;
-  const logoMain = objects.filter((i) => !i.text && !i.id.includes("external_layer_") && !i.id.includes("Layer_1"));
+  const logoMain = objects.filter((i) => !i?.dublicate && !i.text && !i.id?.includes("external_layer_") && !i.id?.includes("Layer_1"));
 
   const timeout = 5;
 
