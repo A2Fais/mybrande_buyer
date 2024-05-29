@@ -61,7 +61,9 @@ export async function saveCanvas(
 
 
   // Loop Through External Layers and export this single object save into local storage 
-  let externalLayersData = [];
+  let externalLayerElements = [],
+    externalTextElements = [];
+
   externalLayers.forEach((layer) => {
     let cacheWidth = layer.cacheWidth,
       cacheHeight = layer.cacheHeight;
@@ -70,13 +72,14 @@ export async function saveCanvas(
     data.layerType = layer.layerType;
 
     if (layer.layerType == 'svg') {
-      data.svgContent = layer.svgContent;
+      data.svgContent = encodeURIComponent(layer.svgContent);
       data.cwidth = cacheWidth;
       data.cheight = cacheHeight;
-    } else if (layer.layerType == 'text') {
     }
+    layer = data;
 
-    externalLayersData.push(data);
+    if (layer.text) externalTextElements.push(layer);
+    else externalLayerElements.push(layer);
   });
 
 
@@ -135,7 +138,8 @@ export async function saveCanvas(
       slogan_fontStyle: sloganNameElement.get("fontStyle"),
       slogan_letterSpace: sloganNameElement.get("charSpacing") / 10,
       slogan_droupShadow: getDropShadowValue(sloganNameElement.get("shadow")),
-      externalLayersData: JSON.stringify(externalLayersData)
+      externalLayerElements: JSON.stringify(externalLayerElements),
+      externalTextElements: JSON.stringify(externalTextElements),
     };
 
     try {
