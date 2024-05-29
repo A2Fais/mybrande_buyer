@@ -919,6 +919,11 @@ class EditorScreen {
 
       if (activeObject) {
 
+        if (activeObject.text)
+          querySelect('.nav-item[data-name="text"]').dispatchEvent(new Event('click'));
+        else
+          querySelect('.nav-item[data-name="logo"]').dispatchEvent(new Event('click'));
+
         if (activeObject.type === 'curved-text') {
           let percentage = activeObject.percentage
 
@@ -1056,20 +1061,6 @@ class EditorScreen {
       fabric.loadSVGFromString(SVG, (objects, options) => {
         logoLayerGroup = new fabric.Group(objects, options);
 
-        this.canvas.on("selection:created", () => {
-
-          const selectedObjects = this.canvas.getActiveObjects();
-          selectedObjects.forEach((item) => {
-            this.activeNavbarSetting = "logo";
-            this.updateActiveNavbar();
-            if (item.type == 'curved-text' || item.type == 'text') return true;
-            this.logoSettingsContainer.style.display = "grid";
-            this.textSettingsContainer.style.display = "none";
-            this.backgroundSettingsContainer.style.display = "none";
-          });
-
-        });
-
         objects.forEach((obj, idx) => {
           const sloganIdx = objects.length - 1;
           const logoIdx = objects.length - 2;
@@ -1155,11 +1146,6 @@ class EditorScreen {
               querySelect("#L").value = hslValues[2];
             }
 
-            this.activeNavbarSetting = "logo";
-            this.updateActiveNavbar();
-            this.logoSettingsContainer.style.display = "grid";
-            this.textSettingsContainer.style.display = "none";
-            this.backgroundSettingsContainer.style.display = "none";
             this.canvas.requestRenderAll();
           });
         });
@@ -1349,10 +1335,12 @@ class EditorScreen {
       const active = this.canvas.getActiveObject();
 
       if (active.type == 'curved-text') {
+        active.set("charSpacing", parseInt(this.letterSpacing));
 
         let letterSpacing = (parseInt(this.letterSpacing) / 100) * 3;
         letterSpacing = letterSpacing.toFixed(1);
         if (letterSpacing < -1) letterSpacing = -1;
+        active.set("_cachedCanvas", null);
         active.set("kerning", parseInt(letterSpacing));
         this.canvas.requestRenderAll();
         return false;
@@ -1485,17 +1473,6 @@ class EditorScreen {
 
 
 
-    [logoNameElement, sloganNameElement].forEach((i) => {
-      i.on("mousedown", () => {
-        this.updateActiveNavbar("text");
-        this.logoSettingsContainer.style.display = "none";
-        this.textSettingsContainer.style.display = "grid";
-        this.backgroundSettingsContainer.style.display = "none";
-        this.uploadSettingsContainer.style.display = "none";
-        this.canvas.renderAll();
-      });
-    });
-
     querySelect("#upload-file").addEventListener("input", (e) => {
       localDirFile = e.target.files[0];
       localDirFiles = [];
@@ -1574,157 +1551,159 @@ class EditorScreen {
       ],
     });
 
-    logoNameElement.on("mousedown", (e) => {
-      e.e.preventDefault();
-      this.textSelectorValue = "LogoName";
+    const applyEventListners = () => {
+      logoNameElement.on("mousedown", (e) => {
+        e.e.preventDefault();
+        this.textSelectorValue = "LogoName";
 
-      const hasShadow = !!logoNameElement?.shadow?.blur;
+        const hasShadow = !!logoNameElement?.shadow?.blur;
 
-      querySelect("#drop-shadow").checked = hasShadow;
-      isShadowAdjust = hasShadow;
-      if (!hasShadow) {
-        querySelect("#shadow-adjust").style.display = "none";
-        querySelect("#shadow-blur").style.display = "none";
-        querySelect("#shadow-offsetX").style.display = "none";
-        querySelect("#shadow-offsetY").style.display = "none";
-      } else {
-        querySelect("#shadow-adjust").style.display = "block";
-        querySelect("#shadow-blur").style.display = "block";
-        querySelect("#shadow-offsetX").style.display = "block";
-        querySelect("#shadow-offsetY").style.display = "block";
-      }
-
-      const charSpacing = logoNameElement.get("charSpacing");
-      querySelect("#l_spacing_value").innerText = ": " + charSpacing / 10;
-
-      let fillColor;
-      const color = e.target.fill;
-
-      if (typeof color === "object") {
-        fillColor = color.colorStops[0].color;
-      } else if (color && color.includes("#")) {
-        fillColor = color;
-      } else {
-        const newColor = rgbaToHex(color);
-        fillColor = newColor;
-      }
-
-      colorPickerText.color.set(fillColor);
-      querySelect("#HEX2").value = fillColor;
-
-      let rgbValue = hexToRgb(fillColor);
-      let rgbValues = rgbValue.match(/\d+/g);
-
-      if (rgbValues && rgbValues.length === 3) {
-        querySelect("#R2").value = rgbValues[0];
-        querySelect("#G2").value = rgbValues[1];
-        querySelect("#B2").value = rgbValues[2];
-      }
-
-      let hslValue = hexToHsl(fillColor);
-      let hslValues = hslValue.match(/\d+/g);
-
-      if (hslValues && hslValues.length === 3) {
-        querySelect("#H2").value = hslValues[0];
-        querySelect("#S2").value = hslValues[1];
-        querySelect("#L2").value = hslValues[2];
-      }
-
-      if (logoNameElement.shadow) {
-        const { blur, offsetX, offsetY } = logoNameElement.shadow;
-
-        if (blur && offsetX && offsetY) {
-          querySelect("#shadow_blur_title").innerText = ` :${blur}px`;
-          querySelect("#shadow-blur-slider").value = blur;
-          querySelect("#offset_x_title").innerText = ` :${offsetX}px`;
-          querySelect("#shadow-offsetX-slider").value = offsetX;
-          querySelect("#offset_y_title").innerText = ` :${offsetY}px`;
-          querySelect("#shadow-offsetY-slider").value = offsetY;
+        querySelect("#drop-shadow").checked = hasShadow;
+        isShadowAdjust = hasShadow;
+        if (!hasShadow) {
+          querySelect("#shadow-adjust").style.display = "none";
+          querySelect("#shadow-blur").style.display = "none";
+          querySelect("#shadow-offsetX").style.display = "none";
+          querySelect("#shadow-offsetY").style.display = "none";
+        } else {
+          querySelect("#shadow-adjust").style.display = "block";
+          querySelect("#shadow-blur").style.display = "block";
+          querySelect("#shadow-offsetX").style.display = "block";
+          querySelect("#shadow-offsetY").style.display = "block";
         }
-      }
-      captureCanvasState();
-      this.canvas.requestRenderAll();
 
-      this.activeNavbarSetting = "text";
-      this.updateActiveNavbar();
-    });
+        const charSpacing = logoNameElement.get("charSpacing");
+        querySelect("#l_spacing_value").innerText = ": " + charSpacing / 10;
 
-    sloganNameElement.on("mousedown", (e) => {
-      e.e.preventDefault();
-      this.textSelectorValue = "SloganName";
+        let fillColor;
+        const color = e.target.fill;
 
-      const hasShadow = !!sloganNameElement?.shadow?.blur;
-
-      querySelect("#drop-shadow").checked = hasShadow;
-      isShadowAdjust = hasShadow;
-      if (!hasShadow) {
-        querySelect("#shadow-adjust").style.display = "none";
-        querySelect("#shadow-blur").style.display = "none";
-        querySelect("#shadow-offsetX").style.display = "none";
-        querySelect("#shadow-offsetY").style.display = "none";
-      } else {
-        querySelect("#shadow-adjust").style.display = "block";
-        querySelect("#shadow-blur").style.display = "block";
-        querySelect("#shadow-offsetX").style.display = "block";
-        querySelect("#shadow-offsetY").style.display = "block";
-      }
-
-      const charSpacing = sloganNameElement.get("charSpacing");
-      querySelect("#l_spacing_value").innerText = ": " + charSpacing / 10;
-
-      let fillColor;
-      const color = e.target.fill;
-
-      if (typeof color === "object") {
-        fillColor = color.colorStops[0].color;
-      } else if (color && color.includes("#")) {
-        fillColor = color;
-      } else {
-        const newColor = rgbaToHex(color);
-        fillColor = newColor;
-      }
-
-      colorPickerText.color.set(fillColor);
-      querySelect("#HEX2").value = fillColor;
-
-      let rgbValue = hexToRgb(fillColor);
-      let rgbValues = rgbValue.match(/\d+/g);
-
-      if (rgbValues && rgbValues.length === 3) {
-        querySelect("#R2").value = rgbValues[0];
-        querySelect("#G2").value = rgbValues[1];
-        querySelect("#B2").value = rgbValues[2];
-      }
-
-      let hslValue = hexToHsl(fillColor);
-      let hslValues = hslValue.match(/\d+/g);
-
-      if (hslValues && hslValues.length === 3) {
-        querySelect("#H2").value = hslValues[0];
-        querySelect("#S2").value = hslValues[1];
-        querySelect("#L2").value = hslValues[2];
-      }
-
-      if (sloganNameElement.shadow) {
-        const { blur, offsetX, offsetY } = sloganNameElement.shadow;
-
-        if (blur && offsetX && offsetY) {
-          querySelect("#shadow_blur_title").innerText = ` :${blur}px`;
-          querySelect("#shadow-blur-slider").value = blur;
-          querySelect("#offset_x_title").innerText = ` :${offsetX}px`;
-          querySelect("#shadow-offsetX-slider").value = offsetX;
-          querySelect("#offset_y_title").innerText = ` :${offsetY}px`;
-          querySelect("#shadow-offsetY-slider").value = offsetY;
+        if (typeof color === "object") {
+          fillColor = color.colorStops[0].color;
+        } else if (color && color.includes("#")) {
+          fillColor = color;
+        } else {
+          const newColor = rgbaToHex(color);
+          fillColor = newColor;
         }
-      }
 
-      captureCanvasState();
-      this.canvas.requestRenderAll();
+        colorPickerText.color.set(fillColor);
+        querySelect("#HEX2").value = fillColor;
 
-      this.activeNavbarSetting = "text";
-      this.updateActiveNavbar();
-    });
+        let rgbValue = hexToRgb(fillColor);
+        let rgbValues = rgbValue.match(/\d+/g);
 
+        if (rgbValues && rgbValues.length === 3) {
+          querySelect("#R2").value = rgbValues[0];
+          querySelect("#G2").value = rgbValues[1];
+          querySelect("#B2").value = rgbValues[2];
+        }
+
+        let hslValue = hexToHsl(fillColor);
+        let hslValues = hslValue.match(/\d+/g);
+
+        if (hslValues && hslValues.length === 3) {
+          querySelect("#H2").value = hslValues[0];
+          querySelect("#S2").value = hslValues[1];
+          querySelect("#L2").value = hslValues[2];
+        }
+
+        if (logoNameElement.shadow) {
+          const { blur, offsetX, offsetY } = logoNameElement.shadow;
+
+          if (blur && offsetX && offsetY) {
+            querySelect("#shadow_blur_title").innerText = ` :${blur}px`;
+            querySelect("#shadow-blur-slider").value = blur;
+            querySelect("#offset_x_title").innerText = ` :${offsetX}px`;
+            querySelect("#shadow-offsetX-slider").value = offsetX;
+            querySelect("#offset_y_title").innerText = ` :${offsetY}px`;
+            querySelect("#shadow-offsetY-slider").value = offsetY;
+          }
+        }
+        captureCanvasState();
+        this.canvas.requestRenderAll();
+
+        this.activeNavbarSetting = "text";
+        this.updateActiveNavbar();
+      });
+
+      sloganNameElement.on("mousedown", (e) => {
+        e.e.preventDefault();
+        this.textSelectorValue = "SloganName";
+
+        const hasShadow = !!sloganNameElement?.shadow?.blur;
+
+        querySelect("#drop-shadow").checked = hasShadow;
+        isShadowAdjust = hasShadow;
+        if (!hasShadow) {
+          querySelect("#shadow-adjust").style.display = "none";
+          querySelect("#shadow-blur").style.display = "none";
+          querySelect("#shadow-offsetX").style.display = "none";
+          querySelect("#shadow-offsetY").style.display = "none";
+        } else {
+          querySelect("#shadow-adjust").style.display = "block";
+          querySelect("#shadow-blur").style.display = "block";
+          querySelect("#shadow-offsetX").style.display = "block";
+          querySelect("#shadow-offsetY").style.display = "block";
+        }
+
+        const charSpacing = sloganNameElement.get("charSpacing");
+        querySelect("#l_spacing_value").innerText = ": " + charSpacing / 10;
+
+        let fillColor;
+        const color = e.target.fill;
+
+        if (typeof color === "object") {
+          fillColor = color.colorStops[0].color;
+        } else if (color && color.includes("#")) {
+          fillColor = color;
+        } else {
+          const newColor = rgbaToHex(color);
+          fillColor = newColor;
+        }
+
+        colorPickerText.color.set(fillColor);
+        querySelect("#HEX2").value = fillColor;
+
+        let rgbValue = hexToRgb(fillColor);
+        let rgbValues = rgbValue.match(/\d+/g);
+
+        if (rgbValues && rgbValues.length === 3) {
+          querySelect("#R2").value = rgbValues[0];
+          querySelect("#G2").value = rgbValues[1];
+          querySelect("#B2").value = rgbValues[2];
+        }
+
+        let hslValue = hexToHsl(fillColor);
+        let hslValues = hslValue.match(/\d+/g);
+
+        if (hslValues && hslValues.length === 3) {
+          querySelect("#H2").value = hslValues[0];
+          querySelect("#S2").value = hslValues[1];
+          querySelect("#L2").value = hslValues[2];
+        }
+
+        if (sloganNameElement.shadow) {
+          const { blur, offsetX, offsetY } = sloganNameElement.shadow;
+
+          if (blur && offsetX && offsetY) {
+            querySelect("#shadow_blur_title").innerText = ` :${blur}px`;
+            querySelect("#shadow-blur-slider").value = blur;
+            querySelect("#offset_x_title").innerText = ` :${offsetX}px`;
+            querySelect("#shadow-offsetX-slider").value = offsetX;
+            querySelect("#offset_y_title").innerText = ` :${offsetY}px`;
+            querySelect("#shadow-offsetY-slider").value = offsetY;
+          }
+        }
+
+        captureCanvasState();
+        this.canvas.requestRenderAll();
+
+        this.activeNavbarSetting = "text";
+        this.updateActiveNavbar();
+      });
+    }
+    applyEventListners();
 
     let captureTimeout = null;
 
@@ -1759,8 +1738,14 @@ class EditorScreen {
         querySelect("#font_size_title").value = `${textSize}px`;
         const active = this.canvas.getActiveObject();
         const fontSize = textSize;
-        active.fontSize = fontSize;
-        this.canvas.renderAll();
+        if (active.type == 'curved-text') {
+          active.set("_cachedCanvas", null);
+          if (fontSize < 5) return false;
+          active.set("fontSize", fontSize);
+        } else
+          active.set("fontSize", fontSize);
+
+        this.canvas.requestRenderAll();
       }
     });
 
@@ -1791,28 +1776,20 @@ class EditorScreen {
     // Text Curve Up
     querySelect('#text-curve-up').addEventListener('click', (e) => {
       let input = querySelect('#curve-text'),
-        value = parseInt(input.getAttribute('data-percentage')) || 0;
+        value = parseInt(input.value) || 0;
+      value += 5;
 
-      if (value <= -100) value -= 1;
-      else value += 1;
-      if (value > 100) return false;
-      input.setAttribute("data-percentage", value);
-      input.value = value * 3.6;
-
+      input.value = value;
       querySelect('#curve-text').dispatchEvent(new Event('change'));
     });
 
     // Text Curve Down
     querySelect('#text-curve-down').addEventListener('click', (e) => {
       let input = querySelect('#curve-text'),
-        value = parseInt(input.getAttribute('data-percentage')) || 0;
-      value -= 1;
+        value = parseInt(input.value) || 0;
 
-      if (value < -100) return false;
-
-      input.setAttribute("data-percentage", value);
-      input.value = value * 3.6;
-
+      value -= 5;
+      input.value = value;
       querySelect('#curve-text').dispatchEvent(new Event('change'));
     });
 
@@ -1820,7 +1797,14 @@ class EditorScreen {
 
     // Text Curve percentage input
     querySelect('#curve-text').addEventListener('change', function (e) {
-      let value = e.target.getAttribute('data-percentage'),
+      let inp = e.target,
+        val = parseInt(inp.value);
+
+      if (val > 360) inp.value = 360;
+      else if (val < -360) inp.value = -360;
+
+
+      let value = (parseInt(inp.value) / 360) * 100,
         rangeValue = getRangeFromPercentage(value);
 
 
@@ -1846,7 +1830,6 @@ class EditorScreen {
 
       if (percentage == -0 || percentage == '-0') percentage = 0;
 
-      querySelect("#curve-text").setAttribute('data-percentage', percentage)
       // Percentage Limit is 90 but we can change it
       if (percentage > 90 || percentage < -90) return percentage * 3.6;
 
@@ -1857,11 +1840,8 @@ class EditorScreen {
       if (value >= 2500) value = 2500 - (value - 2500);
 
 
-
       let isCurvedText = obj.type == 'curved-text';
-
       if (hasCurveApply && !isCurvedText) {
-        l(obj)
         let props = obj.__dimensionAffectingProps,
           options = {
             ...props,
@@ -1871,13 +1851,31 @@ class EditorScreen {
             scaleY: obj.scaleY,
             diameter: value,
             fill: obj.fill,
+            shadow: obj.shadow,
+            percentage,
           };
+
+        let letterSpacing = (parseInt(obj.charSpacing) / 100) * 3;
+        letterSpacing = letterSpacing.toFixed(1);
+        if (letterSpacing < -1) letterSpacing = -1;
+
+        options.kerning = parseInt(letterSpacing);
+
         const curvedText = new fabric.CurvedText(obj.text, options);
 
         let index = this.canvas.getObjects().indexOf(obj);
 
         this.canvas.remove(obj);
         this.canvas.add(curvedText);
+
+        if (curvedText.text == querySelect('#logoMainField').value) {
+          logoNameElement = curvedText;
+        } else if (curvedText.text == querySelect('#sloganNameField').value) {
+          sloganNameElement = curvedText;
+        }
+
+        applyEventListners();
+
         curvedText.moveTo(index);
         this.canvas.setActiveObject(curvedText);
         this.canvas.requestRenderAll();
@@ -1886,11 +1884,20 @@ class EditorScreen {
         const text = new fabric.IText(obj.text, {
           ...obj,
           type: 'text',
+          percentage
         });
         let index = this.canvas.getObjects().indexOf(obj);
 
         this.canvas.remove(obj);
         this.canvas.add(text);
+
+        if (text.text == querySelect('#logoMainField').value) {
+          logoNameElement = text;
+        } else if (text.text == querySelect('#sloganNameField').value) {
+          sloganNameElement = text;
+        }
+        applyEventListners();
+
         text.moveTo(index);
         this.canvas.setActiveObject(text);
         this.canvas.save();
@@ -2545,6 +2552,7 @@ class EditorScreen {
         img.set("id", "external_layer_" + layerCounter);
         img.set("svgContent", content);
         canvas.add(img);
+        canvas.setActiveObject(img);
         canvas.viewportCenterObjectV(img);
         canvas.requestRenderAll();
 
