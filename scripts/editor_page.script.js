@@ -4112,13 +4112,13 @@ class EditorScreen {
 
     }
     //#endregion Ms List 
-    const liveSearch = function (element) {
+    const fontLiveSearch = function (element) {
       let val = element.value.toLowerCase();
       if (!element.hasAttribute("data-target")) return false;
       let targetSelector = element.getAttribute("data-target");
       let radius = element.getAttribute("data-radius") || 'body';
       let radiusElement = element.closest(radius);
-      console.log(radiusElement);
+      // console.log(radiusElement);
       if (!radiusElement) return;
 
       let targets = radiusElement.querySelectorAll(targetSelector);
@@ -4136,7 +4136,7 @@ class EditorScreen {
 
     document.addEventListener("keyup", function (event) {
       if (event.target.classList.contains("live-search")) {
-        liveSearch(event.target);
+        fontLiveSearch(event.target);
       }
     });
   }

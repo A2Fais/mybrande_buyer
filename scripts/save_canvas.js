@@ -75,7 +75,6 @@ export async function saveCanvas(
   const bgColor = canvas.get("backgroundColor");
   canvas.setBackgroundImage(null);
   canvas.setBackgroundColor(null, canvas.renderAll.bind(canvas));
-  console.log("Save function triggered");
 
   const currentCanvasSVG = canvas.toSVG();
 
@@ -135,7 +134,6 @@ export async function saveCanvas(
       externalLayerElements: JSON.stringify(externalLayerElements),
       externalTextElements: JSON.stringify(externalTextElements),
     };
-    console.log(postData)
     // return false;
 
     try {
