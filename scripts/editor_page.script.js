@@ -3842,8 +3842,8 @@ class EditorScreen {
       logoPosition = response.data?.AllData?.logo_position;
       const svgData = response.data?.AllData?.svg_data;
 
-      external_layer = response.data.AllData.externalLayerElements;
-      external_text = response.data.AllData.externalTextElements;
+      external_layer = response.data?.AllData?.externalLayerElements;
+      external_text = response.data?.AllData?.externalTextElements;
       loadExternalLayers(external_layer, external_text);
 
       if (svgData) {
