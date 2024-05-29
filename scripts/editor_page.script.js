@@ -1903,6 +1903,8 @@ class EditorScreen {
         this.canvas.setActiveObject(text);
         this.canvas.save();
       } else if (hasCurveApply && isCurvedText) {
+
+        obj.set('_cachedCanvas', null);
         obj.set('diameter', value);
         obj.set('flipped', isFlipped);
         obj.set('percentage', percentage);
