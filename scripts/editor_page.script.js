@@ -274,6 +274,7 @@ class EditorScreen {
     });
     CanvasGuides(this.canvas); // Init Canvas Guides
 
+    this.loadedIcons = {};
     this.textMode = querySelect('.nav-item[data-name="text"]');
     this.logoMode = querySelect('.nav-item[data-name="logo"]');
     this.uploadsMode = querySelect('.nav-item[data-name="uploads"]');
@@ -2032,6 +2033,15 @@ class EditorScreen {
       let active = this.canvas.getActiveObject(),
         layerEl = null;
       if (active.layerId) layerEl = document.querySelector(`.layer-container[data-id="${active.layerId}"]`);
+
+      if (active.id.includes("external_layer_") && !active.text) {
+        let cloned = active.toJSON(['itemId', 'id', 'category', 'cacheWidth', 'cacheHeight']);
+        cloned.top += 10;
+        cloned.left += 10;
+        loadExternalLayers(JSON.stringify([cloned]));
+        return false;
+      }
+
       if (active._objects) {
         active.clone((clonedGroup) => {
           clonedGroup._objects.forEach((object, i) => {
@@ -2486,7 +2496,6 @@ class EditorScreen {
       img.classList.add("clip-icon");
       img.setAttribute("id", "clip-icon");
       icon = icon.replace(/(\r\n|\n|\r)/gm, "");
-      img.setAttribute("data-content", icon);
       img.setAttribute("data-name", name);
       const blob = new Blob([icon], { type: "image/svg+xml" });
       const svgDataUrl = URL.createObjectURL(blob);
@@ -2503,17 +2512,30 @@ class EditorScreen {
       .get(iconUrl)
       .then((resp) => {
         iconList = resp.data.CategoryWiseIcon;
-
         iconList.forEach((icon, index) => {
-          let iconItem = icon.Icons[currIconIndex].icon_svg;
+          let catslug = icon.category.iconcategory_slug;
+          this.loadedIcons[catslug] = {};
+          icon.Icons.forEach(i => {
+            this.loadedIcons[catslug][i.id] = {
+              id: i.id,
+              svg: i.icon_svg
+            };
+          });
+
+
+          let { icon_svg, id } = icon.Icons[currIconIndex];
           const name = icon.category.iconcategory_name;
           const categoryTitle = querySelect("#category_type_title");
+
           const span = document.createElement("span");
           span.setAttribute("index", index);
           span.classList.add("search-icon-category-text");
           span.innerText = name;
           categoryTitle.append(span);
-          const svgImg = svgCreator(iconItem, name);
+
+          const svgImg = svgCreator(icon_svg, name);
+          svgImg.setAttribute('data-id', id);
+          svgImg.setAttribute('data-category', icon.category.iconcategory_slug);
           querySelect("#clip-icons").appendChild(svgImg);
         });
       })
@@ -2525,12 +2547,20 @@ class EditorScreen {
       querySelect("#clip-icons").innerHTML = null;
       const index = e.target.getAttribute("index");
       const currIndexIcons = iconList[index].Icons;
+      let count = 0;
       currIndexIcons.forEach((icon) => {
-        const name = icon.iconcategory_name;
-        const svgImg = svgCreator(icon.icon_svg, name);
-        querySelect("#clip-icons").appendChild(svgImg);
-      });
+        let cat_id = icon.icon_category_id;
+        const name = iconList[index].category.iconcategory_slug,
+          id = icon.id;
 
+        const svgImg = svgCreator(icon.icon_svg, iconList[index].category.iconcategory_name);
+        svgImg.setAttribute("data-category", name);
+        svgImg.setAttribute("data-id", id);
+
+        querySelect("#clip-icons").appendChild(svgImg);
+        count++;
+      });
+      l(this.loadedIcons);
     });
 
 
@@ -2539,7 +2569,8 @@ class EditorScreen {
 
     document.getElementById("clip-icons").addEventListener("click", (e) => {
       let img = e.target,
-        content = img.getAttribute("data-content");
+        itemId = img.getAttribute("data-id"),
+        category = img.getAttribute("data-category");
       const targetSrc = img.src;
       const decodedSrc = decodeURIComponent(targetSrc);
 
@@ -2550,7 +2581,10 @@ class EditorScreen {
         img.scaleToWidth(100);
         img.set({ left: img.left + 100, layerType: 'svg' });
         img.set("id", "external_layer_" + layerCounter);
-        img.set("svgContent", content);
+
+        img.set("itemId", itemId);
+        img.set("category", category);
+
         canvas.add(img);
         canvas.setActiveObject(img);
         canvas.viewportCenterObjectV(img);
@@ -3949,11 +3983,17 @@ class EditorScreen {
           let textLayer = new fabric.Text(layer.text, layer);
           this.canvas.add(textLayer);
         } else {
-          layer.svgContent = decodeURIComponent(layer.svgContent);
-          fabric.loadSVGFromString(layer.svgContent, (objects, options) => {
+
+          let { category, itemId } = layer,
+            svgContent = this.loadedIcons[category][itemId];
+          if (!svgContent) return false;
+
+          svgContent = svgContent.svg;
+          fabric.loadSVGFromString(svgContent, (objects, options) => {
             let img = fabric.util.groupSVGElements(objects, options);
-            img.scaleToWidth(layer.cwidth);
-            img.scaleToHeight(layer.cheight);
+            img.scaleToWidth(layer.cacheWidth);
+            img.scaleToHeight(layer.cacheHeight);
+
             img.set({
               left: layer.left,
               top: layer.top,
@@ -3965,7 +4005,8 @@ class EditorScreen {
               flipY: layer.flipY,
               selectable: true,
               id: layer.id,
-              svgContent: layer.svgContent,
+              itemId,
+              category,
               layerType: layer.layerType,
             });
             this.canvas.add(img);

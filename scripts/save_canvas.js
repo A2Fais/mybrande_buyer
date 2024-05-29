@@ -65,20 +65,8 @@ export async function saveCanvas(
     externalTextElements = [];
 
   externalLayers.forEach((layer) => {
-    let cacheWidth = layer.cacheWidth,
-      cacheHeight = layer.cacheHeight;
-    let data = layer.toJSON();
-    data.id = layer.id;
-    data.layerType = layer.layerType;
-
-    if (layer.layerType == 'svg') {
-      data.svgContent = encodeURIComponent(layer.svgContent);
-      data.cwidth = cacheWidth;
-      data.cheight = cacheHeight;
-    }
-    layer = data;
-
-    if (layer.text) externalTextElements.push(layer);
+    let data = layer.toJSON(['itemId', 'category', 'cacheHeight', 'cacheWidth', 'id', 'layerType']);
+    if (layer.text) externalTextElements.push(data);
     else externalLayerElements.push(layer);
   });
 
@@ -107,7 +95,6 @@ export async function saveCanvas(
 
     const brandColor = logoNameElement.get("fill");
     const sloganColor = sloganNameElement.get("fill");
-
     const postData = {
       buyer_logo_id: querySelect("#buyer_logo_id")?.value, // from response hidden input field
       buyer_id: querySelect("#buyer_Id")?.value, // hidden input field
