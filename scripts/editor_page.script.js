@@ -2604,7 +2604,6 @@ class EditorScreen {
 
 
     querySelect("#add-clip-text").addEventListener("click", (e) => {
-      l("done")
       querySelect("#popup-parent").style.display = "block";
       querySelect("#popup-parent-icons").style.display = "none";
     });

@@ -68,6 +68,7 @@ export async function saveCanvas(
     let data = layer.toJSON(['itemId', 'category', 'cacheHeight', 'cacheWidth', 'id', 'layerType']);
     if (layer.text) externalTextElements.push(data);
     else externalLayerElements.push(layer);
+    canvas.remove(layer);
   });
 
 
@@ -75,7 +76,13 @@ export async function saveCanvas(
   canvas.setBackgroundImage(null);
   canvas.setBackgroundColor(null, canvas.renderAll.bind(canvas));
   console.log("Save function triggered");
+
   const currentCanvasSVG = canvas.toSVG();
+
+  externalLayers.map(rmObj => {
+    canvas.add(rmObj);
+    canvas.requetsRenderAll();
+  });
 
   if (currentCanvasSVG) {
     const getDropShadowValue = (element) => {
@@ -128,6 +135,8 @@ export async function saveCanvas(
       externalLayerElements: JSON.stringify(externalLayerElements),
       externalTextElements: JSON.stringify(externalTextElements),
     };
+    console.log(postData)
+    // return false;
 
     try {
       const response = await axios.post(
@@ -153,9 +162,9 @@ export async function saveCanvas(
         //     scaleY: 0.3,
         //   }
         // );
-        isPackage
-          ? (location.href = `https://www.mybrande.com/api/buyer/logo/downloadandpayment/${buyer_logo_id}`)
-          : (window.location.href = `https://www.mybrande.com/api/user/logo/preview/${buyer_logo_id}`);
+        // isPackage
+        //   ? (location.href = `https://www.mybrande.com/api/buyer/logo/downloadandpayment/${buyer_logo_id}`)
+        //   : (window.location.href = `https://www.mybrande.com/api/user/logo/preview/${buyer_logo_id}`);
         toastNotification("Logo Saved Successfully");
       }
     } catch (error) {
