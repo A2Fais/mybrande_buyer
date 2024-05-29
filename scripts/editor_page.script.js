@@ -3820,6 +3820,7 @@ class EditorScreen {
 
     var logoPosition;
     var external_layer;
+    var external_text;
     async function fetchData(canvas) {
       querySelect("#loader_main").style.display = "block";
       const logoId = querySelect("#logo_id").value;
@@ -3841,9 +3842,10 @@ class EditorScreen {
       logoPosition = response.data?.AllData?.logo_position;
       const svgData = response.data?.AllData?.svg_data;
 
-      external_layer = response.data.AllData.externalLayersData
-      if (external_layer)
-        loadExternalLayers(external_layer);
+      external_layer = response.data.AllData.externalLayerElements;
+      external_text = response.data.AllData.externalTextElements;
+      loadExternalLayers(external_layer, external_text);
+
       if (svgData) {
         localStorage.setItem("logo-file", svgData);
         setlogoPosition(
@@ -3933,9 +3935,11 @@ class EditorScreen {
 
 
     // Load External Layers Function
-    const loadExternalLayers = (data) => {
+    const loadExternalLayers = (layers = null, text = null) => {
+      layers = layers ? JSON.parse(layers) : [];
+      text = text ? JSON.parse(text) : [];
 
-      const externalLayers = JSON.parse(data);
+      const externalLayers = [...layers, ...text];
       if (!externalLayers.length) return false;
 
       for (const layer of externalLayers) {
@@ -3945,6 +3949,7 @@ class EditorScreen {
           let textLayer = new fabric.Text(layer.text, layer);
           this.canvas.add(textLayer);
         } else {
+          layer.svgContent = decodeURIComponent(layer.svgContent);
           fabric.loadSVGFromString(layer.svgContent, (objects, options) => {
             let img = fabric.util.groupSVGElements(objects, options);
             img.scaleToWidth(layer.cwidth);
