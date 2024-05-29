@@ -2746,7 +2746,6 @@ class EditorScreen {
     });
 
     const canvasObjects = this.canvas.getObjects();
-    const colorPalette = querySelect("#logo_colors_pallete");
     const textPalette = querySelect("#logo_text_colors_pallete");
 
     const solidColorMode = querySelect("#solid_color_mode");
@@ -2768,66 +2767,70 @@ class EditorScreen {
     };
 
     const updateColorPickers = () => {
-      let colorSet = new Set();
+      for (let i = 0; i <= 1; i++) {
 
-      canvasObjects.forEach((item) => {
-        let itemFill = item.get("fill");
-        const colPicker = document.createElement("div");
+        let colorSet = new Set();
+        const colorPalette = querySelectAll("#logo_colors_pallete")[i];
 
-        if (getParsedColor(itemFill) !== undefined) {
-          let color = getParsedColor(itemFill);
-          color = color.padEnd(7, "0");
+        canvasObjects.forEach((item) => {
+          let itemFill = item.get("fill");
+          const colPicker = document.createElement("div");
 
-          if (!colorSet.has(color)) {
-            colorSet.add(color);
-            colPicker.setAttribute("id", "color-layers-pickers");
+          if (getParsedColor(itemFill) !== undefined) {
+            let color = getParsedColor(itemFill);
+            color = color.padEnd(7, "0");
 
-            colPicker.style.background = itemFill;
-            colPicker.className = "color-picker";
-            colPicker.style.borderRadius = "5px";
-            colorPalette.append(colPicker);
-            if (color.includes("#ffffff")) {
-              colPicker.style.border = "1px solid #aaaaaa";
+            if (!colorSet.has(color)) {
+              colorSet.add(color);
+              colPicker.setAttribute("id", "color-layers-pickers");
+
+              colPicker.style.background = itemFill;
+              colPicker.className = "color-picker";
+              colPicker.style.borderRadius = "5px";
+              colorPalette.append(colPicker);
+              if (color.includes("#ffffff")) {
+                colPicker.style.border = "1px solid #aaaaaa";
+              }
             }
+            colPicker.addEventListener("click", (event) => {
+              const color = rgbToHex(event.target.style.backgroundColor);
+              const activeElem = this.canvas.getActiveObject();
+
+              if (activeElem && activeElem._objects)
+                activeElem._objects.forEach((obj) => {
+                  obj.set("fill", color);
+                  console.log(obj)
+                })
+
+              activeElem.set("fill", color);
+              colorPicker.color.set(color);
+              querySelect("#HEX").value = color;
+
+              let rgbValue = hexToRgb(color);
+              let rgbValues = rgbValue.match(/\d+/g);
+
+              if (rgbValues && rgbValues.length === 3) {
+                querySelect("#R").value = rgbValues[0];
+                querySelect("#G").value = rgbValues[1];
+                querySelect("#B").value = rgbValues[2];
+              }
+              let hslValue = hexToHsl(color);
+              let hslValues = hslValue.match(/\d+/g);
+
+              if (hslValues && hslValues.length === 3) {
+                querySelect("#H").value = hslValues[0];
+                querySelect("#S").value = hslValues[1];
+                querySelect("#L").value = hslValues[2];
+              }
+              this.canvas.renderAll();
+              updatePreview();
+              if (activeElem)
+                this.canvas.save();
+            });
           }
-          colPicker.addEventListener("click", (event) => {
-            const color = rgbToHex(event.target.style.backgroundColor);
-            const activeElem = this.canvas.getActiveObject();
+        });
 
-            if (activeElem && activeElem._objects)
-              activeElem._objects.forEach((obj) => {
-                obj.set("fill", color);
-                console.log(obj)
-              })
-
-            activeElem.set("fill", color);
-            colorPicker.color.set(color);
-            querySelect("#HEX").value = color;
-
-            let rgbValue = hexToRgb(color);
-            let rgbValues = rgbValue.match(/\d+/g);
-
-            if (rgbValues && rgbValues.length === 3) {
-              querySelect("#R").value = rgbValues[0];
-              querySelect("#G").value = rgbValues[1];
-              querySelect("#B").value = rgbValues[2];
-            }
-            let hslValue = hexToHsl(color);
-            let hslValues = hslValue.match(/\d+/g);
-
-            if (hslValues && hslValues.length === 3) {
-              querySelect("#H").value = hslValues[0];
-              querySelect("#S").value = hslValues[1];
-              querySelect("#L").value = hslValues[2];
-            }
-            this.canvas.renderAll();
-            updatePreview();
-            if (activeElem)
-              this.canvas.save();
-          });
-        }
-      });
-
+      }
       captureCanvasState();
     };
 
