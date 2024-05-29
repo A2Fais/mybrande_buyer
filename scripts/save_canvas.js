@@ -162,9 +162,9 @@ export async function saveCanvas(
         //     scaleY: 0.3,
         //   }
         // );
-        // isPackage
-        //   ? (location.href = `https://www.mybrande.com/api/buyer/logo/downloadandpayment/${buyer_logo_id}`)
-        //   : (window.location.href = `https://www.mybrande.com/api/user/logo/preview/${buyer_logo_id}`);
+        isPackage
+          ? (location.href = `https://www.mybrande.com/api/buyer/logo/downloadandpayment/${buyer_logo_id}`)
+          : (window.location.href = `https://www.mybrande.com/api/user/logo/preview/${buyer_logo_id}`);
         toastNotification("Logo Saved Successfully");
       }
     } catch (error) {
