@@ -85,7 +85,7 @@ class SaveHistory {
         canvasData.curvedTextObjects = curvedTextObj;
         // Save History
         this.editorHistory.state = { json: canvasData };
-        console.log("History Saved");
+        // console.log("History Saved");
     }
     // Change History
     async changeHistory(playStack, saveStack) {
