@@ -2142,7 +2142,6 @@ class EditorScreen {
       if (!obj) return false;
       let save = true;
 
-
       if (obj._objects) {
         obj.clone((cloned) => {
 
