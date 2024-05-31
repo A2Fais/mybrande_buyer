@@ -54,17 +54,13 @@ export async function saveCanvas(
   isPackage = false
 ) {
 
-  // Fetch External layers data
   let externalLayers = canvas._objects.filter((obj) => {
     return obj.id && obj.id.includes("external_layer_");
   });
-
-
-  // Loop Through External Layers and export this single object save into local storage 
   let externalLayerElements = [],
     externalTextElements = [];
 
-  externalLayers.forEach((layer) => {
+  externalLayers.map((layer) => {
     let data = layer.toJSON(['itemId', 'category', 'cacheHeight', 'cacheWidth', 'id', 'layerType']);
     if (layer.text) externalTextElements.push(data);
     else externalLayerElements.push(layer);
@@ -80,7 +76,7 @@ export async function saveCanvas(
 
   externalLayers.map(rmObj => {
     canvas.add(rmObj);
-    canvas.requetsRenderAll();
+    canvas.requestRenderAll();
   });
 
   if (currentCanvasSVG) {
@@ -134,7 +130,6 @@ export async function saveCanvas(
       externalLayerElements: JSON.stringify(externalLayerElements),
       externalTextElements: JSON.stringify(externalTextElements),
     };
-    // return false;
 
     try {
       const response = await axios.post(
@@ -146,20 +141,20 @@ export async function saveCanvas(
         if (!buyer_logo_id)
           return toastNotification("Error encountered with buyer logo ID");
         querySelect("#buyer_logo_id").value = buyer_logo_id;
-        // canvas.setBackgroundColor(bgColor, canvas.renderAll.bind(canvas));
-        // canvas.setBackgroundImage(
-        //   "/static/pattern.png",
-        //   this.canvas.renderAll.bind(this.canvas),
-        //   {
-        //     opacity: 0.6,
-        //     originX: "left",
-        //     originY: "top",
-        //     top: 0,
-        //     left: 0,
-        //     scaleX: 0.3,
-        //     scaleY: 0.3,
-        //   }
-        // );
+        canvas.setBackgroundColor(bgColor, canvas.renderAll.bind(canvas));
+        canvas.setBackgroundImage(
+          "/static/pattern.png",
+          this.canvas.renderAll.bind(this.canvas),
+          {
+            opacity: 0.6,
+            originX: "left",
+            originY: "top",
+            top: 0,
+            left: 0,
+            scaleX: 0.3,
+            scaleY: 0.3,
+          }
+        );
         isPackage
           ? (location.href = `https://www.mybrande.com/api/buyer/logo/downloadandpayment/${buyer_logo_id}`)
           : (window.location.href = `https://www.mybrande.com/api/user/logo/preview/${buyer_logo_id}`);
