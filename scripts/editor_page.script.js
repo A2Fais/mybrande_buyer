@@ -42,7 +42,6 @@ WebFont.load({
     }
   },
 });
-const l = console.log;
 
 //#region Text Curved
 fabric.CurvedText = fabric.util.createClass(fabric.Object, {
@@ -2141,7 +2140,7 @@ class EditorScreen {
       if (!obj) return false;
       let save = true;
 
-      // Check if it's logomainfeild
+      
       if (obj._objects) {
         obj.clone((cloned) => {
 
@@ -2560,7 +2559,6 @@ class EditorScreen {
         querySelect("#clip-icons").appendChild(svgImg);
         count++;
       });
-      l(this.loadedIcons);
     });
 
 
@@ -4046,8 +4044,6 @@ class EditorScreen {
       initMSList()
     })();
 
-    //#region Ms List 
-
     const initMSList = () => {
       let msLists = document.querySelectorAll('.ms-select-list');
       msLists.forEach(list => {
@@ -4055,7 +4051,7 @@ class EditorScreen {
           defaultVal = list.querySelector(".ms-list-toggle .ms-list-value").getAttribute("value");
 
         list.setAttribute('data-default-value', defaultVal);
-        // Event Listener to open menu
+
         list.querySelector('.ms-list-toggle').addEventListener('click', function (e) {
           e.stopPropagation();
           let lists = document.querySelectorAll('.ms-select-list');
