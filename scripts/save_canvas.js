@@ -63,10 +63,9 @@ export async function saveCanvas(
   externalLayers.map((layer) => {
     let data = layer.toJSON(['itemId', 'category', 'cacheHeight', 'cacheWidth', 'id', 'layerType']);
     if (layer.text) externalTextElements.push(data);
-    else externalLayerElements.push(layer);
+    else externalLayerElements.push(data);
     canvas.remove(layer);
   });
-
 
   const bgColor = canvas.get("backgroundColor");
   canvas.setBackgroundImage(null);
