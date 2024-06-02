@@ -1902,6 +1902,8 @@ class EditorScreen {
         this.canvas.setActiveObject(text);
         this.canvas.save();
       } else if (hasCurveApply && isCurvedText) {
+
+        obj.set('_cachedCanvas', null);
         obj.set('diameter', value);
         obj.set('flipped', isFlipped);
         obj.set('percentage', percentage);
@@ -2140,7 +2142,7 @@ class EditorScreen {
       if (!obj) return false;
       let save = true;
 
-      
+
       if (obj._objects) {
         obj.clone((cloned) => {
 
@@ -2507,6 +2509,8 @@ class EditorScreen {
 
     let currIconIndex = 0,
       iconList;
+    querySelect("#loader_main").style.display = "block";
+
     axios
       .get(iconUrl)
       .then((resp) => {
@@ -2536,6 +2540,44 @@ class EditorScreen {
           svgImg.setAttribute('data-id', id);
           svgImg.setAttribute('data-category', icon.category.iconcategory_slug);
           querySelect("#clip-icons").appendChild(svgImg);
+        });
+
+        fetchData(this.canvas).then((bgColor, _, svgData) => {
+          if (!sessionStorage.getItem("reloaded")) {
+            sessionStorage.setItem("reloaded", "true");
+            location.reload();
+          }
+          if (bgColor?.bg?.includes(",")) {
+            const colorGrad = bgColor.bg.split(",");
+            let color = new fabric.Gradient({
+              type: "linear",
+              coords: {
+                x1: 0,
+                y1: 0,
+                x2: this.canvas.width,
+                y2: this.canvas.height,
+              },
+              colorStops: [
+                { offset: 0, color: colorGrad[0] },
+                { offset: 1, color: colorGrad[1] },
+              ],
+            });
+            this.canvas.setBackgroundColor(color);
+          } else {
+            this.canvas.setBackgroundColor(bgColor.bg);
+          }
+
+          this.canvas.renderAll();
+          this.alignId = +bgColor.logoPosition;
+          updatePreview();
+
+          // Init Undo Redo
+          setTimeout(() => {
+            this.canvasHistory = new SaveHistory(this.canvas) // Init Undo Redo
+            querySelect("#loader_main").style.display = "none";
+            updatePreview();
+            this.canvas.save(); // Save Initial History
+          }, 1000);
         });
       })
       .catch((error) => {
@@ -2579,7 +2621,6 @@ class EditorScreen {
         img.scaleToWidth(100);
         img.set({ left: img.left + 100, layerType: 'svg' });
         img.set("id", "external_layer_" + layerCounter);
-
         img.set("itemId", itemId);
         img.set("category", category);
 
@@ -3890,43 +3931,7 @@ class EditorScreen {
       return { bg, logoPosition, svgData: response.data };
     }
 
-    fetchData(this.canvas).then((bgColor, _, svgData) => {
-      if (!sessionStorage.getItem("reloaded")) {
-        sessionStorage.setItem("reloaded", "true");
-        location.reload();
-      }
-      if (bgColor?.bg?.includes(",")) {
-        const colorGrad = bgColor.bg.split(",");
-        let color = new fabric.Gradient({
-          type: "linear",
-          coords: {
-            x1: 0,
-            y1: 0,
-            x2: this.canvas.width,
-            y2: this.canvas.height,
-          },
-          colorStops: [
-            { offset: 0, color: colorGrad[0] },
-            { offset: 1, color: colorGrad[1] },
-          ],
-        });
-        this.canvas.setBackgroundColor(color);
-      } else {
-        this.canvas.setBackgroundColor(bgColor.bg);
-      }
 
-      this.canvas.renderAll();
-      this.alignId = +bgColor.logoPosition;
-      updatePreview();
-
-      // Init Undo Redo
-      setTimeout(() => {
-        this.canvasHistory = new SaveHistory(this.canvas) // Init Undo Redo
-        querySelect("#loader_main").style.display = "none";
-        updatePreview();
-        this.canvas.save(); // Save Initial History
-      }, 1000);
-    });
 
     let alignmentOptions = {
       "top_bottom_1": 200,
@@ -3975,18 +3980,23 @@ class EditorScreen {
 
       for (const layer of externalLayers) {
         let { layerType } = layer;
-
         if (layerType == 'text') {
-          let textLayer = new fabric.Text(layer.text, layer);
+          let textLayer = new fabric.IText(layer.text, layer);
           this.canvas.add(textLayer);
         } else {
-
-          let { category, itemId } = layer,
-            svgContent = this.loadedIcons[category][itemId];
+          let { category, itemId } = layer;
+          if (!category) continue;
+          let svgContent = this.loadedIcons[category][parseInt(itemId)];
           if (!svgContent) return false;
 
           svgContent = svgContent.svg;
           fabric.loadSVGFromString(svgContent, (objects, options) => {
+            objects.map((obj) => {
+              obj.set({
+                fill: layer.fill
+              });
+            })
+
             let img = fabric.util.groupSVGElements(objects, options);
             img.scaleToWidth(layer.cacheWidth);
             img.scaleToHeight(layer.cacheHeight);
@@ -4005,8 +4015,11 @@ class EditorScreen {
               itemId,
               category,
               layerType: layer.layerType,
+              fill: layer.fill
             });
-            this.canvas.add(img);
+
+            let image = this.canvas.add(img);
+
             this.canvas.requestRenderAll();
           });
         }
