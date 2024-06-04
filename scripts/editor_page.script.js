@@ -1073,8 +1073,7 @@ class EditorScreen {
       const val = e.target.value;
       this.logoName = val;
 
-      const o = this.canvas.getObjects().map((o) => o);
-      logoNameElement = o[o.length - 2];
+      logoNameElement = this.canvas.getObjects("text").map(i => i)[0]
       logoNameElement.set("text", val);
 
       this.canvas.requestRenderAll();
@@ -1083,8 +1082,7 @@ class EditorScreen {
     querySelect("#sloganNameField").addEventListener("input", (e) => {
       const val = e.target.value;
 
-      const o = this.canvas.getObjects().map((o) => o);
-      sloganNameElement = o[o.length - 1];
+      sloganNameElement = this.canvas.getObjects("text").map(i => i)[1]
       sloganNameElement.set("text", val);
       this.canvas.requestRenderAll();
     });
