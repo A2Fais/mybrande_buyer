@@ -592,10 +592,35 @@ class EditorScreen {
 
       let { variants } = self.loadedFonts[family],
         variantsHtml = '';
+      let values = {
+        'Regular': "normal",
+        "Bold": "800",
+        "regular": "normal"
+      }
       variants.map(v => {
-        variantsHtml += `<li value="${v}" style="text-transform:capitalize">${v}</li>`;
+        let value = values[v] ? values[v] : v;
+        variantsHtml += `<li value="${value}" style="text-transform:capitalize">${v}</li>`;
       });
-      querySelect(".font-weight-selector .ms-select-list-menu").innerHTML = variantsHtml;
+      let target = querySelect(".font-weight-selector .ms-select-list-menu");
+      target.innerHTML = variantsHtml;
+      target.removeAttribute('data-init');
+      // Init Click event
+      target.querySelectorAll('li').forEach(li => {
+        li.addEventListener('click', function (e) {
+          e.stopPropagation();
+
+          let value = this.getAttribute("value"),
+            text = this.innerText,
+            parent = this.parentElement.parentElement;
+          parent.classList.remove("show");
+          let toggleBtn = parent.querySelector('.ms-list-toggle')
+
+          toggleBtn.querySelector('.ms-list-value').innerText = text;
+          parent.setAttribute("data-value", value);
+          parent.dispatchEvent(new Event("change"))
+          this.classList.add("selected");
+        });
+      })
 
       obj.setPositionByOrigin(new fabric.Point(currCoordinate.x, currCoordinate.y), "center", "center");
       obj.setCoords();
@@ -655,7 +680,7 @@ class EditorScreen {
 
     // Font Weight
     querySelect('.font-weight-selector').addEventListener("change", function () {
-
+      console.log('okay');
       let weight = this.getAttribute('data-value'),
         obj = self.canvas.getActiveObject();
       if (!obj) return false;
