@@ -268,6 +268,7 @@ class EditorScreen {
   constructor() {
     this.canvasBG = "#efefef";
     this.canvas = new fabric.Canvas("c", { backgroundColor: this.canvasBG });
+    this.loadedFonts = {};
     this.magnifier = new fabric.Canvas("magnifier", {
       backgroundColor: this.canvasBG,
     });
@@ -587,8 +588,14 @@ class EditorScreen {
         });
       }
       else
-        obj.set("fontFamily", family)
+        obj.set("fontFamily", family);
 
+      let { variants } = self.loadedFonts[family],
+        variantsHtml = '';
+      variants.map(v => {
+        variantsHtml += `<li value="${v}" style="text-transform:capitalize">${v}</li>`;
+      });
+      querySelect(".font-weight-selector .ms-select-list-menu").innerHTML = variantsHtml;
 
       obj.setPositionByOrigin(new fabric.Point(currCoordinate.x, currCoordinate.y), "center", "center");
       obj.setCoords();
@@ -4038,6 +4045,9 @@ class EditorScreen {
       items.forEach(item => {
         let { family } = item,
           loaded = false;
+        this.loadedFonts[family] = {
+          variants: item.variants
+        }
         famillies.push(family)
 
         if (count < 300) {
