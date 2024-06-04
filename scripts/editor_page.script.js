@@ -4029,9 +4029,9 @@ class EditorScreen {
 
     // Load Fonts in fabric js
     (async () => {
-      let res = await fetch('https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyA3WEzwS9il6Md6nJW5RI3eMlerTso8tII');
-      res = await res.json();
-      let { items } = res;
+      let response = await fetch('https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyA3WEzwS9il6Md6nJW5RI3eMlerTso8tII');
+      response = await response.json();
+      let { items } = response;
 
       let liItems = "",
         famillies = [],
