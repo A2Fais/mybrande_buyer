@@ -53,10 +53,14 @@ export async function saveCanvas(
   alignId,
   isPackage = false
 ) {
+  const thumbnailSVG = canvas.toSVG();
+  localStorage.setItem('thumbnail', thumbnailSVG)
 
   let externalLayers = canvas._objects.filter((obj) => {
     return obj.id && obj.id.includes("external_layer_");
   });
+
+
   let externalLayerElements = [],
     externalTextElements = [];
 
@@ -96,6 +100,7 @@ export async function saveCanvas(
 
     const brandColor = logoNameElement.get("fill");
     const sloganColor = sloganNameElement.get("fill");
+
     const postData = {
       buyer_logo_id: querySelect("#buyer_logo_id")?.value, // from response hidden input field
       buyer_id: querySelect("#buyer_Id")?.value, // hidden input field
@@ -128,6 +133,7 @@ export async function saveCanvas(
       slogan_droupShadow: getDropShadowValue(sloganNameElement.get("shadow")),
       externalLayerElements: JSON.stringify(externalLayerElements),
       externalTextElements: JSON.stringify(externalTextElements),
+      thumbnail: localStorage?.getItem('thumbnail')
     };
 
     try {
