@@ -268,6 +268,7 @@ class EditorScreen {
   constructor() {
     this.canvasBG = "#efefef";
     this.canvas = new fabric.Canvas("c", { backgroundColor: this.canvasBG });
+    this.loadedFonts = {};
     this.magnifier = new fabric.Canvas("magnifier", {
       backgroundColor: this.canvasBG,
     });
@@ -587,8 +588,39 @@ class EditorScreen {
         });
       }
       else
-        obj.set("fontFamily", family)
+        obj.set("fontFamily", family);
 
+      let { variants } = self.loadedFonts[family],
+        variantsHtml = '';
+      let values = {
+        'Regular': "normal",
+        "Bold": "800",
+        "regular": "normal"
+      }
+      variants.map(v => {
+        let value = values[v] ? values[v] : v;
+        variantsHtml += `<li value="${value}" style="text-transform:capitalize">${v}</li>`;
+      });
+      let target = querySelect(".font-weight-selector .ms-select-list-menu");
+      target.innerHTML = variantsHtml;
+      target.removeAttribute('data-init');
+      // Init Click event
+      target.querySelectorAll('li').forEach(li => {
+        li.addEventListener('click', function (e) {
+          e.stopPropagation();
+
+          let value = this.getAttribute("value"),
+            text = this.innerText,
+            parent = this.parentElement.parentElement;
+          parent.classList.remove("show");
+          let toggleBtn = parent.querySelector('.ms-list-toggle')
+
+          toggleBtn.querySelector('.ms-list-value').innerText = text;
+          parent.setAttribute("data-value", value);
+          parent.dispatchEvent(new Event("change"))
+          this.classList.add("selected");
+        });
+      })
 
       obj.setPositionByOrigin(new fabric.Point(currCoordinate.x, currCoordinate.y), "center", "center");
       obj.setCoords();
@@ -648,7 +680,7 @@ class EditorScreen {
 
     // Font Weight
     querySelect('.font-weight-selector').addEventListener("change", function () {
-
+      console.log('okay');
       let weight = this.getAttribute('data-value'),
         obj = self.canvas.getActiveObject();
       if (!obj) return false;
@@ -2141,7 +2173,6 @@ class EditorScreen {
       const obj = this.canvas.getActiveObject();
       if (!obj) return false;
       let save = true;
-
 
       if (obj._objects) {
         obj.clone((cloned) => {
@@ -4039,6 +4070,9 @@ class EditorScreen {
       items.forEach(item => {
         let { family } = item,
           loaded = false;
+        this.loadedFonts[family] = {
+          variants: item.variants
+        }
         famillies.push(family)
 
         if (count < 300) {
