@@ -42,7 +42,7 @@ export const centerAndResizeElements = (
     }
     return stack.join("");
   };
-  
+
   switch (type) {
     case "topBottom":
       setTimeout(() => {
@@ -202,6 +202,7 @@ export const centerAndResizeElements = (
         }
 
         if (letterSpaced) {
+          console.log("I AM WHERE I AM")
           logoNameElement.text = toTitleCase(logoNameElement.text);
           sloganNameElement.text = toSentenceCase(sloganNameElement.text);
 
@@ -210,12 +211,10 @@ export const centerAndResizeElements = (
 
           sloganNameElement.set("charSpacing", 322);
           sloganNameElement.set("fontSize", 27);
-          sloganNameElement.set(
-            "left",
-            logoNameElement.left +
-              logoNameElement.width / 2 -
-              sloganNameElement.width / 2
-          );
+
+
+          logoNameElement.set("left", canvas.width / 1.6);
+          sloganNameElement.set("left", logoNameElement.left);
         }
 
         logoMain.forEach((i) => (i.left += 500));
@@ -262,11 +261,40 @@ export const centerAndResizeElements = (
           logoNameElement.set("top", canvas.height / 2.3);
           sloganNameElement.set("top", canvas.height / 1.9);
 
-          logoNameElement.set("left", -(canvas.width / 2.9));
-          sloganNameElement.set(
-            "left",
-            logoNameElement.left + logoNameElement.width / 2.5
-          );
+          if (logoNameElement.text.length <= 20) {
+            logoNameElement.set("left", -(canvas.width / 100));
+            sloganNameElement.set(
+              "left",
+              logoNameElement.left +
+                logoNameElement.width / 2.5 -
+                sloganNameElement.width / 2.5
+            );
+          } else if (logoNameElement.text.length <= 30) {
+            console.log("<= 30");
+            logoNameElement.set("left", -(canvas.width / 7));
+            sloganNameElement.set(
+              "left",
+              logoNameElement.left +
+                logoNameElement.width / 1.25 -
+                sloganNameElement.width / 1.25
+            );
+          } else if (logoNameElement.text.length <= 40) {
+            logoNameElement.set("left", -(canvas.width / 2.9));
+            sloganNameElement.set(
+              "left",
+              logoNameElement.left +
+                logoNameElement.width / 1.25 -
+                sloganNameElement.width / 1.25
+            );
+          } else {
+            logoNameElement.set("left", canvas.width / 6);
+            sloganNameElement.set(
+              "left",
+              logoNameElement.left +
+                logoNameElement.width / 2 -
+                sloganNameElement.width / 2
+            );
+          }
 
           if (letterSpaced) {
             logoNameElement.text = toTitleCase(logoNameElement.text);
@@ -277,6 +305,11 @@ export const centerAndResizeElements = (
 
             sloganNameElement.set("charSpacing", 322);
             sloganNameElement.set("fontSize", 27);
+
+
+          const logoNameWidth = logoNameElement.width;
+          sloganNameElement?.set("width", logoNameWidth);
+
             sloganNameElement.set(
               "left",
               logoNameElement.left +
@@ -289,7 +322,7 @@ export const centerAndResizeElements = (
           sloganNameElement.viewportCenterH();
 
           if (logoNameElement.text.length <= 20) {
-            logoNameElement.set("left", canvas.width / 6);
+            logoNameElement.set("left", -(canvas.width / 100));
             sloganNameElement.set(
               "left",
               logoNameElement.left +
@@ -298,7 +331,7 @@ export const centerAndResizeElements = (
             );
           } else if (logoNameElement.text.length <= 30) {
             console.log("<= 30");
-            logoNameElement.set("left", canvas.width / 14);
+            logoNameElement.set("left", -(canvas.width / 6));
             sloganNameElement.set(
               "left",
               logoNameElement.left +
@@ -336,8 +369,8 @@ export const centerAndResizeElements = (
           sloganNameElement.set(
             "left",
             logoNameElement.left +
-              logoNameElement.width / 2 -
-              sloganNameElement.width / 2
+              logoNameElement.width / 2.5 -
+              sloganNameElement.width / 2.5
           );
         }
 

@@ -1071,6 +1071,7 @@ class EditorScreen {
 
     querySelect("#logoMainField").addEventListener("input", (e) => {
       const val = e.target.value;
+      // console.log("LOGO MAIN FIELD", val.length)
       this.logoName = val;
 
       logoNameElement = this.canvas.getObjects("text").map(i => i)[0]
@@ -1081,6 +1082,7 @@ class EditorScreen {
     // Slogan Name
     querySelect("#sloganNameField").addEventListener("input", (e) => {
       const val = e.target.value;
+      // console.log("SLOGAN MAIN FIELD", val.length)
 
       sloganNameElement = this.canvas.getObjects("text").map(i => i)[1]
       sloganNameElement.set("text", val);
