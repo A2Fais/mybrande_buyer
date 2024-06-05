@@ -3833,7 +3833,7 @@ class EditorScreen {
             "rightLeft",
             32,
             25,
-            "center",
+            "left",
             1.32,
             1.5,
             false,
@@ -3858,13 +3858,13 @@ class EditorScreen {
           break;
         case "13":
           centerAndResizeElements(
-            "rightLeft",
-            32,
-            25,
+            "topBottom",
+            46,
+            22,
             "center",
             1.32,
             1.5,
-            false,
+            true,
             canvas,
             logoNameElement,
             sloganNameElement
@@ -3872,13 +3872,13 @@ class EditorScreen {
           break;
         case "14":
           centerAndResizeElements(
-            "rightLeft",
+            "leftRight",
             32,
             25,
             "center",
             1.32,
             1.5,
-            false,
+            true,
             canvas,
             logoNameElement,
             sloganNameElement
@@ -3892,7 +3892,7 @@ class EditorScreen {
             "center",
             1.32,
             1.5,
-            false,
+            true,
             canvas,
             logoNameElement,
             sloganNameElement

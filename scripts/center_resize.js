@@ -12,13 +12,37 @@ export const centerAndResizeElements = (
   logoNameElement,
   sloganNameElement
 ) => {
-  const objects = canvas?.getObjects().filter(i => !i.id?.includes("external_layer_") && !i?.dublicate);
+  const objects = canvas
+    ?.getObjects()
+    .filter((i) => !i.id?.includes("external_layer_") && !i?.dublicate);
   logoNameElement.charSpacing = 0;
   sloganNameElement.charSpacing = 0;
-  const logoMain = objects.filter((i) => !i?.dublicate && !i.text && !i.id?.includes("external_layer_") && !i.id?.includes("Layer_1"));
+  const logoMain = objects.filter(
+    (i) =>
+      !i?.dublicate &&
+      !i.text &&
+      !i.id?.includes("external_layer_") &&
+      !i.id?.includes("Layer_1")
+  );
 
   const timeout = 5;
 
+  const toTitleCase = (str) => {
+    return str.replace(
+      /\w\S*/g,
+      (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+    );
+  };
+
+  const toSentenceCase = (str) => {
+    const stack = [];
+    stack.push(str[0].toUpperCase());
+    for (let i = 1; i < str.length; i++) {
+      stack.push(str[i].toLowerCase());
+    }
+    return stack.join("");
+  };
+  
   switch (type) {
     case "topBottom":
       setTimeout(() => {
@@ -26,14 +50,14 @@ export const centerAndResizeElements = (
           (obj) =>
             obj.type === "text" &&
             obj.text.toLowerCase() ===
-            querySelect("#logoMainField").value.toLowerCase()
+              querySelect("#logoMainField").value.toLowerCase()
         );
 
         const sloganNameElement = objects.find(
           (obj) =>
             obj.type === "text" &&
             obj.text.toLowerCase() ===
-            querySelect("#sloganNameField").value.toLowerCase()
+              querySelect("#sloganNameField").value.toLowerCase()
         );
 
         logoNameElement?.set("fontSize", logoSize);
@@ -78,14 +102,14 @@ export const centerAndResizeElements = (
           (obj) =>
             obj.type === "text" &&
             obj.text.toLowerCase() ===
-            querySelect("#logoMainField").value.toLowerCase()
+              querySelect("#logoMainField").value.toLowerCase()
         );
 
         const sloganNameElement = objects.find(
           (obj) =>
             obj.type === "text" &&
             obj.text.toLowerCase() ===
-            querySelect("#sloganNameField").value.toLowerCase()
+              querySelect("#sloganNameField").value.toLowerCase()
         );
 
         logoNameElement.set("fontSize", logoSize);
@@ -110,17 +134,15 @@ export const centerAndResizeElements = (
           (obj) =>
             obj.type === "text" &&
             obj.text.toLowerCase() ===
-            querySelect("#logoMainField").value.toLowerCase()
+              querySelect("#logoMainField").value.toLowerCase()
         );
 
         const sloganNameElement = objects.find(
           (obj) =>
             obj.type === "text" &&
             obj.text.toLowerCase() ===
-            querySelect("#sloganNameField").value.toLowerCase()
+              querySelect("#sloganNameField").value.toLowerCase()
         );
-
-        console.log("Left Right");
 
         logoNameElement.center();
         sloganNameElement.center();
@@ -137,40 +159,44 @@ export const centerAndResizeElements = (
         if (textPosition === "left") {
           logoNameElement.viewportCenter();
           sloganNameElement.viewportCenter();
-          console.log("left");
 
           logoNameElement.set("top", canvas.height / 2.3);
           sloganNameElement.set("top", canvas.height / 1.9);
 
-          logoNameElement.set("left", canvas.width / 2.4);
-          sloganNameElement.set("left", logoNameElement.left);
+          if (logoNameElement.text.length <= 40) {
+            logoNameElement.set("left", canvas.width / 1.6);
+            sloganNameElement.set("left", logoNameElement.left);
+          } else {
+            logoNameElement.set("left", canvas.width / 2.4);
+            sloganNameElement.set("left", logoNameElement.left);
+          }
         } else {
           logoNameElement.viewportCenterH();
           sloganNameElement.viewportCenterH();
 
           if (logoNameElement.text.length <= 40) {
-            logoNameElement.set("left", canvas.width - 570);
+            logoNameElement.set("left", canvas.width / 1.6);
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-              logoNameElement.width / 2 -
-              sloganNameElement.width / 2
+                logoNameElement.width / 2 -
+                sloganNameElement.width / 1.5
             );
           } else if (logoNameElement.text.length <= 30) {
             logoNameElement.set("left", canvas.width - 500);
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-              logoNameElement.width / 2 -
-              sloganNameElement.width / 2
+                logoNameElement.width / 2 -
+                sloganNameElement.width / 2
             );
           } else {
             logoNameElement.set("left", canvas.width / 2.5);
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-              logoNameElement.width / 2 -
-              sloganNameElement.width / 2
+                logoNameElement.width / 2 -
+                sloganNameElement.width / 2
             );
           }
         }
@@ -187,12 +213,12 @@ export const centerAndResizeElements = (
           sloganNameElement.set(
             "left",
             logoNameElement.left +
-            logoNameElement.width / 2 -
-            sloganNameElement.width / 2
+              logoNameElement.width / 2 -
+              sloganNameElement.width / 2
           );
         }
 
-        logoMain.forEach((i) => (i.left -= 200));
+        logoMain.forEach((i) => (i.left += 500));
         const newGrp = new fabric.Group(objects);
         canvas.viewportCenterObjectH(newGrp);
         canvas.viewportCenterObjectV(newGrp);
@@ -207,14 +233,14 @@ export const centerAndResizeElements = (
           (obj) =>
             obj.type === "text" &&
             obj.text.toLowerCase() ===
-            querySelect("#logoMainField").value.toLowerCase()
+              querySelect("#logoMainField").value.toLowerCase()
         );
 
         const sloganNameElement = objects.find(
           (obj) =>
             obj.type === "text" &&
             obj.text.toLowerCase() ===
-            querySelect("#sloganNameField").value.toLowerCase()
+              querySelect("#sloganNameField").value.toLowerCase()
         );
 
         logoNameElement.center();
@@ -236,12 +262,10 @@ export const centerAndResizeElements = (
           logoNameElement.set("top", canvas.height / 2.3);
           sloganNameElement.set("top", canvas.height / 1.9);
 
-          logoNameElement.set("left", canvas.width / 6);
+          logoNameElement.set("left", -(canvas.width / 2.9));
           sloganNameElement.set(
             "left",
-            logoNameElement.left +
-            logoNameElement.width -
-            sloganNameElement.width
+            logoNameElement.left + logoNameElement.width / 2.5
           );
 
           if (letterSpaced) {
@@ -256,12 +280,11 @@ export const centerAndResizeElements = (
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-              logoNameElement.width -
-              sloganNameElement.width
+                logoNameElement.width -
+                sloganNameElement.width
             );
           }
         } else {
-
           logoNameElement.viewportCenterH();
           sloganNameElement.viewportCenterH();
 
@@ -270,8 +293,8 @@ export const centerAndResizeElements = (
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-              logoNameElement.width / 2.5 -
-              sloganNameElement.width / 2.5
+                logoNameElement.width / 2.5 -
+                sloganNameElement.width / 2.5
             );
           } else if (logoNameElement.text.length <= 30) {
             console.log("<= 30");
@@ -279,30 +302,47 @@ export const centerAndResizeElements = (
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-              logoNameElement.width / 2.5 -
-              sloganNameElement.width / 2.5
+                logoNameElement.width / 2.5 -
+                sloganNameElement.width / 2.5
             );
           } else if (logoNameElement.text.length <= 40) {
-            logoNameElement.set("left", -200);
+            logoNameElement.set("left", -(canvas.width / 2.9));
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-              logoNameElement.width / 2.5 -
-              sloganNameElement.width / 2.5
+                logoNameElement.width / 2.5 -
+                sloganNameElement.width / 2.5
             );
           } else {
             logoNameElement.set("left", canvas.width / 6);
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-              logoNameElement.width / 2 -
-              sloganNameElement.width / 2
+                logoNameElement.width / 2 -
+                sloganNameElement.width / 2
             );
           }
         }
 
+        if (letterSpaced) {
+          logoNameElement.text = toTitleCase(logoNameElement.text);
+          sloganNameElement.text = toSentenceCase(sloganNameElement.text);
+
+          logoNameElement.set("fontFamily", "Poppins");
+          sloganNameElement.set("fontFamily", "Poppins");
+
+          sloganNameElement.set("charSpacing", 322);
+          sloganNameElement.set("fontSize", 27);
+          sloganNameElement.set(
+            "left",
+            logoNameElement.left +
+              logoNameElement.width / 2 -
+              sloganNameElement.width / 2
+          );
+        }
+
         logoMain.forEach((i) => {
-          i.left += 150;
+          i.left += 50;
           i.top += 40;
         });
         const newGrp = new fabric.Group(objects);
