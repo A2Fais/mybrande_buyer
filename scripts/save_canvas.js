@@ -62,12 +62,18 @@ export async function saveCanvas(
 
 
   let externalLayerElements = [],
-    externalTextElements = [];
+    externalTextElements = [],
+    externalImages = [];
 
   externalLayers.map((layer) => {
     let data = layer.toJSON(['itemId', 'category', 'cacheHeight', 'cacheWidth', 'id', 'layerType']);
-    if (layer.text) externalTextElements.push(data);
-    else externalLayerElements.push(data);
+    if (layer.text) { 
+      externalTextElements.push(data)
+    } else if (layer.id.includes("upload_external_layer_")){
+      externalImages.push(data)      
+    } else { 
+      externalLayerElements.push(data)
+    };
     canvas.remove(layer);
   });
 
@@ -133,6 +139,7 @@ export async function saveCanvas(
       slogan_droupShadow: getDropShadowValue(sloganNameElement.get("shadow")),
       externalLayerElements: JSON.stringify(externalLayerElements),
       externalTextElements: JSON.stringify(externalTextElements),
+      images: JSON.stringify(externalImages),
       thumbnail: localStorage?.getItem('thumbnail')
     };
 
@@ -142,28 +149,29 @@ export async function saveCanvas(
         postData
       );
       if (response?.status === 200) {
-        const { buyer_logo_id } = response.data;
-        if (!buyer_logo_id)
-          return toastNotification("Error encountered with buyer logo ID");
-        querySelect("#buyer_logo_id").value = buyer_logo_id;
-        canvas.setBackgroundColor(bgColor, canvas.renderAll.bind(canvas));
-        canvas.setBackgroundImage(
-          "/static/pattern.png",
-          this.canvas.renderAll.bind(this.canvas),
-          {
-            opacity: 0.6,
-            originX: "left",
-            originY: "top",
-            top: 0,
-            left: 0,
-            scaleX: 0.3,
-            scaleY: 0.3,
-          }
-        );
-        isPackage
-          ? (location.href = `https://www.mybrande.com/api/buyer/logo/downloadandpayment/${buyer_logo_id}`)
-          : (window.location.href = `https://www.mybrande.com/api/user/logo/preview/${buyer_logo_id}`);
-        toastNotification("Logo Saved Successfully");
+        console.log(response.data)
+        // const { buyer_logo_id } = response.data;
+        // if (!buyer_logo_id)
+        //   return toastNotification("Error encountered with buyer logo ID");
+        // querySelect("#buyer_logo_id").value = buyer_logo_id;
+        // canvas.setBackgroundColor(bgColor, canvas.renderAll.bind(canvas));
+        // canvas.setBackgroundImage(
+        //   "/static/pattern.png",
+        //   this.canvas.renderAll.bind(this.canvas),
+        //   {
+        //     opacity: 0.6,
+        //     originX: "left",
+        //     originY: "top",
+        //     top: 0,
+        //     left: 0,
+        //     scaleX: 0.3,
+        //     scaleY: 0.3,
+        //   }
+        // );
+        // isPackage
+        //   ? (location.href = `https://www.mybrande.com/api/buyer/logo/downloadandpayment/${buyer_logo_id}`)
+        //   : (window.location.href = `https://www.mybrande.com/api/user/logo/preview/${buyer_logo_id}`);
+        // toastNotification("Logo Saved Successfully");
       }
     } catch (error) {
       console.log(error);

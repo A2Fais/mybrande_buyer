@@ -45,12 +45,24 @@ WebFont.load({
 
 //#region Text Curved
 fabric.CurvedText = fabric.util.createClass(fabric.Object, {
-  type: 'curved-text',
+  type: "curved-text",
   diameter: 250,
   kerning: 0,
-  text: '',
+  text: "",
   flipped: false,
-  cacheProperties: fabric.Object.prototype.cacheProperties.concat('diameter', 'text', 'kerning', 'flipped', 'fill', 'fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'strokeStyle', 'strokeWidth'),
+  cacheProperties: fabric.Object.prototype.cacheProperties.concat(
+    "diameter",
+    "text",
+    "kerning",
+    "flipped",
+    "fill",
+    "fontFamily",
+    "fontSize",
+    "fontWeight",
+    "fontStyle",
+    "strokeStyle",
+    "strokeWidth"
+  ),
   strokeStyle: null,
   _refresh: true,
   strokeWidth: 0,
@@ -61,39 +73,41 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
     options || (options = {});
     this.text = text;
 
-    this.callSuper('initialize', options);
-    this.set('lockUniScaling', true);
+    this.callSuper("initialize", options);
+    this.set("lockUniScaling", true);
     this._needsRecalculate = true;
 
     // Draw curved text here initially too, while we need to know the width and height.
     var canvas = this.getCircularText();
     canvas = this._trimCanvas(canvas);
-    this.set('width', canvas.width);
-    this.set('height', canvas.height);
+    this.set("width", canvas.width);
+    this.set("height", canvas.height);
   },
 
   _getFontDeclaration: function () {
     return [
-      (fabric.isLikelyNode ? this.fontWeight : this.fontStyle),
-      (fabric.isLikelyNode ? this.fontStyle : this.fontWeight),
-      this.fontSize + 'px',
-      (fabric.isLikelyNode ? ('"' + this.fontFamily + '"') : this.fontFamily)
-    ].join(' ');
+      fabric.isLikelyNode ? this.fontWeight : this.fontStyle,
+      fabric.isLikelyNode ? this.fontStyle : this.fontWeight,
+      this.fontSize + "px",
+      fabric.isLikelyNode ? '"' + this.fontFamily + '"' : this.fontFamily,
+    ].join(" ");
   },
 
   _trimCanvas: function (canvas) {
     try {
-      var ctx = canvas.getContext('2d', { willReadFrequently: true }),
+      var ctx = canvas.getContext("2d", { willReadFrequently: true }),
         w = canvas.width,
         h = canvas.height,
         pix = { x: [], y: [] },
         n,
         imageData = ctx.getImageData(0, 0, w, h),
-        fn = function (a, b) { return a - b };
+        fn = function (a, b) {
+          return a - b;
+        };
 
       for (var y = 0; y < h; y++) {
         for (var x = 0; x < w; x++) {
-          if (imageData.data[((y * w + x) * 4) + 3] > 0) {
+          if (imageData.data[(y * w + x) * 4 + 3] > 0) {
             pix.x.push(x);
             pix.y.push(y);
           }
@@ -122,7 +136,10 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
       return this._cachedCanvas;
     }
 
-    var text = this.text.trim().length > 1 ? this.text : "You don't set empty value in curved text",
+    var text =
+        this.text.trim().length > 1
+          ? this.text
+          : "You don't set empty value in curved text",
       diameter = this.diameter,
       flipped = this.flipped,
       kerning = this.kerning,
@@ -130,7 +147,7 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
       inwardFacing = true,
       startAngle = 0,
       canvas = fabric.util.createCanvasElement(),
-      ctx = canvas.getContext('2d', { willReadFrequently: true }),
+      ctx = canvas.getContext("2d", { willReadFrequently: true }),
       cw, // character-width
       x, // iterator
       clockwise = -1; // draw clockwise for aligned right. Else Anticlockwise
@@ -143,10 +160,10 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
     startAngle *= Math.PI / 180; // convert to radians
 
     // Calc heigt of text in selected font:
-    var d = document.createElement('div');
+    var d = document.createElement("div");
     d.style.fontFamily = this.fontFamily;
-    d.style.whiteSpace = 'nowrap';
-    d.style.fontSize = this.fontSize + 'px';
+    d.style.whiteSpace = "nowrap";
+    d.style.fontSize = this.fontSize + "px";
     d.style.fontWeight = this.fontWeight;
     d.style.fontStyle = this.fontStyle;
     d.textContent = text;
@@ -158,18 +175,24 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
     ctx.font = this._getFontDeclaration();
 
     // Reverse letters for center inward.
-    if (inwardFacing) { text = text.split('').reverse().join('') };
+    if (inwardFacing) {
+      text = text.split("").reverse().join("");
+    }
 
     // Setup letters and positioning
     ctx.translate(diameter / 2, diameter / 2); // Move to center
-    startAngle += (Math.PI * !inwardFacing); // Rotate 180 if outward
-    ctx.textBaseline = 'middle'; // Ensure we draw in exact center
-    ctx.textAlign = 'center'; // Ensure we draw in exact center
+    startAngle += Math.PI * !inwardFacing; // Rotate 180 if outward
+    ctx.textBaseline = "middle"; // Ensure we draw in exact center
+    ctx.textAlign = "center"; // Ensure we draw in exact center
 
     // rotate 50% of total angle for center alignment
     for (x = 0; x < text.length; x++) {
       cw = ctx.measureText(text[x]).width;
-      startAngle += ((cw + (x == text.length - 1 ? 0 : kerning)) / (diameter / 2 - textHeight)) / 2 * -clockwise;
+      startAngle +=
+        ((cw + (x == text.length - 1 ? 0 : kerning)) /
+          (diameter / 2 - textHeight) /
+          2) *
+        -clockwise;
     }
 
     // Phew... now rotate into final start position
@@ -179,7 +202,7 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
     for (x = 0; x < text.length; x++) {
       cw = ctx.measureText(text[x]).width; // half letter
       // rotate half letter
-      ctx.rotate((cw / 2) / (diameter / 2 - textHeight) * clockwise);
+      ctx.rotate((cw / 2 / (diameter / 2 - textHeight)) * clockwise);
       // draw the character at "top" or "bottom"
       // depending on inward or outward facing
 
@@ -188,14 +211,24 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
         ctx.strokeStyle = this.strokeStyle;
         ctx.lineWidth = this.strokeWidth;
         ctx.miterLimit = 2;
-        ctx.strokeText(text[x], 0, (inwardFacing ? 1 : -1) * (0 - diameter / 2 + textHeight / 2));
+        ctx.strokeText(
+          text[x],
+          0,
+          (inwardFacing ? 1 : -1) * (0 - diameter / 2 + textHeight / 2)
+        );
       }
 
       // Actual text
       ctx.fillStyle = fill;
-      ctx.fillText(text[x], 0, (inwardFacing ? 1 : -1) * (0 - diameter / 2 + textHeight / 2));
+      ctx.fillText(
+        text[x],
+        0,
+        (inwardFacing ? 1 : -1) * (0 - diameter / 2 + textHeight / 2)
+      );
 
-      ctx.rotate((cw / 2 + kerning) / (diameter / 2 - textHeight) * clockwise); // rotate half letter
+      ctx.rotate(
+        ((cw / 2 + kerning) / (diameter / 2 - textHeight)) * clockwise
+      ); // rotate half letter
     }
 
     this._cachedCanvas = canvas;
@@ -204,30 +237,33 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
   },
 
   _set: function (key, value) {
-    this.callSuper('_set', key, value);
+    this.callSuper("_set", key, value);
     this._needsRecalculate = true;
   },
 
   _updateObj(key, value) {
     switch (key) {
-      case 'scaleX':
+      case "scaleX":
         this.fontSize *= value;
         this.diameter *= value;
         this.width *= value;
         this.scaleX = 1;
-        if (this.width < 1) { this.width = 1; }
+        if (this.width < 1) {
+          this.width = 1;
+        }
         break;
 
-      case 'scaleY':
+      case "scaleY":
         this.height *= value;
         this.scaleY = 1;
-        if (this.height < 1) { this.height = 1; }
+        if (this.height < 1) {
+          this.height = 1;
+        }
         break;
 
       default:
-        this.callSuper('_set', key, value);
+        this.callSuper("_set", key, value);
         break;
-
     }
     this._needsRecalculate = true;
   },
@@ -238,31 +274,56 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
 
   _render: function (ctx) {
     if (!this._refresh && this._cachedCanvas) {
-      ctx.drawImage(this._cachedCanvas, -this.width / 2, -this.height / 2, this.width, this.height);
+      ctx.drawImage(
+        this._cachedCanvas,
+        -this.width / 2,
+        -this.height / 2,
+        this.width,
+        this.height
+      );
       return;
     }
 
     if (!this._cachedCanvas || this._needsRecalculate) {
-
       var canvas = this.getCircularText();
       canvas = this._trimCanvas(canvas);
 
-      this.set('width', canvas.width);
-      this.set('height', canvas.height);
+      this.set("width", canvas.width);
+      this.set("height", canvas.height);
     }
 
-    ctx.drawImage(canvas, -this.width / 2, -this.height / 2, this.width, this.height);
+    ctx.drawImage(
+      canvas,
+      -this.width / 2,
+      -this.height / 2,
+      this.width,
+      this.height
+    );
 
     this.setCoords();
   },
 
   toObject: function (propertiesToInclude) {
-    return this.callSuper('toObject', ['text', 'diameter', 'kerning', 'flipped', 'fill', 'fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'strokeStyle', 'strokeWidth'].concat(propertiesToInclude));
-  }
+    return this.callSuper(
+      "toObject",
+      [
+        "text",
+        "diameter",
+        "kerning",
+        "flipped",
+        "fill",
+        "fontFamily",
+        "fontSize",
+        "fontWeight",
+        "fontStyle",
+        "strokeStyle",
+        "strokeWidth",
+      ].concat(propertiesToInclude)
+    );
+  },
 });
 
-
-//#endregion Text Curved 
+//#endregion Text Curved
 
 class EditorScreen {
   constructor() {
@@ -277,7 +338,7 @@ class EditorScreen {
     this.loadedIcons = {};
     this.textMode = querySelect('.nav-item[data-name="text"]');
     this.logoMode = querySelect('.nav-item[data-name="logo"]');
-    this.uploadsMode = querySelect('.nav-item[data-name="uploads"]');
+    this.uploadsMode = querySelect('.nav-item[data-name="upload"]');
     this.backgroundMode = querySelect('.nav-item[data-name="background"]');
     this.previewMode = querySelect('.nav-item[data-name="preview"]');
     this.galleryMode = querySelect('.nav-item[data-name="gallery"]');
@@ -349,7 +410,7 @@ class EditorScreen {
         const val = e.target.value;
         params.set("logo", val);
         const updatedURL = url.origin + url.pathname + "?" + params.toString();
-      } catch (err) { }
+      } catch (err) {}
     });
 
     querySelect("#logoMainField").addEventListener("change", (e) => {
@@ -358,37 +419,35 @@ class EditorScreen {
 
     this.canvas.save = function () {
       self.canvasHistory.saveHistory();
-    }
+    };
     this.canvas.undoCB = () => {
-
       let layers = querySelectAll("#layers .layer-container");
-      layers.forEach(layer => {
-        layer.style.display = 'none';
+      layers.forEach((layer) => {
+        layer.style.display = "none";
       });
 
-      this.canvas._objects.forEach(obj => {
+      this.canvas._objects.forEach((obj) => {
         if (obj.layerId) {
           let layer = querySelect(`.layer-container[data-id="${obj.layerId}"]`);
           if (!layer) return true;
-          layer.style.display = 'flex';
-          layer.querySelector('.layer-img').classList.remove('selected')
-          layer.querySelector('.layer-span').classList.remove('selected')
+          layer.style.display = "flex";
+          layer.querySelector(".layer-img").classList.remove("selected");
+          layer.querySelector(".layer-span").classList.remove("selected");
         }
       });
       this.canvas.refreshLayerNames();
-    }
+    };
     querySelect("#sloganNameField").addEventListener("input", (e) => {
       try {
         const val = e.target.value;
         params.set("slogan", val);
         const updatedURL = url.origin + url.pathname + "?" + params.toString();
-      } catch (error) { }
+      } catch (error) {}
     });
 
     querySelect("#sloganNameField").addEventListener("change", (e) => {
       this.canvasHistory.saveHistory();
     });
-
 
     this.transparentLoader = (isOn = true) => {
       querySelect("#loader_font").style.display = isOn ? "block" : "none";
@@ -410,7 +469,6 @@ class EditorScreen {
       const currCoordinate = active?.getCenterPoint();
 
       if (this.isScaling && active && this.scaleValue) {
-
         active.scale(this.scaleValue);
 
         active.setPositionByOrigin(
@@ -430,7 +488,7 @@ class EditorScreen {
       if (active.angle == 0) return false;
       rotateReset(active);
       this.canvas.requestRenderAll();
-      querySelect('#rotate_info').innerText = 'Rotate: 0deg';
+      querySelect("#rotate_info").innerText = "Rotate: 0deg";
       this.rotateRange.value = 0;
       if (active) this.canvas.save();
       this.canvas.renderAll();
@@ -466,12 +524,13 @@ class EditorScreen {
     this.canvas.on("after:render", () => {
       querySelect("#loader_font").style.display = "none";
     });
-
   }
   // Hide all positioning line
   hideCanvasGuides() {
     // Get positionlines objects ids in array
-    let positionlines = this.canvas._objects.filter(obj => obj.isPositioningLine);
+    let positionlines = this.canvas._objects.filter(
+      (obj) => obj.isPositioningLine
+    );
     // Hide all positionlines
     for (let i = 0; i < positionlines.length; i++) {
       this.canvas.remove(positionlines[i]);
@@ -481,7 +540,6 @@ class EditorScreen {
   initialize() {
     var self = this;
     const updatePreview = () => {
-
       const imageURL = this.canvas.lowerCanvasEl.toDataURL({
         format: "png",
         multiplier: 0.5,
@@ -492,7 +550,9 @@ class EditorScreen {
     this.canvas.updatePreview = updatePreview;
 
     const refreshLayerNames = () => {
-      let layerItems = Array.from(this.layers.childNodes).filter(i => i.style.display !== 'none');
+      let layerItems = Array.from(this.layers.childNodes).filter(
+        (i) => i.style.display !== "none"
+      );
       let count = 1;
       layerItems.forEach((l) => {
         let span = l.querySelector(".layer-span");
@@ -500,7 +560,7 @@ class EditorScreen {
         span.innerText = `Layer ${count}`;
         count++;
       });
-    }
+    };
     this.canvas.refreshLayerNames = refreshLayerNames;
 
     const setCanvasBackground = () => {
@@ -568,149 +628,156 @@ class EditorScreen {
     //#region Select Boxes
 
     // Font Family
-    querySelect('.font-family-selectbox').addEventListener('change', function () {
-      let family = this.getAttribute('data-value'),
-        loaded = this.getAttribute("data-loaded"),
-        obj = self.canvas.getActiveObject(),
-        currCoordinate = obj.getCenterPoint();
-      if (!obj) return false;
+    querySelect(".font-family-selectbox").addEventListener(
+      "change",
+      function () {
+        let family = this.getAttribute("data-value"),
+          loaded = this.getAttribute("data-loaded"),
+          obj = self.canvas.getActiveObject(),
+          currCoordinate = obj.getCenterPoint();
+        if (!obj) return false;
 
+        if (loaded == "false") {
+          WebFont.load({
+            google: {
+              families: [family],
+            },
+            active: function () {
+              obj.set("fontFamily", family);
+              self.canvas.renderAll();
+            },
+          });
+        } else obj.set("fontFamily", family);
 
-      if (loaded == 'false') {
-        WebFont.load({
-          google: {
-            families: [family]
-          },
-          active: function () {
-            obj.set('fontFamily', family);
-            self.canvas.renderAll();
-          }
+        let { variants } = self.loadedFonts[family],
+          variantsHtml = "";
+        let values = {
+          Regular: "normal",
+          Bold: "800",
+          regular: "normal",
+        };
+        variants.map((v) => {
+          let value = values[v] ? values[v] : v;
+          variantsHtml += `<li value="${value}" style="text-transform:capitalize">${v}</li>`;
         });
-      }
-      else
-        obj.set("fontFamily", family);
+        let target = querySelect(".font-weight-selector .ms-select-list-menu");
+        target.innerHTML = variantsHtml;
+        target.removeAttribute("data-init");
+        // Init Click event
+        target.querySelectorAll("li").forEach((li) => {
+          li.addEventListener("click", function (e) {
+            e.stopPropagation();
 
-      let { variants } = self.loadedFonts[family],
-        variantsHtml = '';
-      let values = {
-        'Regular': "normal",
-        "Bold": "800",
-        "regular": "normal"
-      }
-      variants.map(v => {
-        let value = values[v] ? values[v] : v;
-        variantsHtml += `<li value="${value}" style="text-transform:capitalize">${v}</li>`;
-      });
-      let target = querySelect(".font-weight-selector .ms-select-list-menu");
-      target.innerHTML = variantsHtml;
-      target.removeAttribute('data-init');
-      // Init Click event
-      target.querySelectorAll('li').forEach(li => {
-        li.addEventListener('click', function (e) {
-          e.stopPropagation();
+            let value = this.getAttribute("value"),
+              text = this.innerText,
+              parent = this.parentElement.parentElement;
+            parent.classList.remove("show");
+            let toggleBtn = parent.querySelector(".ms-list-toggle");
 
-          let value = this.getAttribute("value"),
-            text = this.innerText,
-            parent = this.parentElement.parentElement;
-          parent.classList.remove("show");
-          let toggleBtn = parent.querySelector('.ms-list-toggle')
-
-          toggleBtn.querySelector('.ms-list-value').innerText = text;
-          parent.setAttribute("data-value", value);
-          parent.dispatchEvent(new Event("change"))
-          this.classList.add("selected");
+            toggleBtn.querySelector(".ms-list-value").innerText = text;
+            parent.setAttribute("data-value", value);
+            parent.dispatchEvent(new Event("change"));
+            this.classList.add("selected");
+          });
         });
-      })
 
-      obj.setPositionByOrigin(new fabric.Point(currCoordinate.x, currCoordinate.y), "center", "center");
-      obj.setCoords();
-      self.canvas.requestRenderAll();
-      updatePreview();
-      self.canvas.save();
-
-    });
+        obj.setPositionByOrigin(
+          new fabric.Point(currCoordinate.x, currCoordinate.y),
+          "center",
+          "center"
+        );
+        obj.setCoords();
+        self.canvas.requestRenderAll();
+        updatePreview();
+        self.canvas.save();
+      }
+    );
 
     // Font Case
-    querySelect('.text-case-select-box').addEventListener("change", function () {
-      const selectedTextElement = this.getAttribute('data-value'),
-        obj = self.canvas.getActiveObject();
-      if (!obj) return false;
-      let currCoordinate = obj.getCenterPoint(),
-        existingFont = obj.get("fontFamily"),
-        existingFill = obj.get("fill"),
-        existingSelectable = obj.get("selectable"),
-        HasRotatingPoint = obj.get("hasRotatingPoint"),
-        existingDiameter = obj.get("diameter"),
-        existingLeft = obj.get("left"),
-        existingTop = obj.get("top"),
-        existingFlipped = obj.get("flipped"),
-        existingFontSize = obj.get("fontSize");
-      obj.set("letterCase", selectedTextElement)
-      obj.set("fontSize", 40);
+    querySelect(".text-case-select-box").addEventListener(
+      "change",
+      function () {
+        const selectedTextElement = this.getAttribute("data-value"),
+          obj = self.canvas.getActiveObject();
+        if (!obj) return false;
+        let currCoordinate = obj.getCenterPoint(),
+          existingFont = obj.get("fontFamily"),
+          existingFill = obj.get("fill"),
+          existingSelectable = obj.get("selectable"),
+          HasRotatingPoint = obj.get("hasRotatingPoint"),
+          existingDiameter = obj.get("diameter"),
+          existingLeft = obj.get("left"),
+          existingTop = obj.get("top"),
+          existingFlipped = obj.get("flipped"),
+          existingFontSize = obj.get("fontSize");
+        obj.set("letterCase", selectedTextElement);
+        obj.set("fontSize", 40);
 
-      const text = obj?.text;
-      if (selectedTextElement === "Uppercase") obj.text = text.toUpperCase();
-      else if (selectedTextElement === "Lowercase") obj.text = text.toLowerCase();
-      else if (selectedTextElement === "Title Case") obj.text = toTitleCase(text);
-      else if (selectedTextElement === "Sentence Case") obj.text = toSentenceCase(text);
+        const text = obj?.text;
+        if (selectedTextElement === "Uppercase") obj.text = text.toUpperCase();
+        else if (selectedTextElement === "Lowercase")
+          obj.text = text.toLowerCase();
+        else if (selectedTextElement === "Title Case")
+          obj.text = toTitleCase(text);
+        else if (selectedTextElement === "Sentence Case")
+          obj.text = toSentenceCase(text);
 
+        obj.set("fontFamily", existingFont);
+        obj.set("fill", existingFill);
+        obj.set("selectable", existingSelectable);
+        obj.set("hasRotatingPoint", HasRotatingPoint);
+        obj.set("diameter", existingDiameter);
+        obj.set("left", existingLeft);
+        obj.set("top", existingTop);
+        obj.set("flipped", existingFlipped);
+        obj.set("fontSize", existingFontSize);
 
-      obj.set("fontFamily", existingFont);
-      obj.set("fill", existingFill);
-      obj.set("selectable", existingSelectable);
-      obj.set("hasRotatingPoint", HasRotatingPoint);
-      obj.set("diameter", existingDiameter);
-      obj.set("left", existingLeft);
-      obj.set("top", existingTop);
-      obj.set("flipped", existingFlipped);
-      obj.set("fontSize", existingFontSize);
+        obj.setPositionByOrigin(
+          new fabric.Point(currCoordinate.x, currCoordinate.y),
+          "center",
+          "center"
+        );
+        obj.setCoords();
 
-      obj.setPositionByOrigin(
-        new fabric.Point(currCoordinate.x, currCoordinate.y),
-        "center",
-        "center"
-      );
-      obj.setCoords();
-
-      self.canvas.renderAll();
-      updatePreview();
-      self.canvas.save();
-
-    });
+        self.canvas.renderAll();
+        updatePreview();
+        self.canvas.save();
+      }
+    );
 
     // Font Weight
-    querySelect('.font-weight-selector').addEventListener("change", function () {
-      console.log('okay');
-      let weight = this.getAttribute('data-value'),
-        obj = self.canvas.getActiveObject();
-      if (!obj) return false;
-      obj.set('fontWeight', weight);
-      self.canvas.renderAll();
-      updatePreview();
-      self.canvas.save();
-    });
+    querySelect(".font-weight-selector").addEventListener(
+      "change",
+      function () {
+        console.log("okay");
+        let weight = this.getAttribute("data-value"),
+          obj = self.canvas.getActiveObject();
+        if (!obj) return false;
+        obj.set("fontWeight", weight);
+        self.canvas.renderAll();
+        updatePreview();
+        self.canvas.save();
+      }
+    );
 
     // Font Style
-    querySelect('.font-style-selector').addEventListener('change', function () {
-      let value = this.getAttribute('data-value'),
+    querySelect(".font-style-selector").addEventListener("change", function () {
+      let value = this.getAttribute("data-value"),
         obj = self.canvas.getActiveObject();
       if (!obj) return false;
-      if (value == 'Underline') obj.set("underline", true);
+      if (value == "Underline") obj.set("underline", true);
       else {
-        obj.set('underline', false);
+        obj.set("underline", false);
         obj.set("fontStyle", value);
-        obj.set('fontStyle_', value);
+        obj.set("fontStyle_", value);
       }
 
       self.canvas.renderAll();
       updatePreview();
       self.canvas.save();
-
     });
 
-
-    //#endregion Select Boxes 
-
+    //#endregion Select Boxes
 
     this.rotateRange.addEventListener("input", (e) => {
       this.isRotating = true;
@@ -805,17 +872,15 @@ class EditorScreen {
       }
     });
 
-    querySelect('#scale_up').addEventListener("click", (e) => {
+    querySelect("#scale_up").addEventListener("click", (e) => {
       this.scaleRange.value = parseInt(this.scaleRange.value) + 1;
       this.scaleRange.dispatchEvent(new Event("input"));
-    })
+    });
 
-    querySelect('#scale_down').addEventListener("click", (e) => {
+    querySelect("#scale_down").addEventListener("click", (e) => {
       this.scaleRange.value = parseInt(this.scaleRange.value) - 1;
       this.scaleRange.dispatchEvent(new Event("input"));
-    })
-
-
+    });
 
     this.scaleRange.addEventListener("change", function () {
       updatePreview();
@@ -866,15 +931,15 @@ class EditorScreen {
     });
 
     this.layers.addEventListener("click", (e) => {
-      const target = e.target.closest('.layer-container');
+      const target = e.target.closest(".layer-container");
 
-      let id = target.getAttribute('data-id'),
+      let id = target.getAttribute("data-id"),
         obj = null;
-      this.canvas._objects.forEach(object => {
+      this.canvas._objects.forEach((object) => {
         if (object.layerId) {
           if (object.layerId == id) obj = object;
         }
-      })
+      });
       if (!obj) return false;
       this.canvas.setActiveObject(obj);
       this.canvas.requestRenderAll();
@@ -885,13 +950,15 @@ class EditorScreen {
       this.scaleObject();
     });
     let isScaling = false;
-    this.canvas.on('object:scaling', () => { isScaling = true })
+    this.canvas.on("object:scaling", () => {
+      isScaling = true;
+    });
     this.canvas.on("mouse:up", function () {
       if (isScaling) {
         isScaling = false;
         self.canvas.save();
       }
-    })
+    });
 
     let openTextPickerView = "block";
     let openPickerView = "block";
@@ -924,10 +991,9 @@ class EditorScreen {
     colorPicker.on("input:end", (color) => {
       updatePreview();
       this.canvas.save();
-    })
+    });
 
     const changePickerColors = (element) => {
-
       const color = Array.isArray(element.get("fill").colorStops)
         ? rgbToHex(element.get("fill").colorStops[0].color)
         : element.get("fill");
@@ -950,20 +1016,24 @@ class EditorScreen {
         activeObject.on("mousedown", updatePickerHandler(activeObject));
 
       if (activeObject) {
-
         if (activeObject.text)
-          querySelect('.nav-item[data-name="text"]').dispatchEvent(new Event('click'));
+          querySelect('.nav-item[data-name="text"]').dispatchEvent(
+            new Event("click")
+          );
         else
-          querySelect('.nav-item[data-name="logo"]').dispatchEvent(new Event('click'));
+          querySelect('.nav-item[data-name="logo"]').dispatchEvent(
+            new Event("click")
+          );
 
-        if (activeObject.type === 'curved-text') {
-          let percentage = activeObject.percentage
+        if (activeObject.type === "curved-text") {
+          let percentage = activeObject.percentage;
 
-          querySelect('#curve-text').value = percentage;
-          querySelect('#text-curve-range').value = getRangeFromPercentage(percentage);
+          querySelect("#curve-text").value = percentage;
+          querySelect("#text-curve-range").value =
+            getRangeFromPercentage(percentage);
         } else {
-          querySelect('#curve-text').value = 0;
-          querySelect('#text-curve-range').value = 2500;
+          querySelect("#curve-text").value = 0;
+          querySelect("#text-curve-range").value = 2500;
         }
 
         const layers = querySelectAll(".layer-container");
@@ -972,7 +1042,7 @@ class EditorScreen {
           const layerSpan = layer.querySelector(".layer-span");
 
           let fillColor;
-          const color = activeObject.get('fill');
+          const color = activeObject.get("fill");
           if (typeof color === "object") {
             fillColor = color.colorStops[0].color;
           } else if (color && color.includes("#")) {
@@ -1017,28 +1087,29 @@ class EditorScreen {
         });
 
         let selectBoxes = {
-          'font-family-selectbox': 'fontFamily',
-          'font-weight-selector': 'fontWeight',
-          'font-style-selector': 'fontStyle_',
-          'text-case-select-box': 'letterCase',
-        }
+          "font-family-selectbox": "fontFamily",
+          "font-weight-selector": "fontWeight",
+          "font-style-selector": "fontStyle_",
+          "text-case-select-box": "letterCase",
+        };
         for (const key in selectBoxes) {
           let el = querySelect(`.${key}`);
-          el.setAttribute('data-value', obj[selectBoxes[key]]);
-          el.dispatchEvent(new Event('valueChange'));
+          el.setAttribute("data-value", obj[selectBoxes[key]]);
+          el.dispatchEvent(new Event("valueChange"));
         }
 
-        // Set Scale  
+        // Set Scale
 
         querySelect("#scale-value").value = obj.scaleValue || 1;
-        querySelect('#progress-bar').value = obj.scaleValue ? obj.scaleValue * 10 : 10;
+        querySelect("#progress-bar").value = obj.scaleValue
+          ? obj.scaleValue * 10
+          : 10;
 
         // Set Font Size
         if (obj.fontSize) {
-          querySelect("#font_size_title").value = obj.fontSize + 'px';
+          querySelect("#font_size_title").value = obj.fontSize + "px";
           querySelect("#font_size_range").value = obj.fontSize;
         }
-
       }
       this.canvas.requestRenderAll();
     };
@@ -1074,7 +1145,7 @@ class EditorScreen {
       // console.log("LOGO MAIN FIELD", val.length)
       this.logoName = val;
 
-      logoNameElement = this.canvas.getObjects("text").map(i => i)[0]
+      logoNameElement = this.canvas.getObjects("text").map((i) => i)[0];
       logoNameElement.set("text", val);
 
       this.canvas.requestRenderAll();
@@ -1084,7 +1155,7 @@ class EditorScreen {
       const val = e.target.value;
       // console.log("SLOGAN MAIN FIELD", val.length)
 
-      sloganNameElement = this.canvas.getObjects("text").map(i => i)[1]
+      sloganNameElement = this.canvas.getObjects("text").map((i) => i)[1];
       sloganNameElement.set("text", val);
       this.canvas.requestRenderAll();
     });
@@ -1135,7 +1206,6 @@ class EditorScreen {
               querySelect("#logo-shadow-offsetY").style.display = "block";
               querySelect("#logo-shadow-border").style.display = "block";
             }
-
 
             querySelect("#rotate_info").innerText = `Rotate: ${parseInt(
               obj.get("angle")
@@ -1290,6 +1360,9 @@ class EditorScreen {
     this.logoMode.addEventListener("mouseover", () =>
       onMouseOver(true, this.logoMode)
     );
+    this.uploadsMode.addEventListener("mouseover", () =>
+      onMouseOver(true, this.uploadsMode)
+    );
     this.logoMode.addEventListener("mouseleave", () =>
       onMouseOver(false, this.logoMode)
     );
@@ -1332,6 +1405,10 @@ class EditorScreen {
       this.updateActiveNavbar();
     });
 
+    this.uploadsMode.addEventListener("click", () => {
+      querySelect("#upload-file").click();
+    });
+
     this.previewMode.addEventListener("click", () => {
       this.transparentLoader();
       const bgColor = this.canvas.get("backgroundColor");
@@ -1366,7 +1443,7 @@ class EditorScreen {
       this.letterSpacing = e.target.value;
       const active = this.canvas.getActiveObject();
 
-      if (active.type == 'curved-text') {
+      if (active.type == "curved-text") {
         active.set("charSpacing", parseInt(this.letterSpacing));
 
         let letterSpacing = (parseInt(this.letterSpacing) / 100) * 3;
@@ -1406,7 +1483,7 @@ class EditorScreen {
 
     querySelect("#shadow-blur-slider")?.addEventListener("change", (e) => {
       this.canvas.save();
-    })
+    });
 
     querySelect("#logo-shadow-blur-slider").addEventListener("input", (e) => {
       this.logoShadowBlur = e.target.value;
@@ -1422,14 +1499,12 @@ class EditorScreen {
         });
       });
       this.canvas.requestRenderAll();
-
     });
 
     querySelect("#logo-shadow-blur-slider").addEventListener("change", (e) => {
       updatePreview();
       this.canvas.save();
     });
-
 
     this.shadowOffsetXSlider.addEventListener("input", (e) => {
       const val = e.target.value;
@@ -1456,13 +1531,10 @@ class EditorScreen {
 
     this.shadowOffsetXSlider.addEventListener("change", (e) => {
       this.canvas.save();
-    })
+    });
     this.logoShadowOffsetXSlider.addEventListener("change", (e) => {
       this.canvas.save();
-
-    })
-
-
+    });
 
     this.logoShadowOffsetXSlider.addEventListener("change", (e) => {
       updatePreview();
@@ -1497,14 +1569,11 @@ class EditorScreen {
     });
 
     this.logoShadowOffsetYSlider.addEventListener("change", (e) => {
-      updatePreview()
+      updatePreview();
       this.canvas.save();
-    })
+    });
 
-    const fontList = querySelect(".font-selector-list");
-
-
-
+    let uploadLayerCounter = 0;
     querySelect("#upload-file").addEventListener("input", (e) => {
       localDirFile = e.target.files[0];
       localDirFiles = [];
@@ -1519,15 +1588,17 @@ class EditorScreen {
             400 / originalHeight
           );
           img.scale(scaleFactor);
+          img.set("id", "upload_external_layer_" + uploadLayerCounter);
+          console.log("UPLOAD FILE", img)
           this.canvas.add(img);
           this.canvas.centerObject(img);
           this.canvas.requestRenderAll();
+
+          uploadLayerCounter++;
         });
       });
       e.target.value = "";
     });
-
-
 
     const handleCanvasEvent = () => {
       updatePreview();
@@ -1542,7 +1613,9 @@ class EditorScreen {
     document.onkeydown = (event) => {
       if (event.target.tagName === "INPUT") return;
       if (event.key === "Delete") {
-        document.querySelector('#removeElement').dispatchEvent(new Event("click"));
+        document
+          .querySelector("#removeElement")
+          .dispatchEvent(new Event("click"));
         // const deleteLayer = new DeleteLayer(
         //   event,
         //   this.canvas,
@@ -1556,7 +1629,7 @@ class EditorScreen {
 
     document.onmouseup = (event) => {
       this.hideCanvasGuides();
-    }
+    };
 
     const colorPickerText = new iro.ColorPicker("#open_picker_text", {
       display: openTextPickerView,
@@ -1734,7 +1807,7 @@ class EditorScreen {
         this.activeNavbarSetting = "text";
         this.updateActiveNavbar();
       });
-    }
+    };
     applyEventListners();
 
     let captureTimeout = null;
@@ -1757,7 +1830,6 @@ class EditorScreen {
         await this.canvasHistory.redoChanges();
         anyThingRunning = true;
       }
-
     });
     querySelect("#font_size_range").addEventListener("change", (event) => {
       updatePreview();
@@ -1770,35 +1842,32 @@ class EditorScreen {
         querySelect("#font_size_title").value = `${textSize}px`;
         const active = this.canvas.getActiveObject();
         const fontSize = textSize;
-        if (active.type == 'curved-text') {
+        if (active.type == "curved-text") {
           active.set("_cachedCanvas", null);
           if (fontSize < 5) return false;
           active.set("fontSize", fontSize);
-        } else
-          active.set("fontSize", fontSize);
+        } else active.set("fontSize", fontSize);
 
         this.canvas.requestRenderAll();
       }
     });
 
-
     //#region Text Curve
 
     // On Input
-    querySelect('#text-curve-range').addEventListener('input', (e) => {
+    querySelect("#text-curve-range").addEventListener("input", (e) => {
       let percentage = initCurveText();
-      querySelect('#curve-text').value = percentage;
+      querySelect("#curve-text").value = percentage;
     });
 
     // On Change
-    querySelect('#text-curve-range').addEventListener('change', (e) => {
+    querySelect("#text-curve-range").addEventListener("change", (e) => {
       const obj = this.canvas.getActiveObject();
       if (!obj) return false;
-      if (obj.type !== 'curved-text') return false;
-
+      if (obj.type !== "curved-text") return false;
 
       obj._updateObj("scaleX", obj.scaleX);
-      obj._updateObj('scaleY', obj.scaleY);
+      obj._updateObj("scaleY", obj.scaleY);
 
       updatePreview();
       this.canvas.save();
@@ -1806,43 +1875,41 @@ class EditorScreen {
 
     //#region Up and down
     // Text Curve Up
-    querySelect('#text-curve-up').addEventListener('click', (e) => {
-      let input = querySelect('#curve-text'),
+    querySelect("#text-curve-up").addEventListener("click", (e) => {
+      let input = querySelect("#curve-text"),
         value = parseInt(input.value) || 0;
       value += 5;
 
       input.value = value;
-      querySelect('#curve-text').dispatchEvent(new Event('change'));
+      querySelect("#curve-text").dispatchEvent(new Event("change"));
     });
 
     // Text Curve Down
-    querySelect('#text-curve-down').addEventListener('click', (e) => {
-      let input = querySelect('#curve-text'),
+    querySelect("#text-curve-down").addEventListener("click", (e) => {
+      let input = querySelect("#curve-text"),
         value = parseInt(input.value) || 0;
 
       value -= 5;
       input.value = value;
-      querySelect('#curve-text').dispatchEvent(new Event('change'));
+      querySelect("#curve-text").dispatchEvent(new Event("change"));
     });
 
-    //#endregion Up and down 
+    //#endregion Up and down
 
     // Text Curve percentage input
-    querySelect('#curve-text').addEventListener('change', function (e) {
+    querySelect("#curve-text").addEventListener("change", function (e) {
       let inp = e.target,
         val = parseInt(inp.value);
 
       if (val > 360) inp.value = 360;
       else if (val < -360) inp.value = -360;
 
-
       let value = (parseInt(inp.value) / 360) * 100,
         rangeValue = getRangeFromPercentage(value);
 
-
       if (Math.abs(value) > 100) return false;
 
-      let input = querySelect('#text-curve-range');
+      let input = querySelect("#text-curve-range");
 
       input.value = rangeValue;
 
@@ -1851,28 +1918,26 @@ class EditorScreen {
 
     // Init Curve Text
     const initCurveText = () => {
-
       let obj = this.canvas.getActiveObject();
       if (!obj) return 0;
 
-      let value = querySelect('#text-curve-range').value,
-        percentage = value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
+      let value = querySelect("#text-curve-range").value,
+        percentage =
+          value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
 
       percentage = percentage.toFixed(0);
 
-      if (percentage == -0 || percentage == '-0') percentage = 0;
+      if (percentage == -0 || percentage == "-0") percentage = 0;
 
       // Percentage Limit is 90 but we can change it
       if (percentage > 90 || percentage < -90) return percentage * 3.6;
-
 
       let isFlipped = percentage < 0,
         hasCurveApply = parseInt(percentage) != 0;
 
       if (value >= 2500) value = 2500 - (value - 2500);
 
-
-      let isCurvedText = obj.type == 'curved-text';
+      let isCurvedText = obj.type == "curved-text";
       if (hasCurveApply && !isCurvedText) {
         let props = obj.__dimensionAffectingProps,
           options = {
@@ -1900,9 +1965,9 @@ class EditorScreen {
         this.canvas.remove(obj);
         this.canvas.add(curvedText);
 
-        if (curvedText.text == querySelect('#logoMainField').value) {
+        if (curvedText.text == querySelect("#logoMainField").value) {
           logoNameElement = curvedText;
-        } else if (curvedText.text == querySelect('#sloganNameField').value) {
+        } else if (curvedText.text == querySelect("#sloganNameField").value) {
           sloganNameElement = curvedText;
         }
 
@@ -1911,21 +1976,20 @@ class EditorScreen {
         curvedText.moveTo(index);
         this.canvas.setActiveObject(curvedText);
         this.canvas.requestRenderAll();
-
       } else if (!hasCurveApply) {
         const text = new fabric.IText(obj.text, {
           ...obj,
-          type: 'text',
-          percentage
+          type: "text",
+          percentage,
         });
         let index = this.canvas.getObjects().indexOf(obj);
 
         this.canvas.remove(obj);
         this.canvas.add(text);
 
-        if (text.text == querySelect('#logoMainField').value) {
+        if (text.text == querySelect("#logoMainField").value) {
           logoNameElement = text;
-        } else if (text.text == querySelect('#sloganNameField').value) {
+        } else if (text.text == querySelect("#sloganNameField").value) {
           sloganNameElement = text;
         }
         applyEventListners();
@@ -1934,13 +1998,12 @@ class EditorScreen {
         this.canvas.setActiveObject(text);
         this.canvas.save();
       } else if (hasCurveApply && isCurvedText) {
-
-        obj.set('_cachedCanvas', null);
-        obj.set('diameter', value);
-        obj.set('flipped', isFlipped);
-        obj.set('percentage', percentage);
-        obj._updateObj('scaleX', obj.scaleX);
-        obj._updateObj('scaleY', obj.scaleY);
+        obj.set("_cachedCanvas", null);
+        obj.set("diameter", value);
+        obj.set("flipped", isFlipped);
+        obj.set("percentage", percentage);
+        obj._updateObj("scaleX", obj.scaleX);
+        obj._updateObj("scaleY", obj.scaleY);
       }
 
       this.canvas.requestRenderAll();
@@ -1948,21 +2011,18 @@ class EditorScreen {
       const angle = percentage * 3.6;
 
       return angle;
-    }
+    };
     // Get Range From Percentage
     const getRangeFromPercentage = (percentage) => {
       percentage = parseInt(percentage) || 0;
       let rangeValue = 2500;
-      if (percentage > 0) rangeValue = 2500 + (percentage * 25);
-      else if (percentage < 0) rangeValue = 2500 - (Math.abs(percentage) * 25);
+      if (percentage > 0) rangeValue = 2500 + percentage * 25;
+      else if (percentage < 0) rangeValue = 2500 - Math.abs(percentage) * 25;
 
       return rangeValue;
-    }
+    };
 
-    //#endregion Text Curve 
-
-
-
+    //#endregion Text Curve
 
     querySelect("#font_size_title").addEventListener("change", (event) => {
       const text = event.target.value;
@@ -2065,10 +2125,19 @@ class EditorScreen {
     querySelect("#copyElement").addEventListener("click", () => {
       let active = this.canvas.getActiveObject(),
         layerEl = null;
-      if (active.layerId) layerEl = document.querySelector(`.layer-container[data-id="${active.layerId}"]`);
+      if (active.layerId)
+        layerEl = document.querySelector(
+          `.layer-container[data-id="${active.layerId}"]`
+        );
 
       if (active.id.includes("external_layer_") && !active.text) {
-        let cloned = active.toJSON(['itemId', 'id', 'category', 'cacheWidth', 'cacheHeight']);
+        let cloned = active.toJSON([
+          "itemId",
+          "id",
+          "category",
+          "cacheWidth",
+          "cacheHeight",
+        ]);
         cloned.top += 10;
         cloned.left += 10;
         loadExternalLayers(JSON.stringify([cloned]));
@@ -2081,10 +2150,14 @@ class EditorScreen {
             if (object.text) return true;
             object.dublicate = true;
             this.canvas.add(object);
-            layerEl = document.querySelector(`.layer-container[data-id="${active._objects[i].layerId}"]`);
+            layerEl = document.querySelector(
+              `.layer-container[data-id="${active._objects[i].layerId}"]`
+            );
 
             const layerSection = new CreateLayerSection(this.layers);
-            let idx = Array.from(this.layers.childNodes).filter(i => i.style.display !== 'none');
+            let idx = Array.from(this.layers.childNodes).filter(
+              (i) => i.style.display !== "none"
+            );
             layerSection.create(object, idx.length, layerEl);
             refreshLayerNames();
           });
@@ -2095,20 +2168,20 @@ class EditorScreen {
           this.canvas.discardActiveObject();
           this.canvas.requestRenderAll();
           this.canvas.save();
-
         });
       } else {
         active.clone((cloned) => {
           if (cloned.text) return true;
-          // Add Layer 
+          // Add Layer
           cloned.set("dublicate", true);
           this.canvas.add(cloned);
           cloned.top += 10;
           cloned.left += 10;
 
-
           const layerSection = new CreateLayerSection(this.layers);
-          let idx = Array.from(this.layers.childNodes).filter(i => i.style.display !== 'none');
+          let idx = Array.from(this.layers.childNodes).filter(
+            (i) => i.style.display !== "none"
+          );
           layerSection.create(cloned, idx.length, layerEl);
           refreshLayerNames();
           this.canvas.save();
@@ -2131,14 +2204,15 @@ class EditorScreen {
       if (activeObj) {
         this.canvas.save(); // For Position
         if (activeObj._objects && activeObj._objects.length) {
-          activeObj._objects.forEach(obj => {
+          activeObj._objects.forEach((obj) => {
             self.canvas.remove(obj);
 
             if (obj.layerId) {
-              let layerEl = querySelect(`.layer-container[data-id="${obj.layerId}"]`);
-              layerEl.style.display = 'none';
+              let layerEl = querySelect(
+                `.layer-container[data-id="${obj.layerId}"]`
+              );
+              layerEl.style.display = "none";
             }
-
           });
         }
         this.canvas.remove(activeObj);
@@ -2146,8 +2220,10 @@ class EditorScreen {
         this.canvas.requestRenderAll();
 
         if (activeObj.layerId) {
-          let layerEl = querySelect(`.layer-container[data-id="${activeObj.layerId}"]`);
-          layerEl.style.display = 'none';
+          let layerEl = querySelect(
+            `.layer-container[data-id="${activeObj.layerId}"]`
+          );
+          layerEl.style.display = "none";
         }
         refreshLayerNames();
       }
@@ -2176,29 +2252,28 @@ class EditorScreen {
 
       if (obj._objects) {
         obj.clone((cloned) => {
-
-          cloned.getObjects().forEach(obj => {
-
+          cloned.getObjects().forEach((obj) => {
             let text = obj.text;
 
             if (!obj.id?.includes("external_layer_")) {
-              if (text == querySelect('#logoMainField').value) {
+              if (text == querySelect("#logoMainField").value) {
                 save = false;
-                return toastNotification("Logo Name or Slogan can not be duplicated");
+                return toastNotification(
+                  "Logo Name or Slogan can not be duplicated"
+                );
               } else save = true;
 
               if (text == querySelect("#sloganNameField").value) {
                 save = false;
-                return toastNotification("Logo Name or Slogan can not be duplicated");
-              }
-              else save = true;
+                return toastNotification(
+                  "Logo Name or Slogan can not be duplicated"
+                );
+              } else save = true;
             }
-
 
             this.canvas.add(obj);
             obj.top += 10;
             obj.left += 10;
-
           });
         });
       } else
@@ -2206,13 +2281,17 @@ class EditorScreen {
           let text = cloned.text;
 
           if (!cloned.id?.includes("external_layer_")) {
-            if (text == querySelect('#logoMainField').value) {
+            if (text == querySelect("#logoMainField").value) {
               save = false;
-              return toastNotification("Logo Name or Slogan can not be duplicated");
+              return toastNotification(
+                "Logo Name or Slogan can not be duplicated"
+              );
             }
             if (text == querySelect("#sloganNameField").value) {
               save = false;
-              return toastNotification("Logo Name or Slogan can not be duplicated");
+              return toastNotification(
+                "Logo Name or Slogan can not be duplicated"
+              );
             }
           }
 
@@ -2223,8 +2302,7 @@ class EditorScreen {
 
       this.canvas.renderAll();
       updatePreview();
-      if (obj && save)
-        this.canvas.save();
+      if (obj && save) this.canvas.save();
     });
 
     querySelect("#eyeElement2").addEventListener("click", () => {
@@ -2239,13 +2317,12 @@ class EditorScreen {
     });
 
     querySelect("#removeElement2").addEventListener("click", () => {
-
       const activeObj = this.canvas.getActiveObject(),
         self = this;
       if (activeObj) {
         this.canvas.save(); // For Position
         if (activeObj._objects && activeObj._objects.length) {
-          activeObj._objects.forEach(obj => {
+          activeObj._objects.forEach((obj) => {
             self.canvas.remove(obj);
           });
         }
@@ -2254,7 +2331,6 @@ class EditorScreen {
         this.canvas.save();
         this.canvas.requestRenderAll();
       }
-
     });
 
     querySelect("#bringDownElement2").addEventListener("click", () => {
@@ -2272,7 +2348,6 @@ class EditorScreen {
       this.canvas.requestRenderAll();
       updatePreview();
       if (selectedObject) this.canvas.save();
-
     });
 
     querySelect("#eyeElement-uploads").addEventListener("click", () => {
@@ -2282,7 +2357,6 @@ class EditorScreen {
       activeObj.set("visible", visibilty);
       this.canvas.requestRenderAll();
       if (activeObj) this.canvas.save();
-
     });
 
     querySelect("#copyElement-uploads").addEventListener("click", (event) => {
@@ -2362,7 +2436,6 @@ class EditorScreen {
       this.canvas.remove(rect);
 
       this.canvas.requestRenderAll();
-
     });
 
     const logoPalleteComponent = querySelect("#logo-pallete");
@@ -2371,12 +2444,10 @@ class EditorScreen {
       this.canvas.save();
     });
     logoPalleteComponent.addEventListener("colorChange", (e) => {
-
-
       const selectedObject = this.canvas.getActiveObject();
       const { colorMode, grad1Value, grad2Value, solidValue, colorAngle } =
         e.detail;
-      console.log(selectedObject)
+      console.log(selectedObject);
       let angleColor = `${colorAngle}deg`;
       let color = null;
       if (colorMode !== "Solid") {
@@ -2397,13 +2468,12 @@ class EditorScreen {
         color = solidValue;
       }
       if (selectedObject && selectedObject._objects) {
-        selectedObject._objects.forEach(i => {
-          i.set('fill', color);
+        selectedObject._objects.forEach((i) => {
+          i.set("fill", color);
         });
       }
       selectedObject.set("fill", color);
       this.canvas.requestRenderAll();
-
     });
 
     const textPalleteComponent = querySelect("#text-pallete");
@@ -2413,7 +2483,6 @@ class EditorScreen {
     });
 
     textPalleteComponent.addEventListener("colorChange", (e) => {
-
       const selectedObject = this.canvas.getActiveObject();
       const { colorMode, grad1Value, grad2Value, solidValue } = e.detail;
 
@@ -2437,7 +2506,6 @@ class EditorScreen {
       }
       selectedObject.set("fill", color);
       this.canvas.requestRenderAll();
-
     });
 
     updatePreview();
@@ -2519,8 +2587,6 @@ class EditorScreen {
       querySelect("#popup-parent-icons").style.display = "none";
     });
 
-
-
     const iconUrl = "https://www.mybrande.com/api/all/icons";
 
     function svgCreator(icon, name = "") {
@@ -2549,13 +2615,12 @@ class EditorScreen {
         iconList.forEach((icon, index) => {
           let catslug = icon.category.iconcategory_slug;
           this.loadedIcons[catslug] = {};
-          icon.Icons.forEach(i => {
+          icon.Icons.forEach((i) => {
             this.loadedIcons[catslug][i.id] = {
               id: i.id,
-              svg: i.icon_svg
+              svg: i.icon_svg,
             };
           });
-
 
           let { icon_svg, id } = icon.Icons[currIconIndex];
           const name = icon.category.iconcategory_name;
@@ -2568,8 +2633,8 @@ class EditorScreen {
           categoryTitle.append(span);
 
           const svgImg = svgCreator(icon_svg, name);
-          svgImg.setAttribute('data-id', id);
-          svgImg.setAttribute('data-category', icon.category.iconcategory_slug);
+          svgImg.setAttribute("data-id", id);
+          svgImg.setAttribute("data-category", icon.category.iconcategory_slug);
           querySelect("#clip-icons").appendChild(svgImg);
         });
 
@@ -2604,7 +2669,7 @@ class EditorScreen {
 
           // Init Undo Redo
           setTimeout(() => {
-            this.canvasHistory = new SaveHistory(this.canvas) // Init Undo Redo
+            this.canvasHistory = new SaveHistory(this.canvas); // Init Undo Redo
             querySelect("#loader_main").style.display = "none";
             updatePreview();
             this.canvas.save(); // Save Initial History
@@ -2625,7 +2690,10 @@ class EditorScreen {
         const name = iconList[index].category.iconcategory_slug,
           id = icon.id;
 
-        const svgImg = svgCreator(icon.icon_svg, iconList[index].category.iconcategory_name);
+        const svgImg = svgCreator(
+          icon.icon_svg,
+          iconList[index].category.iconcategory_name
+        );
         svgImg.setAttribute("data-category", name);
         svgImg.setAttribute("data-id", id);
 
@@ -2633,7 +2701,6 @@ class EditorScreen {
         count++;
       });
     });
-
 
     let layerCounter = 0;
     let clickedObjectCoordinates = {};
@@ -2650,7 +2717,7 @@ class EditorScreen {
       fabric.loadSVGFromURL(decodedSrc, (objects, options) => {
         const img = fabric.util.groupSVGElements(objects, options);
         img.scaleToWidth(100);
-        img.set({ left: img.left + 100, layerType: 'svg' });
+        img.set({ left: img.left + 100, layerType: "svg" });
         img.set("id", "external_layer_" + layerCounter);
         img.set("itemId", itemId);
         img.set("category", category);
@@ -2661,29 +2728,35 @@ class EditorScreen {
         canvas.requestRenderAll();
 
         img.on("mousedown", (event) => {
-          console.log("Clicked on object with ID:", event.target.id, event.target.top, event.target.left);
+          console.log(
+            "Clicked on object with ID:",
+            event.target.id,
+            event.target.top,
+            event.target.left
+          );
           canvas.renderAll();
         });
       });
 
       layerCounter++;
       document.getElementById("popup-parent-icons").style.display = "none";
-      document.querySelector(".close-popup-btn").dispatchEvent(new Event("click"));
+      document
+        .querySelector(".close-popup-btn")
+        .dispatchEvent(new Event("click"));
       canvas.save();
     });
-
 
     querySelect("#add-clip-text").addEventListener("click", (e) => {
       querySelect("#popup-parent").style.display = "block";
       querySelect("#popup-parent-icons").style.display = "none";
     });
 
-    querySelect(".close-popup-btn").addEventListener('click', (e) => {
+    querySelect(".close-popup-btn").addEventListener("click", (e) => {
       querySelect("#popup-parent").style.display = "none";
-    })
-    querySelect('#trigger-clip-text').addEventListener('click', (e) => {
-      querySelect('#add-clip-text').dispatchEvent(new Event("click"));
-    })
+    });
+    querySelect("#trigger-clip-text").addEventListener("click", (e) => {
+      querySelect("#add-clip-text").dispatchEvent(new Event("click"));
+    });
 
     querySelect("#add-icon").addEventListener("click", () => {
       querySelect("#popup-parent").style.display = "block";
@@ -2696,8 +2769,8 @@ class EditorScreen {
       IText.center();
       IText.set("id", "external_layer_" + Date.now());
       IText.set("left", IText.top + 50);
-      IText.set("layerType", "text")
-      IText.set("type", "text")
+      IText.set("layerType", "text");
+      IText.set("type", "text");
       updatePreview();
       this.canvas.requestRenderAll();
       this.canvas.setActiveObject(IText);
@@ -2762,8 +2835,7 @@ class EditorScreen {
       }
 
       updatePreview();
-      if (active)
-        this.canvas.save();
+      if (active) this.canvas.save();
     });
 
     let isLogoDropShadow = false;
@@ -2836,8 +2908,7 @@ class EditorScreen {
         }
         this.canvas.requestRenderAll();
       }
-      if (active)
-        this.canvas.save();
+      if (active) this.canvas.save();
     });
 
     let isDropShadow = false;
@@ -2879,7 +2950,6 @@ class EditorScreen {
 
     const updateColorPickers = () => {
       for (let i = 0; i <= 1; i++) {
-
         let colorSet = new Set();
         const colorPalette = querySelectAll("#logo_colors_pallete")[i];
 
@@ -2910,8 +2980,8 @@ class EditorScreen {
               if (activeElem && activeElem._objects)
                 activeElem._objects.forEach((obj) => {
                   obj.set("fill", color);
-                  console.log(obj)
-                })
+                  console.log(obj);
+                });
 
               activeElem.set("fill", color);
               colorPicker.color.set(color);
@@ -2935,12 +3005,10 @@ class EditorScreen {
               }
               this.canvas.renderAll();
               updatePreview();
-              if (activeElem)
-                this.canvas.save();
+              if (activeElem) this.canvas.save();
             });
           }
         });
-
       }
       captureCanvasState();
     };
@@ -2973,8 +3041,8 @@ class EditorScreen {
 
       const active = this.canvas.getActiveObject();
       if (active && active._objects) {
-        active._objects.forEach(i => {
-          i.set('fill', color.rgbaString);
+        active._objects.forEach((i) => {
+          i.set("fill", color.rgbaString);
         });
       }
       active.set("fill", color.rgbaString);
@@ -3205,7 +3273,7 @@ class EditorScreen {
         const b = querySelect("#B_BG").value;
         colorPickerBG.color.rgb = { r, g, b };
         const bgColor = colorPickerBG.color.hexString;
-        console.log(bgColor)
+        console.log(bgColor);
         this.canvas.setBackgroundColor(bgColor);
         this.canvas.requestRenderAll();
       });
@@ -3222,7 +3290,6 @@ class EditorScreen {
         this.canvas.requestRenderAll();
       });
     });
-
 
     querySelect("#HEX_BG").addEventListener("input", (e) => {
       let inputCountBG = 0;
@@ -3252,9 +3319,7 @@ class EditorScreen {
       this.canvas.setBackgroundColor(colorPickerBG.color.hexString);
 
       this.canvas.requestRenderAll();
-
     });
-
 
     const handleColorModeClickBG = (activeElement, element1, element2) => {
       querySelect(element1 + "_view_BG").classList.remove(
@@ -3318,7 +3383,7 @@ class EditorScreen {
     colorPickerBG.on("input:end", (color) => {
       updatePreview();
       this.canvas.save();
-    })
+    });
 
     solidColorEvent();
     solidTextColorEvent();
@@ -3469,9 +3534,9 @@ class EditorScreen {
               const blue = parseInt(match[3]);
               const hexColor = convertRGBtoHex(red, green, blue);
               if (activeObj._objects) {
-                activeObj._objects.forEach(i => {
-                  i.set('fill', hexColor);
-                })
+                activeObj._objects.forEach((i) => {
+                  i.set("fill", hexColor);
+                });
               }
               activeObj.set("fill", hexColor);
               colorPicker.color.set(hexColor);
@@ -3506,7 +3571,7 @@ class EditorScreen {
               this.canvas.renderAll();
               updatePreview();
               captureCanvasState();
-              this.canvas.save()
+              this.canvas.save();
             }
           }
         }
@@ -3530,7 +3595,7 @@ class EditorScreen {
             updateColorPickers();
             this.canvas.renderAll();
             captureCanvasState();
-            this.canvas.save()
+            this.canvas.save();
           }
           updatePreview();
         }
@@ -3660,7 +3725,12 @@ class EditorScreen {
 
     const scaleLogo = (scaleSize) => {
       const selection = new fabric.ActiveSelection(
-        this.canvas.getObjects().filter((i) => !i.text && !i?.dublicate && !i.id?.includes("external_layer_")),
+        this.canvas
+          .getObjects()
+          .filter(
+            (i) =>
+              !i.text && !i?.dublicate && !i.id?.includes("external_layer_")
+          ),
         {
           canvas: this.canvas,
         }
@@ -3924,6 +3994,7 @@ class EditorScreen {
     var logoPosition;
     var external_layer;
     var external_text;
+    var external_img;
     async function fetchData(canvas) {
       querySelect("#loader_main").style.display = "block";
       const logoId = querySelect("#logo_id").value;
@@ -3947,7 +4018,9 @@ class EditorScreen {
 
       external_layer = response.data?.AllData?.externalLayerElements;
       external_text = response.data?.AllData?.externalTextElements;
-      loadExternalLayers(external_layer, external_text);
+      external_img = response.data?.AllData?.images;
+      console.log("EXTERNAL IMAGE", response.data);
+      loadExternalLayers(external_layer, external_text, external_img);
 
       if (svgData) {
         localStorage.setItem("logo-file", svgData);
@@ -3962,25 +4035,23 @@ class EditorScreen {
       return { bg, logoPosition, svgData: response.data };
     }
 
-
-
     let alignmentOptions = {
-      "top_bottom_1": 200,
-      "top_bottom_2": 200,
-      "top_bottom_3": 160,
-      "top_bottom_4": 200,
-      "bottom_top_1": 200,
-      "bottom_top_2": 200,
-      "bottom_top_3": 160,
-      "left_right_1": 200,
-      "left_right_2": 200,
-      "left_right_3": 160,
-      "left_right_4": 200,
-      "right_left_1": 200,
-      "right_left_2": 160,
-      "right_left_3": 200,
-      "right_left_4": 200,
-    }
+      top_bottom_1: 200,
+      top_bottom_2: 200,
+      top_bottom_3: 160,
+      top_bottom_4: 200,
+      bottom_top_1: 200,
+      bottom_top_2: 200,
+      bottom_top_3: 160,
+      left_right_1: 200,
+      left_right_2: 200,
+      left_right_3: 160,
+      left_right_4: 200,
+      right_left_1: 200,
+      right_left_2: 160,
+      right_left_3: 200,
+      right_left_4: 200,
+    };
     let anythingApplied = false;
 
     for (const singleEl in alignmentOptions) {
@@ -4000,20 +4071,23 @@ class EditorScreen {
       });
     }
 
-
     // Load External Layers Function
-    const loadExternalLayers = (layers = null, text = null) => {
+    const loadExternalLayers = (layers = null, text = null, img = null) => {
       layers = layers ? JSON.parse(layers) : [];
       text = text ? JSON.parse(text) : [];
+      img = img ? JSON.parse(img) : [];
 
-      const externalLayers = [...layers, ...text];
+      const externalLayers = [...layers, ...text, ...img];
       if (!externalLayers.length) return false;
 
       for (const layer of externalLayers) {
         let { layerType } = layer;
-        if (layerType == 'text') {
+        if (layerType == "text") {
           let textLayer = new fabric.IText(layer.text, layer);
           this.canvas.add(textLayer);
+        } else if (layer.type === "image") {
+          const canvas = this.canvas
+          console.log("IMAGE LOADED", typeof layer, layer);
         } else {
           let { category, itemId } = layer;
           if (!category) continue;
@@ -4024,9 +4098,9 @@ class EditorScreen {
           fabric.loadSVGFromString(svgContent, (objects, options) => {
             objects.map((obj) => {
               obj.set({
-                fill: layer.fill
+                fill: layer.fill,
               });
-            })
+            });
 
             let img = fabric.util.groupSVGElements(objects, options);
             img.scaleToWidth(layer.cacheWidth);
@@ -4046,39 +4120,42 @@ class EditorScreen {
               itemId,
               category,
               layerType: layer.layerType,
-              fill: layer.fill
+              fill: layer.fill,
             });
 
-            let image = this.canvas.add(img);
+            this.canvas.add(img);
 
             this.canvas.requestRenderAll();
           });
         }
 
+        this.canvas.requestRenderAll();
       }
-    }
+    };
 
     // Load Fonts in fabric js
     (async () => {
-      let response = await fetch('https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyA3WEzwS9il6Md6nJW5RI3eMlerTso8tII');
+      let response = await fetch(
+        "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyA3WEzwS9il6Md6nJW5RI3eMlerTso8tII"
+      );
       response = await response.json();
       let { items } = response;
 
       let liItems = "",
         famillies = [],
         count = 0;
-      items.forEach(item => {
+      items.forEach((item) => {
         let { family } = item,
           loaded = false;
         this.loadedFonts[family] = {
-          variants: item.variants
-        }
-        famillies.push(family)
+          variants: item.variants,
+        };
+        famillies.push(family);
 
         if (count < 300) {
           WebFont.load({
             google: {
-              families: [family]
+              families: [family],
             },
           });
           loaded = true;
@@ -4087,90 +4164,100 @@ class EditorScreen {
         liItems += `<li value="${family}" class="font-family-item" data-loaded="${loaded}"><span style="font-family:${family}" class="text">${family}</span></li>`;
         count++;
       });
-      querySelect('.font-family-selectbox .ms-select-list-menu').innerHTML += liItems;
-      initMSList()
+      querySelect(".font-family-selectbox .ms-select-list-menu").innerHTML +=
+        liItems;
+      initMSList();
     })();
 
     const initMSList = () => {
-      let msLists = document.querySelectorAll('.ms-select-list');
-      msLists.forEach(list => {
-        let menu = list.querySelector('.ms-select-list-menu'),
-          defaultVal = list.querySelector(".ms-list-toggle .ms-list-value").getAttribute("value");
+      let msLists = document.querySelectorAll(".ms-select-list");
+      msLists.forEach((list) => {
+        let menu = list.querySelector(".ms-select-list-menu"),
+          defaultVal = list
+            .querySelector(".ms-list-toggle .ms-list-value")
+            .getAttribute("value");
 
-        list.setAttribute('data-default-value', defaultVal);
+        list.setAttribute("data-default-value", defaultVal);
 
-        list.querySelector('.ms-list-toggle').addEventListener('click', function (e) {
-          e.stopPropagation();
-          let lists = document.querySelectorAll('.ms-select-list');
-          let parent = this.parentElement;
-          lists.forEach(item => item != parent ? item.classList.remove("show") : item);
-          parent.classList.toggle("show");
-        })
-
+        list
+          .querySelector(".ms-list-toggle")
+          .addEventListener("click", function (e) {
+            e.stopPropagation();
+            let lists = document.querySelectorAll(".ms-select-list");
+            let parent = this.parentElement;
+            lists.forEach((item) =>
+              item != parent ? item.classList.remove("show") : item
+            );
+            parent.classList.toggle("show");
+          });
 
         // Init Click event
-        menu.querySelectorAll('li').forEach(li => {
-          li.addEventListener('click', function (e) {
+        menu.querySelectorAll("li").forEach((li) => {
+          li.addEventListener("click", function (e) {
             e.stopPropagation();
 
             let value = this.getAttribute("value"),
               text = this.innerText,
               parent = this.parentElement.parentElement;
             parent.classList.remove("show");
-            let toggleBtn = parent.querySelector('.ms-list-toggle')
+            let toggleBtn = parent.querySelector(".ms-list-toggle");
 
-            toggleBtn.querySelector('.ms-list-value').innerText = text;
+            toggleBtn.querySelector(".ms-list-value").innerText = text;
             parent.setAttribute("data-value", value);
-            parent.dispatchEvent(new Event("change"))
+            parent.dispatchEvent(new Event("change"));
             this.classList.add("selected");
           });
-        })
+        });
 
-        // Init On Change 
+        // Init On Change
         list.addEventListener("valueChange", function (e) {
           e.stopPropagation();
 
-          let value = this.getAttribute('data-value'),
-            toggleBtn = this.querySelector('.ms-list-toggle')
+          let value = this.getAttribute("data-value"),
+            toggleBtn = this.querySelector(".ms-list-toggle");
 
-          let text = this.querySelector(`.ms-select-list-menu li[value="${value}"]`);
-          if (value == 'undefined') {
-            text = this.getAttribute('data-default-value');
-          } else if (text) text = text.innerText
+          let text = this.querySelector(
+            `.ms-select-list-menu li[value="${value}"]`
+          );
+          if (value == "undefined") {
+            text = this.getAttribute("data-default-value");
+          } else if (text) text = text.innerText;
 
-
-          toggleBtn.querySelector('.ms-list-value').innerText = text;
+          toggleBtn.querySelector(".ms-list-value").innerText = text;
         });
       });
 
       // Hide lists on document click
       document.onclick = function (e) {
         let target = e.target;
-        if (!target.classList.contains('ms-select-list') && !target.classList.contains('live-search')) {
-          msLists.forEach(list => list.classList.remove("show"));
+        if (
+          !target.classList.contains("ms-select-list") &&
+          !target.classList.contains("live-search")
+        ) {
+          msLists.forEach((list) => list.classList.remove("show"));
         }
-      }
-
-    }
-    //#endregion Ms List 
+      };
+    };
+    //#endregion Ms List
     const fontLiveSearch = function (element) {
       let val = element.value.toLowerCase();
       if (!element.hasAttribute("data-target")) return false;
       let targetSelector = element.getAttribute("data-target");
-      let radius = element.getAttribute("data-radius") || 'body';
+      let radius = element.getAttribute("data-radius") || "body";
       let radiusElement = element.closest(radius);
       // console.log(radiusElement);
       if (!radiusElement) return;
 
       let targets = radiusElement.querySelectorAll(targetSelector);
-      targets.forEach(target => {
-        let dataTarget = element.hasAttribute("data-match") ? target.querySelector(element.getAttribute("data-match")) : target;
+      targets.forEach((target) => {
+        let dataTarget = element.hasAttribute("data-match")
+          ? target.querySelector(element.getAttribute("data-match"))
+          : target;
         let txt = dataTarget ? dataTarget.textContent : "";
         if (txt) {
           if (txt.toLowerCase().indexOf(val) > -1) {
             target.style.display = "inherit";
-          } else
-            target.style.display = "none";
+          } else target.style.display = "none";
         }
       });
     };
