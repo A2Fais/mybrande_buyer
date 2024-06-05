@@ -202,7 +202,6 @@ export const centerAndResizeElements = (
         }
 
         if (letterSpaced) {
-          console.log("I AM WHERE I AM")
           logoNameElement.text = toTitleCase(logoNameElement.text);
           sloganNameElement.text = toSentenceCase(sloganNameElement.text);
 
@@ -270,7 +269,7 @@ export const centerAndResizeElements = (
                 sloganNameElement.width / 2.5
             );
           } else if (logoNameElement.text.length <= 30) {
-            console.log("<= 30");
+            // console.log("<= 30");
             logoNameElement.set("left", -(canvas.width / 7));
             sloganNameElement.set(
               "left",
@@ -330,7 +329,7 @@ export const centerAndResizeElements = (
                 sloganNameElement.width / 2.5
             );
           } else if (logoNameElement.text.length <= 30) {
-            console.log("<= 30");
+            // console.log("<= 30");
             logoNameElement.set("left", -(canvas.width / 6));
             sloganNameElement.set(
               "left",
