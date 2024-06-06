@@ -66,12 +66,14 @@ export async function saveCanvas(
     externalImages = [];
 
   externalLayers.map((layer) => {
+
     let data = layer.toJSON(['itemId', 'category', 'cacheHeight', 'cacheWidth', 'id', 'layerType']);
-    if (layer.text) { 
+
+    if (layer.text) {
       externalTextElements.push(data)
-    } else if (layer.id.includes("upload_external_layer_")){
-      externalImages.push(data)      
-    } else { 
+    } else if (layer.id.includes("upload_external_layer_")) {
+      externalImages.push(data)
+    } else {
       externalLayerElements.push(data)
     };
     canvas.remove(layer);

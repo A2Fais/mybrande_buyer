@@ -405,13 +405,15 @@ class EditorScreen {
     this.alignId = 1;
     let self = this;
 
-    querySelect("#logoMainField").addEventListener("input", (e) => {
-      try {
-        const val = e.target.value;
-        params.set("logo", val);
-        const updatedURL = url.origin + url.pathname + "?" + params.toString();
-      } catch (err) {}
-    });
+    // querySelect("#logoMainField").addEventListener("input", (e) => {
+    //   try {
+    //     const val = e.target.value;
+    //     params.set("logo", val);
+    //     const updatedURL = url.origin + url.pathname + "?" + params.toString();
+    //   } catch (err) { 
+    //     console.log(err)
+    //   }
+    // });
 
     querySelect("#logoMainField").addEventListener("change", (e) => {
       this.canvasHistory.saveHistory();
@@ -437,13 +439,13 @@ class EditorScreen {
       });
       this.canvas.refreshLayerNames();
     };
-    querySelect("#sloganNameField").addEventListener("input", (e) => {
-      try {
-        const val = e.target.value;
-        params.set("slogan", val);
-        const updatedURL = url.origin + url.pathname + "?" + params.toString();
-      } catch (error) {}
-    });
+    // querySelect("#sloganNameField").addEventListener("input", (e) => {
+    //   try {
+    //     const val = e.target.value;
+    //     params.set("slogan", val);
+    //     const updatedURL = url.origin + url.pathname + "?" + params.toString();
+    //   } catch (error) { }
+    // });
 
     querySelect("#sloganNameField").addEventListener("change", (e) => {
       this.canvasHistory.saveHistory();
@@ -1580,22 +1582,62 @@ class EditorScreen {
       localDirFiles.push(localDirFile);
 
       localDirFiles.forEach((file) => {
-        fabric.Image.fromURL(URL.createObjectURL(file), (img) => {
-          const originalWidth = img.width;
-          const originalHeight = img.height;
-          const scaleFactor = Math.min(
-            400 / originalWidth,
-            400 / originalHeight
-          );
-          img.scale(scaleFactor);
-          img.set("id", "upload_external_layer_" + uploadLayerCounter);
-          console.log("UPLOAD FILE", img)
-          this.canvas.add(img);
-          this.canvas.centerObject(img);
-          this.canvas.requestRenderAll();
+        let url = URL.createObjectURL(file),
+          extension = file.type;
+        if (extension.includes("svg")) {
+          const decodedSrc = decodeURIComponent(url);
+          var canvas = this.canvas;
 
-          uploadLayerCounter++;
-        });
+          fabric.loadSVGFromURL(decodedSrc, (objects, options) => {
+            const img = fabric.util.groupSVGElements(objects, options);
+
+            var reader = new FileReader();
+            reader.onloadend = function () {
+              img.set('dataUrl', reader.result);
+              img.set("layerType", "image");
+              img.set("ext", 'svg');
+              img.scaleToWidth(100);
+              img.set({ left: img.left + 100, layerType: "svg" });
+              img.set("id", "upload_external_layer_" + layerCounter);
+
+              canvas.add(img);
+              canvas.setActiveObject(img);
+              canvas.viewportCenterObjectV(img);
+              canvas.requestRenderAll();
+              uploadLayerCounter++;
+            }
+
+            if (localDirFile) reader.readAsDataURL(localDirFile);
+
+          });
+        } else {
+
+          fabric.Image.fromURL(url, (img) => {
+            const originalWidth = img.width;
+            const originalHeight = img.height;
+            const scaleFactor = Math.min(
+              400 / originalWidth,
+              400 / originalHeight
+            );
+            img.scale(scaleFactor);
+            img.set("id", "upload_external_layer_" + uploadLayerCounter);
+
+            var reader = new FileReader();
+            reader.onloadend = function () {
+              img.set('dataUrl', reader.result);
+              img.set("layerType", "image");
+              self.canvas.add(img);
+              self.canvas.centerObject(img);
+              self.canvas.requestRenderAll();
+              uploadLayerCounter++;
+            }
+
+            if (localDirFile) reader.readAsDataURL(localDirFile);
+          });
+        }
+
+
+
       });
       e.target.value = "";
     });
@@ -4019,7 +4061,7 @@ class EditorScreen {
       external_layer = response.data?.AllData?.externalLayerElements;
       external_text = response.data?.AllData?.externalTextElements;
       external_img = response.data?.AllData?.images;
-      console.log("EXTERNAL IMAGE", response.data);
+      // console.log("EXTERNAL IMAGE", response.data);
       loadExternalLayers(external_layer, external_text, external_img);
 
       if (svgData) {
@@ -4076,37 +4118,61 @@ class EditorScreen {
       layers = layers ? JSON.parse(layers) : [];
       text = text ? JSON.parse(text) : [];
       img = img ? JSON.parse(img) : [];
+      let self = this;
 
       const externalLayers = [...layers, ...text, ...img];
       if (!externalLayers.length) return false;
 
+      const loadSVGObject = (layer, objects, options) => {
+        objects.map((obj) => {
+          obj.set({
+            fill: layer.fill,
+          });
+        });
+
+        let img = fabric.util.groupSVGElements(objects, options);
+        img.scaleToWidth(layer.cacheWidth);
+        img.scaleToHeight(layer.cacheHeight);
+
+        img.set({
+          left: layer.left,
+          top: layer.top,
+          angle: layer.angle,
+          scaleX: layer.scaleX,
+          scaleY: layer.scaleY,
+          opacity: layer.opacity,
+          flipX: layer.flipX,
+          flipY: layer.flipY,
+          selectable: true,
+          id: layer.id,
+          layerType: layer.layerType,
+          fill: layer.fill,
+        });
+
+        self.canvas.add(img);
+
+        self.canvas.requestRenderAll();
+        return img;
+      }
+
       for (const layer of externalLayers) {
-        let { layerType } = layer;
+        let { layerType, ext } = layer;
         if (layerType == "text") {
           let textLayer = new fabric.IText(layer.text, layer);
           this.canvas.add(textLayer);
-        } else if (layer.type === "image") {
-          const canvas = this.canvas
-          console.log("IMAGE LOADED", typeof layer, layer);
-        } else {
-          let { category, itemId } = layer;
-          if (!category) continue;
-          let svgContent = this.loadedIcons[category][parseInt(itemId)];
-          if (!svgContent) return false;
+        } else if (ext == 'svg') {
+          fabric.loadSVGFromURL(layer.dataUrl, (objects, options) => {
+            console.log(layer);
+            let img = loadSVGObject(layer, objects, options);
+            img.set('dataUrl', layer.dataUrl);
+          });
+        }
 
-          svgContent = svgContent.svg;
-          fabric.loadSVGFromString(svgContent, (objects, options) => {
-            objects.map((obj) => {
-              obj.set({
-                fill: layer.fill,
-              });
-            });
+        else if (layerType === "image") {
 
-            let img = fabric.util.groupSVGElements(objects, options);
-            img.scaleToWidth(layer.cacheWidth);
-            img.scaleToHeight(layer.cacheHeight);
-
+          fabric.Image.fromURL(layer.dataUrl, (img) => {
             img.set({
+              dataUrl: layer.dataUrl,
               left: layer.left,
               top: layer.top,
               angle: layer.angle,
@@ -4116,15 +4182,30 @@ class EditorScreen {
               flipX: layer.flipX,
               flipY: layer.flipY,
               selectable: true,
-              id: layer.id,
-              itemId,
-              category,
+              id: "upload_external_layer_" + uploadLayerCounter,
               layerType: layer.layerType,
               fill: layer.fill,
             });
 
             this.canvas.add(img);
+            this.canvas.requestRenderAll();
+            uploadLayerCounter++;
 
+          });
+
+        } else {
+          let { category, itemId } = layer;
+          if (!category) continue;
+          let svgContent = this.loadedIcons[category][parseInt(itemId)];
+          if (!svgContent) return false;
+
+          svgContent = svgContent.svg;
+          fabric.loadSVGFromString(svgContent, (objects, options) => {
+            let img = loadSVGObject(layer, objects, options);
+            img.set({
+              itemId,
+              category,
+            });
             this.canvas.requestRenderAll();
           });
         }
