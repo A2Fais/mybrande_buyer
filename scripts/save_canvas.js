@@ -66,9 +66,7 @@ export async function saveCanvas(
     externalImages = [];
 
   externalLayers.map((layer) => {
-
-    let data = layer.toJSON(['itemId', 'category', 'cacheHeight', 'cacheWidth', 'id', 'layerType']);
-
+    let data = layer.toJSON(['itemId', 'category', 'cacheHeight', 'cacheWidth', 'id', 'layerType', 'dataUrl', 'ext']);
     if (layer.text) {
       externalTextElements.push(data)
     } else if (layer.id.includes("upload_external_layer_")) {
