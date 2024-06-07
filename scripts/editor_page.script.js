@@ -410,7 +410,7 @@ class EditorScreen {
     //     const val = e.target.value;
     //     params.set("logo", val);
     //     const updatedURL = url.origin + url.pathname + "?" + params.toString();
-    //   } catch (err) { 
+    //   } catch (err) {
     //     console.log(err)
     //   }
     // });
@@ -420,7 +420,7 @@ class EditorScreen {
     });
 
     this.canvas.save = function () {
-      self.canvasHistory.saveHistory();
+      self?.canvasHistory?.saveHistory();
     };
     this.canvas.undoCB = () => {
       let layers = querySelectAll("#layers .layer-container");
@@ -1593,9 +1593,9 @@ class EditorScreen {
 
             var reader = new FileReader();
             reader.onloadend = function () {
-              img.set('dataUrl', reader.result);
+              img.set("dataUrl", reader.result);
               img.set("layerType", "image");
-              img.set("ext", 'svg');
+              img.set("ext", "svg");
               img.scaleToWidth(100);
               img.set({ left: img.left + 100, layerType: "svg" });
               img.set("id", "upload_external_layer_" + layerCounter);
@@ -1605,13 +1605,11 @@ class EditorScreen {
               canvas.viewportCenterObjectV(img);
               canvas.requestRenderAll();
               uploadLayerCounter++;
-            }
+            };
 
             if (localDirFile) reader.readAsDataURL(localDirFile);
-
           });
         } else {
-
           fabric.Image.fromURL(url, (img) => {
             const originalWidth = img.width;
             const originalHeight = img.height;
@@ -1624,20 +1622,17 @@ class EditorScreen {
 
             var reader = new FileReader();
             reader.onloadend = function () {
-              img.set('dataUrl', reader.result);
+              img.set("dataUrl", reader.result);
               img.set("layerType", "image");
               self.canvas.add(img);
               self.canvas.centerObject(img);
               self.canvas.requestRenderAll();
               uploadLayerCounter++;
-            }
+            };
 
             if (localDirFile) reader.readAsDataURL(localDirFile);
           });
         }
-
-
-
       });
       e.target.value = "";
     });
@@ -2680,7 +2675,7 @@ class EditorScreen {
           querySelect("#clip-icons").appendChild(svgImg);
         });
 
-        fetchData(this.canvas).then((bgColor, _, svgData) => {
+        fetchCanvasData(this.canvas).then((bgColor, _, svgData) => {
           if (!sessionStorage.getItem("reloaded")) {
             sessionStorage.setItem("reloaded", "true");
             location.reload();
@@ -2715,7 +2710,9 @@ class EditorScreen {
             querySelect("#loader_main").style.display = "none";
             updatePreview();
             this.canvas.save(); // Save Initial History
-          }, 1000);
+            }, 1000);
+            document.getElementById("top_bottom_1").click()
+            this.canvas.renderAll();
         });
       })
       .catch((error) => {
@@ -3801,6 +3798,7 @@ class EditorScreen {
     };
 
     function setlogoPosition(position, canvas) {
+      if (!canvas) throw new Error("Canvas", canvas)
       switch (position) {
         case "1":
           centerAndResizeElements(
@@ -3808,8 +3806,8 @@ class EditorScreen {
             46,
             22,
             "center",
-            1.32,
-            1.5,
+            1.3,
+            1.45,
             false,
             canvas,
             logoNameElement,
@@ -3822,8 +3820,8 @@ class EditorScreen {
             40,
             20,
             "center",
-            1.35,
-            1.52,
+            1.32,
+            1.47,
             false,
             canvas,
             logoNameElement,
@@ -3836,8 +3834,8 @@ class EditorScreen {
             46,
             22,
             "center",
-            1.42,
-            1.6,
+            1.32,
+            1.5,
             false,
             canvas,
             logoNameElement,
@@ -4029,15 +4027,15 @@ class EditorScreen {
           );
           break;
       }
+        canvas.requestRenderAll();
     }
-
-    setlogoPosition(1, this.canvas);
 
     var logoPosition;
     var external_layer;
     var external_text;
     var external_img;
-    async function fetchData(canvas) {
+
+    async function fetchCanvasData(canvas) {
       querySelect("#loader_main").style.display = "block";
       const logoId = querySelect("#logo_id").value;
       if (!logoId) return toastNotification("Error!! Logo ID Not Found");
@@ -4066,12 +4064,6 @@ class EditorScreen {
 
       if (svgData) {
         localStorage.setItem("logo-file", svgData);
-        setlogoPosition(
-          logoPosition,
-          canvas,
-          logoNameElement,
-          sloganNameElement
-        );
       }
 
       return { bg, logoPosition, svgData: response.data };
@@ -4105,6 +4097,7 @@ class EditorScreen {
 
         scaleLogo(scaleValue);
         anythingApplied = true;
+        console.log("ALIGN ID", this.alignId)
         setlogoPosition(this.alignId, this.canvas);
         setTimeout(() => {
           this.canvas.save();
@@ -4153,23 +4146,20 @@ class EditorScreen {
 
         self.canvas.requestRenderAll();
         return img;
-      }
+      };
 
       for (const layer of externalLayers) {
         let { layerType, ext } = layer;
         if (layerType == "text") {
           let textLayer = new fabric.IText(layer.text, layer);
           this.canvas.add(textLayer);
-        } else if (ext == 'svg') {
+        } else if (ext == "svg") {
           fabric.loadSVGFromURL(layer.dataUrl, (objects, options) => {
             console.log(layer);
             let img = loadSVGObject(layer, objects, options);
-            img.set('dataUrl', layer.dataUrl);
+            img.set("dataUrl", layer.dataUrl);
           });
-        }
-
-        else if (layerType === "image") {
-
+        } else if (layerType === "image") {
           fabric.Image.fromURL(layer.dataUrl, (img) => {
             img.set({
               dataUrl: layer.dataUrl,
@@ -4190,9 +4180,7 @@ class EditorScreen {
             this.canvas.add(img);
             this.canvas.requestRenderAll();
             uploadLayerCounter++;
-
           });
-
         } else {
           let { category, itemId } = layer;
           if (!category) continue;
