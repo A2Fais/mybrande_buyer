@@ -150,10 +150,10 @@ export async function saveCanvas(
       );
       if (response?.status === 200) {
         console.log(response.data)
-        // const { buyer_logo_id } = response.data;
-        // if (!buyer_logo_id)
-        //   return toastNotification("Error encountered with buyer logo ID");
-        // querySelect("#buyer_logo_id").value = buyer_logo_id;
+        const { buyer_logo_id } = response.data;
+        if (!buyer_logo_id)
+          return toastNotification("Error encountered with buyer logo ID");
+        querySelect("#buyer_logo_id").value = buyer_logo_id;
         // canvas.setBackgroundColor(bgColor, canvas.renderAll.bind(canvas));
         // canvas.setBackgroundImage(
         //   "/static/pattern.png",
@@ -168,10 +168,10 @@ export async function saveCanvas(
         //     scaleY: 0.3,
         //   }
         // );
-        // isPackage
-        //   ? (location.href = `https://www.mybrande.com/api/buyer/logo/downloadandpayment/${buyer_logo_id}`)
-        //   : (window.location.href = `https://www.mybrande.com/api/user/logo/preview/${buyer_logo_id}`);
-        // toastNotification("Logo Saved Successfully");
+        isPackage
+          ? (location.href = `https://www.mybrande.com/api/buyer/logo/downloadandpayment/${buyer_logo_id}`)
+          : (window.location.href = `https://www.mybrande.com/api/user/logo/preview/${buyer_logo_id}`);
+        toastNotification("Logo Saved Successfully");
       }
     } catch (error) {
       console.log(error);
