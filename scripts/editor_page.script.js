@@ -1150,7 +1150,7 @@ class EditorScreen {
       logoNameElement = this.canvas.getObjects("text").map((i) => i)[0];
       logoNameElement.set("text", val);
 
-      this.canvas.requestRenderAll();
+      this.canvas.renderAll();
     });
     // Slogan Name
     querySelect("#sloganNameField").addEventListener("input", (e) => {
@@ -1159,7 +1159,7 @@ class EditorScreen {
 
       sloganNameElement = this.canvas.getObjects("text").map((i) => i)[1];
       sloganNameElement.set("text", val);
-      this.canvas.requestRenderAll();
+      this.canvas.renderAll();
     });
 
     const renderCanvas = (SVG) => {
@@ -2484,7 +2484,7 @@ class EditorScreen {
       const selectedObject = this.canvas.getActiveObject();
       const { colorMode, grad1Value, grad2Value, solidValue, colorAngle } =
         e.detail;
-      console.log(selectedObject);
+      // console.log(selectedObject);
       let angleColor = `${colorAngle}deg`;
       let color = null;
       if (colorMode !== "Solid") {
@@ -2767,12 +2767,12 @@ class EditorScreen {
         canvas.requestRenderAll();
 
         img.on("mousedown", (event) => {
-          console.log(
-            "Clicked on object with ID:",
-            event.target.id,
-            event.target.top,
-            event.target.left
-          );
+          // console.log(
+          //   "Clicked on object with ID:",
+          //   event.target.id,
+          //   event.target.top,
+          //   event.target.left
+          // );
           canvas.renderAll();
         });
       });
@@ -3019,7 +3019,7 @@ class EditorScreen {
               if (activeElem && activeElem._objects)
                 activeElem._objects.forEach((obj) => {
                   obj.set("fill", color);
-                  console.log(obj);
+                  // console.log(obj);
                 });
 
               activeElem.set("fill", color);
@@ -3312,7 +3312,7 @@ class EditorScreen {
         const b = querySelect("#B_BG").value;
         colorPickerBG.color.rgb = { r, g, b };
         const bgColor = colorPickerBG.color.hexString;
-        console.log(bgColor);
+        // console.log(bgColor);
         this.canvas.setBackgroundColor(bgColor);
         this.canvas.requestRenderAll();
       });
@@ -3820,8 +3820,8 @@ class EditorScreen {
             40,
             20,
             "center",
-            1.32,
-            1.47,
+            1.3,
+            1.45,
             false,
             canvas,
             logoNameElement,
@@ -4097,7 +4097,7 @@ class EditorScreen {
 
         scaleLogo(scaleValue);
         anythingApplied = true;
-        console.log("ALIGN ID", this.alignId)
+        // console.log("ALIGN ID", this.alignId)
         setlogoPosition(this.alignId, this.canvas);
         setTimeout(() => {
           this.canvas.save();
@@ -4155,7 +4155,7 @@ class EditorScreen {
           this.canvas.add(textLayer);
         } else if (ext == "svg") {
           fabric.loadSVGFromURL(layer.dataUrl, (objects, options) => {
-            console.log(layer);
+            // console.log(layer);
             let img = loadSVGObject(layer, objects, options);
             img.set("dataUrl", layer.dataUrl);
           });

@@ -84,6 +84,10 @@ export const centerAndResizeElements = (
 
           sloganNameElement?.set("charSpacing", 322);
           sloganNameElement?.set("fontSize", 27);
+
+
+        logoNameElement?.set("top", logoNameElement.top+=20);
+        sloganNameElement?.set("top", sloganNameElement.top+=20);
         }
 
         logoNameElement?.centerH();
@@ -174,29 +178,30 @@ export const centerAndResizeElements = (
           logoNameElement.viewportCenterH();
           sloganNameElement.viewportCenterH();
 
-          if (logoNameElement.text.length <= 40) {
+
+          if (logoNameElement.text.length <= 20) {
+            logoNameElement.set("left", (canvas.width / 1.5));
+            sloganNameElement.set(
+              "left",
+              logoNameElement.left +
+                logoNameElement.width / 2.5 -
+                sloganNameElement.width / 2.5
+            );
+          } else if (logoNameElement.text.length <= 30) {
             logoNameElement.set("left", canvas.width / 1.6);
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-                logoNameElement.width / 2 -
-                sloganNameElement.width / 1.5
+                logoNameElement.width / 2.5 -
+                sloganNameElement.width / 2.5
             );
-          } else if (logoNameElement.text.length <= 30) {
-            logoNameElement.set("left", canvas.width - 500);
+          } else if (logoNameElement.text.length <= 40) {
+            logoNameElement.set("left", canvas.width / 1.6);
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-                logoNameElement.width / 2 -
-                sloganNameElement.width / 2
-            );
-          } else {
-            logoNameElement.set("left", canvas.width / 2.5);
-            sloganNameElement.set(
-              "left",
-              logoNameElement.left +
-                logoNameElement.width / 2 -
-                sloganNameElement.width / 2
+                logoNameElement.width / 2.5 -
+                sloganNameElement.width / 2.5
             );
           }
         }
@@ -210,7 +215,6 @@ export const centerAndResizeElements = (
 
           sloganNameElement.set("charSpacing", 322);
           sloganNameElement.set("fontSize", 27);
-
 
           logoNameElement.set("left", canvas.width / 1.6);
           sloganNameElement.set("left", logoNameElement.left);
@@ -269,7 +273,6 @@ export const centerAndResizeElements = (
                 sloganNameElement.width / 2.5
             );
           } else if (logoNameElement.text.length <= 30) {
-            // console.log("<= 30");
             logoNameElement.set("left", -(canvas.width / 7));
             sloganNameElement.set(
               "left",
@@ -329,8 +332,7 @@ export const centerAndResizeElements = (
                 sloganNameElement.width / 2.5
             );
           } else if (logoNameElement.text.length <= 30) {
-            // console.log("<= 30");
-            logoNameElement.set("left", -(canvas.width / 6));
+            logoNameElement.set("left", -(canvas.width / 8));
             sloganNameElement.set(
               "left",
               logoNameElement.left +
@@ -338,20 +340,12 @@ export const centerAndResizeElements = (
                 sloganNameElement.width / 2.5
             );
           } else if (logoNameElement.text.length <= 40) {
-            logoNameElement.set("left", -(canvas.width / 2.9));
+            logoNameElement.set("left", -(canvas.width / 3));
             sloganNameElement.set(
               "left",
               logoNameElement.left +
                 logoNameElement.width / 2.5 -
                 sloganNameElement.width / 2.5
-            );
-          } else {
-            logoNameElement.set("left", canvas.width / 6);
-            sloganNameElement.set(
-              "left",
-              logoNameElement.left +
-                logoNameElement.width / 2 -
-                sloganNameElement.width / 2
             );
           }
         }
@@ -365,18 +359,41 @@ export const centerAndResizeElements = (
 
           sloganNameElement.set("charSpacing", 322);
           sloganNameElement.set("fontSize", 27);
-          sloganNameElement.set(
-            "left",
-            logoNameElement.left +
-              logoNameElement.width / 2.5 -
-              sloganNameElement.width / 2.5
-          );
+
+          if (logoNameElement.text.length <= 20) {
+            logoNameElement.set("left", -(canvas.width / 3.6));
+
+            sloganNameElement.set(
+              "left",
+              logoNameElement.left +
+                logoNameElement.width / 2.5 -
+                sloganNameElement.width / 2.5
+            );
+          }
+          else if (logoNameElement.text.length <= 30) {
+            logoNameElement.set("left", -(canvas.width / 4));
+            sloganNameElement.set(
+              "left",
+              logoNameElement.left +
+                logoNameElement.width / 2.5 -
+                sloganNameElement.width / 2.5
+            );
+          }
+          else if (logoNameElement.text.length <= 40) {
+            logoNameElement.set("left", -(canvas.width / 2.7));
+            sloganNameElement.set(
+              "left",
+              logoNameElement.left +
+                logoNameElement.width / 2.5 -
+                sloganNameElement.width / 2.5
+            );
+          }
+
+
         }
 
-        logoMain.forEach((i) => {
-          i.left += 50;
-          i.top += 40;
-        });
+
+        // logoMain.forEach((i) => (i.left -= 500));
         const newGrp = new fabric.Group(objects);
         canvas.viewportCenterObjectH(newGrp);
         canvas.viewportCenterObjectV(newGrp);
