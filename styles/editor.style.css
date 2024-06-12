@@ -444,8 +444,8 @@ input:checked+.switch-slider:before {
   background: none;
   outline: none;
   border: none;
-  width: 42px;
-  height: 42px;
+  width: 25px;
+  height: 25px;
   padding: 0;
   cursor: pointer;
 }
@@ -1303,10 +1303,23 @@ body {
   padding: 5px 12px;
 }
 
+.color_mode_title.active,
 .color_mode_title:hover {
   color: var(--gold);
   cursor: pointer;
   border-bottom: 2px solid var(--gold);
+}
+
+.font-family-search {
+  width: 100%;
+  padding-left: 4px;
+  padding: 14px 3px;
+  position: sticky;
+  top: 0px;
+  background: #f6f6f6;
+  padding-top: 21px;
+  padding-left: 9px;
+  margin-bottom: 10px;
 }
 
 .color_mode_title-active {
@@ -1326,7 +1339,7 @@ body {
 .scale-value,
 .font_size {
   margin-inline: 10px;
-  width: 33px !important;
+  width: 44px !important;
   text-indent: 5px;
   outline: none;
   border: none;

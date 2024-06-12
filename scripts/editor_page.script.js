@@ -137,9 +137,9 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
     }
 
     var text =
-        this.text.trim().length > 1
-          ? this.text
-          : "You don't set empty value in curved text",
+      this.text.trim().length > 1
+        ? this.text
+        : "You don't set empty value in curved text",
       diameter = this.diameter,
       flipped = this.flipped,
       kerning = this.kerning,
@@ -336,6 +336,7 @@ class EditorScreen {
     CanvasGuides(this.canvas); // Init Canvas Guides
 
     this.loadedIcons = {};
+    this.activeSection = '';
     this.textMode = querySelect('.nav-item[data-name="text"]');
     this.logoMode = querySelect('.nav-item[data-name="logo"]');
     this.uploadsMode = querySelect('.nav-item[data-name="upload"]');
@@ -1018,14 +1019,19 @@ class EditorScreen {
         activeObject.on("mousedown", updatePickerHandler(activeObject));
 
       if (activeObject) {
-        if (activeObject.text)
+        if (activeObject.text) {
           querySelect('.nav-item[data-name="text"]').dispatchEvent(
             new Event("click")
           );
-        else
+          this.activeSection = 'text';
+        }
+        else {
+          this.activeSection = 'text';
+
           querySelect('.nav-item[data-name="logo"]').dispatchEvent(
             new Event("click")
           );
+        }
 
         if (activeObject.type === "curved-text") {
           let percentage = activeObject.percentage;
@@ -1106,6 +1112,9 @@ class EditorScreen {
         querySelect("#progress-bar").value = obj.scaleValue
           ? obj.scaleValue * 10
           : 10;
+
+        querySelect("#letter-spacing-slider").value = obj.charSpacing;
+        querySelect("#l_spacing_value").value = obj.charSpacing;
 
         // Set Font Size
         if (obj.fontSize) {
@@ -1453,6 +1462,8 @@ class EditorScreen {
         if (letterSpacing < -1) letterSpacing = -1;
         active.set("_cachedCanvas", null);
         active.set("kerning", parseInt(letterSpacing));
+        querySelect("#l_spacing_value").innerText = ": " + e.target.value / 10;
+
         this.canvas.requestRenderAll();
         return false;
       }
@@ -1476,10 +1487,20 @@ class EditorScreen {
     });
 
     querySelect("#shadow-blur-slider")?.addEventListener("input", (e) => {
-      const value = e.target.value;
-      this.shadowBlur = value;
-      querySelect("#shadow_blur_title").innerText = ` :${value}px`;
-      this.shadowChanger(sloganNameElement, logoNameElement);
+      const active = this.canvas.getActiveObjects(),
+        self = this;
+      querySelect(
+        "#shadow_blur_title"
+      ).innerText = ` :${e.target.value}px`;
+      this.logoShadowBlur = e.target.value;
+
+      active.forEach((item) => {
+        item.set("shadow", {
+          offsetX: self.logoShadowOffsetX,
+          offsetY: self.logoShadowOffsetY,
+          blur: self.logoShadowBlur,
+        });
+      });
       this.canvas.requestRenderAll();
     });
 
@@ -1512,7 +1533,16 @@ class EditorScreen {
       const val = e.target.value;
       this.shadowOffsetX = val;
       querySelect("#offset_x_title").innerText = ` :${val}px`;
-      this.shadowChanger(sloganNameElement, logoNameElement);
+      const active = this.canvas.getActiveObjects();
+      let self = this;
+      console.log(self.logoShadowOffsetX);
+      active.forEach((item) => {
+        item.set("shadow", {
+          offsetX: self.logoShadowOffsetX,
+          offsetY: self.logoShadowOffsetY,
+          blur: self.logoShadowBlur,
+        });
+      });
       this.canvas.requestRenderAll();
     });
 
@@ -1610,28 +1640,7 @@ class EditorScreen {
             if (localDirFile) reader.readAsDataURL(localDirFile);
           });
         } else {
-          fabric.Image.fromURL(url, (img) => {
-            const originalWidth = img.width;
-            const originalHeight = img.height;
-            const scaleFactor = Math.min(
-              400 / originalWidth,
-              400 / originalHeight
-            );
-            img.scale(scaleFactor);
-            img.set("id", "upload_external_layer_" + uploadLayerCounter);
-
-            var reader = new FileReader();
-            reader.onloadend = function () {
-              img.set("dataUrl", reader.result);
-              img.set("layerType", "image");
-              self.canvas.add(img);
-              self.canvas.centerObject(img);
-              self.canvas.requestRenderAll();
-              uploadLayerCounter++;
-            };
-
-            if (localDirFile) reader.readAsDataURL(localDirFile);
-          });
+          toastNotification("Please select an SVG file");
         }
       });
       e.target.value = "";
@@ -1875,6 +1884,7 @@ class EditorScreen {
 
     querySelect("#font_size_range").addEventListener("input", (event) => {
       const textSize = event.target.value;
+      console.log(textSize);
       if (textSize > 0) {
         querySelect("#font_size_title").value = `${textSize}px`;
         const active = this.canvas.getActiveObject();
@@ -1911,6 +1921,7 @@ class EditorScreen {
     });
 
     //#region Up and down
+
     // Text Curve Up
     querySelect("#text-curve-up").addEventListener("click", (e) => {
       let input = querySelect("#curve-text"),
@@ -1967,7 +1978,7 @@ class EditorScreen {
       if (percentage == -0 || percentage == "-0") percentage = 0;
 
       // Percentage Limit is 90 but we can change it
-      if (percentage > 90 || percentage < -90) return percentage * 3.6;
+      if (percentage > 90 || percentage < -90) return (percentage * 3.6).toFixed(0);
 
       let isFlipped = percentage < 0,
         hasCurveApply = parseInt(percentage) != 0;
@@ -2014,7 +2025,16 @@ class EditorScreen {
         this.canvas.setActiveObject(curvedText);
         this.canvas.requestRenderAll();
       } else if (!hasCurveApply) {
-        const text = new fabric.IText(obj.text, {
+        let itext = true;
+        if (obj.text == querySelect("#logoMainField").value) {
+          itext = false;
+        } else if (obj.text == querySelect("#sloganNameField").value) {
+          itext = false;
+        }
+
+
+
+        const text = new fabric[itext ? 'IText' : 'Text'](obj.text, {
           ...obj,
           type: "text",
           percentage,
@@ -2045,7 +2065,7 @@ class EditorScreen {
 
       this.canvas.requestRenderAll();
 
-      const angle = percentage * 3.6;
+      const angle = (percentage * 3.6).toFixed(0);
 
       return angle;
     };
@@ -2065,6 +2085,8 @@ class EditorScreen {
       const text = event.target.value;
       const fontSize = Number(text.split("px")[0]);
       querySelect("#font_size_range").value = fontSize;
+      console.log(fontSize)
+
       updatePreview();
       this.canvas.save();
       this.canvas.requestRenderAll();
@@ -2083,7 +2105,6 @@ class EditorScreen {
     const arrowFontResizer = (type = "increment") => {
       const active = this.canvas.getActiveObject();
       let fontSize = parseInt(active.fontSize);
-
       if (fontSize <= 1) {
         fontSize = 2;
       }
@@ -2426,7 +2447,7 @@ class EditorScreen {
     palleteComponent.addEventListener("colorChange", (e) => {
       const { colorMode, grad1Value, grad2Value, colorAngle, solidValue } =
         e.detail;
-
+      console.log(colorMode)
       let angleColor = `${colorAngle}deg`;
       let color = null;
       if (colorMode === "Linear") {
@@ -2510,6 +2531,7 @@ class EditorScreen {
         });
       }
       selectedObject.set("fill", color);
+      console.log(color)
       this.canvas.requestRenderAll();
     });
 
@@ -2710,9 +2732,9 @@ class EditorScreen {
             querySelect("#loader_main").style.display = "none";
             updatePreview();
             this.canvas.save(); // Save Initial History
-            }, 1000);
-            document.getElementById("top_bottom_1").click()
-            this.canvas.renderAll();
+          }, 1000);
+          document.getElementById("top_bottom_1").click()
+          this.canvas.renderAll();
         });
       })
       .catch((error) => {
@@ -2821,6 +2843,7 @@ class EditorScreen {
     let isLogoShadowAdjust = false;
     querySelect("#logo-drop-shadow").addEventListener("change", () => {
       const active = this.canvas.getActiveObject();
+      if (active.text) return true;
       isLogoShadowAdjust = !isLogoShadowAdjust;
 
       if (isLogoShadowAdjust) {
@@ -2901,6 +2924,7 @@ class EditorScreen {
     querySelect("#drop-shadow").addEventListener("change", () => {
       isShadowAdjust = !isShadowAdjust;
       const active = this.canvas.getActiveObject();
+      if (!active.text) return true;
 
       if (isShadowAdjust) {
         querySelect("#shadow-adjust").style.display = "block";
@@ -3611,6 +3635,7 @@ class EditorScreen {
               updatePreview();
               captureCanvasState();
               this.canvas.save();
+              changeColorPickerText(colorPickerText.color)
             }
           }
         }
@@ -3719,6 +3744,7 @@ class EditorScreen {
     });
 
     const handleColorModeClick = (activeElement, element1, element2) => {
+      querySelectAll('.color_mode_title').forEach(i => i.classList.remove('active'));
       querySelect(element1 + "_view").classList.remove(
         "color_mode_title-active"
       );
@@ -3735,28 +3761,37 @@ class EditorScreen {
       querySelect(activeElement + "_view").style.display = "flex";
     };
 
-    querySelect("#HSL_mode").addEventListener("click", () => {
+    querySelect("#HSL_mode").addEventListener("click", (e) => {
       handleColorModeClick("#HSL", "#RGB", "#HEX");
+      e.target.classList.add("active");
     });
 
-    querySelect("#RGB_mode").addEventListener("click", () => {
+    querySelect("#RGB_mode").addEventListener("click", (e) => {
       handleColorModeClick("#RGB", "#HSL", "#HEX");
+      e.target.classList.add("active");
+
     });
 
-    querySelect("#HEX_mode").addEventListener("click", () => {
+    querySelect("#HEX_mode").addEventListener("click", (e) => {
       handleColorModeClick("#HEX", "#RGB", "#HSL");
+      e.target.classList.add("active");
+
     });
 
-    querySelect("#HSL2_mode").addEventListener("click", () => {
+    querySelect("#HSL2_mode").addEventListener("click", (e) => {
       handleColorModeClick("#HSL2", "#RGB2", "#HEX2");
+      e.target.classList.add("active");
+      console.log(e.target);
     });
 
-    querySelect("#RGB2_mode").addEventListener("click", () => {
+    querySelect("#RGB2_mode").addEventListener("click", (e) => {
       handleColorModeClick("#RGB2", "#HSL2", "#HEX2");
+      e.target.classList.add("active");
     });
 
-    querySelect("#HEX2_mode").addEventListener("click", () => {
+    querySelect("#HEX2_mode").addEventListener("click", (e) => {
       handleColorModeClick("#HEX2", "#RGB2", "#HSL2");
+      e.target.classList.add("active");
     });
 
     handleColorModeClick("#HEX", "#RGB", "#HSL");
@@ -4027,7 +4062,7 @@ class EditorScreen {
           );
           break;
       }
-        canvas.requestRenderAll();
+      canvas.requestRenderAll();
     }
 
     var logoPosition;
@@ -4221,7 +4256,7 @@ class EditorScreen {
         };
         famillies.push(family);
 
-        if (count < 300) {
+        if (count < 800) {
           WebFont.load({
             google: {
               families: [family],
@@ -4324,7 +4359,7 @@ class EditorScreen {
           : target;
         let txt = dataTarget ? dataTarget.textContent : "";
         if (txt) {
-          if (txt.toLowerCase().indexOf(val) > -1) {
+          if (txt.toLowerCase().includes(val)) {
             target.style.display = "inherit";
           } else target.style.display = "none";
         }

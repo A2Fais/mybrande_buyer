@@ -445,8 +445,8 @@
               <input id="custom_color_generator" type="color" style="visibility: hidden;">
             </label>
           </div>
-          <h4 style="font-weight: 500; font-size: 14px; color: var(--gray-light);">Layer Colors</h4>
-          <div id="logo_colors_pallete" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+          <h4 style="font-weight: 500; font-size: 14px; color: var(--gray-light);margin-bottom: 1px;">Layer Colors</h4>
+          <div id="logo_colors_pallete" style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 0px;">
           </div>
           <pallete-component id="logo-pallete" data-list="['Linear']"></pallete-component>
         </div>
@@ -931,8 +931,8 @@
           </div>
 
 
-          <h4 style="font-weight: 500; font-size: 14px; color: var(--gray-light);">Layer Colors</h4>
-          <div id="logo_colors_pallete" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+          <h4 style="font-weight: 500; font-size: 14px; color: var(--gray-light);margin-bottom: 0px;">Layer Colors</h4>
+          <div id="logo_colors_pallete" style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 0px;">
           </div>
           <!-- 
                     <div id="logo_colors_pallete"
@@ -981,9 +981,8 @@
           </span>
 
           <div class="ms-select-list-menu" id="font-family-con">
-            <input type="search" class="form-control live-search" data-target=".font-family-item" data-match=".text"
-              placeholder="Search Fonts..." data-radius="#font-family-con"
-              style="margin-inline: 10px;width: 88%;padding-left: 4px;background: transparent;padding: 14px 3px;margin-bottom: 10px;margin-top: 6px;">
+            <input type="search" class="form-control live-search font-family-search" data-target=".font-family-item"
+              data-match=".text" placeholder="Search Fonts..." data-radius="#font-family-con">
           </div>
         </div>
 
@@ -1117,7 +1116,7 @@
             </span>Upload a file
           </label>
         </div>
-        <input type="file" name="file-uploads" id="upload-file" style="display: none;">
+        <input type="file" accept=".svg" name="file-uploads" id="upload-file" style="display: none;">
 
         <div class="layer-specific-settings">
           <span class="specific-setting" id="copyElement-uploads">
