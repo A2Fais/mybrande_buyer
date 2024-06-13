@@ -1492,13 +1492,15 @@ class EditorScreen {
       querySelect(
         "#shadow_blur_title"
       ).innerText = ` :${e.target.value}px`;
-      this.logoShadowBlur = e.target.value;
+      this.shadowBlur = e.target.value;
 
       active.forEach((item) => {
+        if (!item.text) return true;
+
         item.set("shadow", {
-          offsetX: self.logoShadowOffsetX,
-          offsetY: self.logoShadowOffsetY,
-          blur: self.logoShadowBlur,
+          offsetX: self.shadowOffsetX,
+          offsetY: self.shadowOffsetY,
+          blur: self.shadowBlur,
         });
       });
       this.canvas.requestRenderAll();
@@ -1515,11 +1517,21 @@ class EditorScreen {
         "#logo-shadow_blur_title"
       ).innerText = ` :${e.target.value}px`;
       active.forEach((item) => {
-        item.set("shadow", {
-          offsetX: this.logoShadowOffsetX,
-          offsetY: this.logoShadowOffsetY,
-          blur: this.logoShadowBlur,
-        });
+        if (item._objects) {
+          item._objects.forEach((i) => {
+            i.set("shadow", {
+              offsetX: this.logoShadowOffsetX,
+              offsetY: this.logoShadowOffsetY,
+              blur: parseInt(this.logoShadowBlur),
+            });
+          });
+        } else
+          item.set("shadow", {
+            offsetX: this.logoShadowOffsetX,
+            offsetY: this.logoShadowOffsetY,
+            blur: parseInt(this.logoShadowBlur),
+          });
+
       });
       this.canvas.requestRenderAll();
     });
@@ -1534,13 +1546,15 @@ class EditorScreen {
       this.shadowOffsetX = val;
       querySelect("#offset_x_title").innerText = ` :${val}px`;
       const active = this.canvas.getActiveObjects();
+
       let self = this;
-      console.log(self.logoShadowOffsetX);
       active.forEach((item) => {
+        if (!item.text) return true;
+
         item.set("shadow", {
-          offsetX: self.logoShadowOffsetX,
-          offsetY: self.logoShadowOffsetY,
-          blur: self.logoShadowBlur,
+          offsetX: self.shadowOffsetX,
+          offsetY: self.shadowOffsetY,
+          blur: self.shadowBlur,
         });
       });
       this.canvas.requestRenderAll();
@@ -1552,11 +1566,21 @@ class EditorScreen {
       querySelect("#logo-shadow_offsetX").innerText = ` :${e.target.value}px`;
       const active = this.canvas.getActiveObjects();
       active.forEach((item) => {
-        item.set("shadow", {
-          offsetX: this.logoShadowOffsetX,
-          offsetY: this.logoShadowOffsetY,
-          blur: this.logoShadowBlur,
-        });
+
+        if (item._objects) {
+          item._objects.forEach((i) => {
+            i.set("shadow", {
+              offsetX: this.logoShadowOffsetX,
+              offsetY: this.logoShadowOffsetY,
+              blur: this.logoShadowBlur,
+            });
+          });
+        } else
+          item.set("shadow", {
+            offsetX: this.logoShadowOffsetX,
+            offsetY: this.logoShadowOffsetY,
+            blur: this.logoShadowBlur,
+          });
       });
       this.canvas.requestRenderAll();
     });
@@ -1582,7 +1606,18 @@ class EditorScreen {
       const val = e.target.value;
       this.shadowOffsetY = val;
       querySelect("#offset_y_title").innerText = ` :${val}px`;
-      this.shadowChanger(sloganNameElement, logoNameElement);
+      const active = this.canvas.getActiveObjects();
+
+      let self = this;
+      active.forEach((item) => {
+        if (!item.text) return true;
+
+        item.set("shadow", {
+          offsetX: self.shadowOffsetX,
+          offsetY: self.shadowOffsetY,
+          blur: self.shadowBlur,
+        });
+      });
       this.canvas.requestRenderAll();
     });
 
@@ -1591,11 +1626,21 @@ class EditorScreen {
       querySelect("#logo-shadow_offsetY").innerText = ` :${e.target.value}px`;
       const active = this.canvas.getActiveObjects();
       active.forEach((item) => {
-        item.set("shadow", {
-          offsetX: this.logoShadowOffsetX,
-          offsetY: this.logoShadowOffsetY,
-          blur: this.logoShadowBlur,
-        });
+
+        if (item._objects) {
+          item._objects.forEach((i) => {
+            i.set("shadow", {
+              offsetX: this.logoShadowOffsetX,
+              offsetY: this.logoShadowOffsetY,
+              blur: this.logoShadowBlur,
+            });
+          });
+        } else
+          item.set("shadow", {
+            offsetX: this.logoShadowOffsetX,
+            offsetY: this.logoShadowOffsetY,
+            blur: this.logoShadowBlur,
+          });
       });
       this.canvas.requestRenderAll();
     });
@@ -2289,7 +2334,7 @@ class EditorScreen {
 
     querySelect("#bringDownElement").addEventListener("click", () => {
       const selectedObject = this.canvas.getActiveObject();
-      this.canvas.sendToBack(selectedObject);
+      this.canvas.sendBackwards(selectedObject);
       this.canvas.setActiveObject(selectedObject);
       this.canvas.requestRenderAll();
       this.canvas.save();
@@ -2841,12 +2886,14 @@ class EditorScreen {
     });
 
     let isLogoShadowAdjust = false;
-    querySelect("#logo-drop-shadow").addEventListener("change", () => {
-      const active = this.canvas.getActiveObject();
+    querySelect("#logo-drop-shadow").addEventListener("change", (e) => {
+      const active = this.canvas.getActiveObject(),
+        el = e.target;
       if (active.text) return true;
+      el.classList.toggle('active');
       isLogoShadowAdjust = !isLogoShadowAdjust;
 
-      if (isLogoShadowAdjust) {
+      if (el.classList.contains('active')) {
         querySelect("#logo-shadow-adjust").style.display = "block";
         const settingsView = querySelect(".settings-view");
         settingsView.scrollTop = settingsView.scrollHeight;
@@ -2933,6 +2980,8 @@ class EditorScreen {
 
         if (active._objects) {
           active.forEachObject((obj) => {
+            if (!obj.text) return true;
+
             obj.set("shadow", {
               offsetX: 2,
               offsetY: 2,
