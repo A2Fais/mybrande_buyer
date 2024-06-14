@@ -113,8 +113,8 @@ export async function saveCanvas(
       logo_id: logoId, // svg data id
       brand_name: querySelect("#logoMainField").value,
       slogan: querySelect("#sloganNameField").value,
-      svg_data: currentCanvasSVG,
-      editor_svg_data: thumbnailSVG,
+      svg_data: thumbnailSVG,
+      editor_svg_data: currentCanvasSVG,
       /* logo_position: alignId, */
       logo_position: 1,
       logo_backgroundcolor: bgColor === "#efefef" ? "transparent" : bgColor,
