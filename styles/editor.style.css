@@ -444,10 +444,15 @@ input:checked+.switch-slider:before {
   background: none;
   outline: none;
   border: none;
-  width: 25px;
-  height: 25px;
+  width: 42px;
+  height: 42px;
   padding: 0;
   cursor: pointer;
+}
+
+#color-layers-pickers.color-picker {
+  width: 28px;
+  height: 28px;
 }
 
 .color-picker::-webkit-color-swatch {
