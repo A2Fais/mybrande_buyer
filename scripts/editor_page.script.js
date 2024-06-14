@@ -752,10 +752,20 @@ class EditorScreen {
     querySelect(".font-weight-selector").addEventListener(
       "change",
       function () {
-        console.log("okay");
         let weight = this.getAttribute("data-value"),
           obj = self.canvas.getActiveObject();
         if (!obj) return false;
+
+        if (weight.includes("italic")) {
+          weight = weight.replace("italic", "");
+          obj.set('fontStyle', 'italic');
+          obj.set("fontweightapply", true);
+        } else {
+          if (obj.get('fontweightapply'))
+            obj.set('fontStyle', 'normal');
+        }
+
+
         obj.set("fontWeight", weight);
         self.canvas.renderAll();
         updatePreview();
@@ -2007,6 +2017,15 @@ class EditorScreen {
       input.value = rangeValue;
 
       initCurveText();
+    });
+
+    // Arrow up down event
+    querySelect("#curve-text").addEventListener("keydown", (e) => {
+      if (e.key == "ArrowUp") {
+        querySelect("#text-curve-up").dispatchEvent(new Event("click"));
+      } else if (e.key == "ArrowDown") {
+        querySelect("#text-curve-down").dispatchEvent(new Event("click"));
+      }
     });
 
     // Init Curve Text
@@ -4408,7 +4427,7 @@ class EditorScreen {
           : target;
         let txt = dataTarget ? dataTarget.textContent : "";
         if (txt) {
-          if (txt.toLowerCase().includes(val)) {
+          if (txt.toLowerCase().startsWith(val)) {
             target.style.display = "inherit";
           } else target.style.display = "none";
         }
