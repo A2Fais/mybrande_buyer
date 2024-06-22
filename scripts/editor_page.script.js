@@ -4244,7 +4244,7 @@ class EditorScreen {
 
       const bg = response.data?.AllData?.logo_backgroundcolor;
       logoPosition = response.data?.AllData?.logo_position;
-      const svgData = response.data?.AllData?.svg_data;
+      const svgData = response.data?.AllData?.editor_svg;
 
       external_layer = response.data?.AllData?.externalLayerElements;
       external_text = response.data?.AllData?.externalTextElements;
