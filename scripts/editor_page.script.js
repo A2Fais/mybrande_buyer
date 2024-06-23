@@ -1247,7 +1247,6 @@ class EditorScreen {
             querySelect("#flip-x").checked = this.isFlipX;
 
             const hasShadow = !!obj?.shadow?.blur;
-            console.log(hasShadow);
             querySelect("#logo-drop-shadow").checked = hasShadow;
             if (!hasShadow) querySelect("#logo-shadow-adjust").classList.remove('active');
             isLogoShadowAdjust = hasShadow;
@@ -1305,7 +1304,6 @@ class EditorScreen {
               querySelect("#S").value = hslValues[1];
               querySelect("#L").value = hslValues[2];
             }
-
             this.canvas.requestRenderAll();
           });
         });
@@ -2960,7 +2958,7 @@ class EditorScreen {
         settingsView.scrollTop = settingsView.scrollHeight;
 
 
-        this.logoShadowBlur = 5;
+        this.logoShadowBlur = 1;
         this.logoShadowOffsetX = 2;
         this.logoShadowOffsetY = 2;
         querySelect("#logo-shadow-blur-slider").value = this.logoShadowBlur;
@@ -3050,7 +3048,7 @@ class EditorScreen {
         const settingsView = querySelect(".settings-view");
         settingsView.scrollTop = settingsView.scrollHeight;
 
-        this.shadowBlur = 5;
+        this.shadowBlur = 1;
         this.shadowOffsetX = 2;
         this.shadowOffsetY = 2;
         querySelect("#shadow-blur-slider").value = this.shadowBlur;
@@ -3066,18 +3064,18 @@ class EditorScreen {
             obj.set("shadow", {
               offsetX: 2,
               offsetY: 2,
-              blur: 5,
+              blur: 1,
             });
           });
         } else {
           active.set("shadow", {
             offsetX: 2,
             offsetY: 2,
-            blur: 5,
+            blur: 1,
           });
         }
 
-        this.canvas.requestRenderAll();
+        this.canvas.renderAll();
       } else {
         querySelect("#shadow-adjust").style.display = "none";
         querySelect("#shadow-blur").style.display = "none";
