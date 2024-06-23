@@ -2785,6 +2785,7 @@ class EditorScreen {
               svg: i.icon_svg,
             };
           });
+          if (!icon.Icons[currIconIndex]) return true;
 
           let { icon_svg, id } = icon.Icons[currIconIndex];
           const name = icon.category.iconcategory_name;
@@ -4244,7 +4245,7 @@ class EditorScreen {
 
       const bg = response.data?.AllData?.logo_backgroundcolor;
       logoPosition = response.data?.AllData?.logo_position;
-      const svgData = response.data?.AllData?.editor_svg;
+      const svgData = response.data?.AllData?.svg_data;
 
       external_layer = response.data?.AllData?.externalLayerElements;
       external_text = response.data?.AllData?.externalTextElements;

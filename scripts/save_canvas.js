@@ -113,7 +113,7 @@ export async function saveCanvas(
       logo_id: logoId, // svg data id
       brand_name: querySelect("#logoMainField").value,
       slogan: querySelect("#sloganNameField").value,
-      svg_data: thumbnailSVG,
+      svg_data: currentCanvasSVG, // thumbnailSVG
       editor_svg_data: currentCanvasSVG,
       /* logo_position: alignId, */
       logo_position: 1,
