@@ -2786,7 +2786,6 @@ class EditorScreen {
             };
           });
           if (!icon.Icons[currIconIndex]) return true;
-
           let { icon_svg, id } = icon.Icons[currIconIndex];
           const name = icon.category.iconcategory_name;
           const categoryTitle = querySelect("#category_type_title");
