@@ -23,25 +23,25 @@ const querySelect = (element) => document.querySelector(element);
 const querySelectAll = (element) => document.querySelectorAll(element);
 const getAttr = (element, attr) => querySelect(element).getAttribute(attr);
 
-const families = [
-  "Poppins:300,400,500,600,700",
-  "Inter:300,400,500,600,700",
-  "Roboto:400,500,700",
-];
+// const families = [
+//   "Poppins:300,400,500,600,700",
+//   "Inter:300,400,500,600,700",
+//   "Roboto:400,500,700",
+// ];
 
-WebFont.load({
-  google: { families },
-  fontloading: () => (querySelect("#loader_font").style.display = "block"),
-  fontactive: (familyName) => {
-    if (
-      familyName === "Poppins" ||
-      familyName === "Inter" ||
-      familyName === "Roboto"
-    ) {
-      querySelect("#loader_font").style.display = "none";
-    }
-  },
-});
+// WebFont.load({
+//   google: { families },
+//   fontloading: () => (querySelect("#loader_font").style.display = "block"),
+//   fontactive: (familyName) => {
+//     if (
+//       familyName === "Poppins" ||
+//       familyName === "Inter" ||
+//       familyName === "Roboto"
+//     ) {
+//       querySelect("#loader_font").style.display = "none";
+//     }
+//   },
+// });
 
 //#region Text Curved
 fabric.CurvedText = fabric.util.createClass(fabric.Object, {
@@ -137,9 +137,9 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
     }
 
     var text =
-      this.text.trim().length > 1
-        ? this.text
-        : "You don't set empty value in curved text",
+        this.text.trim().length > 1
+          ? this.text
+          : "You don't set empty value in curved text",
       diameter = this.diameter,
       flipped = this.flipped,
       kerning = this.kerning,
@@ -336,7 +336,7 @@ class EditorScreen {
     CanvasGuides(this.canvas); // Init Canvas Guides
 
     this.loadedIcons = {};
-    this.activeSection = '';
+    this.activeSection = "";
     this.textMode = querySelect('.nav-item[data-name="text"]');
     this.logoMode = querySelect('.nav-item[data-name="logo"]');
     this.uploadsMode = querySelect('.nav-item[data-name="upload"]');
@@ -673,7 +673,9 @@ class EditorScreen {
         variants.map((v) => {
           let value = values[v] ? values[v] : v;
 
-          variantsHtml += `<li value="${value}" style="text-transform:capitalize">${formatString(value)}</li>`;
+          variantsHtml += `<li value="${value}" style="text-transform:capitalize">${formatString(
+            value
+          )}</li>`;
         });
         let target = querySelect(".font-weight-selector .ms-select-list-menu");
         target.innerHTML = variantsHtml;
@@ -770,13 +772,11 @@ class EditorScreen {
 
         if (weight.includes("italic")) {
           weight = weight.replace("italic", "");
-          obj.set('fontStyle', 'italic');
+          obj.set("fontStyle", "italic");
           obj.set("fontweightapply", true);
         } else {
-          if (obj.get('fontweightapply'))
-            obj.set('fontStyle', 'normal');
+          if (obj.get("fontweightapply")) obj.set("fontStyle", "normal");
         }
-
 
         obj.set("fontWeight", weight);
         self.canvas.renderAll();
@@ -1045,7 +1045,7 @@ class EditorScreen {
           querySelect('.nav-item[data-name="text"]').dispatchEvent(
             new Event("click")
           );
-          this.activeSection = 'text';
+          this.activeSection = "text";
 
           if (activeObject.shadow) {
             // set shadow values
@@ -1057,10 +1057,8 @@ class EditorScreen {
             this.shadowOffsetX = offsetX;
             this.shadowOffsetY = offsetY;
           }
-
-        }
-        else {
-          this.activeSection = 'text';
+        } else {
+          this.activeSection = "text";
 
           querySelect('.nav-item[data-name="logo"]').dispatchEvent(
             new Event("click")
@@ -1248,7 +1246,8 @@ class EditorScreen {
 
             const hasShadow = !!obj?.shadow?.blur;
             querySelect("#logo-drop-shadow").checked = hasShadow;
-            if (!hasShadow) querySelect("#logo-shadow-adjust").classList.remove('active');
+            if (!hasShadow)
+              querySelect("#logo-shadow-adjust").classList.remove("active");
             isLogoShadowAdjust = hasShadow;
             if (!hasShadow) {
               querySelect("#logo-shadow-adjust").style.display = "none";
@@ -1534,9 +1533,7 @@ class EditorScreen {
     querySelect("#shadow-blur-slider")?.addEventListener("input", (e) => {
       const active = this.canvas.getActiveObjects(),
         self = this;
-      querySelect(
-        "#shadow_blur_title"
-      ).innerText = ` :${e.target.value}px`;
+      querySelect("#shadow_blur_title").innerText = ` :${e.target.value}px`;
       this.shadowBlur = e.target.value;
 
       active.forEach((item) => {
@@ -1576,7 +1573,6 @@ class EditorScreen {
             offsetY: this.logoShadowOffsetY,
             blur: parseInt(this.logoShadowBlur),
           });
-
       });
       this.canvas.requestRenderAll();
     });
@@ -1611,7 +1607,6 @@ class EditorScreen {
       querySelect("#logo-shadow_offsetX").innerText = ` :${e.target.value}px`;
       const active = this.canvas.getActiveObjects();
       active.forEach((item) => {
-
         if (item._objects) {
           item._objects.forEach((i) => {
             i.set("shadow", {
@@ -1671,7 +1666,6 @@ class EditorScreen {
       querySelect("#logo-shadow_offsetY").innerText = ` :${e.target.value}px`;
       const active = this.canvas.getActiveObjects();
       active.forEach((item) => {
-
         if (item._objects) {
           item._objects.forEach((i) => {
             i.set("shadow", {
@@ -1974,7 +1968,7 @@ class EditorScreen {
     });
 
     querySelect("#font_size_range").addEventListener("input", (event) => {
-      const textSize = event.target.value
+      const textSize = event.target.value;
       if (textSize > 0) {
         // Use to fixed to remove decimal points
         querySelect("#font_size_title").value = `${textSize}px`;
@@ -2078,7 +2072,8 @@ class EditorScreen {
       if (percentage == -0 || percentage == "-0") percentage = 0;
 
       // Percentage Limit is 90 but we can change it
-      if (percentage > 90 || percentage < -90) return (percentage * 3.6).toFixed(0);
+      if (percentage > 90 || percentage < -90)
+        return (percentage * 3.6).toFixed(0);
 
       let isFlipped = percentage < 0,
         hasCurveApply = parseInt(percentage) != 0;
@@ -2132,9 +2127,7 @@ class EditorScreen {
           itext = false;
         }
 
-
-
-        const text = new fabric[itext ? 'IText' : 'Text'](obj.text, {
+        const text = new fabric[itext ? "IText" : "Text"](obj.text, {
           ...obj,
           type: "text",
           percentage,
@@ -2187,7 +2180,7 @@ class EditorScreen {
       text = parseFloat(text).toFixed(1);
       const fontSize = Number(text.split("px")[0]);
       querySelect("#font_size_range").value = fontSize;
-      console.log(fontSize)
+      console.log(fontSize);
 
       updatePreview();
       this.canvas.save();
@@ -2634,7 +2627,7 @@ class EditorScreen {
         });
       }
       selectedObject.set("fill", color);
-      console.log(color)
+      console.log(color);
       this.canvas.requestRenderAll();
     });
 
@@ -2836,7 +2829,7 @@ class EditorScreen {
             updatePreview();
             this.canvas.save(); // Save Initial History
           }, 1000);
-          document.getElementById("top_bottom_1").click()
+          document.getElementById("top_bottom_1").click();
           this.canvas.renderAll();
         });
       })
@@ -2948,37 +2941,43 @@ class EditorScreen {
       const active = this.canvas.getActiveObject(),
         el = e.target;
       if (active.text) return true;
-      el.classList.toggle('active');
+      el.classList.toggle("active");
       isLogoShadowAdjust = !isLogoShadowAdjust;
 
       if (el.checked) {
-
         querySelect("#logo-shadow-adjust").style.display = "block";
         const settingsView = querySelect(".settings-view");
         settingsView.scrollTop = settingsView.scrollHeight;
 
-
         this.logoShadowBlur = 1;
-        this.logoShadowOffsetX = 2;
+        this.logoShadowOffsetX = 0;
         this.logoShadowOffsetY = 2;
         querySelect("#logo-shadow-blur-slider").value = this.logoShadowBlur;
-        querySelect("#logo-shadow-offsetX-slider").value = this.logoShadowOffsetX;
-        querySelect("#logo-shadow-offsetY-slider").value = this.logoShadowOffsetY;
-        querySelect("#logo-shadow-blur-slider").dispatchEvent(new Event('input'));
-        querySelect("#logo-shadow-offsetX-slider").dispatchEvent(new Event('input'));
-        querySelect("#logo-shadow-offsetY-slider").dispatchEvent(new Event('input'));
+        querySelect("#logo-shadow-offsetX-slider").value =
+          this.logoShadowOffsetX;
+        querySelect("#logo-shadow-offsetY-slider").value =
+          this.logoShadowOffsetY;
+        querySelect("#logo-shadow-blur-slider").dispatchEvent(
+          new Event("input")
+        );
+        querySelect("#logo-shadow-offsetX-slider").dispatchEvent(
+          new Event("input")
+        );
+        querySelect("#logo-shadow-offsetY-slider").dispatchEvent(
+          new Event("input")
+        );
 
         if (active._objects) {
           active.forEachObject((obj) => {
             obj.set("shadow", {
-              offsetX: 2,
+              offsetX: 0,
               offsetY: 2,
               blur: 5,
             });
           });
         } else {
           active.set("shadow", {
-            offsetX: 2,
+            offsetX: 0,
             offsetY: 2,
             blur: 5,
           });
@@ -3049,27 +3048,27 @@ class EditorScreen {
         settingsView.scrollTop = settingsView.scrollHeight;
 
         this.shadowBlur = 1;
-        this.shadowOffsetX = 2;
+        this.shadowOffsetX = 0;
         this.shadowOffsetY = 2;
         querySelect("#shadow-blur-slider").value = this.shadowBlur;
         querySelect("#shadow-offsetX-slider").value = this.shadowOffsetX;
         querySelect("#shadow-offsetY-slider").value = this.shadowOffsetY;
-        querySelect("#shadow-blur-slider").dispatchEvent(new Event('input'));
-        querySelect("#shadow-offsetX-slider").dispatchEvent(new Event('input'));
-        querySelect("#shadow-offsetY-slider").dispatchEvent(new Event('input'));
+        querySelect("#shadow-blur-slider").dispatchEvent(new Event("input"));
+        querySelect("#shadow-offsetX-slider").dispatchEvent(new Event("input"));
+        querySelect("#shadow-offsetY-slider").dispatchEvent(new Event("input"));
         if (active._objects) {
           active.forEachObject((obj) => {
             if (!obj.text) return true;
 
             obj.set("shadow", {
-              offsetX: 2,
+              offsetX: 0,
               offsetY: 2,
               blur: 1,
             });
           });
         } else {
           active.set("shadow", {
-            offsetX: 2,
+            offsetX: 0,
             offsetY: 2,
             blur: 1,
           });
@@ -3512,9 +3511,16 @@ class EditorScreen {
       this.canvas.requestRenderAll();
     });
 
-    const handleColorModeClickBG = (activeElement, element1, element2, removeClasses = true) => {
+    const handleColorModeClickBG = (
+      activeElement,
+      element1,
+      element2,
+      removeClasses = true
+    ) => {
       if (removeClasses)
-        document.querySelectorAll('.bg-settings-container .color_mode_title').forEach(i => i.classList.remove('active'));
+        document
+          .querySelectorAll(".bg-settings-container .color_mode_title")
+          .forEach((i) => i.classList.remove("active"));
 
       querySelect(element1 + "_view_BG").classList.remove(
         "color_mode_title-active"
@@ -3540,13 +3546,11 @@ class EditorScreen {
     querySelect("#RGB_mode_BG").addEventListener("click", (e) => {
       handleColorModeClickBG("#RGB", "#HSL", "#HEX");
       e.target.classList.add("active");
-
     });
 
     querySelect("#HEX_mode_BG").addEventListener("click", (e) => {
       handleColorModeClickBG("#HEX", "#RGB", "#HSL");
       e.target.classList.add("active");
-
     });
     handleColorModeClickBG("#HEX", "#RGB", "#HSL", false);
 
@@ -3569,11 +3573,11 @@ class EditorScreen {
 
       this.canvas.setBackgroundColor(color.rgbaString);
       this.canvas.requestRenderAll();
-    }
+    };
 
     colorPickerBG.on("color:init", (color) => {
       color.set(pickerDefaultColorBG);
-      changeBgColorInputValues(color)
+      changeBgColorInputValues(color);
     });
 
     let colorChangingBG = false;
@@ -3584,8 +3588,6 @@ class EditorScreen {
       changeBgColorInputValues(color);
       colorChangingBG = false;
     });
-
-
 
     colorPickerBG.on("input:end", (color) => {
       updatePreview();
@@ -3779,7 +3781,7 @@ class EditorScreen {
               updatePreview();
               captureCanvasState();
               this.canvas.save();
-              changeColorPickerText(colorPickerText.color)
+              changeColorPickerText(colorPickerText.color);
             }
           }
         }
@@ -3905,43 +3907,54 @@ class EditorScreen {
     };
 
     querySelect("#HSL_mode").addEventListener("click", (e) => {
-      document.querySelectorAll('.setting-container .color_mode_title').forEach(i => i.classList.remove('active'));
+      document
+        .querySelectorAll(".setting-container .color_mode_title")
+        .forEach((i) => i.classList.remove("active"));
 
       handleColorModeClick("#HSL", "#RGB", "#HEX");
       e.target.classList.add("active");
     });
 
     querySelect("#RGB_mode").addEventListener("click", (e) => {
-      document.querySelectorAll('.setting-container .color_mode_title').forEach(i => i.classList.remove('active'));
+      document
+        .querySelectorAll(".setting-container .color_mode_title")
+        .forEach((i) => i.classList.remove("active"));
 
       handleColorModeClick("#RGB", "#HSL", "#HEX");
       e.target.classList.add("active");
     });
 
     querySelect("#HEX_mode").addEventListener("click", (e) => {
-      document.querySelectorAll('.setting-container .color_mode_title').forEach(i => i.classList.remove('active'));
+      document
+        .querySelectorAll(".setting-container .color_mode_title")
+        .forEach((i) => i.classList.remove("active"));
 
       handleColorModeClick("#HEX", "#RGB", "#HSL");
       e.target.classList.add("active");
-
     });
 
     querySelect("#HSL2_mode").addEventListener("click", (e) => {
-      document.querySelectorAll('.text-settings-container .color_mode_title').forEach(i => i.classList.remove('active'));
+      document
+        .querySelectorAll(".text-settings-container .color_mode_title")
+        .forEach((i) => i.classList.remove("active"));
 
       handleColorModeClick("#HSL2", "#RGB2", "#HEX2");
       e.target.classList.add("active");
     });
 
     querySelect("#RGB2_mode").addEventListener("click", (e) => {
-      document.querySelectorAll('.text-settings-container .color_mode_title').forEach(i => i.classList.remove('active'));
+      document
+        .querySelectorAll(".text-settings-container .color_mode_title")
+        .forEach((i) => i.classList.remove("active"));
 
       handleColorModeClick("#RGB2", "#HSL2", "#HEX2");
       e.target.classList.add("active");
     });
 
     querySelect("#HEX2_mode").addEventListener("click", (e) => {
-      document.querySelectorAll('.text-settings-container .color_mode_title').forEach(i => i.classList.remove('active'));
+      document
+        .querySelectorAll(".text-settings-container .color_mode_title")
+        .forEach((i) => i.classList.remove("active"));
 
       handleColorModeClick("#HEX2", "#RGB2", "#HSL2");
       e.target.classList.add("active");
@@ -3986,7 +3999,7 @@ class EditorScreen {
     };
 
     function setlogoPosition(position, canvas) {
-      if (!canvas) throw new Error("Canvas", canvas)
+      if (!canvas) throw new Error("Canvas", canvas);
       switch (position) {
         case "1":
           centerAndResizeElements(
@@ -4396,35 +4409,28 @@ class EditorScreen {
         "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyA3WEzwS9il6Md6nJW5RI3eMlerTso8tII"
       );
       response = await response.json();
-      let { items } = response;
 
-      let liItems = "",
-        famillies = [],
-        count = 0;
+      let items = response.items, liItems = "";
+
       items.forEach((item) => {
         let { family } = item,
           loaded = false;
         this.loadedFonts[family] = {
           variants: item.variants,
         };
-        famillies.push(family);
 
-        if (count < 800) {
-          WebFont.load({
-            google: {
-              families: [family],
-            },
-          });
-          loaded = true;
-        }
+        WebFont.load({
+          google: {
+            families: [family],
+          },
+        });
+        loaded = true;
 
-
-
-        liItems += `<li value="${family}" class="font-family-item" data-loaded="${loaded}"><span style="font-family:${family}" class="text">${family}</span></li>`;
-        count++;
+        liItems += `<li value="${family}" class="font-family-item" data-loaded="${loaded}"><span style="font-family:${family}; font-weight: 500px" class="text">${family}</span></li>`;
       });
       querySelect(".font-family-selectbox .ms-select-list-menu").innerHTML +=
         liItems;
+
       initMSList();
     })();
 
