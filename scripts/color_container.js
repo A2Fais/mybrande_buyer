@@ -8,12 +8,12 @@ const paletteMarkup = /*html*/ `
         <div id="bg-color-list" class="color-mode-list"></div>
     </div>
 
-    <div id="gradient-panel-viewer" style="position: absolute; left: 43%; margin-top: -130px;">
+    <div id="gradient-panel-viewer" style="position: absolute; left: 50%; transform: translateX(-50%); margin-top: -130px;">
         <div id="color-palette-gradient" class="color-palette-gradient"></div>
     </div>
 
-    <div id="gradient-panel" style="margin-top: 60px;  display: none; justify-content: flex-start; gap: 5px;">
-        <input type="color" value="#000000" class="color-picker" id="grad-1">
+    <div id="gradient-panel" style="margin-top: 45px;  display: none; justify-content: flex-start; gap: 5px;">
+        <input type="color" value="#ffffff" class="color-picker" id="grad-1">
         <input type="color" value="#000000" class="color-picker" id="grad-2">
       </div>
       
@@ -50,7 +50,7 @@ class Palette extends HTMLElement {
     $('#gradient-panel').style.display = 'flex';
     // $('#slider-container').style.display = 'block';
     $('#solid-panel').style.display = 'none';
-    $('#color-palette-gradient').style.background = '#000';
+    $('#color-palette-gradient').style.background = 'linear-gradient(0deg, rgb(255, 255, 255), rgb(0, 0, 0))';
 
   }
 

@@ -445,13 +445,9 @@
               <input id="custom_color_generator" type="color" style="visibility: hidden;">
             </label>
           </div>
-          <h4 style="font-weight: 500; font-size: 14px; color: var(--gray-light);margin-bottom: 1px;">Layer Colors</h4>
-          <div id="logo_colors_pallete" style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px;">
-          </div>
-          <pallete-component id="logo-pallete" data-list="['Linear']"></pallete-component>
         </div>
-
-
+        
+        
         <div id="picker_color_items" style="display: flex; flex-direction: column; margin-top: -40px;">
 
           <div id="open_picker"></div>
@@ -475,6 +471,12 @@
               <input id="HEX" class="hslPalette" type="text" placeholder="HEX">
             </div>
           </div>
+        </div>
+        <h4 style="font-weight: 500; font-size: 14px; color: var(--gray-light);margin-bottom: 10px; margin-top: -20px">Layer Colors</h4>
+        <div id="logo_colors_pallete" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: -20px;">
+        </div>
+        <div style="margin-right: 10px;">
+          <pallete-component id="logo-pallete" data-list="['Linear']"></pallete-component>
         </div>
 
         <div class="setting-switch">
@@ -922,27 +924,13 @@
           </div>
 
           <div id="custom_text_colors_wrapper"
-            style="display: grid; grid-template-columns: repeat(5, auto); gap: 5px; margin-block: 15px;">
+            style="display: grid; grid-template-columns: repeat(5, auto); gap: 5px;">
             <label
               style="width: 33px; height: 33px; background-color: #eee; border-radius: 5px; justify-content: center; display: flex; align-items: center;">
               <span style="position: absolute;">+</span>
               <input id="custom_text_color_generator" type="color" style="visibility: hidden;">
             </label>
           </div>
-
-
-          <h4 style="font-weight: 500; font-size: 14px; color: var(--gray-light);margin-bottom: 0px;">Layer Colors</h4>
-          <div id="logo_colors_pallete" style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px;">
-          </div>
-          <!-- 
-                    <div id="logo_colors_pallete"
-                        style="display: grid; grid-template-columns: repeat(4, 1fr); gap: px;">
-                    </div>
-                    <h4 style="font-weight: 500; font-size: 14px; color: var(--gray-light);">Text</h4>
-                    <div id="logo_text_colors_pallete"
-                        style="display: grid; grid-template-columns: repeat(4, 1fr); gap: px;"></div> -->
-
-          <pallete-component id="text-pallete" data-list="['Linear', 'Solid', 'Web 2.0', 'None']"></pallete-component>
         </div>
 
         <div id="picker_color_items_text" style="display: flex; flex-direction: column; margin-top: 20px;">
@@ -970,6 +958,13 @@
             </div>
           </div>
         </div>
+
+        <h4 style="font-weight: 500; font-size: 14px; color: var(--gray-light);margin-bottom: -10px; margin-top: -5px">Layer Colors</h4>
+        <div id="logo_colors_pallete" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;">
+        </div>
+          <div style="margin-top: 10px;">
+            <pallete-component id="text-pallete" data-list="['Linear', 'Solid', 'Web 2.0', 'None']"></pallete-component>
+          </div>
 
         <!-- Select boxes -->
         <span class="selectbox-label">Font Family</span>

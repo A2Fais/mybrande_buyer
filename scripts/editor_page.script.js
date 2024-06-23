@@ -2552,7 +2552,6 @@ class EditorScreen {
     palleteComponent.addEventListener("colorChange", (e) => {
       const { colorMode, grad1Value, grad2Value, colorAngle, solidValue } =
         e.detail;
-      console.log(colorMode)
       let angleColor = `${colorAngle}deg`;
       let color = null;
       if (colorMode === "Linear") {
@@ -2606,6 +2605,7 @@ class EditorScreen {
       updatePreview();
       this.canvas.save();
     });
+
     logoPalleteComponent.addEventListener("colorChange", (e) => {
       const selectedObject = this.canvas.getActiveObject();
       const { colorMode, grad1Value, grad2Value, solidValue, colorAngle } =
@@ -3976,7 +3976,7 @@ class EditorScreen {
     };
 
     querySelect("#canvas-bg-none").addEventListener("click", () => {
-      this.canvas.setBackgroundColor(this.canvasBG);
+      // this.canvas.setBackgroundColor(this.canvasBG);
       updatePreview();
       this.canvas.requestRenderAll();
       captureCanvasState();

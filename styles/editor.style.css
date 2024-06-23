@@ -444,8 +444,8 @@ input:checked+.switch-slider:before {
   background: none;
   outline: none;
   border: none;
-  width: 42px;
-  height: 42px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   cursor: pointer;
 }
@@ -659,6 +659,7 @@ input:checked+.switch-slider:before {
   font-weight: 500;
   font-size: 14px;
   width: 175px;
+  margin-top: -15px;
   border-radius: 5px;
   padding: 0 10px;
   display: flex;
