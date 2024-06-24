@@ -9,6 +9,8 @@
   <link rel="icon" type="image/x-icon" href="./assets/Favicon Transparent.ico">
   <link rel="stylesheet" href="styles/editor.style.css">
   <link rel="stylesheet" href="styles/details.style.css">
+
+
 </head>
 
 <body>
@@ -446,8 +448,8 @@
             </label>
           </div>
         </div>
-        
-        
+
+
         <div id="picker_color_items" style="display: flex; flex-direction: column; margin-top: -40px;">
 
           <div id="open_picker"></div>
@@ -472,8 +474,10 @@
             </div>
           </div>
         </div>
-        <h4 style="font-weight: 500; font-size: 14px; color: var(--gray-light);margin-bottom: 10px; margin-top: -20px">Layer Colors</h4>
-        <div id="logo_colors_pallete" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: -20px;">
+        <h4 style="font-weight: 500; font-size: 14px; color: var(--gray-light);margin-bottom: 10px; margin-top: -20px">
+          Layer Colors</h4>
+        <div id="logo_colors_pallete"
+          style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: -20px;">
         </div>
         <div style="margin-right: 10px;">
           <pallete-component id="logo-pallete" data-list="['Linear']"></pallete-component>
@@ -923,8 +927,7 @@
               style="background-color: #f8f0ff;"></span>
           </div>
 
-          <div id="custom_text_colors_wrapper"
-            style="display: grid; grid-template-columns: repeat(5, auto); gap: 5px;">
+          <div id="custom_text_colors_wrapper" style="display: grid; grid-template-columns: repeat(5, auto); gap: 5px;">
             <label
               style="width: 33px; height: 33px; background-color: #eee; border-radius: 5px; justify-content: center; display: flex; align-items: center;">
               <span style="position: absolute;">+</span>
@@ -959,12 +962,13 @@
           </div>
         </div>
 
-        <h4 style="font-weight: 500; font-size: 14px; color: var(--gray-light);margin-bottom: -10px; margin-top: -5px">Layer Colors</h4>
+        <h4 style="font-weight: 500; font-size: 14px; color: var(--gray-light);margin-bottom: -10px; margin-top: -5px">
+          Layer Colors</h4>
         <div id="logo_colors_pallete" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;">
         </div>
-          <div style="margin-top: 10px;">
-            <pallete-component id="text-pallete" data-list="['Linear', 'Solid', 'Web 2.0', 'None']"></pallete-component>
-          </div>
+        <div style="margin-top: 10px;">
+          <pallete-component id="text-pallete" data-list="['Linear', 'Solid', 'Web 2.0', 'None']"></pallete-component>
+        </div>
 
         <!-- Select boxes -->
         <span class="selectbox-label">Font Family</span>

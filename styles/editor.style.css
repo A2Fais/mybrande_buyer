@@ -1491,3 +1491,10 @@ body {
 #magnifier_img {
   user-select: none;
 }
+
+#logo_colors_pallete {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  flex-wrap: wrap !important;
+}

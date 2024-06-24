@@ -1377,7 +1377,7 @@ class EditorScreen {
     };
 
     logoNameElement.on("mousedblclick", () => {
-      const logoNameInput = document.getElementById("logoNameInput");
+      const logoNameInput = document.getElementById("logoMainField");
       if (logoNameInput) {
         logoNameInput.focus();
       }
@@ -1385,7 +1385,7 @@ class EditorScreen {
 
     sloganNameElement.on("mousedblclick", () => {
       const sloganNameInput = document
-        .getElementById("sloganNameInput")
+        .getElementById("sloganNameField")
         .focus();
       if (sloganNameInput) {
         sloganNameElement.focus();
