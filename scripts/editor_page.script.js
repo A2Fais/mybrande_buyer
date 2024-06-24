@@ -137,9 +137,9 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
     }
 
     var text =
-      this.text.trim().length > 1
-        ? this.text
-        : "You don't set empty value in curved text",
+        this.text.trim().length > 1
+          ? this.text
+          : "You don't set empty value in curved text",
       diameter = this.diameter,
       flipped = this.flipped,
       kerning = this.kerning,
@@ -327,7 +327,7 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
 
 class EditorScreen {
   constructor() {
-    this.canvasBG = "#efefef";
+    this.canvasBG = "#ffffff";
     this.canvas = new fabric.Canvas("c", { backgroundColor: this.canvasBG });
     this.loadedFonts = {};
     this.magnifier = new fabric.Canvas("magnifier", {
@@ -1056,6 +1056,7 @@ class EditorScreen {
             this.shadowBlur = blur;
             this.shadowOffsetX = offsetX;
             this.shadowOffsetY = offsetY;
+            affectStroke: false;
           }
         } else {
           this.activeSection = "text";
@@ -2815,7 +2816,7 @@ class EditorScreen {
             });
             this.canvas.setBackgroundColor(color);
           } else {
-            this.canvas.setBackgroundColor(bgColor.bg);
+            bgColor.bg === 'transparent' ? this.canvas.setBackgroundColor('#ffffff') : this.canvas.setBackgroundColor(bgColor.bg)
           }
 
           this.canvas.renderAll();
@@ -3250,7 +3251,6 @@ class EditorScreen {
         let g = querySelect("#G").value;
         let b = querySelect("#B").value;
         colorPicker.color.rgb = { r, g, b };
-        console.log(colorPicker.color.rgb)
         const a = this.canvas.getActiveObject();
         if (a && a._objects) {
           a._objects.forEach((i) => {
@@ -3269,9 +3269,10 @@ class EditorScreen {
         let l = querySelect("#L").value;
         colorPicker.color.hsl = { h, s, l };
         const a = this.canvas.getActiveObject();
-        if (a && a._objects) a._objects.forEach((i) => {
-          i.set("fill", colorPicker.color.hexString);
-        });
+        if (a && a._objects)
+          a._objects.forEach((i) => {
+            i.set("fill", colorPicker.color.hexString);
+          });
         a.set("fill", colorPicker.color.hexString);
         this.canvas.requestRenderAll();
       });
@@ -3285,7 +3286,9 @@ class EditorScreen {
         colorPickerText.color.rgb = { r, g, b };
         const a = this.canvas.getActiveObject();
         if (a._objects)
-          a._objects.forEach((i) => { i.set('fill', colorPickerText.color.hexString) })
+          a._objects.forEach((i) => {
+            i.set("fill", colorPickerText.color.hexString);
+          });
         a.set("fill", colorPickerText.color.hexString);
         this.canvas.requestRenderAll();
       });
@@ -3300,7 +3303,9 @@ class EditorScreen {
         const a = this.canvas.getActiveObject();
 
         if (a._objects)
-          a._objects.forEach((i) => { i.set('fill', colorPickerText.color.hexString) })
+          a._objects.forEach((i) => {
+            i.set("fill", colorPickerText.color.hexString);
+          });
 
         a.set("fill", colorPickerText.color.hexString);
         this.canvas.requestRenderAll();
@@ -3356,11 +3361,14 @@ class EditorScreen {
           inputCount2++;
         }
       }
-      console.log(hex)
+      console.log(hex);
       colorPickerText.color.set(hex);
       const a = this.canvas.getActiveObject();
       if (!a) return true;
-      if (a._objects) a._objects.forEach(i => { i.set("fill", hex) });
+      if (a._objects)
+        a._objects.forEach((i) => {
+          i.set("fill", hex);
+        });
       a.set("fill", hex);
 
       let r = querySelect("#R2").value;
@@ -3638,7 +3646,8 @@ class EditorScreen {
 
       newColor.addEventListener("click", () => {
         const activeObj = this.canvas.getActiveObject();
-        if (activeObj._objects) activeObj._objects.forEach(i => i.set('fill', color));
+        if (activeObj._objects)
+          activeObj._objects.forEach((i) => i.set("fill", color));
         activeObj.set("fill", color);
         colorPicker.color.set(color);
         querySelect("#HEX").value = color;
@@ -3681,7 +3690,8 @@ class EditorScreen {
 
         newColor.addEventListener("click", () => {
           const activeObj = this.canvas.getActiveObject();
-          if (activeObj._objects) activeObj._objects.forEach(i => i.set('fill', color));
+          if (activeObj._objects)
+            activeObj._objects.forEach((i) => i.set("fill", color));
 
           activeObj.set("fill", color);
           colorPickerText.color.set(color);
@@ -4017,7 +4027,7 @@ class EditorScreen {
     };
 
     querySelect("#canvas-bg-none").addEventListener("click", () => {
-      // this.canvas.setBackgroundColor(this.canvasBG);
+      this.canvas.setBackgroundColor(this.canvasBG);
       updatePreview();
       this.canvas.requestRenderAll();
       captureCanvasState();
@@ -4486,7 +4496,7 @@ class EditorScreen {
             parent.classList.toggle("show");
           });
 
-        // Init Click event
+
         menu.querySelectorAll("li").forEach((li) => {
           li.addEventListener("click", function (e) {
             e.stopPropagation();
@@ -4504,7 +4514,6 @@ class EditorScreen {
           });
         });
 
-        // Init On Change
         list.addEventListener("valueChange", function (e) {
           e.stopPropagation();
 
@@ -4522,7 +4531,6 @@ class EditorScreen {
         });
       });
 
-      // Hide lists on document click
       document.onclick = function (e) {
         let target = e.target;
         if (
@@ -4533,14 +4541,13 @@ class EditorScreen {
         }
       };
     };
-    //#endregion Ms List
+
     const fontLiveSearch = function (element) {
       let val = element.value.toLowerCase();
       if (!element.hasAttribute("data-target")) return false;
       let targetSelector = element.getAttribute("data-target");
       let radius = element.getAttribute("data-radius") || "body";
       let radiusElement = element.closest(radius);
-      // console.log(radiusElement);
       if (!radiusElement) return;
 
       let targets = radiusElement.querySelectorAll(targetSelector);
