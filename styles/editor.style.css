@@ -1498,3 +1498,9 @@ body {
   gap: 6px;
   flex-wrap: wrap !important;
 }
+
+#canvas-container {
+  border-right: 1px solid var(--lighter);
+  border-bottom: 1px solid var(--lighter);
+  border-left: 1px solid var(--lighter);
+}

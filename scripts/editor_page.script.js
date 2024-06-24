@@ -137,9 +137,9 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
     }
 
     var text =
-        this.text.trim().length > 1
-          ? this.text
-          : "You don't set empty value in curved text",
+      this.text.trim().length > 1
+        ? this.text
+        : "You don't set empty value in curved text",
       diameter = this.diameter,
       flipped = this.flipped,
       kerning = this.kerning,
@@ -3244,13 +3244,19 @@ class EditorScreen {
       colorChanging = false;
     });
 
-    [("#R", "#G", "#B")].forEach((id) => {
+    ["#R", "#G", "#B"].forEach((id) => {
       querySelect(id).addEventListener("input", () => {
         let r = querySelect("#R").value;
         let g = querySelect("#G").value;
         let b = querySelect("#B").value;
         colorPicker.color.rgb = { r, g, b };
+        console.log(colorPicker.color.rgb)
         const a = this.canvas.getActiveObject();
+        if (a && a._objects) {
+          a._objects.forEach((i) => {
+            i.set("fill", colorPicker.color.hexString);
+          });
+        }
         a.set("fill", colorPicker.color.hexString);
         this.canvas.requestRenderAll();
       });
@@ -3263,19 +3269,24 @@ class EditorScreen {
         let l = querySelect("#L").value;
         colorPicker.color.hsl = { h, s, l };
         const a = this.canvas.getActiveObject();
+        if (a && a._objects) a._objects.forEach((i) => {
+          i.set("fill", colorPicker.color.hexString);
+        });
         a.set("fill", colorPicker.color.hexString);
         this.canvas.requestRenderAll();
       });
     });
 
-    [("#R2", "#G2", "#B2")].forEach((id) => {
+    ["#R2", "#G2", "#B2"].forEach((id) => {
       querySelect(id).addEventListener("input", () => {
         let r = querySelect("#R2").value;
         let g = querySelect("#G2").value;
         let b = querySelect("#B2").value;
-        colorPicker.color.rgb = { r, g, b };
+        colorPickerText.color.rgb = { r, g, b };
         const a = this.canvas.getActiveObject();
-        a.set("fill", colorPicker.color.hexString);
+        if (a._objects)
+          a._objects.forEach((i) => { i.set('fill', colorPickerText.color.hexString) })
+        a.set("fill", colorPickerText.color.hexString);
         this.canvas.requestRenderAll();
       });
     });
@@ -3285,9 +3296,13 @@ class EditorScreen {
         let h = querySelect("#H2").value;
         let s = querySelect("#S2").value;
         let l = querySelect("#L2").value;
-        colorPicker.color.hsl = { h, s, l };
+        colorPickerText.color.hsl = { h, s, l };
         const a = this.canvas.getActiveObject();
-        a.set("fill", colorPicker.color.hexString);
+
+        if (a._objects)
+          a._objects.forEach((i) => { i.set('fill', colorPickerText.color.hexString) })
+
+        a.set("fill", colorPickerText.color.hexString);
         this.canvas.requestRenderAll();
       });
     });
@@ -3310,6 +3325,11 @@ class EditorScreen {
 
       colorPicker.color.set(hex);
       const a = this.canvas.getActiveObject();
+      if (a && a._objects) {
+        a._objects.forEach((i) => {
+          i.set("fill", hex);
+        });
+      }
       a.set("fill", hex);
 
       let r = querySelect("#R").value;
@@ -3336,19 +3356,21 @@ class EditorScreen {
           inputCount2++;
         }
       }
-
-      colorPicker.color.set(hex);
+      console.log(hex)
+      colorPickerText.color.set(hex);
       const a = this.canvas.getActiveObject();
+      if (!a) return true;
+      if (a._objects) a._objects.forEach(i => { i.set("fill", hex) });
       a.set("fill", hex);
 
       let r = querySelect("#R2").value;
       let g = querySelect("#G2").value;
       let b = querySelect("#B2").value;
-      colorPicker.color.rgb = { r, g, b };
+      colorPickerText.color.rgb = { r, g, b };
       let h = querySelect("#H2").value;
       let s = querySelect("#S2").value;
       let l = querySelect("#L2").value;
-      colorPicker.color.hsl = { h, s, l };
+      colorPickerText.color.hsl = { h, s, l };
 
       this.canvas.requestRenderAll();
     });
@@ -3616,6 +3638,7 @@ class EditorScreen {
 
       newColor.addEventListener("click", () => {
         const activeObj = this.canvas.getActiveObject();
+        if (activeObj._objects) activeObj._objects.forEach(i => i.set('fill', color));
         activeObj.set("fill", color);
         colorPicker.color.set(color);
         querySelect("#HEX").value = color;
@@ -3658,6 +3681,8 @@ class EditorScreen {
 
         newColor.addEventListener("click", () => {
           const activeObj = this.canvas.getActiveObject();
+          if (activeObj._objects) activeObj._objects.forEach(i => i.set('fill', color));
+
           activeObj.set("fill", color);
           colorPickerText.color.set(color);
           querySelect("#HEX2").value = color;
@@ -3874,6 +3899,11 @@ class EditorScreen {
 
       const active = this.canvas.getActiveObject();
       if (!active) return false;
+      if (active._objects) {
+        active._objects.forEach((i) => {
+          i.set("fill", color.rgbaString);
+        });
+      }
       active.set("fill", color.rgbaString);
       this.canvas.requestRenderAll();
 
@@ -4412,18 +4442,18 @@ class EditorScreen {
 
       let items = response.items, liItems = "";
 
-      items.forEach((item) => {
+      items.forEach((item, i) => {
         let { family } = item,
           loaded = false;
         this.loadedFonts[family] = {
           variants: item.variants,
         };
-
-        WebFont.load({
-          google: {
-            families: [family],
-          },
-        });
+        if (i < 10)
+          WebFont.load({
+            google: {
+              families: [family],
+            },
+          });
         loaded = true;
 
         liItems += `<li value="${family}" class="font-family-item" data-loaded="${loaded}"><span style="font-family:${family}; font-weight: 500px" class="text">${family}</span></li>`;
