@@ -4450,8 +4450,10 @@ class EditorScreen {
     let currentFontIndex = 0;
 
     (async () => {
-      const apiUrl = "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyA3WEzwS9il6Md6nJW5RI3eMlerTso8tII"
-      const apiResponse = (await fetch(apiUrl)).json();
+      let apiResponse = await fetch(
+        "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyA3WEzwS9il6Md6nJW5RI3eMlerTso8tII"
+      );
+      apiResponse = await apiResponse.json();
 
       let fontItems = apiResponse.items;
       await loadFonts(fontItems);
