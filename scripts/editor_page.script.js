@@ -1158,7 +1158,7 @@ class EditorScreen {
           : 10;
 
         querySelect("#letter-spacing-slider").value = obj.charSpacing;
-        querySelect("#l_spacing_value").value = obj.charSpacing;
+        querySelect("#l_spacing_value").value = obj.charSpacing || 0;
 
         // Set Font Size
         if (obj.fontSize) {
@@ -1199,10 +1199,7 @@ class EditorScreen {
       const val = e.target.value;
       // console.log("LOGO MAIN FIELD", val.length)
       this.logoName = val;
-
-      logoNameElement = this.canvas.getObjects("text").map((i) => i)[0];
       logoNameElement.set("text", val);
-
       this.canvas.renderAll();
     });
     // Slogan Name
@@ -1210,7 +1207,6 @@ class EditorScreen {
       const val = e.target.value;
       // console.log("SLOGAN MAIN FIELD", val.length)
 
-      sloganNameElement = this.canvas.getObjects("text").map((i) => i)[1];
       sloganNameElement.set("text", val);
       this.canvas.renderAll();
     });
@@ -1507,7 +1503,7 @@ class EditorScreen {
         if (letterSpacing < -1) letterSpacing = -1;
         active.set("_cachedCanvas", null);
         active.set("kerning", parseInt(letterSpacing));
-        querySelect("#l_spacing_value").innerText = ": " + e.target.value / 10;
+        querySelect("#l_spacing_value").value = e.target.value / 10;
 
         this.canvas.requestRenderAll();
         return false;
@@ -1516,7 +1512,7 @@ class EditorScreen {
       const currCoordinate = active.getCenterPoint();
 
       active.set("charSpacing", this.letterSpacing);
-      querySelect("#l_spacing_value").innerText = ": " + e.target.value / 10;
+      querySelect("#l_spacing_value").value = e.target.value / 10;
 
       active.setPositionByOrigin(
         new fabric.Point(currCoordinate.x, currCoordinate.y),
@@ -1526,6 +1522,29 @@ class EditorScreen {
       active.setCoords();
       this.canvas.requestRenderAll();
     });
+
+
+    document.querySelector('#l_spacing_value').addEventListener("change", function (e) {
+      let value = e.target.value;
+      querySelect("#letter-spacing-slider").value = value * 10;
+      querySelect("#letter-spacing-slider").dispatchEvent(new Event("input"));
+    });
+
+    querySelect("#letter-spacing-up").addEventListener("click", (e) => {
+      let value = parseInt(querySelect("#letter-spacing-slider").value);
+      value += 10;
+      querySelect("#letter-spacing-slider").value = value;
+      querySelect("#letter-spacing-slider").dispatchEvent(new Event("input"));
+
+    });
+
+    querySelect("#letter-spacing-down").addEventListener("click", (e) => {
+      let value = parseInt(querySelect("#letter-spacing-slider").value);
+      value -= 10;
+      querySelect("#letter-spacing-slider").value = value;
+      querySelect("#letter-spacing-slider").dispatchEvent(new Event("input"));
+    });
+
     this.letterSpacingSlider.addEventListener("change", (e) => {
       updatePreview();
       this.canvas.save();
@@ -1809,7 +1828,7 @@ class EditorScreen {
         }
 
         const charSpacing = logoNameElement.get("charSpacing");
-        querySelect("#l_spacing_value").innerText = ": " + charSpacing / 10;
+        querySelect("#l_spacing_value").value = (charSpacing / 10) || 0;
 
         let fillColor;
         const color = e.target.fill;
@@ -1861,6 +1880,22 @@ class EditorScreen {
 
         this.activeNavbarSetting = "text";
         this.updateActiveNavbar();
+
+        logoNameElement.on("mousedblclick", () => {
+          const logoNameInput = document.getElementById("logoMainField");
+          if (logoNameInput) {
+            logoNameInput.focus();
+          }
+        });
+
+        sloganNameElement.on("mousedblclick", () => {
+          const sloganNameInput = document
+            .getElementById("sloganNameField")
+            .focus();
+          if (sloganNameInput) {
+            sloganNameElement.focus();
+          }
+        });
       });
 
       sloganNameElement.on("mousedown", (e) => {
@@ -1884,7 +1919,7 @@ class EditorScreen {
         }
 
         const charSpacing = sloganNameElement.get("charSpacing");
-        querySelect("#l_spacing_value").innerText = ": " + charSpacing / 10;
+        querySelect("#l_spacing_value").value = charSpacing / 10;
 
         let fillColor;
         const color = e.target.fill;
@@ -2055,6 +2090,15 @@ class EditorScreen {
         querySelect("#text-curve-up").dispatchEvent(new Event("click"));
       } else if (e.key == "ArrowDown") {
         querySelect("#text-curve-down").dispatchEvent(new Event("click"));
+      }
+    });
+
+    // Arrow up down event
+    querySelect("#l_spacing_value").addEventListener("keydown", (e) => {
+      if (e.key == "ArrowUp") {
+        querySelect("#letter-spacing-up").dispatchEvent(new Event("click"));
+      } else if (e.key == "ArrowDown") {
+        querySelect("#letter-spacing-down").dispatchEvent(new Event("click"));
       }
     });
 
