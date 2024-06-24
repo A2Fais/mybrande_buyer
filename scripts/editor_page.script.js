@@ -1795,7 +1795,6 @@ class EditorScreen {
         const hasShadow = !!logoNameElement?.shadow?.blur;
 
         querySelect("#drop-shadow").checked = hasShadow;
-        console.log("okay");
         isShadowAdjust = hasShadow;
         if (!hasShadow) {
           querySelect("#shadow-adjust").style.display = "none";
@@ -2816,7 +2815,9 @@ class EditorScreen {
             });
             this.canvas.setBackgroundColor(color);
           } else {
-            bgColor.bg === 'transparent' ? this.canvas.setBackgroundColor('#ffffff') : this.canvas.setBackgroundColor(bgColor.bg)
+            bgColor.bg === "transparent"
+              ? this.canvas.setBackgroundColor("#ffffff")
+              : this.canvas.setBackgroundColor(bgColor.bg);
           }
 
           this.canvas.renderAll();
@@ -4443,36 +4444,70 @@ class EditorScreen {
       }
     };
 
-    // Load Fonts in fabric js
+    const fontListMenu = querySelect(".ms-select-list-menu");
+    const fontMaxCount = 20;
+    let loadedFonts = {};
+    let currentFontIndex = 0;
+
     (async () => {
-      let response = await fetch(
-        "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyA3WEzwS9il6Md6nJW5RI3eMlerTso8tII"
+      const apiUrl = "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyA3WEzwS9il6Md6nJW5RI3eMlerTso8tII"
+      const apiResponse = (await fetch(apiUrl)).json();
+
+      let fontItems = apiResponse.items;
+      await loadFonts(fontItems);
+
+      fontListMenu.addEventListener("wheel", (e) => {
+        if (e.wheelDelta < 0) {
+          loadFonts(fontItems);
+        } else if (e.wheelDelta > 0 && currentFontIndex > fontMaxCount) {
+          unloadFonts(fontItems);
+        }
+      });
+    })();
+
+    const loadFonts = async (items) => {
+      const chunk = items.slice(
+        currentFontIndex,
+        currentFontIndex + fontMaxCount
       );
-      response = await response.json();
+      currentFontIndex += fontMaxCount;
 
-      let items = response.items, liItems = "";
-
-      items.forEach((item, i) => {
-        let { family } = item,
-          loaded = false;
-        this.loadedFonts[family] = {
+      let liItems = "";
+      for (const item of chunk) {
+        const { family } = item;
+        loadedFonts[family] = {
           variants: item.variants,
         };
-        if (i < 10)
-          WebFont.load({
-            google: {
-              families: [family],
-            },
-          });
-        loaded = true;
 
-        liItems += `<li value="${family}" class="font-family-item" data-loaded="${loaded}"><span style="font-family:${family}; font-weight: 500px" class="text">${family}</span></li>`;
-      });
-      querySelect(".font-family-selectbox .ms-select-list-menu").innerHTML +=
-        liItems;
+        WebFont.load({
+          google: {
+            families: [family],
+          },
+        });
+        liItems += `<li value="${family}" class="font-family-item" data-loaded="true">
+          <span style="font-family:${family}; font-weight: 500px" class="text">${family}</span></li>`;
+      }
 
+      fontListMenu.innerHTML += liItems;
       initMSList();
-    })();
+    };
+
+    const unloadFonts = (items) => {
+      const itemsToRemove = items.slice(
+        currentFontIndex - fontMaxCount,
+        currentFontIndex
+      );
+      for (const item of itemsToRemove) {
+        const { family } = item;
+        const fontListItem = fontListMenu.querySelector(
+          `li[value="${family}"]`
+        );
+        if (fontListItem) {
+          fontListMenu.removeChild(fontListItem);
+        }
+      }
+      currentFontIndex -= fontMaxCount;
+    };
 
     const initMSList = () => {
       let msLists = document.querySelectorAll(".ms-select-list");
@@ -4495,7 +4530,6 @@ class EditorScreen {
             );
             parent.classList.toggle("show");
           });
-
 
         menu.querySelectorAll("li").forEach((li) => {
           li.addEventListener("click", function (e) {
