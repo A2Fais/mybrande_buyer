@@ -35,7 +35,7 @@ body {
 
 .canvas-actions {
   background-color: var(--lighter);
-  border-bottom: 1px solid var(--lighter);
+  border-bottom: 1px solid var(--light);
   width: 100%;
   height: 32px;
   display: flex;
