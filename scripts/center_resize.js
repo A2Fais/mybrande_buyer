@@ -220,7 +220,7 @@ export const centerAndResizeElements = (
           sloganNameElement.set("left", logoNameElement.left);
         }
 
-        logoMain.forEach((i) => (i.left += 500));
+        // logoMain.forEach((i) => (i.left -= 500));
         const newGrp = new fabric.Group(objects);
         canvas.viewportCenterObjectH(newGrp);
         canvas.viewportCenterObjectV(newGrp);

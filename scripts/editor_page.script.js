@@ -4448,6 +4448,7 @@ class EditorScreen {
         this.canvas.requestRenderAll();
       }
     };
+    
     (async () => {
       let response = await fetch(
         "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyA3WEzwS9il6Md6nJW5RI3eMlerTso8tII"
