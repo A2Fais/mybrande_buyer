@@ -1,6 +1,5 @@
 import { fabric } from "fabric";
 import { CreateLayerSection } from "./create_layer";
-import { DeleteLayer } from "./layer_remover";
 import { CanvasGuides } from "./editor-obj-dim";
 import { toastNotification } from "./toast_notification.js";
 import "alwan/dist/css/alwan.min.css";
@@ -23,27 +22,6 @@ const querySelect = (element) => document.querySelector(element);
 const querySelectAll = (element) => document.querySelectorAll(element);
 const getAttr = (element, attr) => querySelect(element).getAttribute(attr);
 
-// const families = [
-//   "Poppins:300,400,500,600,700",
-//   "Inter:300,400,500,600,700",
-//   "Roboto:400,500,700",
-// ];
-
-// WebFont.load({
-//   google: { families },
-//   fontloading: () => (querySelect("#loader_font").style.display = "block"),
-//   fontactive: (familyName) => {
-//     if (
-//       familyName === "Poppins" ||
-//       familyName === "Inter" ||
-//       familyName === "Roboto"
-//     ) {
-//       querySelect("#loader_font").style.display = "none";
-//     }
-//   },
-// });
-
-//#region Text Curved
 fabric.CurvedText = fabric.util.createClass(fabric.Object, {
   type: "curved-text",
   diameter: 250,
@@ -77,7 +55,6 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
     this.set("lockUniScaling", true);
     this._needsRecalculate = true;
 
-    // Draw curved text here initially too, while we need to know the width and height.
     var canvas = this.getCircularText();
     canvas = this._trimCanvas(canvas);
     this.set("width", canvas.width);
