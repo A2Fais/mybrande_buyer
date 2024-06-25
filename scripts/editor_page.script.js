@@ -657,7 +657,7 @@ class EditorScreen {
         let target = querySelect(".font-weight-selector .ms-select-list-menu");
         target.innerHTML = variantsHtml;
         target.removeAttribute("data-init");
-        // Init Click event
+        
         target.querySelectorAll("li").forEach((li) => {
           li.addEventListener("click", function (e) {
             e.stopPropagation();
@@ -739,7 +739,6 @@ class EditorScreen {
       }
     );
 
-    // Font Weight
     querySelect(".font-weight-selector").addEventListener(
       "change",
       function () {
@@ -762,7 +761,6 @@ class EditorScreen {
       }
     );
 
-    // Font Style
     querySelect(".font-style-selector").addEventListener("change", function () {
       let value = this.getAttribute("data-value"),
         obj = self.canvas.getActiveObject();
@@ -1351,18 +1349,18 @@ class EditorScreen {
     };
 
     logoNameElement.on("mousedblclick", () => {
-      const logoNameInput = document.getElementById("logoMainField");
+      const logoNameInput = querySelect("#logoMainField");
       if (logoNameInput) {
         logoNameInput.focus();
+        logoNameInput.select();
       }
     });
 
     sloganNameElement.on("mousedblclick", () => {
-      const sloganNameInput = document
-        .getElementById("sloganNameField")
-        .focus();
+      const sloganNameInput = document.querySelector("#sloganNameField");
       if (sloganNameInput) {
-        sloganNameElement.focus();
+        sloganNameInput.focus();
+        sloganNameInput.select();
       }
     });
 
@@ -1996,15 +1994,11 @@ class EditorScreen {
       }
     });
 
-    //#region Text Curve
-
-    // On Input
     querySelect("#text-curve-range").addEventListener("input", (e) => {
       let percentage = initCurveText();
       querySelect("#curve-text").value = percentage;
     });
 
-    // On Change
     querySelect("#text-curve-range").addEventListener("change", (e) => {
       const obj = this.canvas.getActiveObject();
       if (!obj) return false;
@@ -2016,10 +2010,7 @@ class EditorScreen {
       updatePreview();
       this.canvas.save();
     });
-
-    //#region Up and down
-
-    // Text Curve Up
+    
     querySelect("#text-curve-up").addEventListener("click", (e) => {
       let input = querySelect("#curve-text"),
         value = parseInt(input.value) || 0;
@@ -2029,7 +2020,6 @@ class EditorScreen {
       querySelect("#curve-text").dispatchEvent(new Event("change"));
     });
 
-    // Text Curve Down
     querySelect("#text-curve-down").addEventListener("click", (e) => {
       let input = querySelect("#curve-text"),
         value = parseInt(input.value) || 0;
@@ -2039,9 +2029,6 @@ class EditorScreen {
       querySelect("#curve-text").dispatchEvent(new Event("change"));
     });
 
-    //#endregion Up and down
-
-    // Text Curve percentage input
     querySelect("#curve-text").addEventListener("change", function (e) {
       let inp = e.target,
         val = parseInt(inp.value);
@@ -2070,7 +2057,6 @@ class EditorScreen {
       }
     });
 
-    // Arrow up down event
     querySelect("#l_spacing_value").addEventListener("keydown", (e) => {
       if (e.key == "ArrowUp") {
         querySelect("#letter-spacing-up").dispatchEvent(new Event("click"));
@@ -2079,7 +2065,6 @@ class EditorScreen {
       }
     });
 
-    // Init Curve Text
     const initCurveText = () => {
       let obj = this.canvas.getActiveObject();
       if (!obj) return 0;
@@ -2092,7 +2077,6 @@ class EditorScreen {
 
       if (percentage == -0 || percentage == "-0") percentage = 0;
 
-      // Percentage Limit is 90 but we can change it
       if (percentage > 90 || percentage < -90)
         return (percentage * 3.6).toFixed(0);
 
@@ -4464,73 +4448,38 @@ class EditorScreen {
         this.canvas.requestRenderAll();
       }
     };
-
-    const fontListMenu = querySelect(".ms-select-list-menu");
-    const fontMaxCount = 20;
-    let loadedFonts = {};
-    let currentFontIndex = 0;
-
     (async () => {
-      let apiResponse = await fetch(
+      let response = await fetch(
         "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyA3WEzwS9il6Md6nJW5RI3eMlerTso8tII"
       );
-      apiResponse = await apiResponse.json();
-
-      let fontItems = apiResponse.items;
-      await loadFonts(fontItems);
-
-      fontListMenu.addEventListener("wheel", (e) => {
-        if (e.wheelDelta < 0) {
-          loadFonts(fontItems);
-        } else if (e.wheelDelta > 0 && currentFontIndex > fontMaxCount) {
-          unloadFonts(fontItems);
-        }
-      });
-    })();
-
-    const loadFonts = async (items) => {
-      const chunk = items.slice(
-        currentFontIndex,
-        currentFontIndex + fontMaxCount
-      );
-      currentFontIndex += fontMaxCount;
+      response = await response.json();
+      console.log(response)
+      let { items } = response;
 
       let liItems = "";
-      for (const item of chunk) {
-        const { family } = item;
-        loadedFonts[family] = {
+
+      items.forEach((item, i) => {
+        let { family } = item,
+          loaded = false;
+        this.loadedFonts[family] = {
           variants: item.variants,
         };
 
-        WebFont.load({
-          google: {
-            families: [family],
-          },
-        });
-        liItems += `<li value="${family}" class="font-family-item" data-loaded="true">
-          <span style="font-family:${family}; font-weight: 500px" class="text">${family}</span></li>`;
-      }
-
-      fontListMenu.innerHTML += liItems;
-      initMSList();
-    };
-
-    const unloadFonts = (items) => {
-      const itemsToRemove = items.slice(
-        currentFontIndex - fontMaxCount,
-        currentFontIndex
-      );
-      for (const item of itemsToRemove) {
-        const { family } = item;
-        const fontListItem = fontListMenu.querySelector(
-          `li[value="${family}"]`
-        );
-        if (fontListItem) {
-          fontListMenu.removeChild(fontListItem);
+        if (i < 800) {
+          WebFont.load({
+            google: {
+              families: [family],
+            },
+          });
+          loaded = true;
         }
-      }
-      currentFontIndex -= fontMaxCount;
-    };
+
+        liItems += `<li value="${family}" class="font-family-item" data-loaded="${loaded}"><span style="font-family:${family}" class="text">${family}</span></li>`;
+      });
+
+      querySelect(".font-family-selectbox .ms-select-list-menu").innerHTML += liItems;
+      initMSList();
+    })();
 
     const initMSList = () => {
       let msLists = document.querySelectorAll(".ms-select-list");
