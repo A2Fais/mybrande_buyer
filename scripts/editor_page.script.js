@@ -632,7 +632,7 @@ class EditorScreen {
         let { variants } = self.loadedFonts[family];
 
         let variantsHtml = "";
-        let fontvariants = {};
+        let values = {};
 
         function formatString(input) {
           const fontTitle = {
@@ -647,13 +647,15 @@ class EditorScreen {
             900: "Black"
           };
 
-          const formatted = input.replace(/([0-9]+)/g, (item) => `${fontTitle[parseInt(item)]}` );
+          let formatted = input.replace(/([0-9]+)/g, (item) => fontTitle[parseInt(item)] + " " );
           formatted = formatted.replace(/\b\w/g, (char) => char.toUpperCase());
           return formatted;
         }
 
+        console.log(variants)
+
         variants.map((variant) => {
-          const value = fontvariants[variant] ? fontvariants[variant] : variant;
+          const value = values[variant] ? values[variant] : variant;
 
           variantsHtml += `<li value="${value}" style="text-transform:capitalize">${formatString(
             value
@@ -4459,8 +4461,7 @@ class EditorScreen {
         "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyA3WEzwS9il6Md6nJW5RI3eMlerTso8tII"
       );
       response = await response.json();
-      console.log(response);
-      let { items } = response;
+      let items = response.items;
 
       let liItems = "";
 
@@ -4482,9 +4483,8 @@ class EditorScreen {
 
         liItems += `<li value="${family}" class="font-family-item" data-loaded="${loaded}"><span style="font-family:${family}" class="text">${family}</span></li>`;
       });
-
-      querySelect(".font-family-selectbox .ms-select-list-menu").innerHTML +=
-        liItems;
+      
+      querySelect(".font-family-selectbox .ms-select-list-menu").innerHTML += liItems;
       initMSList();
     })();
 
