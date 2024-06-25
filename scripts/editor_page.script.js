@@ -629,31 +629,37 @@ class EditorScreen {
           });
         } else obj.set("fontFamily", family);
 
-        let { variants } = self.loadedFonts[family],
-          variantsHtml = "";
-        let values = {
-          Regular: "normal",
-          Bold: "800",
-          regular: "normal",
-        };
+        let { variants } = self.loadedFonts[family];
+
+        let variantsHtml = "";
+        let fontvariants = {};
 
         function formatString(input) {
-          let formatted = input.replace(/([0-9]+)/g, "$1 ");
+          const fontTitle = {
+            100: "Thin",
+            200: "Extra Light",
+            300: "Light",
+            400: "Regular",
+            500: "Medium",
+            600: "Semi Bold",
+            700: "Bold",
+            800: "Extra Bold",
+            900: "Black"
+          };
 
-          formatted = formatted.replace(/\b\w/g, function (char) {
-            return char.toUpperCase();
-          });
-
+          const formatted = input.replace(/([0-9]+)/g, (item) => `${fontTitle[parseInt(item)]}` );
+          formatted = formatted.replace(/\b\w/g, (char) => char.toUpperCase());
           return formatted;
         }
 
-        variants.map((v) => {
-          let value = values[v] ? values[v] : v;
+        variants.map((variant) => {
+          const value = fontvariants[variant] ? fontvariants[variant] : variant;
 
           variantsHtml += `<li value="${value}" style="text-transform:capitalize">${formatString(
             value
           )}</li>`;
         });
+
         let target = querySelect(".font-weight-selector .ms-select-list-menu");
         target.innerHTML = variantsHtml;
         target.removeAttribute("data-init");
@@ -4402,7 +4408,6 @@ class EditorScreen {
           this.canvas.add(textLayer);
         } else if (ext == "svg") {
           fabric.loadSVGFromURL(layer.dataUrl, (objects, options) => {
-            // console.log(layer);
             let img = loadSVGObject(layer, objects, options);
             img.set("dataUrl", layer.dataUrl);
           });
@@ -4454,6 +4459,7 @@ class EditorScreen {
         "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyA3WEzwS9il6Md6nJW5RI3eMlerTso8tII"
       );
       response = await response.json();
+      console.log(response);
       let { items } = response;
 
       let liItems = "";
@@ -4477,13 +4483,13 @@ class EditorScreen {
         liItems += `<li value="${family}" class="font-family-item" data-loaded="${loaded}"><span style="font-family:${family}" class="text">${family}</span></li>`;
       });
 
-      querySelect(".font-family-selectbox .ms-select-list-menu").innerHTML += liItems;
+      querySelect(".font-family-selectbox .ms-select-list-menu").innerHTML +=
+        liItems;
       initMSList();
     })();
 
     const initMSList = () => {
       let lists = document.querySelectorAll(".ms-select-list");
-      console.log("LIST", lists)
 
       lists.forEach((list) => {
         let menu = list.querySelector(".ms-select-list-menu");
