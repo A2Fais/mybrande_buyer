@@ -4484,16 +4484,15 @@ class EditorScreen {
 
     const initMSList = () => {
       let msLists = document.querySelectorAll(".ms-select-list");
-      msLists.forEach((list) => {
-        let menu = list.querySelector(".ms-select-list-menu"),
-          defaultVal = list
-            .querySelector(".ms-list-toggle .ms-list-value")
-            .getAttribute("value");
 
+      msLists.forEach((list) => {
+        let menu = list.querySelector(".ms-select-list-menu")
+
+
+        let defaultVal = list.querySelector(".ms-list-toggle .ms-list-value").getAttribute("value");
         list.setAttribute("data-default-value", defaultVal);
 
-        list
-          .querySelector(".ms-list-toggle")
+        list.querySelector(".ms-list-toggle")
           .addEventListener("click", function (e) {
             e.stopPropagation();
             let lists = document.querySelectorAll(".ms-select-list");
@@ -4508,12 +4507,12 @@ class EditorScreen {
           li.addEventListener("click", function (e) {
             e.stopPropagation();
 
-            let value = this.getAttribute("value"),
-              text = this.innerText,
-              parent = this.parentElement.parentElement;
+            let value = this.getAttribute("value");
+            let text = this.innerText;
+            let parent = this.parentElement.parentElement;
             parent.classList.remove("show");
-            let toggleBtn = parent.querySelector(".ms-list-toggle");
 
+            let toggleBtn = parent.querySelector(".ms-list-toggle");
             toggleBtn.querySelector(".ms-list-value").innerText = text;
             parent.setAttribute("data-value", value);
             parent.dispatchEvent(new Event("change"));
@@ -4521,15 +4520,14 @@ class EditorScreen {
           });
         });
 
+
         list.addEventListener("valueChange", function (e) {
           e.stopPropagation();
 
           let value = this.getAttribute("data-value"),
             toggleBtn = this.querySelector(".ms-list-toggle");
 
-          let text = this.querySelector(
-            `.ms-select-list-menu li[value="${value}"]`
-          );
+          let text = this.querySelector(`.ms-select-list-menu li[value="${value}"]`);
           if (value == "undefined") {
             text = this.getAttribute("data-default-value");
           } else if (text) text = text.innerText;
