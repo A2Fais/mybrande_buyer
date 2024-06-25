@@ -244,8 +244,8 @@ input:checked+.switch-slider:before {
 
 .form-control {
   height: 20px;
-  border-width: 0 0 1px;
-  border-color: var(--gray);
+  border-width: 0 0 1.5px;
+  border-color: var(--light);
   background-color: var(--white);
   padding: 22px 5px 10px 40px;
   width: 100%;

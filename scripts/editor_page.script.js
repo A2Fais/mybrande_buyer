@@ -657,7 +657,7 @@ class EditorScreen {
         let target = querySelect(".font-weight-selector .ms-select-list-menu");
         target.innerHTML = variantsHtml;
         target.removeAttribute("data-init");
-        
+
         target.querySelectorAll("li").forEach((li) => {
           li.addEventListener("click", function (e) {
             e.stopPropagation();
@@ -1498,19 +1498,19 @@ class EditorScreen {
       this.canvas.requestRenderAll();
     });
 
-
-    document.querySelector('#l_spacing_value').addEventListener("change", function (e) {
-      let value = e.target.value;
-      querySelect("#letter-spacing-slider").value = value * 10;
-      querySelect("#letter-spacing-slider").dispatchEvent(new Event("input"));
-    });
+    document
+      .querySelector("#l_spacing_value")
+      .addEventListener("change", function (e) {
+        let value = e.target.value;
+        querySelect("#letter-spacing-slider").value = value * 10;
+        querySelect("#letter-spacing-slider").dispatchEvent(new Event("input"));
+      });
 
     querySelect("#letter-spacing-up").addEventListener("click", (e) => {
       let value = parseInt(querySelect("#letter-spacing-slider").value);
       value += 10;
       querySelect("#letter-spacing-slider").value = value;
       querySelect("#letter-spacing-slider").dispatchEvent(new Event("input"));
-
     });
 
     querySelect("#letter-spacing-down").addEventListener("click", (e) => {
@@ -1803,7 +1803,7 @@ class EditorScreen {
         }
 
         const charSpacing = logoNameElement.get("charSpacing");
-        querySelect("#l_spacing_value").value = (charSpacing / 10) || 0;
+        querySelect("#l_spacing_value").value = charSpacing / 10 || 0;
 
         let fillColor;
         const color = e.target.fill;
@@ -2010,7 +2010,7 @@ class EditorScreen {
       updatePreview();
       this.canvas.save();
     });
-    
+
     querySelect("#text-curve-up").addEventListener("click", (e) => {
       let input = querySelect("#curve-text"),
         value = parseInt(input.value) || 0;
@@ -4448,13 +4448,12 @@ class EditorScreen {
         this.canvas.requestRenderAll();
       }
     };
-    
+
     (async () => {
       let response = await fetch(
         "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyA3WEzwS9il6Md6nJW5RI3eMlerTso8tII"
       );
       response = await response.json();
-      console.log(response)
       let { items } = response;
 
       let liItems = "";
@@ -4483,16 +4482,19 @@ class EditorScreen {
     })();
 
     const initMSList = () => {
-      let msLists = document.querySelectorAll(".ms-select-list");
+      let lists = document.querySelectorAll(".ms-select-list");
+      console.log("LIST", lists)
 
-      msLists.forEach((list) => {
-        let menu = list.querySelector(".ms-select-list-menu")
+      lists.forEach((list) => {
+        let menu = list.querySelector(".ms-select-list-menu");
 
-
-        let defaultVal = list.querySelector(".ms-list-toggle .ms-list-value").getAttribute("value");
+        let defaultVal = list
+          .querySelector(".ms-list-toggle .ms-list-value")
+          .getAttribute("value");
         list.setAttribute("data-default-value", defaultVal);
 
-        list.querySelector(".ms-list-toggle")
+        list
+          .querySelector(".ms-list-toggle")
           .addEventListener("click", function (e) {
             e.stopPropagation();
             let lists = document.querySelectorAll(".ms-select-list");
@@ -4520,18 +4522,20 @@ class EditorScreen {
           });
         });
 
-
         list.addEventListener("valueChange", function (e) {
           e.stopPropagation();
 
           let value = this.getAttribute("data-value"),
             toggleBtn = this.querySelector(".ms-list-toggle");
 
-          let text = this.querySelector(`.ms-select-list-menu li[value="${value}"]`);
+          let text = this.querySelector(
+            `.ms-select-list-menu li[value="${value}"]`
+          );
           if (value == "undefined") {
             text = this.getAttribute("data-default-value");
-          } else if (text) text = text.innerText;
-
+          } else if (text) {
+            text = text.innerText;
+          }
           toggleBtn.querySelector(".ms-list-value").innerText = text;
         });
       });
@@ -4542,7 +4546,7 @@ class EditorScreen {
           !target.classList.contains("ms-select-list") &&
           !target.classList.contains("live-search")
         ) {
-          msLists.forEach((list) => list.classList.remove("show"));
+          lists.forEach((list) => list.classList.remove("show"));
         }
       };
     };
