@@ -1453,7 +1453,17 @@ body {
   overflow-x: hidden;
 }
 
-.ms-select-list .ms-select-list-menu>li {
+.ms-select-list.show .ms-select-list-menu.collection-available {
+  overflow: hidden;
+  min-height: 50vh !important;
+}
+
+.ms-select-list.show .ms-select-list-menu.collection-available .collection {
+  overflow: auto;
+  height: 50svh;
+}
+
+.ms-select-list .ms-select-list-menu li {
   padding: 5px 10px;
   list-style: none;
   font-size: 14px;
@@ -1464,19 +1474,19 @@ body {
   cursor: pointer;
 }
 
-.ms-select-list .ms-select-list-menu>li:hover {
+.ms-select-list .ms-select-list-menu li:hover {
   background-color: var(--light);
 }
 
-
+.ms-select-list.show .ms-select-list-menu.collection-available .collection::-webkit-scrollbar,
 .ms-select-list .ms-select-list-menu::-webkit-scrollbar {
   width: 8px;
 }
-
+.ms-select-list.show .ms-select-list-menu.collection-available .collection::-webkit-scrollbar-track,
 .ms-select-list .ms-select-list-menu::-webkit-scrollbar-track {
   background: var(--lighter);
 }
-
+.ms-select-list.show .ms-select-list-menu.collection-available .collection::-webkit-scrollbar-thumb,
 .ms-select-list .ms-select-list-menu::-webkit-scrollbar-thumb {
   border-radius: 5px;
   background: var(--light);
@@ -1501,4 +1511,7 @@ body {
   grid-template-columns: repeat(6, 1fr);
   gap: 6px;
   flex-wrap: wrap !important;
+}
+.ms-list-value br {
+  display: none;
 }

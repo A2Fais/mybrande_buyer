@@ -313,6 +313,7 @@ class EditorScreen {
     CanvasGuides(this.canvas); // Init Canvas Guides
 
     this.loadedIcons = {};
+    this.allFonts = {};
     this.activeSection = "";
     this.textMode = querySelect('.nav-item[data-name="text"]');
     this.logoMode = querySelect('.nav-item[data-name="logo"]');
@@ -1122,7 +1123,6 @@ class EditorScreen {
         });
 
         let selectBoxes = {
-          "font-family-selectbox": "fontFamily",
           "font-weight-selector": "fontWeight",
           "font-style-selector": "fontStyle_",
           "text-case-select-box": "letterCase",
@@ -1131,6 +1131,38 @@ class EditorScreen {
           let el = querySelect(`.${key}`);
           el.setAttribute("data-value", obj[selectBoxes[key]]);
           el.dispatchEvent(new Event("valueChange"));
+        }
+
+
+        let fontList = querySelect('.font-family-selectbox');
+        const setFontFamily = (family) => {
+          fontList.querySelector('.ms-list-toggle .ms-list-value').innerText = family;
+        }
+
+        // Set Font family 
+        let family = obj.get("fontFamily"),
+          familyData = this.allFonts[family];
+
+        if (familyData) {
+
+          let { loaded } = familyData;
+
+          if (!loaded) {
+            WebFont.load({
+              google: {
+                families: [family],
+              },
+              active: function () {
+                obj.set("fontFamily", family);
+                setFontFamily(family)
+                self.canvas.renderAll();
+              },
+            });
+          } else {
+            setFontFamily(family);
+          }
+
+
         }
 
         // Set Scale
@@ -1158,7 +1190,7 @@ class EditorScreen {
 
     const textMain = ({
       text,
-      fontFamily = "Poppins",
+      fontFamily = "ABeeZee",
       fontSize = 32,
       fill = "#000000",
     }) => {
@@ -4456,60 +4488,93 @@ class EditorScreen {
       }
     };
 
+
+    let currentFontIndex = 0,
+      fontMaxCount = 20,
+      loadedFonts = {},
+      fontListMenu = querySelect("#font-family-con .collection");
+
     (async () => {
-      let response = await fetch(
+      let apiResponse = await fetch(
         "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyA3WEzwS9il6Md6nJW5RI3eMlerTso8tII"
       );
-      response = await response.json();
-      let items = response.items;
+      apiResponse = await apiResponse.json();
+
+      let fontItems = apiResponse.items;
+
+      fontItems.map((item) => {
+        this.allFonts[item.family] = item;
+      });
+
+      await loadFonts(fontItems);
+
+      fontListMenu.addEventListener("wheel", (e) => {
+        if (e.wheelDelta < 0) {
+          loadFonts(fontItems);
+        } else if (e.wheelDelta > 0 && currentFontIndex > fontMaxCount) {
+          unloadFonts(fontItems);
+        }
+      });
+    })();
+
+    const loadFonts = async (items) => {
+      const chunk = items.slice(
+        currentFontIndex,
+        currentFontIndex + fontMaxCount
+      );
+      currentFontIndex += fontMaxCount;
 
       let liItems = "";
-
-      items.forEach((item, i) => {
-        let { family } = item,
-          loaded = false;
-        this.loadedFonts[family] = {
+      for (const item of chunk) {
+        const { family } = item;
+        loadedFonts[family] = {
           variants: item.variants,
         };
 
-        if (i < 800) {
-          WebFont.load({
-            google: {
-              families: [family],
-            },
-          });
-          loaded = true;
+        self.loadedFonts[family] = {
+          variants: item.variants,
         }
 
-        liItems += `<li value="${family}" class="font-family-item" data-loaded="${loaded}"><span style="font-family:${family}" class="text">${family}</span></li>`;
-      });
-      
-      querySelect(".font-family-selectbox .ms-select-list-menu").innerHTML += liItems;
+        self.allFonts[family].loaded = true;
+
+        WebFont.load({
+          google: {
+            families: [family],
+          },
+        });
+        liItems += `<li value="${family}" class="font-family-item" data-loaded="true">
+          <span style="font-family:${family}; font-weight: 500px" class="text">${family}</span></li>`;
+      }
+
+      fontListMenu.innerHTML += liItems;
       initMSList();
-    })();
+    };
+
+    const unloadFonts = (items) => {
+      const itemsToRemove = items.slice(
+        currentFontIndex - fontMaxCount,
+        currentFontIndex
+      );
+      for (const item of itemsToRemove) {
+        const { family } = item;
+        const fontListItem = fontListMenu.querySelector(`li[value="${family}"]`);
+        if (fontListItem) {
+          fontListMenu.removeChild(fontListItem);
+        }
+      }
+      currentFontIndex -= fontMaxCount;
+      initMSList();
+    };
 
     const initMSList = () => {
       let lists = document.querySelectorAll(".ms-select-list");
 
       lists.forEach((list) => {
         let menu = list.querySelector(".ms-select-list-menu");
-
         let defaultVal = list
           .querySelector(".ms-list-toggle .ms-list-value")
           .getAttribute("value");
         list.setAttribute("data-default-value", defaultVal);
-
-        list
-          .querySelector(".ms-list-toggle")
-          .addEventListener("click", function (e) {
-            e.stopPropagation();
-            let lists = document.querySelectorAll(".ms-select-list");
-            let parent = this.parentElement;
-            lists.forEach((item) =>
-              item != parent ? item.classList.remove("show") : item
-            );
-            parent.classList.toggle("show");
-          });
 
         menu.querySelectorAll("li").forEach((li) => {
           li.addEventListener("click", function (e) {
@@ -4518,6 +4583,7 @@ class EditorScreen {
             let value = this.getAttribute("value");
             let text = this.innerText;
             let parent = this.parentElement.parentElement;
+            if (this.parentElement.classList.contains('collection')) parent = this.parentElement.parentElement.parentElement;
             parent.classList.remove("show");
 
             let toggleBtn = parent.querySelector(".ms-list-toggle");
@@ -4527,6 +4593,20 @@ class EditorScreen {
             this.classList.add("selected");
           });
         });
+
+        if (list.classList.contains("initialized")) return true;
+        list.querySelector(".ms-list-toggle").addEventListener("click", function (e) {
+          e.stopPropagation();
+          console.log("Done");
+          let lists = document.querySelectorAll(".ms-select-list");
+          let parent = this.parentElement;
+          lists.forEach((item) =>
+            item != parent ? item.classList.remove("show") : item
+          );
+          parent.classList.toggle("show");
+        });
+
+
 
         list.addEventListener("valueChange", function (e) {
           e.stopPropagation();
@@ -4544,6 +4624,8 @@ class EditorScreen {
           }
           toggleBtn.querySelector(".ms-list-value").innerText = text;
         });
+
+        list.classList.add("initialized");
       });
 
       document.onclick = function (e) {
@@ -4558,25 +4640,57 @@ class EditorScreen {
     };
 
     const fontLiveSearch = function (element) {
-      let val = element.value.toLowerCase();
-      if (!element.hasAttribute("data-target")) return false;
-      let targetSelector = element.getAttribute("data-target");
-      let radius = element.getAttribute("data-radius") || "body";
-      let radiusElement = element.closest(radius);
-      if (!radiusElement) return;
+      let val = element.value.toLowerCase(),
+        fontList = querySelect('#font-family-con .collection');
 
-      let targets = radiusElement.querySelectorAll(targetSelector);
-      targets.forEach((target) => {
-        let dataTarget = element.hasAttribute("data-match")
-          ? target.querySelector(element.getAttribute("data-match"))
-          : target;
-        let txt = dataTarget ? dataTarget.textContent : "";
-        if (txt) {
-          if (txt.toLowerCase().startsWith(val)) {
-            target.style.display = "inherit";
-          } else target.style.display = "none";
+
+      const generateItem = (font) => {
+        return `<li value="${font}" class="font-family-item" data-loaded="true">
+          <span style="font-family:${font}; font-weight: 500px" class="text">${font}</span></li>`;
+      }
+
+      if (!val.length) {
+        fontList.innerHTML = "";
+        let max = 20;
+        let liItems = "";
+
+        for (const font in self.allFonts) {
+          if (max <= 0) break;
+          let item = generateItem(font);
+          liItems += item;
+          max--;
+        }
+
+        fontListMenu.innerHTML = liItems;
+
+
+
+        return false;
+      }
+
+
+      // Search from all font object and filter the font and make li item and add them
+      let filteredFonts = Object.keys(self.allFonts).filter((font) => {
+        return font.toLowerCase().startsWith(val);
+      });
+
+
+      let liItems = "";
+      for (const font of filteredFonts) {
+        let item = generateItem(font);
+        liItems += item;
+        self.loadedFonts[font] = self.allFonts[font];
+
+      }
+      WebFont.load({
+        google: {
+          families: filteredFonts,
+        },
+        active: function () {
         }
       });
+      fontList.innerHTML = liItems;
+      initMSList();
     };
 
     document.addEventListener("keyup", function (event) {
