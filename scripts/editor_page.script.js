@@ -655,8 +655,6 @@ class EditorScreen {
           return formatted;
         }
 
-        console.log(variants)
-
         variants.map((variant) => {
           const value = values[variant] ? values[variant] : variant;
 
@@ -4596,10 +4594,10 @@ class EditorScreen {
           });
         });
 
+
         if (list.classList.contains("initialized")) return true;
         list.querySelector(".ms-list-toggle").addEventListener("click", function (e) {
           e.stopPropagation();
-          console.log("Done");
           let lists = document.querySelectorAll(".ms-select-list");
           let parent = this.parentElement;
           lists.forEach((item) =>
@@ -4684,13 +4682,16 @@ class EditorScreen {
         self.loadedFonts[font] = self.allFonts[font];
 
       }
-      WebFont.load({
-        google: {
-          families: filteredFonts,
-        },
-        active: function () {
-        }
-      });
+      try {
+
+        WebFont.load({
+          google: {
+            families: filteredFonts,
+          },
+          active: function () {
+          }
+        });
+      } catch (err) { }
       fontList.innerHTML = liItems;
       initMSList();
     };
