@@ -114,9 +114,9 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
     }
 
     var text =
-        this.text.trim().length > 1
-          ? this.text
-          : "You don't set empty value in curved text",
+      this.text.trim().length > 1
+        ? this.text
+        : "You don't set empty value in curved text",
       diameter = this.diameter,
       flipped = this.flipped,
       kerning = this.kerning,
@@ -629,7 +629,7 @@ class EditorScreen {
             },
           });
         }
-
+        obj.set('fontWeight', 'normal');
         obj.set("fontFamily", family);
 
         let { variants } = self.loadedFonts[family];
@@ -650,7 +650,7 @@ class EditorScreen {
             900: "Black"
           };
 
-          let formatted = input.replace(/([0-9]+)/g, (item) => fontTitle[parseInt(item)] + " " );
+          let formatted = input.replace(/([0-9]+)/g, (item) => fontTitle[parseInt(item)] + " ");
           formatted = formatted.replace(/\b\w/g, (char) => char.toUpperCase());
           return formatted;
         }
@@ -665,24 +665,8 @@ class EditorScreen {
 
         let target = querySelect(".font-weight-selector .ms-select-list-menu");
         target.innerHTML = variantsHtml;
-        target.removeAttribute("data-init");
 
-        target.querySelectorAll("li").forEach((li) => {
-          li.addEventListener("click", function (e) {
-            e.stopPropagation();
-
-            let value = this.getAttribute("value"),
-              text = this.innerText,
-              parent = this.parentElement.parentElement;
-            parent.classList.remove("show");
-            let toggleBtn = parent.querySelector(".ms-list-toggle");
-
-            toggleBtn.querySelector(".ms-list-value").innerText = text;
-            parent.setAttribute("data-value", value);
-            parent.dispatchEvent(new Event("change"));
-            this.classList.add("selected");
-          });
-        });
+        initMSList();
 
         obj.setPositionByOrigin(
           new fabric.Point(currCoordinate.x, currCoordinate.y),
@@ -4086,6 +4070,13 @@ class EditorScreen {
 
     function setlogoPosition(position, canvas) {
       if (!canvas) throw new Error("Canvas", canvas);
+
+      querySelectAll('.right-bar .svg__icon').forEach((i) => {
+        i.classList.remove('active');
+      });
+
+      querySelect(`.svg__icon[data-align-id="${position}"]`).classList.add('active');
+
       switch (position) {
         case "1":
           centerAndResizeElements(
@@ -4576,6 +4567,9 @@ class EditorScreen {
       initMSList();
     };
 
+
+
+
     const initMSList = () => {
       let lists = document.querySelectorAll(".ms-select-list");
 
@@ -4587,9 +4581,10 @@ class EditorScreen {
         list.setAttribute("data-default-value", defaultVal);
 
         menu.querySelectorAll("li").forEach((li) => {
+          // Check if the li is already initialized
+          if (li.classList.contains("initialized")) return true;
           li.addEventListener("click", function (e) {
             e.stopPropagation();
-
             let value = this.getAttribute("value");
             let text = this.innerText;
             let parent = this.parentElement.parentElement;
@@ -4602,20 +4597,8 @@ class EditorScreen {
             parent.dispatchEvent(new Event("change"));
             this.classList.add("selected");
           });
+          li.classList.add("initialized");
         });
-
-
-        if (list.classList.contains("initialized")) return true;
-        list.querySelector(".ms-list-toggle").addEventListener("click", function (e) {
-          e.stopPropagation();
-          let lists = document.querySelectorAll(".ms-select-list");
-          let parent = this.parentElement;
-          lists.forEach((item) =>
-            item != parent ? item.classList.remove("show") : item
-          );
-          parent.classList.toggle("show");
-        });
-
 
 
         list.addEventListener("valueChange", function (e) {
@@ -4635,17 +4618,53 @@ class EditorScreen {
           toggleBtn.querySelector(".ms-list-value").innerText = text;
         });
 
+        if (list.classList.contains("initialized")) return true;
+        list.querySelector(".ms-list-toggle").addEventListener("click", function (e) {
+          e.stopPropagation();
+          let lists = document.querySelectorAll(".ms-select-list");
+          let parent = this.parentElement;
+          lists.forEach((item) =>
+            item != parent ? item.classList.remove("show") : item
+          );
+          parent.classList.toggle("show");
+        });
+
+
+
+
+
         list.classList.add("initialized");
       });
 
       document.onclick = function (e) {
         let target = e.target;
+        console.log(target);
         if (
           !target.classList.contains("ms-select-list") &&
           !target.classList.contains("live-search")
         ) {
           lists.forEach((list) => list.classList.remove("show"));
         }
+
+        if (target.parentElement.tagName === "LI") target = target.parentElement;
+        if (target.tagName !== "LI") return true;
+
+
+
+        e.stopPropagation();
+        let value = target.getAttribute("value");
+        let text = target.innerText;
+        let parent = target.parentElement.parentElement;
+        if (target.parentElement.classList.contains('collection')) parent = target.parentElement.parentElement.parentElement;
+        if (!parent.classList.contains("ms-select-list")) return true;
+        parent.classList.remove("show");
+
+        let toggleBtn = parent.querySelector(".ms-list-toggle");
+        toggleBtn.querySelector(".ms-list-value").innerText = text;
+        parent.setAttribute("data-value", value);
+        parent.dispatchEvent(new Event("change"));
+        target.classList.add("selected");
+
       };
     };
 

@@ -1195,7 +1195,7 @@ input:checked+.switch-slider:before {
   transition: 0.2s all ease-out;
   user-select: none;
 }
-
+.svg__icon.active,
 .svg__icon:hover {
   background-color: #ddd;
 }
@@ -1455,12 +1455,12 @@ body {
 
 .ms-select-list.show .ms-select-list-menu.collection-available {
   overflow: hidden;
-  min-height: 50vh !important;
+  min-height: 35vh !important;
 }
 
 .ms-select-list.show .ms-select-list-menu.collection-available .collection {
   overflow: auto;
-  height: 50svh;
+  height: 35vh;
 }
 
 .ms-select-list .ms-select-list-menu li {
