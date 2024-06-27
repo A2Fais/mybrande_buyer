@@ -628,7 +628,9 @@ class EditorScreen {
               self.canvas.renderAll();
             },
           });
-        } else obj.set("fontFamily", family);
+        }
+
+        obj.set("fontFamily", family);
 
         let { variants } = self.loadedFonts[family];
 
