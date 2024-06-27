@@ -4508,14 +4508,24 @@ class EditorScreen {
 
       await loadFonts(fontItems);
 
-      fontListMenu.addEventListener("wheel", (e) => {
+      fontListMenu.addEventListener("wheel", debounce((e) => {
         if (e.wheelDelta < 0) {
           loadFonts(fontItems);
         } else if (e.wheelDelta > 0 && currentFontIndex > fontMaxCount) {
           unloadFonts(fontItems);
         }
-      });
+      }), 150);
     })();
+
+    const debounce = (callback, wait) => {
+      let timeout = null;
+      return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          callback(...args);
+        }, wait);
+      };
+    }
 
     const loadFonts = async (items) => {
       const chunk = items.slice(
