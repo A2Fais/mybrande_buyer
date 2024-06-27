@@ -1195,7 +1195,7 @@ input:checked+.switch-slider:before {
   transition: 0.2s all ease-out;
   user-select: none;
 }
-
+.svg__icon.active,
 .svg__icon:hover {
   background-color: #ddd;
 }

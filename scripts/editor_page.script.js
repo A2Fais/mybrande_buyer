@@ -5,8 +5,6 @@ import { toastNotification } from "./toast_notification.js";
 import "alwan/dist/css/alwan.min.css";
 import iro from "@jaames/iro";
 import WebFont from "webfontloader";
-// Import  jquery 
-import $ from "jquery";
 import axios from "axios";
 import {
   rgbToHex,
@@ -611,33 +609,29 @@ class EditorScreen {
     //#region Select Boxes
 
     // Font Family
-    $(".font-family-selectbox").on("onValueChange", function () {
-      let family = $(this).attr("data-value"),
-        loaded = $(this).attr("data-loaded"),
-        obj = self.canvas.getActiveObject(),
-        currCoordinate = obj.getCenterPoint();
-      if (!obj) return false;
+    querySelect(".font-family-selectbox").addEventListener(
+      "change",
+      function () {
+        let family = this.getAttribute("data-value"),
+          loaded = this.getAttribute("data-loaded"),
+          obj = self.canvas.getActiveObject(),
+          currCoordinate = obj.getCenterPoint();
+        if (!obj) return false;
 
+        if (loaded == "false") {
+          WebFont.load({
+            google: {
+              families: [family],
+            },
+            active: function () {
+              obj.set("fontFamily", family);
+              self.canvas.renderAll();
+            },
+          });
+        }
+        obj.set('fontWeight', 'normal');
+        obj.set("fontFamily", family);
 
-      // remove font weight if they effct on font family 
-      try {
-        WebFont.load({
-          google: {
-            families: [family],
-          },
-          active: function () {
-            obj.set("fontFamily", family);
-            self.canvas.renderAll();
-          },
-        });
-      } catch (err) {
-      }
-
-      obj.set("fontWeight", "normal");
-      obj.set("fontFamily", family);
-      self.canvas.renderAll();
-
-      self.canvas.renderAll();
         let { variants } = self.loadedFonts[family];
 
         let variantsHtml = "";
@@ -669,19 +663,28 @@ class EditorScreen {
           )}</li>`;
         });
 
-      let target = $(".font-weight-selector .ms-select-list-menu");
-      target.html(variantsHtml);
+        let target = querySelect(".font-weight-selector .ms-select-list-menu");
+        target.innerHTML = variantsHtml;
 
+        initMSList();
 
-
+        obj.setPositionByOrigin(
+          new fabric.Point(currCoordinate.x, currCoordinate.y),
+          "center",
+          "center"
+        );
+        obj.setCoords();
         self.canvas.requestRenderAll();
         updatePreview();
         self.canvas.save();
-    });
+      }
+    );
 
     // Font Case
-    $(".text-case-select-box").on("onValueChange", function () {
-      const selectedTextElement = $(this).attr("data-value"),
+    querySelect(".text-case-select-box").addEventListener(
+      "change",
+      function () {
+        const selectedTextElement = this.getAttribute("data-value"),
           obj = self.canvas.getActiveObject();
         if (!obj) return false;
         let currCoordinate = obj.getCenterPoint(),
@@ -729,28 +732,30 @@ class EditorScreen {
       }
     );
 
-    $(".font-weight-selector").on("onValueChange", function () {
-      let weight = $(this).attr("data-value"),
-        obj = self.canvas.getActiveObject();
-      if (!obj) return false;
+    querySelect(".font-weight-selector").addEventListener(
+      "change",
+      function () {
+        let weight = this.getAttribute("data-value"),
+          obj = self.canvas.getActiveObject();
+        if (!obj) return false;
 
-      if (weight.includes("italic")) {
-        weight = weight.replace("italic", "");
-        obj.set("fontStyle", "italic");
-        obj.set("fontweightapply", true);
-      } else {
-        if (obj.get("fontweightapply")) obj.set("fontStyle", "normal");
+        if (weight.includes("italic")) {
+          weight = weight.replace("italic", "");
+          obj.set("fontStyle", "italic");
+          obj.set("fontweightapply", true);
+        } else {
+          if (obj.get("fontweightapply")) obj.set("fontStyle", "normal");
+        }
+
+        obj.set("fontWeight", weight);
+        self.canvas.renderAll();
+        updatePreview();
+        self.canvas.save();
       }
-
-      obj.set("fontWeight", weight);
-      self.canvas.renderAll();
-      updatePreview();
-      self.canvas.save();
-    }
     );
 
-    $(".font-style-selector").on("onValueChange", function () {
-      let value = $(this).attr("data-value"),
+    querySelect(".font-style-selector").addEventListener("change", function () {
+      let value = this.getAttribute("data-value"),
         obj = self.canvas.getActiveObject();
       if (!obj) return false;
       if (value == "Underline") obj.set("underline", true);
@@ -4065,6 +4070,13 @@ class EditorScreen {
 
     function setlogoPosition(position, canvas) {
       if (!canvas) throw new Error("Canvas", canvas);
+
+      querySelectAll('.right-bar .svg__icon').forEach((i) => {
+        i.classList.remove('active');
+      });
+
+      querySelect(`.svg__icon[data-align-id="${position}"]`).classList.add('active');
+
       switch (position) {
         case "1":
           centerAndResizeElements(
@@ -4526,6 +4538,7 @@ class EditorScreen {
       }
 
       fontListMenu.innerHTML += liItems;
+      initMSList();
     };
 
     const unloadFonts = (items) => {
@@ -4541,60 +4554,109 @@ class EditorScreen {
         }
       }
       currentFontIndex -= fontMaxCount;
+      initMSList();
     };
 
 
 
-    let $lists = $(".ms-select-list");
 
-    $lists.each(function () {
-      let $list = $(this);
-      let $menu = $list.find(".ms-select-list-menu");
-      let defaultVal = $list.find(".ms-list-toggle .ms-list-value").attr("value");
-      $list.attr("data-default-value", defaultVal);
+    const initMSList = () => {
+      let lists = document.querySelectorAll(".ms-select-list");
+
+      lists.forEach((list) => {
+        let menu = list.querySelector(".ms-select-list-menu");
+        let defaultVal = list
+          .querySelector(".ms-list-toggle .ms-list-value")
+          .getAttribute("value");
+        list.setAttribute("data-default-value", defaultVal);
+
+        menu.querySelectorAll("li").forEach((li) => {
+          // Check if the li is already initialized
+          if (li.classList.contains("initialized")) return true;
+          li.addEventListener("click", function (e) {
+            e.stopPropagation();
+            let value = this.getAttribute("value");
+            let text = this.innerText;
+            let parent = this.parentElement.parentElement;
+            if (this.parentElement.classList.contains('collection')) parent = this.parentElement.parentElement.parentElement;
+            parent.classList.remove("show");
+
+            let toggleBtn = parent.querySelector(".ms-list-toggle");
+            toggleBtn.querySelector(".ms-list-value").innerText = text;
+            parent.setAttribute("data-value", value);
+            parent.dispatchEvent(new Event("change"));
+            this.classList.add("selected");
+          });
+          li.classList.add("initialized");
+        });
+
+
+        list.addEventListener("valueChange", function (e) {
+          e.stopPropagation();
+
+          let value = this.getAttribute("data-value"),
+            toggleBtn = this.querySelector(".ms-list-toggle");
+
+          let text = this.querySelector(
+            `.ms-select-list-menu li[value="${value}"]`
+          );
+          if (value == "undefined") {
+            text = this.getAttribute("data-default-value");
+          } else if (text) {
+            text = text.innerText;
+          }
+          toggleBtn.querySelector(".ms-list-value").innerText = text;
+        });
+
+        if (list.classList.contains("initialized")) return true;
+        list.querySelector(".ms-list-toggle").addEventListener("click", function (e) {
+          e.stopPropagation();
+          let lists = document.querySelectorAll(".ms-select-list");
+          let parent = this.parentElement;
+          lists.forEach((item) =>
+            item != parent ? item.classList.remove("show") : item
+          );
+          parent.classList.toggle("show");
+        });
 
 
 
-      $list.find(".ms-list-toggle").on("click", function (e) {
-        e.stopPropagation();
-        let $parent = $(this).closest(".ms-select-list");
-        $(".ms-select-list").not($parent).removeClass("show");
-        $parent.toggleClass("show");
+
+
+        list.classList.add("initialized");
       });
 
-      $list.on("valueChange", function (e) {
-        e.stopPropagation();
-
-        let value = $list.attr("data-value");
-        let $toggleBtn = $list.find(".ms-list-toggle");
-
-        let $text = $list.find(`.ms-select-list-menu li[value="${value}"]`);
-        if (value == "undefined") {
-          $text = $list.attr("data-default-value");
-        } else if ($text.length) {
-          $text = $text.text();
+      document.onclick = function (e) {
+        let target = e.target;
+        console.log(target);
+        if (
+          !target.classList.contains("ms-select-list") &&
+          !target.classList.contains("live-search")
+        ) {
+          lists.forEach((list) => list.classList.remove("show"));
         }
-        $toggleBtn.find(".ms-list-value").text($text);
-      });
 
-    });
-
-
-    $(document).on("click", ".ms-select-list-menu li", function (e) {
-      e.stopPropagation();
-      let value = $(this).attr("value");
-      let text = $(this).text();
-      let $parent = $(this).parents(".ms-select-list");
-      $parent.removeClass("show");
-
-      let $toggleBtn = $parent.find(".ms-list-toggle");
-      $toggleBtn.find(".ms-list-value").text(text);
-      $parent.attr("data-value", value);
-      $parent.trigger("onValueChange");
-      $(this).addClass("selected");
-    });
+        if (target.parentElement.tagName === "LI") target = target.parentElement;
+        if (target.tagName !== "LI") return true;
 
 
+
+        e.stopPropagation();
+        let value = target.getAttribute("value");
+        let text = target.innerText;
+        let parent = target.parentElement.parentElement;
+        if (target.parentElement.classList.contains('collection')) parent = target.parentElement.parentElement.parentElement;
+        if (!parent.classList.contains("ms-select-list")) return true;
+        parent.classList.remove("show");
+
+        let toggleBtn = parent.querySelector(".ms-list-toggle");
+        toggleBtn.querySelector(".ms-list-value").innerText = text;
+        parent.setAttribute("data-value", value);
+        parent.dispatchEvent(new Event("change"));
+        target.classList.add("selected");
+
+      };
+    };
 
     const fontLiveSearch = function (element) {
       let val = element.value.toLowerCase(),
@@ -4650,6 +4712,7 @@ class EditorScreen {
         });
       } catch (err) { }
       fontList.innerHTML = liItems;
+      initMSList();
     };
 
     document.addEventListener("keyup", function (event) {
