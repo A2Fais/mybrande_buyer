@@ -314,6 +314,7 @@ class EditorScreen {
 
     this.loadedIcons = {};
     this.allFonts = {};
+    this.changeFontWeight = true;
     this.activeSection = "";
     this.textMode = querySelect('.nav-item[data-name="text"]');
     this.logoMode = querySelect('.nav-item[data-name="logo"]');
@@ -628,8 +629,15 @@ class EditorScreen {
               self.canvas.renderAll();
             },
           });
+        } 
+
+        if (self.changeFontWeight) {
+
+          obj.set('fontStyle', 'normal');
+          obj.set('fontWeight', 'normal');
+          obj.set('orgFontWeight', 'normal');
         }
-        obj.set('fontWeight', 'normal');
+
         obj.set("fontFamily", family);
 
         let { variants } = self.loadedFonts[family];
@@ -658,7 +666,7 @@ class EditorScreen {
         variants.map((variant) => {
           const value = values[variant] ? values[variant] : variant;
 
-          variantsHtml += `<li value="${value}" style="text-transform:capitalize">${formatString(
+          variantsHtml += `<li value="${value == 'regular' ? 'normal' : value}" style="text-transform:capitalize">${formatString(
             value
           )}</li>`;
         });
@@ -738,7 +746,7 @@ class EditorScreen {
         let weight = this.getAttribute("data-value"),
           obj = self.canvas.getActiveObject();
         if (!obj) return false;
-
+        obj.set("orgFontWeight", weight);
         if (weight.includes("italic")) {
           weight = weight.replace("italic", "");
           obj.set("fontStyle", "italic");
@@ -1120,7 +1128,21 @@ class EditorScreen {
 
         let fontList = querySelect('.font-family-selectbox');
         const setFontFamily = (family) => {
-          fontList.querySelector('.ms-list-toggle .ms-list-value').innerText = family;
+          fontList.setAttribute('data-value', family);
+          self.changeFontWeight = false;
+          fontList.dispatchEvent(new Event("valueChange"));
+          fontList.dispatchEvent(new Event("change"));
+          self.changeFontWeight = true;
+
+          fontList.querySelector(".ms-list-value").innerText = family;
+
+          let fontWeightSelector = querySelect(".font-weight-selector");
+          fontWeightSelector.setAttribute("data-value", obj.orgFontWeight);
+          fontWeightSelector.dispatchEvent(new Event("valueChange"));
+          fontWeightSelector.dispatchEvent(new Event("change"));
+
+
+
         }
 
         // Set Font family 
@@ -1137,6 +1159,10 @@ class EditorScreen {
                 families: [family],
               },
               active: function () {
+
+                familyData.loaded = true;
+                self.loadedFonts[family] = familyData;
+
                 obj.set("fontFamily", family);
                 setFontFamily(family)
                 self.canvas.renderAll();
@@ -4628,7 +4654,6 @@ class EditorScreen {
 
       document.onclick = function (e) {
         let target = e.target;
-        console.log(target);
         if (
           !target.classList.contains("ms-select-list") &&
           !target.classList.contains("live-search")
