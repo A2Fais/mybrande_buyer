@@ -1197,7 +1197,7 @@ input:checked+.switch-slider:before {
 }
 .svg__icon.active,
 .svg__icon:hover {
-  background-color: #ddd;
+  background-color: #c5c5c5;
 }
 
 .right-bar {
