@@ -1137,7 +1137,7 @@ class EditorScreen {
           fontList.querySelector(".ms-list-value").innerText = family;
 
           let fontWeightSelector = querySelect(".font-weight-selector");
-          fontWeightSelector.setAttribute("data-value", obj.orgFontWeight);
+          fontWeightSelector.setAttribute("data-value", obj.orgFontWeight ? obj.orgFontWeight : "normal");
           fontWeightSelector.dispatchEvent(new Event("valueChange"));
           fontWeightSelector.dispatchEvent(new Event("change"));
 
@@ -2033,6 +2033,11 @@ class EditorScreen {
         // Use to fixed to remove decimal points
         querySelect("#font_size_title").value = `${textSize}px`;
         const active = this.canvas.getActiveObject();
+
+        console.log(active.fontFamily)
+        console.log(active.fontStyle);
+
+        console.log(active.fontWeight);
         const fontSize = textSize;
         if (active.type == "curved-text") {
           active.set("_cachedCanvas", null);
