@@ -528,6 +528,19 @@ class EditorScreen {
       this.canvas.updatePreview();
     });
 
+    querySelect("#text-rotate_reset").addEventListener("click", () => {
+      const active = this.canvas.getActiveObject();
+      if (!active) return true;
+      if (active.angle == 0) return false;
+      rotateReset(active);
+      this.canvas.requestRenderAll();
+      querySelect("#rotate_info").innerText = "Rotate: 0deg";
+      this.rotateRange.value = 0;
+      if (active) this.canvas.save();
+      this.canvas.renderAll();
+      this.canvas.updatePreview();
+    });
+
     this.shadowChanger = (sloganNameElement, logoNameElement) => {
       const element =
         this.textSelectorValue === "SloganName"
@@ -843,6 +856,12 @@ class EditorScreen {
     });
 
     querySelect("#rotate-bar-uploads").addEventListener("input", (e) => {
+      this.isRotating = true;
+      this.rotateValue = parseInt(e.target.value, 10);
+      this.rotateObject();
+    });
+
+    querySelect("#text-rotate-bar").addEventListener("input", (e) => {
       this.isRotating = true;
       this.rotateValue = parseInt(e.target.value, 10);
       this.rotateObject();
@@ -1884,6 +1903,9 @@ class EditorScreen {
         e.e.preventDefault();
         this.textSelectorValue = "LogoName";
 
+        querySelect('#font_style_tag').innerText = toTitleCase(logoNameElement.get('fontStyle'));
+        querySelect('#font_case').innerText = toTitleCase(getTextCase(logoNameElement.text));
+
         const hasShadow = !!logoNameElement?.shadow?.blur;
 
         querySelect("#drop-shadow").checked = hasShadow;
@@ -1974,6 +1996,9 @@ class EditorScreen {
       sloganNameElement.on("mousedown", (e) => {
         e.e.preventDefault();
         this.textSelectorValue = "SloganName";
+
+        querySelect('#font_style_tag').innerText = toTitleCase(sloganNameElement.get('fontStyle'));
+        querySelect('#font_case').innerText = toTitleCase(getTextCase(sloganNameElement.text));
 
         const hasShadow = !!sloganNameElement?.shadow?.blur;
 
@@ -2895,7 +2920,16 @@ class EditorScreen {
         });
 
         fetchCanvasData(this.canvas).then((data) => {
-          console.log(data)
+          const brandCase = data.brandCase;
+          const sloganCase = data.sloganCase;
+          const brandBlur = data.brandNameDropShadow.charAt(0);
+          const brandOffsetX = data.brandNameDropShadow.charAt(1);
+          const brandOffsetY = data.brandNameDropShadow.charAt(2);
+
+          const sloganBlur = data.sloganDropShadow.charAt(0);
+          const sloganOffsetX = data.sloganDropShadow.charAt(1);
+          const sloganOffsetY = data.sloganDropShadow.charAt(2);
+          
           if (!sessionStorage.getItem("reloaded")) {
             sessionStorage.setItem("reloaded", "true");
             location.reload();
@@ -2926,13 +2960,55 @@ class EditorScreen {
           this.alignId = +data.logoPosition;
           updatePreview();
           document.getElementById("top_bottom_1").click();
-          // Init Undo Redo
+          
           setTimeout(() => {
-            this.canvasHistory = new SaveHistory(this.canvas); // Init Undo Redo
+            this.canvasHistory = new SaveHistory(this.canvas); 
             querySelect("#loader_main").style.display = "none";
+
+            logoNameElement.set('fontSize', +data.brandSize);
+            sloganNameElement.set('fontSize', +data.sloganSize);
+
+            logoNameElement.set("shadow", {
+              offsetX: brandOffsetX,
+              offsetY: brandOffsetY,
+              blur: brandBlur,
+            })
+
+            sloganNameElement.set("shadow", {
+              offsetX: sloganOffsetX,
+              offsetY: sloganOffsetY,
+              blur: sloganBlur,
+            })
 
             logoNameElement.set('charSpacing', data.brandCharSpacing);
             sloganNameElement.set('charSpacing', data.sloganCharSpacing);
+
+            if (brandCase === "Uppercase") {
+              logoNameElement.text = logoNameElement.text.toUpperCase();
+            }
+            else if (brandCase === "Lowercase"){
+              logoNameElement.text = logoNameElement.text.toLowerCase();
+            }
+            else if (brandCase === "Title Case"){
+              logoNameElement.text = toTitleCase(logoNameElement.text);
+            }
+            else if (brandCase === "Sentence Case"){
+              logoNameElement.text = toSentenceCase(logoNameElement.text);
+            }
+
+            if (sloganCase === "Uppercase") {
+              sloganNameElement.text = sloganNameElement.text.toUpperCase();
+            }
+            else if (sloganCase === "Lowercase"){
+              sloganNameElement.text = sloganNameElement.text.toLowerCase();
+            }
+            else if (sloganCase === "Title Case"){
+              sloganNameElement.text = toTitleCase(sloganNameElement.text);
+            }
+            else if (sloganCase === "Sentence Case"){
+              sloganNameElement.text = toSentenceCase(sloganNameElement.text);
+            }
+
             if (data.brandStyle === 'underline') {
               logoNameElement.set('underline', true);
             } else {
@@ -4428,6 +4504,12 @@ class EditorScreen {
       const sloganCharSpacing = responseData?.slogan_letterSpace;
       const brandStyle = responseData?.brandName_fontStyle;
       const sloganStyle = responseData?.slogan_fontStyle;
+      const brandSize = responseData?.brandName_fontSize;
+      const sloganSize = responseData?.slogan_fontSize;
+      const brandCase = responseData?.brandName_letterCase;
+      const sloganCase = responseData?.slogan_letterCase;
+      const brandNameDropShadow = responseData?.brandName_droupShadow;
+      const sloganDropShadow = responseData?.slogan_droupShadow;
       external_layer = responseData?.externalLayerElements;
       external_text = responseData?.externalTextElements;
       external_img = responseData?.images;
@@ -4459,11 +4541,21 @@ class EditorScreen {
       if (svgData) {
         localStorage.setItem("logo-file", svgData);
       }
+
+      const brandCharModifiedVal = Number(brandCharSpacing) * 10;
+      const sloganCharModifiedVal = Number(sloganCharSpacing) * 10;
       return {
         bg, logoPosition, svgData: response.data,
-        brandCharSpacing: Number(brandCharSpacing),
-        sloganCharSpacing: Number(sloganCharSpacing),
-        brandStyle, sloganStyle
+        brandCharSpacing: brandCharModifiedVal,
+        sloganCharSpacing: sloganCharModifiedVal,
+        brandStyle, 
+        sloganStyle,
+        brandNameDropShadow, 
+        sloganDropShadow,
+        brandSize,
+        sloganSize,
+        brandCase,
+        sloganCase
       };
     }
 
@@ -4495,7 +4587,6 @@ class EditorScreen {
 
         scaleLogo(scaleValue);
         anythingApplied = true;
-        // console.log("ALIGN ID", this.alignId)
         setlogoPosition(this.alignId, this.canvas);
         setTimeout(() => {
           this.canvas.save();
@@ -4750,7 +4841,7 @@ class EditorScreen {
     };
 
     (async () => {
-      const fontItems = this.fontItems;
+      const fontItems = await this.fetchFonts()
       await loadFonts(fontItems);
 
       fontListMenu.addEventListener("wheel", debounce((e) => {
@@ -4771,12 +4862,12 @@ class EditorScreen {
         }, wait);
       };
     }
+
     const fontLiveSearch = function(element) {
       let val = element.value.toLowerCase(),
         fontList = querySelect('#font-family-con .collection');
 
-
-      const generateItem = (font) => {
+        const generateItem = (font) => {
         return `<li value="${font}" class="font-family-item" data-loaded="true">
           <span style="font-family:${font}; font-weight: 500px" class="text">${font}</span></li>`;
       }
@@ -4797,8 +4888,6 @@ class EditorScreen {
         return false;
       }
 
-
-      // Search from all font object and filter the font and make li item and add them
       let filteredFonts = Object.keys(self.allFonts).filter((font) => {
         return font.toLowerCase().startsWith(val);
       });

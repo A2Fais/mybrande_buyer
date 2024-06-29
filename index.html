@@ -524,6 +524,7 @@
                 <span id="scale_down" class="fa-solid fa-chevron-down arrow_icons"></span>
               </div>
             </div>
+            
 
           </div>
           <div class="slider-container">
@@ -757,6 +758,7 @@
         </div>
 
       </div>
+
       <div class="text-settings-container">
         <!-- <input class="input-main" id="logoMainField" type="text" placeholder="Logo Name" name="" value="My Brand Name"> -->
         <!-- Raindrops fall, soil dampens, life. sdf -->
@@ -1019,7 +1021,7 @@
 
         <div class='ms-select-list font-style-selector'>
           <span class="ms-list-toggle">
-            <span class="ms-list-value" value="Normal">Normal</span>
+            <span id="font_style_tag" class="ms-list-value" value="Normal">Normal</span>
             <i class="fa-solid fa-angle-down"></i>
           </span>
 
@@ -1034,7 +1036,7 @@
 
         <div class='ms-select-list text-case-select-box'>
           <span class="ms-list-toggle">
-            <span class="ms-list-value" value="Uppercase">Uppercase</span>
+            <span id="font_case" class="ms-list-value" value="Uppercase">Uppercase</span>
             <i class="fa-solid fa-angle-down"></i></span>
 
           <div class="ms-select-list-menu">
@@ -1079,6 +1081,18 @@
           <div class="slider-container">
             <input class="slider" id="text-curve-range" type="range" value="2500" max="5000">
           </div>
+        </div>
+        <div class="setting-item" style=" width: 230px;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size: 14px;" id="rotate_info">Rotate: 0deg</span>
+            <button id="text-rotate_reset" style="font-size: 14px; padding: 5px 20px; background-color: transparent; color: #999999; border: var(--gold) 1px solid; 
+                            display: flex; justify-content: center; align-items: center;">Reset</button>
+          </div>
+
+          <div class="slider-container">
+            <input style="width: 230px;" class="slider" id="text-rotate-bar" type="range" value="0" min="-180" max="180">
+          </div>
+
         </div>
 
 
