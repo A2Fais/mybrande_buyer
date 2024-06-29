@@ -1959,16 +1959,16 @@ class EditorScreen {
         }
 
         if (logoNameElement.shadow) {
-          const { blur, offsetX, offsetY } = logoNameElement.shadow;
+          const blur = logoNameElement?.shadow?.blur;
+          const offsetX = logoNameElement?.shadow?.offsetX;
+          const offsetY = logoNameElement?.shadow?.offsetY;
 
-          if (blur && offsetX && offsetY) {
-            querySelect("#shadow_blur_title").innerText = ` :${blur}px`;
+            querySelect("#shadow_blur_title").innerText = blur ? ` :${blur}px`: ' :0px';
             querySelect("#shadow-blur-slider").value = blur;
-            querySelect("#offset_x_title").innerText = ` :${offsetX}px`;
+            querySelect("#offset_x_title").innerText = offsetX ? ` :${offsetX}px` : ' :0px';
             querySelect("#shadow-offsetX-slider").value = offsetX;
-            querySelect("#offset_y_title").innerText = ` :${offsetY}px`;
+            querySelect("#offset_y_title").innerText = offsetY ? ` :${offsetY}px` : ' 0px';
             querySelect("#shadow-offsetY-slider").value = offsetY;
-          }
         }
         captureCanvasState();
         this.canvas.requestRenderAll();
@@ -2053,16 +2053,16 @@ class EditorScreen {
         }
 
         if (sloganNameElement.shadow) {
-          const { blur, offsetX, offsetY } = sloganNameElement.shadow;
+          const blur = sloganNameElement?.shadow?.blur;
+          const offsetX = sloganNameElement?.shadow?.offsetX;
+          const offsetY = sloganNameElement?.shadow?.offsetY;
 
-          if (blur && offsetX && offsetY) {
-            querySelect("#shadow_blur_title").innerText = ` :${blur}px`;
+            querySelect("#shadow_blur_title").innerText = blur ? ` :${blur}px`: ' :0px';
             querySelect("#shadow-blur-slider").value = blur;
-            querySelect("#offset_x_title").innerText = ` :${offsetX}px`;
+            querySelect("#offset_x_title").innerText = offsetX ? ` :${offsetX}px` : ' :0px';
             querySelect("#shadow-offsetX-slider").value = offsetX;
-            querySelect("#offset_y_title").innerText = ` :${offsetY}px`;
+            querySelect("#offset_y_title").innerText = offsetY ? ` :${offsetY}px` : ' 0px';
             querySelect("#shadow-offsetY-slider").value = offsetY;
-          }
         }
 
         captureCanvasState();
@@ -2920,15 +2920,8 @@ class EditorScreen {
         });
 
         fetchCanvasData(this.canvas).then((data) => {
-          const brandCase = data.brandCase;
-          const sloganCase = data.sloganCase;
-          const brandBlur = data.brandNameDropShadow.charAt(0);
-          const brandOffsetX = data.brandNameDropShadow.charAt(1);
-          const brandOffsetY = data.brandNameDropShadow.charAt(2);
-
-          const sloganBlur = data.sloganDropShadow.charAt(0);
-          const sloganOffsetX = data.sloganDropShadow.charAt(1);
-          const sloganOffsetY = data.sloganDropShadow.charAt(2);
+          const brandCase = data?.brandCase;
+          const sloganCase = data?.sloganCase;
           
           if (!sessionStorage.getItem("reloaded")) {
             sessionStorage.setItem("reloaded", "true");
@@ -2968,16 +2961,24 @@ class EditorScreen {
             logoNameElement.set('fontSize', +data.brandSize);
             sloganNameElement.set('fontSize', +data.sloganSize);
 
+            const brandBlur = data?.brandNameDropShadow?.split(",")[0];
+            const brandOffsetX = data?.brandNameDropShadow?.split(",")[1];
+            const brandOffsetY = data?.brandNameDropShadow?.split(",")[2];
+  
+            const sloganBlur = data?.sloganDropShadow?.split(",")[0];
+            const sloganOffsetX = data?.sloganDropShadow?.split(",")[1];
+            const sloganOffsetY = data?.sloganDropShadow?.split(",")[2];
+
             logoNameElement.set("shadow", {
-              offsetX: brandOffsetX,
-              offsetY: brandOffsetY,
-              blur: brandBlur,
+              offsetX: +brandOffsetX,
+              offsetY: +brandOffsetY,
+              blur: +brandBlur,
             })
 
             sloganNameElement.set("shadow", {
-              offsetX: sloganOffsetX,
-              offsetY: sloganOffsetY,
-              blur: sloganBlur,
+              offsetX: +sloganOffsetX,
+              offsetY: +sloganOffsetY,
+              blur: +sloganBlur,
             })
 
             logoNameElement.set('charSpacing', data.brandCharSpacing);
