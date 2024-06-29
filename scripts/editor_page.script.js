@@ -47,7 +47,7 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
   _cachedCanvas: null,
   _needsRecalculate: true,
 
-  initialize: function (text, options) {
+  initialize: function(text, options) {
     options || (options = {});
     this.text = text;
 
@@ -61,7 +61,7 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
     this.set("height", canvas.height);
   },
 
-  _getFontDeclaration: function () {
+  _getFontDeclaration: function() {
     return [
       fabric.isLikelyNode ? this.fontWeight : this.fontStyle,
       fabric.isLikelyNode ? this.fontStyle : this.fontWeight,
@@ -70,7 +70,7 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
     ].join(" ");
   },
 
-  _trimCanvas: function (canvas) {
+  _trimCanvas: function(canvas) {
     try {
       var ctx = canvas.getContext("2d", { willReadFrequently: true }),
         w = canvas.width,
@@ -78,7 +78,7 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
         pix = { x: [], y: [] },
         n,
         imageData = ctx.getImageData(0, 0, w, h),
-        fn = function (a, b) {
+        fn = function(a, b) {
           return a - b;
         };
 
@@ -108,7 +108,7 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
     }
   },
 
-  getCircularText: function () {
+  getCircularText: function() {
     if (this._cachedCanvas && !this._needsRecalculate) {
       return this._cachedCanvas;
     }
@@ -213,7 +213,7 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
     return this._cachedCanvas;
   },
 
-  _set: function (key, value) {
+  _set: function(key, value) {
     this.callSuper("_set", key, value);
     this._needsRecalculate = true;
   },
@@ -249,7 +249,7 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
     this._refresh = bool;
   },
 
-  _render: function (ctx) {
+  _render: function(ctx) {
     if (!this._refresh && this._cachedCanvas) {
       ctx.drawImage(
         this._cachedCanvas,
@@ -280,7 +280,7 @@ fabric.CurvedText = fabric.util.createClass(fabric.Object, {
     this.setCoords();
   },
 
-  toObject: function (propertiesToInclude) {
+  toObject: function(propertiesToInclude) {
     return this.callSuper(
       "toObject",
       [
@@ -399,7 +399,7 @@ class EditorScreen {
       this.canvasHistory.saveHistory();
     });
 
-    this.canvas.save = function () {
+    this.canvas.save = function() {
       self?.canvasHistory?.saveHistory();
     };
     this.canvas.undoCB = () => {
@@ -612,7 +612,7 @@ class EditorScreen {
     // Font Family
     querySelect(".font-family-selectbox").addEventListener(
       "change",
-      function () {
+      function() {
         let family = this.getAttribute("data-value"),
           loaded = this.getAttribute("data-loaded"),
           obj = self.canvas.getActiveObject(),
@@ -624,12 +624,12 @@ class EditorScreen {
             google: {
               families: [family],
             },
-            active: function () {
+            active: function() {
               obj.set("fontFamily", family);
               self.canvas.renderAll();
             },
           });
-        } 
+        }
 
         if (self.changeFontWeight) {
 
@@ -691,7 +691,7 @@ class EditorScreen {
     // Font Case
     querySelect(".text-case-select-box").addEventListener(
       "change",
-      function () {
+      function() {
         const selectedTextElement = this.getAttribute("data-value"),
           obj = self.canvas.getActiveObject();
         if (!obj) return false;
@@ -742,7 +742,7 @@ class EditorScreen {
 
     querySelect(".font-weight-selector").addEventListener(
       "change",
-      function () {
+      function() {
         let weight = this.getAttribute("data-value"),
           obj = self.canvas.getActiveObject();
         if (!obj) return false;
@@ -762,7 +762,7 @@ class EditorScreen {
       }
     );
 
-    querySelect(".font-style-selector").addEventListener("change", function () {
+    querySelect(".font-style-selector").addEventListener("change", function() {
       let value = this.getAttribute("data-value"),
         obj = self.canvas.getActiveObject();
       if (!obj) return false;
@@ -883,7 +883,7 @@ class EditorScreen {
       this.scaleRange.dispatchEvent(new Event("input"));
     });
 
-    this.scaleRange.addEventListener("change", function () {
+    this.scaleRange.addEventListener("change", function() {
       updatePreview();
       self.canvas.save();
     });
@@ -954,7 +954,7 @@ class EditorScreen {
     this.canvas.on("object:scaling", () => {
       isScaling = true;
     });
-    this.canvas.on("mouse:up", function () {
+    this.canvas.on("mouse:up", function() {
       if (isScaling) {
         isScaling = false;
         self.canvas.save();
@@ -1158,7 +1158,7 @@ class EditorScreen {
               google: {
                 families: [family],
               },
-              active: function () {
+              active: function() {
 
                 familyData.loaded = true;
                 self.loadedFonts[family] = familyData;
@@ -1550,7 +1550,7 @@ class EditorScreen {
 
     document
       .querySelector("#l_spacing_value")
-      .addEventListener("change", function (e) {
+      .addEventListener("change", function(e) {
         let value = e.target.value;
         querySelect("#letter-spacing-slider").value = value * 10;
         querySelect("#letter-spacing-slider").dispatchEvent(new Event("input"));
@@ -1751,7 +1751,7 @@ class EditorScreen {
             const img = fabric.util.groupSVGElements(objects, options);
 
             var reader = new FileReader();
-            reader.onloadend = function () {
+            reader.onloadend = function() {
               img.set("dataUrl", reader.result);
               img.set("layerType", "image");
               img.set("ext", "svg");
@@ -2084,7 +2084,7 @@ class EditorScreen {
       querySelect("#curve-text").dispatchEvent(new Event("change"));
     });
 
-    querySelect("#curve-text").addEventListener("change", function (e) {
+    querySelect("#curve-text").addEventListener("change", function(e) {
       let inp = e.target,
         val = parseInt(inp.value);
 
@@ -2965,15 +2965,15 @@ class EditorScreen {
       canvas.save();
     });
 
-    querySelect("#add-clip-text").addEventListener("click", (e) => {
+    querySelect("#add-clip-text").addEventListener("click", () => {
       querySelect("#popup-parent").style.display = "block";
       querySelect("#popup-parent-icons").style.display = "none";
     });
 
-    querySelect(".close-popup-btn").addEventListener("click", (e) => {
+    querySelect(".close-popup-btn").addEventListener("click", () => {
       querySelect("#popup-parent").style.display = "none";
     });
-    querySelect("#trigger-clip-text").addEventListener("click", (e) => {
+    querySelect("#trigger-clip-text").addEventListener("click", () => {
       querySelect("#add-clip-text").dispatchEvent(new Event("click"));
     });
 
@@ -2982,7 +2982,7 @@ class EditorScreen {
       querySelect("#popup-parent-icons").style.display = "block";
     });
 
-    querySelect(".item-title").addEventListener("click", (e) => {
+    querySelect(".item-title").addEventListener("click", () => {
       const IText = new fabric.IText("Add Text", { fontFamily: "Poppins" });
       this.canvas.add(IText);
       IText.center();
@@ -4361,15 +4361,26 @@ class EditorScreen {
         );
       }
 
-      const bg = response.data?.AllData?.logo_backgroundcolor;
-      logoPosition = response.data?.AllData?.logo_position;
-      const svgData = response.data?.AllData?.svg_data;
+      const responseData = response.data.AllData
 
-      external_layer = response.data?.AllData?.externalLayerElements;
-      external_text = response.data?.AllData?.externalTextElements;
-      external_img = response.data?.AllData?.images;
-      // console.log("EXTERNAL IMAGE", response.data);
+      const bg = responseData?.logo_backgroundcolor;
+      logoPosition = responseData?.logo_position;
+      const svgData = responseData?.svg_data;
+
+      external_layer = responseData?.externalLayerElements;
+      external_text = responseData?.externalTextElements;
+      external_img = responseData?.images;
       loadExternalLayers(external_layer, external_text, external_img);
+
+      // logoNameElement.set('fontFamily', this.allFonts[responseData?.brandName_fontFamely]);
+      // logoNameElement.set('charSpacing', Number(responseData?.brandName_letterSpace));
+      // logoNameElement.set('fontStyle', Number(responseData?.brandName_fontStyle));
+      //
+      // sloganNameElement.set('fontFamily', this.allFonts[responseData?.slogan_fontFamely]);
+      // sloganNameElement.set('charSpacing', Number(responseData?.slogan_letterSpace));
+      // sloganNameElement.set('fontStyle', Number(responseData?.slogan_fontStyle));
+      //
+      // canvas.renderAll();
 
       if (svgData) {
         localStorage.setItem("logo-file", svgData);
@@ -4614,7 +4625,7 @@ class EditorScreen {
         menu.querySelectorAll("li").forEach((li) => {
           // Check if the li is already initialized
           if (li.classList.contains("initialized")) return true;
-          li.addEventListener("click", function (e) {
+          li.addEventListener("click", function(e) {
             e.stopPropagation();
             let value = this.getAttribute("value");
             let text = this.innerText;
@@ -4632,7 +4643,7 @@ class EditorScreen {
         });
 
 
-        list.addEventListener("valueChange", function (e) {
+        list.addEventListener("valueChange", function(e) {
           e.stopPropagation();
 
           let value = this.getAttribute("data-value"),
@@ -4650,7 +4661,7 @@ class EditorScreen {
         });
 
         if (list.classList.contains("initialized")) return true;
-        list.querySelector(".ms-list-toggle").addEventListener("click", function (e) {
+        list.querySelector(".ms-list-toggle").addEventListener("click", function(e) {
           e.stopPropagation();
           let lists = document.querySelectorAll(".ms-select-list");
           let parent = this.parentElement;
@@ -4667,7 +4678,7 @@ class EditorScreen {
         list.classList.add("initialized");
       });
 
-      document.onclick = function (e) {
+      document.onclick = function(e) {
         let target = e.target;
         if (
           !target.classList.contains("ms-select-list") &&
@@ -4698,7 +4709,7 @@ class EditorScreen {
       };
     };
 
-    const fontLiveSearch = function (element) {
+    const fontLiveSearch = function(element) {
       let val = element.value.toLowerCase(),
         fontList = querySelect('#font-family-con .collection');
 
@@ -4747,7 +4758,7 @@ class EditorScreen {
           google: {
             families: filteredFonts,
           },
-          active: function () {
+          active: function() {
           }
         });
       } catch (err) { }
@@ -4755,7 +4766,7 @@ class EditorScreen {
       initMSList();
     };
 
-    document.addEventListener("keyup", function (event) {
+    document.addEventListener("keyup", function(event) {
       if (event.target.classList.contains("live-search")) {
         fontLiveSearch(event.target);
       }
