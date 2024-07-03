@@ -1056,7 +1056,13 @@ class EditorScreen {
         if (activeObject.type === "curved-text") {
           let percentage = activeObject.percentage;
 
-          querySelect("#curve-text").value = percentage;
+
+          if (percentage >= 90) percentage = 100;
+          if (percentage <= -90) percentage = 0;
+
+
+
+          querySelect("#curve-text").value = (percentage * 3.6).toFixed(0);
           querySelect("#text-curve-range").value =
             getRangeFromPercentage(percentage);
         } else {
@@ -2050,11 +2056,16 @@ class EditorScreen {
     });
 
     querySelect("#text-curve-range").addEventListener("input", (e) => {
+      this.canvas.requestRenderAll();
       let percentage = initCurveText();
       querySelect("#curve-text").value = percentage;
+      this.canvas.requestRenderAll();
+
     });
 
     querySelect("#text-curve-range").addEventListener("change", (e) => {
+      this.canvas.requestRenderAll();
+
       const obj = this.canvas.getActiveObject();
       if (!obj) return false;
       if (obj.type !== "curved-text") return false;
@@ -2064,6 +2075,7 @@ class EditorScreen {
 
       updatePreview();
       this.canvas.save();
+      this.canvas.requestRenderAll();
     });
 
     querySelect("#text-curve-up").addEventListener("click", (e) => {
@@ -2085,6 +2097,8 @@ class EditorScreen {
     });
 
     querySelect("#curve-text").addEventListener("change", function (e) {
+      self.canvas.requestRenderAll();
+
       let inp = e.target,
         val = parseInt(inp.value);
 
@@ -2109,6 +2123,7 @@ class EditorScreen {
       initCurveText();
       input.value = rangeValue;
 
+      self.canvas.requestRenderAll();
 
     });
 
@@ -2136,12 +2151,17 @@ class EditorScreen {
       let value = querySelect("#text-curve-range").value,
         percentage =
           value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
-      percentage = percentage.toFixed(0);
-
+      percentage = percentage.toFixed(0)
       if (percentage == -0 || percentage == "-0") percentage = 0;
 
-      if (percentage > 90 || percentage < -90)
-        return (percentage * 3.6).toFixed(0);
+      if (percentage > 90 || percentage < -90) {
+        let nowVal = (percentage * 3.6).toFixed(0);
+
+        querySelect('#curve-text').value = nowVal;
+        querySelect('#curve-text').dispatchEvent(new Event("change"));
+
+        return nowVal;
+      }
 
       let isFlipped = percentage < 0,
         hasCurveApply = parseInt(percentage) != 0;
@@ -2162,6 +2182,8 @@ class EditorScreen {
             shadow: obj.shadow,
             percentage,
           };
+
+        console.log(options)
 
         let letterSpacing = (parseInt(obj.charSpacing) / 100) * 3;
         letterSpacing = letterSpacing.toFixed(1);
