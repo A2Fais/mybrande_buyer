@@ -629,7 +629,7 @@ class EditorScreen {
               self.canvas.renderAll();
             },
           });
-        } 
+        }
 
         if (self.changeFontWeight) {
 
@@ -2091,16 +2091,25 @@ class EditorScreen {
       if (val > 360) inp.value = 360;
       else if (val < -360) inp.value = -360;
 
-      let value = (parseInt(inp.value) / 360) * 100,
-        rangeValue = getRangeFromPercentage(value);
+      let value = (parseInt(inp.value) / 360) * 100;
 
-      if (Math.abs(value) > 100) return false;
+      if (value > 90) value = 90;
+      else if (value < -90) value = -90;
+
+      let rangeValue = getRangeFromPercentage(value),
+        orgVal = rangeValue;
 
       let input = querySelect("#text-curve-range");
 
-      input.value = rangeValue;
+
+      if (value >= 90) rangeValue = 5000;
+      else if (value <= -90) rangeValue = 0;
+      input.value = orgVal;
 
       initCurveText();
+      input.value = rangeValue;
+
+
     });
 
     // Arrow up down event
@@ -2127,7 +2136,6 @@ class EditorScreen {
       let value = querySelect("#text-curve-range").value,
         percentage =
           value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
-
       percentage = percentage.toFixed(0);
 
       if (percentage == -0 || percentage == "-0") percentage = 0;
