@@ -719,9 +719,11 @@ class EditorScreen {
             900: "Black"
           };
 
-          let formatted = input.replace(/([0-9]+)/g, (item) => fontTitle[parseInt(item)] + " ");
-          formatted = formatted.replace(/\b\w/g, (char) => char.toUpperCase());
-          return formatted;
+          let formatted = input.replace(/([0-9]+)/g, (item) => {
+            let key = parseInt(item);
+            return fontTitle[key] + " " + key + " ";
+          });
+          return toTitleCase(formatted);
         }
 
         variants.map((variant) => {
@@ -1963,12 +1965,12 @@ class EditorScreen {
           const offsetX = logoNameElement?.shadow?.offsetX;
           const offsetY = logoNameElement?.shadow?.offsetY;
 
-            querySelect("#shadow_blur_title").innerText = blur ? ` :${blur}px`: ' :0px';
-            querySelect("#shadow-blur-slider").value = blur;
-            querySelect("#offset_x_title").innerText = offsetX ? ` :${offsetX}px` : ' :0px';
-            querySelect("#shadow-offsetX-slider").value = offsetX;
-            querySelect("#offset_y_title").innerText = offsetY ? ` :${offsetY}px` : ' 0px';
-            querySelect("#shadow-offsetY-slider").value = offsetY;
+          querySelect("#shadow_blur_title").innerText = blur ? ` :${blur}px` : ' :0px';
+          querySelect("#shadow-blur-slider").value = blur;
+          querySelect("#offset_x_title").innerText = offsetX ? ` :${offsetX}px` : ' :0px';
+          querySelect("#shadow-offsetX-slider").value = offsetX;
+          querySelect("#offset_y_title").innerText = offsetY ? ` :${offsetY}px` : ' 0px';
+          querySelect("#shadow-offsetY-slider").value = offsetY;
         }
         captureCanvasState();
         this.canvas.requestRenderAll();
@@ -2057,12 +2059,12 @@ class EditorScreen {
           const offsetX = sloganNameElement?.shadow?.offsetX;
           const offsetY = sloganNameElement?.shadow?.offsetY;
 
-            querySelect("#shadow_blur_title").innerText = blur ? ` :${blur}px`: ' :0px';
-            querySelect("#shadow-blur-slider").value = blur;
-            querySelect("#offset_x_title").innerText = offsetX ? ` :${offsetX}px` : ' :0px';
-            querySelect("#shadow-offsetX-slider").value = offsetX;
-            querySelect("#offset_y_title").innerText = offsetY ? ` :${offsetY}px` : ' 0px';
-            querySelect("#shadow-offsetY-slider").value = offsetY;
+          querySelect("#shadow_blur_title").innerText = blur ? ` :${blur}px` : ' :0px';
+          querySelect("#shadow-blur-slider").value = blur;
+          querySelect("#offset_x_title").innerText = offsetX ? ` :${offsetX}px` : ' :0px';
+          querySelect("#shadow-offsetX-slider").value = offsetX;
+          querySelect("#offset_y_title").innerText = offsetY ? ` :${offsetY}px` : ' 0px';
+          querySelect("#shadow-offsetY-slider").value = offsetY;
         }
 
         captureCanvasState();
@@ -2667,9 +2669,10 @@ class EditorScreen {
       updatePreview();
       this.canvas.save();
     });
+
     palleteComponent.addEventListener("colorChange", (e) => {
-      const { colorMode, grad1Value, grad2Value, colorAngle, solidValue } =
-        e.detail;
+      const { colorMode, grad1Value, grad2Value, colorAngle, solidValue } = e.detail;
+
       let angleColor = `${colorAngle}deg`;
       let color = null;
       if (colorMode === "Linear") {
@@ -2766,6 +2769,7 @@ class EditorScreen {
     textPalleteComponent.addEventListener("colorChange", (e) => {
       const selectedObject = this.canvas.getActiveObject();
       const { colorMode, grad1Value, grad2Value, solidValue } = e.detail;
+      console.log(e.detail)
 
       let color = null;
       if (colorMode !== "Solid") {
@@ -2922,7 +2926,7 @@ class EditorScreen {
         fetchCanvasData(this.canvas).then((data) => {
           const brandCase = data?.brandCase;
           const sloganCase = data?.sloganCase;
-          
+
           if (!sessionStorage.getItem("reloaded")) {
             sessionStorage.setItem("reloaded", "true");
             location.reload();
@@ -2953,9 +2957,9 @@ class EditorScreen {
           this.alignId = +data.logoPosition;
           updatePreview();
           document.getElementById("top_bottom_1").click();
-          
+
           setTimeout(() => {
-            this.canvasHistory = new SaveHistory(this.canvas); 
+            this.canvasHistory = new SaveHistory(this.canvas);
             querySelect("#loader_main").style.display = "none";
 
             logoNameElement.set('fontSize', +data.brandSize);
@@ -2964,7 +2968,7 @@ class EditorScreen {
             const brandBlur = data?.brandNameDropShadow?.split(",")[0];
             const brandOffsetX = data?.brandNameDropShadow?.split(",")[1];
             const brandOffsetY = data?.brandNameDropShadow?.split(",")[2];
-  
+
             const sloganBlur = data?.sloganDropShadow?.split(",")[0];
             const sloganOffsetX = data?.sloganDropShadow?.split(",")[1];
             const sloganOffsetY = data?.sloganDropShadow?.split(",")[2];
@@ -2987,26 +2991,26 @@ class EditorScreen {
             if (brandCase === "Uppercase") {
               logoNameElement.text = logoNameElement.text.toUpperCase();
             }
-            else if (brandCase === "Lowercase"){
+            else if (brandCase === "Lowercase") {
               logoNameElement.text = logoNameElement.text.toLowerCase();
             }
-            else if (brandCase === "Title Case"){
+            else if (brandCase === "Title Case") {
               logoNameElement.text = toTitleCase(logoNameElement.text);
             }
-            else if (brandCase === "Sentence Case"){
+            else if (brandCase === "Sentence Case") {
               logoNameElement.text = toSentenceCase(logoNameElement.text);
             }
 
             if (sloganCase === "Uppercase") {
               sloganNameElement.text = sloganNameElement.text.toUpperCase();
             }
-            else if (sloganCase === "Lowercase"){
+            else if (sloganCase === "Lowercase") {
               sloganNameElement.text = sloganNameElement.text.toLowerCase();
             }
-            else if (sloganCase === "Title Case"){
+            else if (sloganCase === "Title Case") {
               sloganNameElement.text = toTitleCase(sloganNameElement.text);
             }
-            else if (sloganCase === "Sentence Case"){
+            else if (sloganCase === "Sentence Case") {
               sloganNameElement.text = toSentenceCase(sloganNameElement.text);
             }
 
@@ -4223,10 +4227,11 @@ class EditorScreen {
     };
 
     querySelect("#canvas-bg-none").addEventListener("click", () => {
+      this.canvasBG = '#ffffff';
       this.canvas.setBackgroundColor(this.canvasBG);
-      updatePreview();
-      this.canvas.requestRenderAll();
-      captureCanvasState();
+      this.canvas.renderAll();
+      this.canvas.updatePreview();
+      // captureCanvasState();
     });
 
     const discardSelectionForAlignments = () => {
@@ -4549,9 +4554,9 @@ class EditorScreen {
         bg, logoPosition, svgData: response.data,
         brandCharSpacing: brandCharModifiedVal,
         sloganCharSpacing: sloganCharModifiedVal,
-        brandStyle, 
+        brandStyle,
         sloganStyle,
-        brandNameDropShadow, 
+        brandNameDropShadow,
         sloganDropShadow,
         brandSize,
         sloganSize,
@@ -4868,7 +4873,7 @@ class EditorScreen {
       let val = element.value.toLowerCase(),
         fontList = querySelect('#font-family-con .collection');
 
-        const generateItem = (font) => {
+      const generateItem = (font) => {
         return `<li value="${font}" class="font-family-item" data-loaded="true">
           <span style="font-family:${font}; font-weight: 500px" class="text">${font}</span></li>`;
       }
