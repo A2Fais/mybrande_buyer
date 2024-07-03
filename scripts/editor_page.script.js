@@ -719,9 +719,11 @@ class EditorScreen {
             900: "Black"
           };
 
-          let formatted = input.replace(/([0-9]+)/g, (item) => fontTitle[parseInt(item)] + " ");
-          formatted = formatted.replace(/\b\w/g, (char) => char.toUpperCase());
-          return formatted;
+          let formatted = input.replace(/([0-9]+)/g, (item) => {
+            let key = parseInt(item);
+            return fontTitle[key] + " " + key + " ";
+          });
+          return toTitleCase(formatted);
         }
 
         variants.map((variant) => {
@@ -2697,9 +2699,10 @@ class EditorScreen {
       updatePreview();
       this.canvas.save();
     });
+
     palleteComponent.addEventListener("colorChange", (e) => {
-      const { colorMode, grad1Value, grad2Value, colorAngle, solidValue } =
-        e.detail;
+      const { colorMode, grad1Value, grad2Value, colorAngle, solidValue } = e.detail;
+
       let angleColor = `${colorAngle}deg`;
       let color = null;
       if (colorMode === "Linear") {
@@ -2796,6 +2799,7 @@ class EditorScreen {
     textPalleteComponent.addEventListener("colorChange", (e) => {
       const selectedObject = this.canvas.getActiveObject();
       const { colorMode, grad1Value, grad2Value, solidValue } = e.detail;
+      console.log(e.detail)
 
       let color = null;
       if (colorMode !== "Solid") {
@@ -4253,10 +4257,11 @@ class EditorScreen {
     };
 
     querySelect("#canvas-bg-none").addEventListener("click", () => {
+      this.canvasBG = '#ffffff';
       this.canvas.setBackgroundColor(this.canvasBG);
-      updatePreview();
-      this.canvas.requestRenderAll();
-      captureCanvasState();
+      this.canvas.renderAll();
+      this.canvas.updatePreview();
+      // captureCanvasState();
     });
 
     const discardSelectionForAlignments = () => {
