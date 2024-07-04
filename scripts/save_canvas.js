@@ -124,6 +124,10 @@ export async function saveCanvas(
         : brandColor,
       brandName_fontFamely: logoNameElement.get("fontFamily"),
       brandName_fontSize: logoNameElement.get("fontSize"),
+
+      brandName_curve_diameter: logoNameElement.get("diameter"),
+      brand_curve_percentage: logoNameElement.get('percentage'),
+
       brandName_letterCase: getTextCase(logoNameElement.text),
       brandName_fontStyle: logoNameElement.get("fontStyle"),
       brandName_letterSpace: logoNameElement.get("charSpacing") / 10,
@@ -134,6 +138,10 @@ export async function saveCanvas(
         : sloganColor,
       slogan_fontFamely: sloganNameElement.get("fontFamily"),
       slogan_fontSize: sloganNameElement.get("fontSize"),
+
+      slogan_curve_diameter: sloganNameElement.get("diameter"),
+      slogan_curve_percentage: sloganNameElement.get('percentage'),
+
       slogan_letterCase: getTextCase(sloganNameElement.text),
       slogan_fontStyle: sloganNameElement.get("fontStyle"),
       slogan_letterSpace: sloganNameElement.get("charSpacing") / 10,
