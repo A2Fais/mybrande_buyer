@@ -1819,7 +1819,7 @@ class EditorScreen {
       }
     });
 
-    querySelect("#text-curve-range").addEventListener("input", () => {
+    querySelect("#text-curve-range").addEventListener("input", (e) => {
       this.canvas.requestRenderAll();
       let value = e.target.value;
 
