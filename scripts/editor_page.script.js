@@ -2128,10 +2128,15 @@ class EditorScreen {
 
     querySelect("#text-curve-range").addEventListener("input", (e) => {
       this.canvas.requestRenderAll();
-      let percentage = initCurveText();
-      querySelect("#curve-text").value = percentage;
-      this.canvas.requestRenderAll();
+      let value = e.target.value;
 
+      initCurveText();
+      let percentage_ = value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25),
+        angle = (percentage_ * 3.6).toFixed(0);
+
+
+      querySelect("#curve-text").value = angle;
+      this.canvas.requestRenderAll();
     });
 
     querySelect("#text-curve-range").addEventListener("change", (e) => {
@@ -2222,16 +2227,18 @@ class EditorScreen {
       let value = querySelect("#text-curve-range").value,
         percentage =
           value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
+
       percentage = percentage.toFixed(0)
       if (percentage == -0 || percentage == "-0") percentage = 0;
 
-      if (percentage > 90 || percentage < -90) {
-        let nowVal = (percentage * 3.6).toFixed(0);
+      if (percentage > 90) {
+        percentage = 90;
+        value = getRangeFromPercentage(percentage);
+      }
 
-        querySelect('#curve-text').value = nowVal;
-        querySelect('#curve-text').dispatchEvent(new Event("change"));
-
-        return nowVal;
+      if (percentage < -90) {
+        percentage = -90
+        value = getRangeFromPercentage(percentage);
       }
 
       let isFlipped = percentage < 0,
@@ -2253,8 +2260,6 @@ class EditorScreen {
             shadow: obj.shadow,
             percentage,
           };
-
-        console.log(options)
 
         let letterSpacing = (parseInt(obj.charSpacing) / 100) * 3;
         letterSpacing = letterSpacing.toFixed(1);
