@@ -2220,6 +2220,48 @@ class EditorScreen {
       }
     });
 
+
+    const addCurveText = (obj, diameter, percentage = null) => {
+      let props = obj.__dimensionAffectingProps,
+        options = {
+          ...props,
+          left: obj.left,
+          top: obj.top,
+          scaleX: obj.scaleX,
+          scaleY: obj.scaleY,
+          diameter: parseInt(diameter),
+          fill: obj.fill,
+          shadow: obj.shadow,
+          percentage,
+        };
+
+      let letterSpacing = (parseInt(obj.charSpacing) / 100) * 3;
+      letterSpacing = letterSpacing.toFixed(1);
+      if (letterSpacing < -1) letterSpacing = -1;
+
+      options.kerning = parseInt(letterSpacing);
+
+      const curvedText = new fabric.CurvedText(obj.text, options);
+
+      let index = this.canvas.getObjects().indexOf(obj);
+
+      this.canvas.remove(obj);
+      this.canvas.add(curvedText);
+
+      if (curvedText.text == querySelect("#logoMainField").value) {
+        logoNameElement = curvedText;
+      } else if (curvedText.text == querySelect("#sloganNameField").value) {
+        sloganNameElement = curvedText;
+      }
+
+      applyEventListners();
+
+      curvedText.moveTo(index);
+      this.canvas.setActiveObject(curvedText);
+      this.canvas.requestRenderAll();
+    }
+
+
     const initCurveText = () => {
       let obj = this.canvas.getActiveObject();
       if (!obj) return 0;
@@ -2248,43 +2290,7 @@ class EditorScreen {
 
       let isCurvedText = obj.type == "curved-text";
       if (hasCurveApply && !isCurvedText) {
-        let props = obj.__dimensionAffectingProps,
-          options = {
-            ...props,
-            left: obj.left,
-            top: obj.top,
-            scaleX: obj.scaleX,
-            scaleY: obj.scaleY,
-            diameter: value,
-            fill: obj.fill,
-            shadow: obj.shadow,
-            percentage,
-          };
-
-        let letterSpacing = (parseInt(obj.charSpacing) / 100) * 3;
-        letterSpacing = letterSpacing.toFixed(1);
-        if (letterSpacing < -1) letterSpacing = -1;
-
-        options.kerning = parseInt(letterSpacing);
-
-        const curvedText = new fabric.CurvedText(obj.text, options);
-
-        let index = this.canvas.getObjects().indexOf(obj);
-
-        this.canvas.remove(obj);
-        this.canvas.add(curvedText);
-
-        if (curvedText.text == querySelect("#logoMainField").value) {
-          logoNameElement = curvedText;
-        } else if (curvedText.text == querySelect("#sloganNameField").value) {
-          sloganNameElement = curvedText;
-        }
-
-        applyEventListners();
-
-        curvedText.moveTo(index);
-        this.canvas.setActiveObject(curvedText);
-        this.canvas.requestRenderAll();
+        addCurveText(obj, value, percentage);
       } else if (!hasCurveApply) {
         let itext = true;
         if (obj.text == querySelect("#logoMainField").value) {
@@ -2999,6 +3005,18 @@ class EditorScreen {
 
             logoNameElement.set('fontSize', +data.brandSize);
             sloganNameElement.set('fontSize', +data.sloganSize);
+
+
+            if (data.brandCurveDiameter)
+              addCurveText(logoNameElement, data.brandCurveDiameter, data.brand_curve_percentage);
+
+
+            if (data.sloganCurveDiameter)
+              addCurveText(sloganNameElement, data.brandCurveDiameter, data.slogan_curve_percentage);
+
+
+
+
 
             const brandBlur = data?.brandNameDropShadow?.split(",")[0];
             const brandOffsetX = data?.brandNameDropShadow?.split(",")[1];
@@ -4549,6 +4567,10 @@ class EditorScreen {
       const sloganSize = responseData?.slogan_fontSize;
       const brandCase = responseData?.brandName_letterCase;
       const sloganCase = responseData?.slogan_letterCase;
+
+      const sloganCurveDiameter = responseData?.slogan_curve_diameter;
+      const brandCurveDiameter = responseData?.brandName_curve_diameter;
+
       const brandNameDropShadow = responseData?.brandName_droupShadow;
       const sloganDropShadow = responseData?.slogan_droupShadow;
       external_layer = responseData?.externalLayerElements;
@@ -4596,7 +4618,9 @@ class EditorScreen {
         brandSize,
         sloganSize,
         brandCase,
-        sloganCase
+        sloganCase,
+        sloganCurveDiameter,
+        brandCurveDiameter,
       };
     }
 
