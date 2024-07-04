@@ -17,7 +17,7 @@ import { rotateReset } from "./rotate_reset";
 import { saveCanvas } from "./save_canvas";
 import { centerAndResizeElements } from "./center_resize";
 import SaveHistory from "./SaveHistory.js";
-import { curvedText } from "./curvedText.js";
+import { curvedText } from "./curved_text.js";
 
 const querySelect = (element) => document.querySelector(element);
 const querySelectAll = (element) => document.querySelectorAll(element);
@@ -28,13 +28,15 @@ fabric.CurvedText = curvedText;
 class EditorScreen {
   constructor() {
     this.canvasBG = "#ffffff";
+
     this.canvas = new fabric.Canvas("c", { backgroundColor: this.canvasBG });
     this.loadedFonts = {};
     this.magnifier = new fabric.Canvas("magnifier", {
       backgroundColor: this.canvasBG,
     });
-    CanvasGuides(this.canvas); // Init Canvas Guides
+    CanvasGuides(this.canvas);
 
+    this.currentGradiantColors = { grad1Value: '#ffffff', grad2Value: '#000000' };
     this.loadedIcons = {};
     this.allFonts = {};
     this.changeFontWeight = true;
@@ -109,16 +111,6 @@ class EditorScreen {
     this.fontItems = []
     let self = this;
 
-    // querySelect("#logoMainField").addEventListener("input", (e) => {
-    //   try {
-    //     const val = e.target.value;
-    //     params.set("logo", val);
-    //     const updatedURL = url.origin + url.pathname + "?" + params.toString();
-    //   } catch (err) {
-    //     console.log(err)
-    //   }
-    // });
-
     this.fetchFonts = async () => {
       let apiResponse = await fetch(
         "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyA3WEzwS9il6Md6nJW5RI3eMlerTso8tII"
@@ -133,9 +125,6 @@ class EditorScreen {
     };
 
     this.fetchFonts().then((items) => {
-      // console.log(this.allFonts['Acme'])
-      // console.log("FONT ITEMS", this.fontItems)
-
       let currentFontIndex = 0, fontMaxCount = 20;
       const chunk = items.slice(
         currentFontIndex,
@@ -165,7 +154,6 @@ class EditorScreen {
           <span style="font-family:${family}; font-weight: 500px" class="text">${family}</span></li>`;
       }
 
-      // fontListMenu.innerHTML += liItems;
       querySelect("#font-family-con .collection").innerHTML += liItems;
       this.initMSList();
     });
@@ -194,13 +182,6 @@ class EditorScreen {
       });
       this.canvas.refreshLayerNames();
     };
-    // querySelect("#sloganNameField").addEventListener("input", (e) => {
-    //   try {
-    //     const val = e.target.value;
-    //     params.set("slogan", val);
-    //     const updatedURL = url.origin + url.pathname + "?" + params.toString();
-    //   } catch (error) { }
-    // });
 
     querySelect("#sloganNameField").addEventListener("change", (e) => {
       this.canvasHistory.saveHistory();
@@ -395,7 +376,6 @@ class EditorScreen {
       return stack.join("");
     };
 
-
     querySelect(".font-family-selectbox").addEventListener(
       "change",
       function() {
@@ -416,15 +396,12 @@ class EditorScreen {
             },
           });
         }
-
         if (self.changeFontWeight) {
           obj.set('fontStyle', 'normal');
           obj.set('fontWeight', 'normal');
           obj.set('orgFontWeight', 'normal');
         }
-
         obj.set("fontFamily", family);
-
         let { variants } = self.loadedFonts[family];
 
         let variantsHtml = "";
@@ -1469,19 +1446,19 @@ class EditorScreen {
       this.canvas.requestRenderAll();
     });
 
-    this.shadowOffsetXSlider.addEventListener("change", (e) => {
+    this.shadowOffsetXSlider.addEventListener("change", () => {
       this.canvas.save();
     });
-    this.logoShadowOffsetXSlider.addEventListener("change", (e) => {
+    this.logoShadowOffsetXSlider.addEventListener("change", () => {
       this.canvas.save();
     });
 
-    this.logoShadowOffsetXSlider.addEventListener("change", (e) => {
+    this.logoShadowOffsetXSlider.addEventListener("change", () => {
       updatePreview();
       this.canvas.save();
     });
 
-    this.shadowOffsetYSlider.addEventListener("change", (e) => {
+    this.shadowOffsetYSlider.addEventListener("change", () => {
       updatePreview();
       this.canvas.save();
     });
@@ -1528,7 +1505,7 @@ class EditorScreen {
       this.canvas.requestRenderAll();
     });
 
-    this.logoShadowOffsetYSlider.addEventListener("change", (e) => {
+    this.logoShadowOffsetYSlider.addEventListener("change", () => {
       updatePreview();
       this.canvas.save();
     });
@@ -1590,14 +1567,6 @@ class EditorScreen {
         document
           .querySelector("#removeElement")
           .dispatchEvent(new Event("click"));
-        // const deleteLayer = new DeleteLayer(
-        //   event,
-        //   this.canvas,
-        //   this.layers,
-        //   this.activeLayerIndex
-        // );
-        // deleteLayer.deleteLayer();
-        // localDirFile = null;
       }
     };
 
@@ -1827,7 +1796,7 @@ class EditorScreen {
         anyThingRunning = true;
       }
     });
-    querySelect("#font_size_range").addEventListener("change", (event) => {
+    querySelect("#font_size_range").addEventListener("change", () => {
       updatePreview();
       this.canvas.save();
     });
@@ -1850,7 +1819,7 @@ class EditorScreen {
       }
     });
 
-    querySelect("#text-curve-range").addEventListener("input", (e) => {
+    querySelect("#text-curve-range").addEventListener("input", () => {
       this.canvas.requestRenderAll();
       let percentage = initCurveText();
       querySelect("#curve-text").value = percentage;
@@ -1858,7 +1827,7 @@ class EditorScreen {
 
     });
 
-    querySelect("#text-curve-range").addEventListener("change", (e) => {
+    querySelect("#text-curve-range").addEventListener("change", () => {
       this.canvas.requestRenderAll();
 
       const obj = this.canvas.getActiveObject();
@@ -1873,7 +1842,7 @@ class EditorScreen {
       this.canvas.requestRenderAll();
     });
 
-    querySelect("#text-curve-up").addEventListener("click", (e) => {
+    querySelect("#text-curve-up").addEventListener("click", () => {
       let input = querySelect("#curve-text"),
         value = parseInt(input.value) || 0;
       value += 5;
@@ -1882,7 +1851,7 @@ class EditorScreen {
       querySelect("#curve-text").dispatchEvent(new Event("change"));
     });
 
-    querySelect("#text-curve-down").addEventListener("click", (e) => {
+    querySelect("#text-curve-down").addEventListener("click", () => {
       let input = querySelect("#curve-text"),
         value = parseInt(input.value) || 0;
 
@@ -2520,10 +2489,32 @@ class EditorScreen {
       this.canvas.save();
     });
 
+    querySelect('#tp-btn-apply').addEventListener('click', () => {
+      const active = this.canvas.getActiveObject();
+
+      const color = new fabric.Gradient({
+        type: "linear",
+        coords: {
+          x1: 0,
+          y1: 0,
+          x2: active.width,
+          y2: active.height,
+        },
+        colorStops: [
+          { offset: 0, color: this.currentGradiantColors.grad1Value },
+          { offset: 1, color: this.currentGradiantColors.grad2Value },
+        ],
+      });
+
+      active.set('fill', color);
+      this.canvas.renderAll();
+    })
+
     textPalleteComponent.addEventListener("colorChange", (e) => {
       const selectedObject = this.canvas.getActiveObject();
       const { colorMode, grad1Value, grad2Value, solidValue } = e.detail;
       console.log(e.detail)
+      this.currentGradiantColors = { grad1Value, grad2Value };
 
       let color = null;
       if (colorMode !== "Solid") {
@@ -2532,8 +2523,8 @@ class EditorScreen {
           coords: {
             x1: 0,
             y1: 0,
-            x2: selectedObject.width,
-            y2: selectedObject.height,
+            x2: selectedObject?.width,
+            y2: selectedObject?.height,
           },
           colorStops: [
             { offset: 0, color: grad1Value },

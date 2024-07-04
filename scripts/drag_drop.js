@@ -201,33 +201,3 @@ elements.backBtn.addEventListener('click', () => {
   elements.dragDropView.style.display = 'block';
 });
 
-// let cropper;
-// elements.imgView.onload = () => {
-//   cropper = new Cropper(elements.imgView, {
-//     aspectRatio: 1 / 1,
-//   });
-// };
-
-// function convertPngToSvg(dataUrl) {
-//   const svgNS = 'http://www.w3.org/2000/svg';
-
-//   const svg = document.createElementNS(svgNS, 'svg');
-
-//   const svgImage = document.createElementNS(svgNS, 'image');
-
-//   svgImage.setAttributeNS('http://www.w3.org/1999/xlink', 'href', dataUrl);
-
-//   svg.appendChild(svgImage);
-
-//   const serializer = new XMLSerializer();
-//   const svgString = serializer.serializeToString(svg);
-
-//   return svgString;
-// }
-
-// elements.cropElement?.addEventListener('click', () => {
-//   const croppedImage = cropper.getCroppedCanvas().toDataURL('image/png');
-//   const svgContent = convertPngToSvg(croppedImage)
-//   localStorage.setItem('logo-file', svgContent);
-//   elements.imger.src = croppedImage;
-// });
