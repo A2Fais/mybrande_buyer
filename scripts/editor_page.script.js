@@ -174,7 +174,7 @@ class EditorScreen {
       this.canvasHistory.saveHistory();
     });
 
-    this.canvas.save = function() {
+    this.canvas.save = function () {
       self?.canvasHistory?.saveHistory();
     };
     this.canvas.undoCB = () => {
@@ -398,7 +398,7 @@ class EditorScreen {
 
     querySelect(".font-family-selectbox").addEventListener(
       "change",
-      function() {
+      function () {
         let family = this.getAttribute("data-value"),
           loaded = this.getAttribute("data-loaded"),
           obj = self.canvas.getActiveObject(),
@@ -410,7 +410,7 @@ class EditorScreen {
             google: {
               families: [family],
             },
-            active: function() {
+            active: function () {
               obj.set("fontFamily", family);
               self.canvas.renderAll();
             },
@@ -478,7 +478,7 @@ class EditorScreen {
     // Font Case
     querySelect(".text-case-select-box").addEventListener(
       "change",
-      function() {
+      function () {
         const selectedTextElement = this.getAttribute("data-value"),
           obj = self.canvas.getActiveObject();
         if (!obj) return false;
@@ -529,7 +529,7 @@ class EditorScreen {
 
     querySelect(".font-weight-selector").addEventListener(
       "change",
-      function() {
+      function () {
         let weight = this.getAttribute("data-value"),
           obj = self.canvas.getActiveObject();
         if (!obj) return false;
@@ -549,7 +549,7 @@ class EditorScreen {
       }
     );
 
-    querySelect(".font-style-selector").addEventListener("change", function() {
+    querySelect(".font-style-selector").addEventListener("change", function () {
       let value = this.getAttribute("data-value"),
         obj = self.canvas.getActiveObject();
       if (!obj) return false;
@@ -676,7 +676,7 @@ class EditorScreen {
       this.scaleRange.dispatchEvent(new Event("input"));
     });
 
-    this.scaleRange.addEventListener("change", function() {
+    this.scaleRange.addEventListener("change", function () {
       updatePreview();
       self.canvas.save();
     });
@@ -747,7 +747,7 @@ class EditorScreen {
     this.canvas.on("object:scaling", () => {
       isScaling = true;
     });
-    this.canvas.on("mouse:up", function() {
+    this.canvas.on("mouse:up", function () {
       if (isScaling) {
         isScaling = false;
         self.canvas.save();
@@ -957,7 +957,7 @@ class EditorScreen {
               google: {
                 families: [family],
               },
-              active: function() {
+              active: function () {
 
                 familyData.loaded = true;
                 self.loadedFonts[family] = familyData;
@@ -1349,7 +1349,7 @@ class EditorScreen {
 
     document
       .querySelector("#l_spacing_value")
-      .addEventListener("change", function(e) {
+      .addEventListener("change", function (e) {
         let value = e.target.value;
         querySelect("#letter-spacing-slider").value = value * 10;
         querySelect("#letter-spacing-slider").dispatchEvent(new Event("input"));
@@ -1550,7 +1550,7 @@ class EditorScreen {
             const img = fabric.util.groupSVGElements(objects, options);
 
             var reader = new FileReader();
-            reader.onloadend = function() {
+            reader.onloadend = function () {
               img.set("dataUrl", reader.result);
               img.set("layerType", "image");
               img.set("ext", "svg");
@@ -1896,7 +1896,7 @@ class EditorScreen {
       querySelect("#curve-text").dispatchEvent(new Event("change"));
     });
 
-    querySelect("#curve-text").addEventListener("change", function(e) {
+    querySelect("#curve-text").addEventListener("change", function (e) {
       self.canvas.requestRenderAll();
 
       let inp = e.target,
@@ -2730,13 +2730,12 @@ class EditorScreen {
             logoNameElement.set('fontSize', +data.brandSize);
             sloganNameElement.set('fontSize', +data.sloganSize);
 
-
             if (data.brandCurveDiameter)
               addCurveText(logoNameElement, data.brandCurveDiameter, data.brand_curve_percentage);
 
 
             if (data.sloganCurveDiameter)
-              addCurveText(sloganNameElement, data.brandCurveDiameter, data.slogan_curve_percentage);
+              addCurveText(sloganNameElement, data.sloganCurveDiameter, data.slogan_curve_percentage);
 
 
 
@@ -4318,7 +4317,7 @@ class EditorScreen {
         google: {
           families: fontFamilies,
         },
-        active: function() {
+        active: function () {
           logoNameElement.set("fontFamily", brandNameFamily);
           sloganNameElement.set('fontFamily', sloganFamily);
           self.canvas.renderAll();
@@ -4479,7 +4478,7 @@ class EditorScreen {
       }
     };
 
-    this.initMSList = function() {
+    this.initMSList = function () {
       let lists = document.querySelectorAll(".ms-select-list");
 
       lists.forEach((list) => {
@@ -4492,7 +4491,7 @@ class EditorScreen {
         menu.querySelectorAll("li").forEach((li) => {
           // Check if the li is already initialized
           if (li.classList.contains("initialized")) return true;
-          li.addEventListener("click", function(e) {
+          li.addEventListener("click", function (e) {
             e.stopPropagation();
             let value = this.getAttribute("value");
             let text = this.innerText;
@@ -4512,7 +4511,7 @@ class EditorScreen {
         });
 
 
-        list.addEventListener("valueChange", function(e) {
+        list.addEventListener("valueChange", function (e) {
           e.stopPropagation();
 
           let value = this.getAttribute("data-value"),
@@ -4530,7 +4529,7 @@ class EditorScreen {
         });
 
         if (list.classList.contains("initialized")) return true;
-        list.querySelector(".ms-list-toggle").addEventListener("click", function(e) {
+        list.querySelector(".ms-list-toggle").addEventListener("click", function (e) {
           e.stopPropagation();
           let lists = document.querySelectorAll(".ms-select-list");
           let parent = this.parentElement;
@@ -4542,7 +4541,7 @@ class EditorScreen {
         list.classList.add("initialized");
       });
 
-      document.onclick = function(e) {
+      document.onclick = function (e) {
         let target = e.target;
         if (
           !target.classList.contains("ms-select-list") &&
@@ -4652,7 +4651,7 @@ class EditorScreen {
       };
     }
 
-    const fontLiveSearch = function(element) {
+    const fontLiveSearch = function (element) {
       let val = element.value.toLowerCase(),
         fontList = querySelect('#font-family-con .collection');
 
@@ -4695,7 +4694,7 @@ class EditorScreen {
           google: {
             families: filteredFonts,
           },
-          active: function() {
+          active: function () {
           }
         });
       } catch (err) { }
@@ -4703,7 +4702,7 @@ class EditorScreen {
       this.initMSList();
     };
 
-    document.addEventListener("keyup", function(event) {
+    document.addEventListener("keyup", function (event) {
       if (event.target.classList.contains("live-search")) {
         fontLiveSearch(event.target);
       }
