@@ -36,7 +36,10 @@ class EditorScreen {
     });
     CanvasGuides(this.canvas);
 
-    this.currentGradiantColors = { grad1Value: '#ffffff', grad2Value: '#000000' };
+    this.currentGradiantColors = {
+      grad1Value: "#ffffff",
+      grad2Value: "#000000",
+    };
     this.loadedIcons = {};
     this.allFonts = {};
     this.changeFontWeight = true;
@@ -108,7 +111,7 @@ class EditorScreen {
     this.initialRotation = null;
     this.logoOrientation = null;
     this.alignId = 1;
-    this.fontItems = []
+    this.fontItems = [];
     let self = this;
 
     this.fetchFonts = async () => {
@@ -121,11 +124,12 @@ class EditorScreen {
       this.fontItems.map((item) => {
         this.allFonts[item.family] = item;
       });
-      return apiResponse?.items
+      return apiResponse?.items;
     };
 
     this.fetchFonts().then((items) => {
-      let currentFontIndex = 0, fontMaxCount = 20;
+      let currentFontIndex = 0,
+        fontMaxCount = 20;
       const chunk = items.slice(
         currentFontIndex,
         currentFontIndex + fontMaxCount
@@ -141,7 +145,7 @@ class EditorScreen {
 
         self.loadedFonts[family] = {
           variants: item.variants,
-        }
+        };
 
         self.allFonts[family].loaded = true;
 
@@ -162,7 +166,7 @@ class EditorScreen {
       this.canvasHistory.saveHistory();
     });
 
-    this.canvas.save = function() {
+    this.canvas.save = function () {
       self?.canvasHistory?.saveHistory();
     };
     this.canvas.undoCB = () => {
@@ -378,7 +382,7 @@ class EditorScreen {
 
     querySelect(".font-family-selectbox").addEventListener(
       "change",
-      function() {
+      function () {
         let family = this.getAttribute("data-value"),
           loaded = this.getAttribute("data-loaded"),
           obj = self.canvas.getActiveObject(),
@@ -390,16 +394,16 @@ class EditorScreen {
             google: {
               families: [family],
             },
-            active: function() {
+            active: function () {
               obj.set("fontFamily", family);
               self.canvas.renderAll();
             },
           });
         }
         if (self.changeFontWeight) {
-          obj.set('fontStyle', 'normal');
-          obj.set('fontWeight', 'normal');
-          obj.set('orgFontWeight', 'normal');
+          obj.set("fontStyle", "normal");
+          obj.set("fontWeight", "normal");
+          obj.set("orgFontWeight", "normal");
         }
         obj.set("fontFamily", family);
         let { variants } = self.loadedFonts[family];
@@ -417,7 +421,7 @@ class EditorScreen {
             600: "Semi Bold",
             700: "Bold",
             800: "Extra Bold",
-            900: "Black"
+            900: "Black",
           };
 
           let formatted = input.replace(/([0-9]+)/g, (item) => {
@@ -430,9 +434,9 @@ class EditorScreen {
         variants.map((variant) => {
           const value = values[variant] ? values[variant] : variant;
 
-          variantsHtml += `<li value="${value == 'regular' ? 'normal' : value}" style="text-transform:capitalize">${formatString(
-            value
-          )}</li>`;
+          variantsHtml += `<li value="${
+            value == "regular" ? "normal" : value
+          }" style="text-transform:capitalize">${formatString(value)}</li>`;
         });
 
         let target = querySelect(".font-weight-selector .ms-select-list-menu");
@@ -455,7 +459,7 @@ class EditorScreen {
     // Font Case
     querySelect(".text-case-select-box").addEventListener(
       "change",
-      function() {
+      function () {
         const selectedTextElement = this.getAttribute("data-value"),
           obj = self.canvas.getActiveObject();
         if (!obj) return false;
@@ -506,7 +510,7 @@ class EditorScreen {
 
     querySelect(".font-weight-selector").addEventListener(
       "change",
-      function() {
+      function () {
         let weight = this.getAttribute("data-value"),
           obj = self.canvas.getActiveObject();
         if (!obj) return false;
@@ -526,7 +530,7 @@ class EditorScreen {
       }
     );
 
-    querySelect(".font-style-selector").addEventListener("change", function() {
+    querySelect(".font-style-selector").addEventListener("change", function () {
       let value = this.getAttribute("data-value"),
         obj = self.canvas.getActiveObject();
       if (!obj) return false;
@@ -653,7 +657,7 @@ class EditorScreen {
       this.scaleRange.dispatchEvent(new Event("input"));
     });
 
-    this.scaleRange.addEventListener("change", function() {
+    this.scaleRange.addEventListener("change", function () {
       updatePreview();
       self.canvas.save();
     });
@@ -724,7 +728,7 @@ class EditorScreen {
     this.canvas.on("object:scaling", () => {
       isScaling = true;
     });
-    this.canvas.on("mouse:up", function() {
+    this.canvas.on("mouse:up", function () {
       if (isScaling) {
         isScaling = false;
         self.canvas.save();
@@ -826,11 +830,8 @@ class EditorScreen {
         if (activeObject.type === "curved-text") {
           let percentage = activeObject.percentage;
 
-
           if (percentage >= 90) percentage = 100;
           if (percentage <= -90) percentage = 0;
-
-
 
           querySelect("#curve-text").value = (percentage * 3.6).toFixed(0);
           querySelect("#text-curve-range").value =
@@ -901,10 +902,9 @@ class EditorScreen {
           el.dispatchEvent(new Event("valueChange"));
         }
 
-
-        let fontList = querySelect('.font-family-selectbox');
+        let fontList = querySelect(".font-family-selectbox");
         const setFontFamily = (family) => {
-          fontList.setAttribute('data-value', family);
+          fontList.setAttribute("data-value", family);
           self.changeFontWeight = false;
           fontList.dispatchEvent(new Event("valueChange"));
           fontList.dispatchEvent(new Event("change"));
@@ -913,20 +913,19 @@ class EditorScreen {
           fontList.querySelector(".ms-list-value").innerText = family;
 
           let fontWeightSelector = querySelect(".font-weight-selector");
-          fontWeightSelector.setAttribute("data-value", obj.orgFontWeight ? obj.orgFontWeight : "normal");
+          fontWeightSelector.setAttribute(
+            "data-value",
+            obj.orgFontWeight ? obj.orgFontWeight : "normal"
+          );
           fontWeightSelector.dispatchEvent(new Event("valueChange"));
           fontWeightSelector.dispatchEvent(new Event("change"));
+        };
 
-
-
-        }
-
-        // Set Font family 
+        // Set Font family
         let family = obj.get("fontFamily"),
           familyData = this.allFonts[family];
 
         if (familyData) {
-
           let { loaded } = familyData;
 
           if (!loaded) {
@@ -934,21 +933,18 @@ class EditorScreen {
               google: {
                 families: [family],
               },
-              active: function() {
-
+              active: function () {
                 familyData.loaded = true;
                 self.loadedFonts[family] = familyData;
 
                 obj.set("fontFamily", family);
-                setFontFamily(family)
+                setFontFamily(family);
                 self.canvas.renderAll();
               },
             });
           } else {
             setFontFamily(family);
           }
-
-
         }
 
         // Set Scale
@@ -1326,7 +1322,7 @@ class EditorScreen {
 
     document
       .querySelector("#l_spacing_value")
-      .addEventListener("change", function(e) {
+      .addEventListener("change", function (e) {
         let value = e.target.value;
         querySelect("#letter-spacing-slider").value = value * 10;
         querySelect("#letter-spacing-slider").dispatchEvent(new Event("input"));
@@ -1527,7 +1523,7 @@ class EditorScreen {
             const img = fabric.util.groupSVGElements(objects, options);
 
             var reader = new FileReader();
-            reader.onloadend = function() {
+            reader.onloadend = function () {
               img.set("dataUrl", reader.result);
               img.set("layerType", "image");
               img.set("ext", "svg");
@@ -1604,8 +1600,12 @@ class EditorScreen {
         e.e.preventDefault();
         this.textSelectorValue = "LogoName";
 
-        querySelect('#font_style_tag').innerText = toTitleCase(logoNameElement.get('fontStyle'));
-        querySelect('#font_case').innerText = toTitleCase(getTextCase(logoNameElement.text));
+        querySelect("#font_style_tag").innerText = toTitleCase(
+          logoNameElement.get("fontStyle")
+        );
+        querySelect("#font_case").innerText = toTitleCase(
+          getTextCase(logoNameElement.text)
+        );
 
         const hasShadow = !!logoNameElement?.shadow?.blur;
 
@@ -1664,11 +1664,17 @@ class EditorScreen {
           const offsetX = logoNameElement?.shadow?.offsetX;
           const offsetY = logoNameElement?.shadow?.offsetY;
 
-          querySelect("#shadow_blur_title").innerText = blur ? ` :${blur}px` : ' :0px';
+          querySelect("#shadow_blur_title").innerText = blur
+            ? ` :${blur}px`
+            : " :0px";
           querySelect("#shadow-blur-slider").value = blur;
-          querySelect("#offset_x_title").innerText = offsetX ? ` :${offsetX}px` : ' :0px';
+          querySelect("#offset_x_title").innerText = offsetX
+            ? ` :${offsetX}px`
+            : " :0px";
           querySelect("#shadow-offsetX-slider").value = offsetX;
-          querySelect("#offset_y_title").innerText = offsetY ? ` :${offsetY}px` : ' 0px';
+          querySelect("#offset_y_title").innerText = offsetY
+            ? ` :${offsetY}px`
+            : " 0px";
           querySelect("#shadow-offsetY-slider").value = offsetY;
         }
         captureCanvasState();
@@ -1698,8 +1704,12 @@ class EditorScreen {
         e.e.preventDefault();
         this.textSelectorValue = "SloganName";
 
-        querySelect('#font_style_tag').innerText = toTitleCase(sloganNameElement.get('fontStyle'));
-        querySelect('#font_case').innerText = toTitleCase(getTextCase(sloganNameElement.text));
+        querySelect("#font_style_tag").innerText = toTitleCase(
+          sloganNameElement.get("fontStyle")
+        );
+        querySelect("#font_case").innerText = toTitleCase(
+          getTextCase(sloganNameElement.text)
+        );
 
         const hasShadow = !!sloganNameElement?.shadow?.blur;
 
@@ -1758,11 +1768,17 @@ class EditorScreen {
           const offsetX = sloganNameElement?.shadow?.offsetX;
           const offsetY = sloganNameElement?.shadow?.offsetY;
 
-          querySelect("#shadow_blur_title").innerText = blur ? ` :${blur}px` : ' :0px';
+          querySelect("#shadow_blur_title").innerText = blur
+            ? ` :${blur}px`
+            : " :0px";
           querySelect("#shadow-blur-slider").value = blur;
-          querySelect("#offset_x_title").innerText = offsetX ? ` :${offsetX}px` : ' :0px';
+          querySelect("#offset_x_title").innerText = offsetX
+            ? ` :${offsetX}px`
+            : " :0px";
           querySelect("#shadow-offsetX-slider").value = offsetX;
-          querySelect("#offset_y_title").innerText = offsetY ? ` :${offsetY}px` : ' 0px';
+          querySelect("#offset_y_title").innerText = offsetY
+            ? ` :${offsetY}px`
+            : " 0px";
           querySelect("#shadow-offsetY-slider").value = offsetY;
         }
 
@@ -1824,9 +1840,9 @@ class EditorScreen {
       let value = e.target.value;
 
       initCurveText();
-      let percentage_ = value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25),
+      let percentage_ =
+          value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25),
         angle = (percentage_ * 3.6).toFixed(0);
-
 
       querySelect("#curve-text").value = angle;
       this.canvas.requestRenderAll();
@@ -1865,7 +1881,7 @@ class EditorScreen {
       querySelect("#curve-text").dispatchEvent(new Event("change"));
     });
 
-    querySelect("#curve-text").addEventListener("change", function(e) {
+    querySelect("#curve-text").addEventListener("change", function (e) {
       self.canvas.requestRenderAll();
 
       let inp = e.target,
@@ -1884,7 +1900,6 @@ class EditorScreen {
 
       let input = querySelect("#text-curve-range");
 
-
       if (value >= 90) rangeValue = 5000;
       else if (value <= -90) rangeValue = 0;
       input.value = orgVal;
@@ -1893,7 +1908,6 @@ class EditorScreen {
       input.value = rangeValue;
 
       self.canvas.requestRenderAll();
-
     });
 
     // Arrow up down event
@@ -1912,7 +1926,6 @@ class EditorScreen {
         querySelect("#letter-spacing-down").dispatchEvent(new Event("click"));
       }
     });
-
 
     const addCurveText = (obj, diameter, percentage = null) => {
       let props = obj.__dimensionAffectingProps,
@@ -1952,8 +1965,7 @@ class EditorScreen {
       curvedText.moveTo(index);
       this.canvas.setActiveObject(curvedText);
       this.canvas.requestRenderAll();
-    }
-
+    };
 
     const initCurveText = () => {
       let obj = this.canvas.getActiveObject();
@@ -1963,7 +1975,7 @@ class EditorScreen {
         percentage =
           value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
 
-      percentage = percentage.toFixed(0)
+      percentage = percentage.toFixed(0);
       if (percentage == -0 || percentage == "-0") percentage = 0;
 
       if (percentage > 90) {
@@ -1972,7 +1984,7 @@ class EditorScreen {
       }
 
       if (percentage < -90) {
-        percentage = -90
+        percentage = -90;
         value = getRangeFromPercentage(percentage);
       }
 
@@ -2405,7 +2417,8 @@ class EditorScreen {
     });
 
     palleteComponent.addEventListener("colorChange", (e) => {
-      const { colorMode, grad1Value, grad2Value, colorAngle, solidValue } = e.detail;
+      const { colorMode, grad1Value, grad2Value, colorAngle, solidValue } =
+        e.detail;
 
       let angleColor = `${colorAngle}deg`;
       let color = null;
@@ -2500,7 +2513,7 @@ class EditorScreen {
       this.canvas.save();
     });
 
-    querySelect('#tp-btn-apply').addEventListener('click', () => {
+    const applyLinearColor = (isBG = false) => {
       const active = this.canvas.getActiveObject();
 
       const color = new fabric.Gradient({
@@ -2508,8 +2521,8 @@ class EditorScreen {
         coords: {
           x1: 0,
           y1: 0,
-          x2: active.width,
-          y2: active.height,
+          x2: isBG ? this.canvas.width : active.width,
+          y2: isBG ? this.canvas.height : active.height,
         },
         colorStops: [
           { offset: 0, color: this.currentGradiantColors.grad1Value },
@@ -2517,14 +2530,24 @@ class EditorScreen {
         ],
       });
 
-      active.set('fill', color);
+      isBG ? this.canvas.setBackgroundColor(color) : active.set("fill", color);
       this.canvas.renderAll();
-    })
+    };
+
+    [".tp-btn-apply", ".tp-btn-apply_solid"].forEach((i) => {
+      querySelect(i).addEventListener("click", () => {
+        applyLinearColor();
+      });
+    });
+
+    querySelect(".tp-btn-applyBG").addEventListener("click", () => {
+      applyLinearColor(true);
+    });
 
     textPalleteComponent.addEventListener("colorChange", (e) => {
       const selectedObject = this.canvas.getActiveObject();
       const { colorMode, grad1Value, grad2Value, solidValue } = e.detail;
-      console.log(e.detail)
+      console.log(e.detail);
       this.currentGradiantColors = { grad1Value, grad2Value };
 
       let color = null;
@@ -2718,19 +2741,22 @@ class EditorScreen {
             this.canvasHistory = new SaveHistory(this.canvas);
             querySelect("#loader_main").style.display = "none";
 
-            logoNameElement.set('fontSize', +data.brandSize);
-            sloganNameElement.set('fontSize', +data.sloganSize);
+            logoNameElement.set("fontSize", +data.brandSize);
+            sloganNameElement.set("fontSize", +data.sloganSize);
 
             if (data.brandCurveDiameter)
-              addCurveText(logoNameElement, data.brandCurveDiameter, data.brand_curve_percentage);
-
+              addCurveText(
+                logoNameElement,
+                data.brandCurveDiameter,
+                data.brand_curve_percentage
+              );
 
             if (data.sloganCurveDiameter)
-              addCurveText(sloganNameElement, data.sloganCurveDiameter, data.slogan_curve_percentage);
-
-
-
-
+              addCurveText(
+                sloganNameElement,
+                data.sloganCurveDiameter,
+                data.slogan_curve_percentage
+              );
 
             const brandBlur = data?.brandNameDropShadow?.split(",")[0];
             const brandOffsetX = data?.brandNameDropShadow?.split(",")[1];
@@ -2744,55 +2770,49 @@ class EditorScreen {
               offsetX: +brandOffsetX,
               offsetY: +brandOffsetY,
               blur: +brandBlur,
-            })
+            });
 
             sloganNameElement.set("shadow", {
               offsetX: +sloganOffsetX,
               offsetY: +sloganOffsetY,
               blur: +sloganBlur,
-            })
+            });
 
-            logoNameElement.set('charSpacing', data.brandCharSpacing);
-            sloganNameElement.set('charSpacing', data.sloganCharSpacing);
+            logoNameElement.set("charSpacing", data.brandCharSpacing);
+            sloganNameElement.set("charSpacing", data.sloganCharSpacing);
 
             if (brandCase === "Uppercase") {
               logoNameElement.text = logoNameElement.text.toUpperCase();
-            }
-            else if (brandCase === "Lowercase") {
+            } else if (brandCase === "Lowercase") {
               logoNameElement.text = logoNameElement.text.toLowerCase();
-            }
-            else if (brandCase === "Title Case") {
+            } else if (brandCase === "Title Case") {
               logoNameElement.text = toTitleCase(logoNameElement.text);
-            }
-            else if (brandCase === "Sentence Case") {
+            } else if (brandCase === "Sentence Case") {
               logoNameElement.text = toSentenceCase(logoNameElement.text);
             }
 
             if (sloganCase === "Uppercase") {
               sloganNameElement.text = sloganNameElement.text.toUpperCase();
-            }
-            else if (sloganCase === "Lowercase") {
+            } else if (sloganCase === "Lowercase") {
               sloganNameElement.text = sloganNameElement.text.toLowerCase();
-            }
-            else if (sloganCase === "Title Case") {
+            } else if (sloganCase === "Title Case") {
               sloganNameElement.text = toTitleCase(sloganNameElement.text);
-            }
-            else if (sloganCase === "Sentence Case") {
+            } else if (sloganCase === "Sentence Case") {
               sloganNameElement.text = toSentenceCase(sloganNameElement.text);
             }
 
-            if (data.brandStyle === 'underline') {
-              logoNameElement.set('underline', true);
+            if (data.brandStyle === "underline") {
+              logoNameElement.set("underline", true);
             } else {
-              logoNameElement.set('underline', false);
-              logoNameElement.set('fontStyle', data.brandStyle);
+              logoNameElement.set("underline", false);
+              logoNameElement.set("fontStyle", data.brandStyle);
             }
 
-            if (data.sloganStyle === 'underline') {
-              sloganNameElement.set('underline', true);
+            if (data.sloganStyle === "underline") {
+              sloganNameElement.set("underline", true);
             } else {
-              sloganNameElement.set('underline', false);
-              sloganNameElement.set('fontStyle', data.sloganStyle);
+              sloganNameElement.set("underline", false);
+              sloganNameElement.set("fontStyle", data.sloganStyle);
             }
 
             logoNameElement.centerH();
@@ -3400,9 +3420,13 @@ class EditorScreen {
       querySelect("#solid_color_text_mode").classList.add("category_selected");
       querySelect("#solid_color_items_text").style.display = "flex";
       querySelect("#picker_color_items_text").style.display = "none";
-      querySelect("#picker_color_text_mode").classList.remove("category_selected");
+      querySelect("#picker_color_text_mode").classList.remove(
+        "category_selected"
+      );
 
-      querySelect("#linear_color_text_mode").classList.remove("category_selected");
+      querySelect("#linear_color_text_mode").classList.remove(
+        "category_selected"
+      );
       querySelect("#linear_color_items_text").style.display = "none";
       openPickerView = "none";
 
@@ -3413,7 +3437,9 @@ class EditorScreen {
       querySelect("#picker_color_text_mode").classList.remove(
         "category_selected"
       );
-      querySelect("#solid_color_text_mode").classList.remove("category_selected");
+      querySelect("#solid_color_text_mode").classList.remove(
+        "category_selected"
+      );
       querySelect("#linear_color_text_mode").classList.add("category_selected");
       querySelect("#linear_color_items_text").style.display = "flex";
       querySelect("#solid_color_items_text").style.display = "none";
@@ -3429,10 +3455,14 @@ class EditorScreen {
 
       querySelect("#solid_color_items_text").style.display = "none";
       querySelect("#linear_color_items_text").style.display = "none";
-      
-      querySelect("#solid_color_text_mode").classList.remove("category_selected");
-      querySelect("#linear_color_text_mode").classList.remove("category_selected");
-      
+
+      querySelect("#solid_color_text_mode").classList.remove(
+        "category_selected"
+      );
+      querySelect("#linear_color_text_mode").classList.remove(
+        "category_selected"
+      );
+
       querySelect(".tp-btn-apply").style.display = "none";
       querySelect("#picker_color_items_text").style.marginTop = "8px";
       openTextPickerView = "block";
@@ -3468,7 +3498,7 @@ class EditorScreen {
     const solidTextColorEventBG = () => {
       querySelect("#picker_color_text_modeBG").classList.remove(
         "category_selected"
-      );      
+      );
       querySelect("#linear_color_text_modeBG").classList.remove(
         "category_selected"
       );
@@ -3479,7 +3509,7 @@ class EditorScreen {
       querySelect("#bg_solid_color_items_text").style.display = "flex";
       querySelect("#bg_picker_color_items_text").style.display = "none";
       querySelect("#bg_linear_color_items_text").style.display = "none";
-      querySelect("#tp-btn-applyBG").style.display = "none";
+      querySelect(".tp-btn-applyBG").style.display = "none";
       openPickerViewBG = "none";
     };
 
@@ -3487,7 +3517,7 @@ class EditorScreen {
       querySelect("#bg_solid_color_items_text").style.display = "none";
       querySelect("#bg_picker_color_items_text").style.display = "flex";
       querySelect("#bg_linear_color_items_text").style.display = "none";
-      querySelect("#tp-btn-applyBG").style.display = "none";
+      querySelect(".tp-btn-applyBG").style.display = "none";
 
       querySelect("#solid_color_text_modeBG").classList.remove(
         "category_selected"
@@ -3507,7 +3537,7 @@ class EditorScreen {
       querySelect("#bg_solid_color_items_text").style.display = "none";
       querySelect("#bg_picker_color_items_text").style.display = "none";
       querySelect("#bg_linear_color_items_text").style.display = "flex";
-      querySelect("#tp-btn-applyBG").style.display = "block";
+      querySelect(".tp-btn-applyBG").style.display = "block";
 
       querySelect("#solid_color_text_modeBG").classList.remove(
         "category_selected"
@@ -4078,7 +4108,7 @@ class EditorScreen {
     };
 
     querySelect("#canvas-bg-none").addEventListener("click", () => {
-      this.canvasBG = '#ffffff';
+      this.canvasBG = "#ffffff";
       this.canvas.setBackgroundColor(this.canvasBG);
       this.canvas.renderAll();
       this.canvas.updatePreview();
@@ -4093,11 +4123,13 @@ class EditorScreen {
     function setlogoPosition(position, canvas) {
       if (!canvas) throw new Error("Canvas", canvas);
 
-      querySelectAll('.right-bar .svg__icon').forEach((i) => {
-        i.classList.remove('active');
+      querySelectAll(".right-bar .svg__icon").forEach((i) => {
+        i.classList.remove("active");
       });
 
-      querySelect(`.svg__icon[data-align-id="${position}"]`).classList.add('active');
+      querySelect(`.svg__icon[data-align-id="${position}"]`).classList.add(
+        "active"
+      );
 
       switch (position) {
         case "1":
@@ -4376,8 +4408,10 @@ class EditorScreen {
       external_img = responseData?.images;
       loadExternalLayers(external_layer, external_text, external_img);
 
-      const brandNameFamily = self.allFonts[responseData?.brandName_fontFamely]?.family;
-      const sloganFamily = self.allFonts[responseData?.slogan_fontFamely]?.family;
+      const brandNameFamily =
+        self.allFonts[responseData?.brandName_fontFamely]?.family;
+      const sloganFamily =
+        self.allFonts[responseData?.slogan_fontFamely]?.family;
 
       const fontFamilies = [];
       if (brandNameFamily) {
@@ -4388,13 +4422,13 @@ class EditorScreen {
       }
 
       WebFont.load({
-        fontDisplay: 'swap',
+        fontDisplay: "swap",
         google: {
           families: fontFamilies,
         },
-        active: function() {
+        active: function () {
           logoNameElement.set("fontFamily", brandNameFamily);
-          sloganNameElement.set('fontFamily', sloganFamily);
+          sloganNameElement.set("fontFamily", sloganFamily);
           self.canvas.renderAll();
         },
       });
@@ -4406,7 +4440,9 @@ class EditorScreen {
       const brandCharModifiedVal = Number(brandCharSpacing) * 10;
       const sloganCharModifiedVal = Number(sloganCharSpacing) * 10;
       return {
-        bg, logoPosition, svgData: response.data,
+        bg,
+        logoPosition,
+        svgData: response.data,
         brandCharSpacing: brandCharModifiedVal,
         sloganCharSpacing: sloganCharModifiedVal,
         brandStyle,
@@ -4553,7 +4589,7 @@ class EditorScreen {
       }
     };
 
-    this.initMSList = function() {
+    this.initMSList = function () {
       let lists = document.querySelectorAll(".ms-select-list");
 
       lists.forEach((list) => {
@@ -4566,12 +4602,12 @@ class EditorScreen {
         menu.querySelectorAll("li").forEach((li) => {
           // Check if the li is already initialized
           if (li.classList.contains("initialized")) return true;
-          li.addEventListener("click", function(e) {
+          li.addEventListener("click", function (e) {
             e.stopPropagation();
             let value = this.getAttribute("value");
             let text = this.innerText;
             let parent = this.parentElement.parentElement;
-            if (this.parentElement.classList.contains('collection')) {
+            if (this.parentElement.classList.contains("collection")) {
               parent = this.parentElement.parentElement.parentElement;
             }
             parent.classList.remove("show");
@@ -4585,8 +4621,7 @@ class EditorScreen {
           li.classList.add("initialized");
         });
 
-
-        list.addEventListener("valueChange", function(e) {
+        list.addEventListener("valueChange", function (e) {
           e.stopPropagation();
 
           let value = this.getAttribute("data-value"),
@@ -4604,19 +4639,21 @@ class EditorScreen {
         });
 
         if (list.classList.contains("initialized")) return true;
-        list.querySelector(".ms-list-toggle").addEventListener("click", function(e) {
-          e.stopPropagation();
-          let lists = document.querySelectorAll(".ms-select-list");
-          let parent = this.parentElement;
-          lists.forEach((item) =>
-            item != parent ? item.classList.remove("show") : item
-          );
-          parent.classList.toggle("show");
-        });
+        list
+          .querySelector(".ms-list-toggle")
+          .addEventListener("click", function (e) {
+            e.stopPropagation();
+            let lists = document.querySelectorAll(".ms-select-list");
+            let parent = this.parentElement;
+            lists.forEach((item) =>
+              item != parent ? item.classList.remove("show") : item
+            );
+            parent.classList.toggle("show");
+          });
         list.classList.add("initialized");
       });
 
-      document.onclick = function(e) {
+      document.onclick = function (e) {
         let target = e.target;
         if (
           !target.classList.contains("ms-select-list") &&
@@ -4625,14 +4662,15 @@ class EditorScreen {
           lists.forEach((list) => list.classList.remove("show"));
         }
 
-        if (target.parentElement.tagName === "LI") target = target.parentElement;
+        if (target.parentElement.tagName === "LI")
+          target = target.parentElement;
         if (target.tagName !== "LI") return true;
 
         e.stopPropagation();
         let value = target.getAttribute("value");
         let text = target.innerText;
         let parent = target.parentElement.parentElement;
-        if (target.parentElement.classList.contains('collection')) {
+        if (target.parentElement.classList.contains("collection")) {
           parent = target.parentElement.parentElement.parentElement;
         }
 
@@ -4644,7 +4682,6 @@ class EditorScreen {
         parent.setAttribute("data-value", value);
         parent.dispatchEvent(new Event("change"));
         target.classList.add("selected");
-
       };
     };
 
@@ -4652,7 +4689,6 @@ class EditorScreen {
       fontMaxCount = 20,
       loadedFonts = {},
       fontListMenu = querySelect("#font-family-con .collection");
-
 
     const loadFonts = async (items) => {
       const chunk = items.slice(
@@ -4670,7 +4706,7 @@ class EditorScreen {
 
         self.loadedFonts[family] = {
           variants: item.variants,
-        }
+        };
 
         self.allFonts[family].loaded = true;
 
@@ -4694,7 +4730,9 @@ class EditorScreen {
       );
       for (const item of itemsToRemove) {
         const { family } = item;
-        const fontListItem = fontListMenu.querySelector(`li[value="${family}"]`);
+        const fontListItem = fontListMenu.querySelector(
+          `li[value="${family}"]`
+        );
         if (fontListItem) {
           fontListMenu.removeChild(fontListItem);
         }
@@ -4704,16 +4742,20 @@ class EditorScreen {
     };
 
     (async () => {
-      const fontItems = await this.fetchFonts()
+      const fontItems = await this.fetchFonts();
       await loadFonts(fontItems);
 
-      fontListMenu.addEventListener("wheel", debounce((e) => {
-        if (e.wheelDelta < 0) {
-          loadFonts(fontItems);
-        } else if (e.wheelDelta > 0 && currentFontIndex > fontMaxCount) {
-          unloadFonts(fontItems);
-        }
-      }), 150);
+      fontListMenu.addEventListener(
+        "wheel",
+        debounce((e) => {
+          if (e.wheelDelta < 0) {
+            loadFonts(fontItems);
+          } else if (e.wheelDelta > 0 && currentFontIndex > fontMaxCount) {
+            unloadFonts(fontItems);
+          }
+        }),
+        150
+      );
     })();
 
     const debounce = (callback, wait) => {
@@ -4724,16 +4766,16 @@ class EditorScreen {
           callback(...args);
         }, wait);
       };
-    }
+    };
 
-    const fontLiveSearch = function(element) {
+    const fontLiveSearch = function (element) {
       let val = element.value.toLowerCase(),
-        fontList = querySelect('#font-family-con .collection');
+        fontList = querySelect("#font-family-con .collection");
 
       const generateItem = (font) => {
         return `<li value="${font}" class="font-family-item" data-loaded="true">
           <span style="font-family:${font}; font-weight: 500px" class="text">${font}</span></li>`;
-      }
+      };
 
       if (!val.length) {
         fontList.innerHTML = "";
@@ -4755,29 +4797,25 @@ class EditorScreen {
         return font.toLowerCase().startsWith(val);
       });
 
-
       let liItems = "";
       for (const font of filteredFonts) {
         let item = generateItem(font);
         liItems += item;
         self.loadedFonts[font] = self.allFonts[font];
-
       }
       try {
-
         WebFont.load({
           google: {
             families: filteredFonts,
           },
-          active: function() {
-          }
+          active: function () {},
         });
-      } catch (err) { }
+      } catch (err) {}
       fontList.innerHTML = liItems;
       this.initMSList();
     };
 
-    document.addEventListener("keyup", function(event) {
+    document.addEventListener("keyup", function (event) {
       if (event.target.classList.contains("live-search")) {
         fontLiveSearch(event.target);
       }
