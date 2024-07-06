@@ -162,7 +162,7 @@ class EditorScreen {
       this.canvasHistory.saveHistory();
     });
 
-    this.canvas.save = function () {
+    this.canvas.save = function() {
       self?.canvasHistory?.saveHistory();
     };
     this.canvas.undoCB = () => {
@@ -378,7 +378,7 @@ class EditorScreen {
 
     querySelect(".font-family-selectbox").addEventListener(
       "change",
-      function () {
+      function() {
         let family = this.getAttribute("data-value"),
           loaded = this.getAttribute("data-loaded"),
           obj = self.canvas.getActiveObject(),
@@ -390,7 +390,7 @@ class EditorScreen {
             google: {
               families: [family],
             },
-            active: function () {
+            active: function() {
               obj.set("fontFamily", family);
               self.canvas.renderAll();
             },
@@ -455,7 +455,7 @@ class EditorScreen {
     // Font Case
     querySelect(".text-case-select-box").addEventListener(
       "change",
-      function () {
+      function() {
         const selectedTextElement = this.getAttribute("data-value"),
           obj = self.canvas.getActiveObject();
         if (!obj) return false;
@@ -506,7 +506,7 @@ class EditorScreen {
 
     querySelect(".font-weight-selector").addEventListener(
       "change",
-      function () {
+      function() {
         let weight = this.getAttribute("data-value"),
           obj = self.canvas.getActiveObject();
         if (!obj) return false;
@@ -526,7 +526,7 @@ class EditorScreen {
       }
     );
 
-    querySelect(".font-style-selector").addEventListener("change", function () {
+    querySelect(".font-style-selector").addEventListener("change", function() {
       let value = this.getAttribute("data-value"),
         obj = self.canvas.getActiveObject();
       if (!obj) return false;
@@ -653,7 +653,7 @@ class EditorScreen {
       this.scaleRange.dispatchEvent(new Event("input"));
     });
 
-    this.scaleRange.addEventListener("change", function () {
+    this.scaleRange.addEventListener("change", function() {
       updatePreview();
       self.canvas.save();
     });
@@ -724,7 +724,7 @@ class EditorScreen {
     this.canvas.on("object:scaling", () => {
       isScaling = true;
     });
-    this.canvas.on("mouse:up", function () {
+    this.canvas.on("mouse:up", function() {
       if (isScaling) {
         isScaling = false;
         self.canvas.save();
@@ -934,7 +934,7 @@ class EditorScreen {
               google: {
                 families: [family],
               },
-              active: function () {
+              active: function() {
 
                 familyData.loaded = true;
                 self.loadedFonts[family] = familyData;
@@ -1326,7 +1326,7 @@ class EditorScreen {
 
     document
       .querySelector("#l_spacing_value")
-      .addEventListener("change", function (e) {
+      .addEventListener("change", function(e) {
         let value = e.target.value;
         querySelect("#letter-spacing-slider").value = value * 10;
         querySelect("#letter-spacing-slider").dispatchEvent(new Event("input"));
@@ -1527,7 +1527,7 @@ class EditorScreen {
             const img = fabric.util.groupSVGElements(objects, options);
 
             var reader = new FileReader();
-            reader.onloadend = function () {
+            reader.onloadend = function() {
               img.set("dataUrl", reader.result);
               img.set("layerType", "image");
               img.set("ext", "svg");
@@ -1766,7 +1766,7 @@ class EditorScreen {
           querySelect("#shadow-offsetY-slider").value = offsetY;
         }
 
-        captureCanvasState();
+        // captureCanvasState();
         this.canvas.requestRenderAll();
 
         this.activeNavbarSetting = "text";
@@ -1865,7 +1865,7 @@ class EditorScreen {
       querySelect("#curve-text").dispatchEvent(new Event("change"));
     });
 
-    querySelect("#curve-text").addEventListener("change", function (e) {
+    querySelect("#curve-text").addEventListener("change", function(e) {
       self.canvas.requestRenderAll();
 
       let inp = e.target,
@@ -3092,9 +3092,11 @@ class EditorScreen {
     const textPalette = querySelect("#logo_text_colors_pallete");
 
     const solidColorMode = querySelect("#solid_color_mode");
+    const linearColorMode = querySelect("#linear_color_mode");
     const pickerColorMode = querySelect("#picker_color_mode");
 
     const solidColorTextMode = querySelect("#solid_color_text_mode");
+    const linearColorTextMode = querySelect("#linear_color_text_mode");
     const pickerColorTextMode = querySelect("#picker_color_text_mode");
 
     const getParsedColor = (color) => {
@@ -3355,17 +3357,39 @@ class EditorScreen {
     const solidColorEvent = () => {
       querySelect("#picker_color_mode").classList.remove("category_selected");
       querySelect("#solid_color_mode").classList.add("category_selected");
+      querySelect("#linear_color_mode").classList.remove("category_selected");
+
       querySelect("#solid_color_items").style.display = "flex";
+      querySelect("#linear_color_items").style.display = "none";
       querySelect("#picker_color_items").style.display = "none";
+
+      querySelect(".tp-btn-apply_solid").style.display = "none";
+      openPickerView = "none";
+    };
+
+    const linearColorEvent = () => {
+      querySelect("#picker_color_mode").classList.remove("category_selected");
+      querySelect("#linear_color_mode").classList.add("category_selected");
+      querySelect("#solid_color_mode").classList.remove("category_selected");
+
+      querySelect("#linear_color_items").style.display = "flex";
+      querySelect("#solid_color_items").style.display = "none";
+      querySelect("#picker_color_items").style.display = "none";
+
+      querySelect(".tp-btn-apply_solid").style.display = "block";
       openPickerView = "none";
     };
 
     const pickerColorEvent = () => {
       querySelect("#solid_color_items").style.display = "none";
       querySelect("#picker_color_items").style.display = "flex";
+      querySelect("#linear_color_items").style.display = "none";
+      querySelect("#linear_color_mode").classList.remove("category_selected");
       querySelect("#solid_color_mode").classList.remove("category_selected");
       querySelect("#picker_color_mode").classList.add("category_selected");
       querySelect("#picker_color_items").style.marginTop = "8px";
+
+      querySelect(".tp-btn-apply_solid").style.display = "none";
       openTextPickerView = "block";
     };
 
@@ -3376,16 +3400,40 @@ class EditorScreen {
       querySelect("#solid_color_text_mode").classList.add("category_selected");
       querySelect("#solid_color_items_text").style.display = "flex";
       querySelect("#picker_color_items_text").style.display = "none";
+      querySelect("#picker_color_text_mode").classList.remove("category_selected");
+
+      querySelect("#linear_color_text_mode").classList.remove("category_selected");
+      querySelect("#linear_color_items_text").style.display = "none";
+      openPickerView = "none";
+
+      querySelect(".tp-btn-apply").style.display = "none";
+    };
+
+    const linearTextColorEvent = () => {
+      querySelect("#picker_color_text_mode").classList.remove(
+        "category_selected"
+      );
+      querySelect("#solid_color_text_mode").classList.remove("category_selected");
+      querySelect("#linear_color_text_mode").classList.add("category_selected");
+      querySelect("#linear_color_items_text").style.display = "flex";
+      querySelect("#solid_color_items_text").style.display = "none";
+      querySelect("#picker_color_items_text").style.display = "none";
+
+      querySelect(".tp-btn-apply").style.display = "block";
       openPickerView = "none";
     };
 
     const pickerTextColorEvent = () => {
-      querySelect("#solid_color_items_text").style.display = "none";
       querySelect("#picker_color_items_text").style.display = "flex";
-      querySelect("#solid_color_text_mode").classList.remove(
-        "category_selected"
-      );
       querySelect("#picker_color_text_mode").classList.add("category_selected");
+
+      querySelect("#solid_color_items_text").style.display = "none";
+      querySelect("#linear_color_items_text").style.display = "none";
+      
+      querySelect("#solid_color_text_mode").classList.remove("category_selected");
+      querySelect("#linear_color_text_mode").classList.remove("category_selected");
+      
+      querySelect(".tp-btn-apply").style.display = "none";
       querySelect("#picker_color_items_text").style.marginTop = "8px";
       openTextPickerView = "block";
     };
@@ -3420,6 +3468,9 @@ class EditorScreen {
     const solidTextColorEventBG = () => {
       querySelect("#picker_color_text_modeBG").classList.remove(
         "category_selected"
+      );      
+      querySelect("#linear_color_text_modeBG").classList.remove(
+        "category_selected"
       );
       querySelect("#solid_color_text_modeBG").classList.add(
         "category_selected"
@@ -3427,17 +3478,44 @@ class EditorScreen {
 
       querySelect("#bg_solid_color_items_text").style.display = "flex";
       querySelect("#bg_picker_color_items_text").style.display = "none";
+      querySelect("#bg_linear_color_items_text").style.display = "none";
+      querySelect("#tp-btn-applyBG").style.display = "none";
       openPickerViewBG = "none";
     };
 
     const pickerTextColorEventBG = () => {
       querySelect("#bg_solid_color_items_text").style.display = "none";
       querySelect("#bg_picker_color_items_text").style.display = "flex";
+      querySelect("#bg_linear_color_items_text").style.display = "none";
+      querySelect("#tp-btn-applyBG").style.display = "none";
 
       querySelect("#solid_color_text_modeBG").classList.remove(
         "category_selected"
       );
+      querySelect("#linear_color_text_modeBG").classList.remove(
+        "category_selected"
+      );
       querySelect("#picker_color_text_modeBG").classList.add(
+        "category_selected"
+      );
+
+      querySelect("#bg_picker_color_items_text").style.marginTop = "8px";
+      openPickerViewBG = "block";
+    };
+
+    const linearTextColorEventBG = () => {
+      querySelect("#bg_solid_color_items_text").style.display = "none";
+      querySelect("#bg_picker_color_items_text").style.display = "none";
+      querySelect("#bg_linear_color_items_text").style.display = "flex";
+      querySelect("#tp-btn-applyBG").style.display = "block";
+
+      querySelect("#solid_color_text_modeBG").classList.remove(
+        "category_selected"
+      );
+      querySelect("#picker_color_text_modeBG").classList.remove(
+        "category_selected"
+      );
+      querySelect("#linear_color_text_modeBG").classList.add(
         "category_selected"
       );
 
@@ -3453,6 +3531,10 @@ class EditorScreen {
 
     querySelect("#picker_color_text_modeBG").addEventListener("click", () => {
       pickerTextColorEventBG();
+    });
+
+    querySelect("#linear_color_text_modeBG").addEventListener("click", () => {
+      linearTextColorEventBG();
     });
 
     [("#R_BG", "#G_BG", "#B_BG")].forEach((id) => {
@@ -3586,7 +3668,7 @@ class EditorScreen {
       colorChangingBG = false;
     });
 
-    colorPickerBG.on("input:end", (color) => {
+    colorPickerBG.on("input:end", () => {
       updatePreview();
       this.canvas.save();
     });
@@ -3596,8 +3678,10 @@ class EditorScreen {
 
     solidColorMode.addEventListener("click", solidColorEvent);
     pickerColorMode.addEventListener("click", pickerColorEvent);
+    linearColorMode.addEventListener("click", linearColorEvent);
 
     solidColorTextMode.addEventListener("click", solidTextColorEvent);
+    linearColorTextMode.addEventListener("click", linearTextColorEvent);
     pickerColorTextMode.addEventListener("click", pickerTextColorEvent);
 
     querySelect("#custom_color_generator").addEventListener("change", (e) => {
@@ -4308,7 +4392,7 @@ class EditorScreen {
         google: {
           families: fontFamilies,
         },
-        active: function () {
+        active: function() {
           logoNameElement.set("fontFamily", brandNameFamily);
           sloganNameElement.set('fontFamily', sloganFamily);
           self.canvas.renderAll();
@@ -4469,7 +4553,7 @@ class EditorScreen {
       }
     };
 
-    this.initMSList = function () {
+    this.initMSList = function() {
       let lists = document.querySelectorAll(".ms-select-list");
 
       lists.forEach((list) => {
@@ -4482,7 +4566,7 @@ class EditorScreen {
         menu.querySelectorAll("li").forEach((li) => {
           // Check if the li is already initialized
           if (li.classList.contains("initialized")) return true;
-          li.addEventListener("click", function (e) {
+          li.addEventListener("click", function(e) {
             e.stopPropagation();
             let value = this.getAttribute("value");
             let text = this.innerText;
@@ -4502,7 +4586,7 @@ class EditorScreen {
         });
 
 
-        list.addEventListener("valueChange", function (e) {
+        list.addEventListener("valueChange", function(e) {
           e.stopPropagation();
 
           let value = this.getAttribute("data-value"),
@@ -4520,7 +4604,7 @@ class EditorScreen {
         });
 
         if (list.classList.contains("initialized")) return true;
-        list.querySelector(".ms-list-toggle").addEventListener("click", function (e) {
+        list.querySelector(".ms-list-toggle").addEventListener("click", function(e) {
           e.stopPropagation();
           let lists = document.querySelectorAll(".ms-select-list");
           let parent = this.parentElement;
@@ -4532,7 +4616,7 @@ class EditorScreen {
         list.classList.add("initialized");
       });
 
-      document.onclick = function (e) {
+      document.onclick = function(e) {
         let target = e.target;
         if (
           !target.classList.contains("ms-select-list") &&
@@ -4642,7 +4726,7 @@ class EditorScreen {
       };
     }
 
-    const fontLiveSearch = function (element) {
+    const fontLiveSearch = function(element) {
       let val = element.value.toLowerCase(),
         fontList = querySelect('#font-family-con .collection');
 
@@ -4685,7 +4769,7 @@ class EditorScreen {
           google: {
             families: filteredFonts,
           },
-          active: function () {
+          active: function() {
           }
         });
       } catch (err) { }
@@ -4693,7 +4777,7 @@ class EditorScreen {
       this.initMSList();
     };
 
-    document.addEventListener("keyup", function (event) {
+    document.addEventListener("keyup", function(event) {
       if (event.target.classList.contains("live-search")) {
         fontLiveSearch(event.target);
       }

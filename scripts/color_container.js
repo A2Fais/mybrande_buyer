@@ -2,7 +2,8 @@ const paletteMarkup = /*html*/ `
 <div class="bg-settings-container">
 <div>
   <div id="color-mode" class="color-mode-selector">
-    <span id="color-mode-title" class="color-mode-title" style="margin-left: -10px; margin-bottom: 40px;">Linear Colors
+    <span id="color-mode-title" class="color-mode-title" style="margin-left: -5px; margin-bottom: 40px;">
+      <span style="margin-left: -20px">Linear Colors</span>
       <i class="fa-solid fa-angle-down"  style="visibility: hidden; display: none"></i>
     </span>
         <div id="bg-color-list" class="color-mode-list"></div>
@@ -12,7 +13,7 @@ const paletteMarkup = /*html*/ `
         <div id="color-palette-gradient" class="color-palette-gradient"></div>
     </div>
 
-    <div id="gradient-panel" style="margin-top: 45px;  display: none; justify-content: flex-start; gap: 5px;">
+    <div id="gradient-panel" style="margin-top: 45px;  display: none; justify-content: flex-start; gap: 5px; margin-left: -15px; margin-bottom: 20px;">
         <input type="color" value="#ffffff" class="color-picker" id="grad-1">
         <input type="color" value="#000000" class="color-picker" id="grad-2">
       </div>
@@ -90,14 +91,14 @@ class Palette extends HTMLElement {
         $('#solid-panel').style.opacity = 1;
         $('#solid-panel').style.visibility = 'visible';
         $('#solid-panel').style.marginTop = '60px';
-        $('#color-palette-gradient').style.background = '#000';
+        $('#color-palette-gradient').style.background = '#000000';
       } else if (colorMode === 'Linear') {
         // $('#color-angle-text').style.display = 'block';
         $('#color-angle').style.display = 'block';
         $('#gradient-panel').style.display = 'flex';
         // $('#slider-container').style.display = 'block';
         $('#solid-panel').style.display = 'none';
-        $('#color-palette-gradient').style.background = '#000';
+        $('#color-palette-gradient').style.background = '#000000';
       } else if (colorMode === 'Transparent') {
         // $('#color-angle-text').style.display = 'none';
         $('#gradient-panel').style.display = 'none';

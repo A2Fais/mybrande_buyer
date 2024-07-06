@@ -277,6 +277,19 @@ input:checked+.switch-slider:before {
   background-color: var(--gold-darker);
 }
 
+.btn_outlined {
+  border: none;
+  font-weight: 500;
+  color: var(--white);
+  background: var(--gold);
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.btn_outlined:hover {
+  background: var(--gold-darker);
+}
+
 .settings-view {
   width: 260px;
   padding-right: 4px;
@@ -1249,6 +1262,7 @@ input:checked+.switch-slider:before {
   font-size: 14px;
   color: var(--gray-light);
   cursor: pointer;
+  z-index: 10000;
 }
 
 .category:hover {
