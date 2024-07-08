@@ -958,7 +958,7 @@ class EditorScreen {
 
         // Set Font Size
         if (obj.fontSize) {
-          querySelect("#font_size_title").value = obj.fontSize + "px";
+          querySelect("#font_size_title").value = Math.round(obj.fontSize) + "px";
           querySelect("#font_size_range").value = Math.round(obj.fontSize);
         }
       }
@@ -2088,7 +2088,7 @@ class EditorScreen {
           ? (active.fontSize = increment)
           : (active.fontSize = decrement);
       querySelect("#font_size_range").value = fontResizer;
-      querySelect("#font_size_title").value = fontResizer + "px";
+      querySelect("#font_size_title").value = Math.round(fontResizer) + "px";
       this.canvas.requestRenderAll();
       updatePreview();
     };
