@@ -959,7 +959,7 @@ class EditorScreen {
         // Set Font Size
         if (obj.fontSize) {
           querySelect("#font_size_title").value = obj.fontSize + "px";
-          querySelect("#font_size_range").value = obj.fontSize;
+          querySelect("#font_size_range").value = Math.round(obj.fontSize);
         }
       }
       this.canvas.requestRenderAll();
@@ -1822,7 +1822,7 @@ class EditorScreen {
       const textSize = event.target.value;
       if (textSize > 0) {
         // Use to fixed to remove decimal points
-        querySelect("#font_size_title").value = `${textSize}px`;
+        querySelect("#font_size_title").value = `${Math.round(textSize)}px`;
         const active = this.canvas.getActiveObject();
 
         const fontSize = textSize;
@@ -2061,7 +2061,7 @@ class EditorScreen {
       updatePreview();
       this.canvas.save();
       this.canvas.requestRenderAll();
-      querySelect("#font_size_title").value = fontSize + "px";
+      querySelect("#font_size_title").value = Math.round(fontSize) + "px";
     });
 
     querySelect("#font_size_title").addEventListener("input", (event) => {
@@ -2069,7 +2069,7 @@ class EditorScreen {
       const fontSize = Number(text.split("px")[0]);
       const active = this.canvas.getActiveObject();
       active.fontSize = fontSize;
-      querySelect("#font_size_range").value = fontSize;
+      querySelect("#font_size_range").value = Math.round(fontSize);
 
       this.canvas.requestRenderAll();
     });
