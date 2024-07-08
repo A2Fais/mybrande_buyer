@@ -166,7 +166,7 @@ class EditorScreen {
       this.canvasHistory.saveHistory();
     });
 
-    this.canvas.save = function () {
+    this.canvas.save = function() {
       self?.canvasHistory?.saveHistory();
     };
     this.canvas.undoCB = () => {
@@ -2543,6 +2543,7 @@ class EditorScreen {
 
     querySelect(".tp-btn-applyBG").addEventListener("click", () => {
       applyLinearColor(true);
+      updatePreview();
     });
 
     textPalleteComponent.addEventListener("colorChange", (e) => {
