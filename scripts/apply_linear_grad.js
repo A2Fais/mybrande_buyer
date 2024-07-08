@@ -17,8 +17,8 @@ export class applyLinearGradient {
         y2: isBG ? this.canvas.height : this.active.height,
       },
       colorStops: [
-        { offset: 0, color: this.grad1 },
-        { offset: 1, color: this.grad2 },
+        { offset: 0, color: this.grad1 ? this.grad1 : "#ffffff" },
+        { offset: 1, color: this.grad2 ? this.grad2 : "#000000" },
       ],
     });
     isBG ? this.canvas.setBackgroundColor(color) : this.active.set("fill", color);

@@ -18,6 +18,7 @@ import { saveCanvas } from "./save_canvas";
 import { centerAndResizeElements } from "./center_resize";
 import SaveHistory from "./SaveHistory.js";
 import { curvedText } from "./curved_text.js";
+import { applyLinearGradient } from "./apply_linear_grad.js";
 
 const querySelect = (element) => document.querySelector(element);
 const querySelectAll = (element) => document.querySelectorAll(element);
@@ -2411,8 +2412,10 @@ class EditorScreen {
       if (selectedObject) this.canvas.save();
     });
 
+    var bgGrad1, bgGrad2;
     const palleteComponent = querySelect("#bg-pallete");
-    palleteComponent.addEventListener("colorChanged", () => {
+    palleteComponent.addEventListener("colorChanged", function(c) {
+      [bgGrad1, bgGrad2] = [c.target.querySelector("#grad-1").value, c.target.querySelector("#grad-2").value];
       updatePreview();
       this.canvas.save();
     });
@@ -2469,18 +2472,19 @@ class EditorScreen {
       this.canvas.requestRenderAll();
     });
 
+    var lGrad1, lGrad2;
     const logoPalleteComponent = querySelect("#logo-pallete");
-    logoPalleteComponent.addEventListener("colorChanged", () => {
+    logoPalleteComponent.addEventListener("colorChanged", (c) => {
+      [lGrad1, lGrad2] = [c.target.querySelector("#grad-1").value, c.target.querySelector("#grad-2").value];
       updatePreview();
       this.canvas.save();
     });
 
     logoPalleteComponent.addEventListener("colorChange", (e) => {
       const selectedObject = this.canvas.getActiveObject();
-      const { colorMode, grad1Value, grad2Value, solidValue, colorAngle } =
-        e.detail;
+      const { colorMode, grad1Value, grad2Value, solidValue } = e.detail;
       // console.log(selectedObject);
-      let angleColor = `${colorAngle}deg`;
+      // let angleColor = `${colorAngle}deg`;
       let color = null;
       if (colorMode !== "Solid") {
         color = new fabric.Gradient({
@@ -2508,48 +2512,32 @@ class EditorScreen {
       this.canvas.requestRenderAll();
     });
 
+    var tGrad1, tGrad2;
     const textPalleteComponent = querySelect("#text-pallete");
-    textPalleteComponent.addEventListener("colorChanged", () => {
+    textPalleteComponent.addEventListener("colorChanged", (c) => {
+      [tGrad1, tGrad2] = [c.target.querySelector("#grad-1").value, c.target.querySelector("#grad-2").value];
       updatePreview();
       this.canvas.save();
     });
 
-    const applyLinearColor = (isBG = false) => {
-      const active = this.canvas.getActiveObject();
-
-      const color = new fabric.Gradient({
-        type: "linear",
-        coords: {
-          x1: 0,
-          y1: 0,
-          x2: isBG ? this.canvas.width : active.width,
-          y2: isBG ? this.canvas.height : active.height,
-        },
-        colorStops: [
-          { offset: 0, color: this.currentGradiantColors.grad1Value },
-          { offset: 1, color: this.currentGradiantColors.grad2Value },
-        ],
-      });
-
-      isBG ? this.canvas.setBackgroundColor(color) : active.set("fill", color);
-      this.canvas.renderAll();
-    };
-
-    [".tp-btn-apply", ".tp-btn-apply_solid"].forEach((i) => {
-      querySelect(i).addEventListener("click", () => {
-        applyLinearColor();
-      });
-    });
-
-    querySelect(".tp-btn-applyBG").addEventListener("click", () => {
-      applyLinearColor(true);
-      updatePreview();
+    document.addEventListener('DOMContentLoaded', () => {
+      querySelect("#text-pallete .color-palette-gradient").addEventListener('click', () => {
+        const applyColor = new applyLinearGradient(this.canvas, tGrad1, tGrad2);
+        applyColor.setColor();
+      })
+      querySelect("#logo-pallete .color-palette-gradient").addEventListener('click', () => {
+        const applyColor = new applyLinearGradient(this.canvas, lGrad1, lGrad2);
+        applyColor.setColor();
+      })
+      querySelect("#bg-pallete .color-palette-gradient").addEventListener('click', () => {
+        const applyColor = new applyLinearGradient(this.canvas, bgGrad1, bgGrad2);
+        applyColor.setColor(true);
+      })
     });
 
     textPalleteComponent.addEventListener("colorChange", (e) => {
       const selectedObject = this.canvas.getActiveObject();
       const { colorMode, grad1Value, grad2Value, solidValue } = e.detail;
-      console.log(e.detail);
       this.currentGradiantColors = { grad1Value, grad2Value };
 
       let color = null;
@@ -3111,7 +3099,7 @@ class EditorScreen {
     });
 
     const canvasObjects = this.canvas.getObjects();
-    const textPalette = querySelect("#logo_text_colors_pallete");
+    // const textPalette = querySelect("#logo_text_colors_pallete");
 
     const solidColorMode = querySelect("#solid_color_mode");
     const linearColorMode = querySelect("#linear_color_mode");
@@ -3385,7 +3373,7 @@ class EditorScreen {
       querySelect("#linear_color_items").style.display = "none";
       querySelect("#picker_color_items").style.display = "none";
 
-      querySelect(".tp-btn-apply_solid").style.display = "none";
+      // querySelect(".tp-btn-apply_solid").style.display = "none";
       openPickerView = "none";
     };
 
@@ -3398,7 +3386,7 @@ class EditorScreen {
       querySelect("#solid_color_items").style.display = "none";
       querySelect("#picker_color_items").style.display = "none";
 
-      querySelect(".tp-btn-apply_solid").style.display = "block";
+      // querySelect(".tp-btn-apply_solid").style.display = "block";
       openPickerView = "none";
     };
 
@@ -3411,7 +3399,7 @@ class EditorScreen {
       querySelect("#picker_color_mode").classList.add("category_selected");
       querySelect("#picker_color_items").style.marginTop = "8px";
 
-      querySelect(".tp-btn-apply_solid").style.display = "none";
+      // querySelect(".tp-btn-apply_solid").style.display = "none";
       openTextPickerView = "block";
     };
 
@@ -3432,7 +3420,7 @@ class EditorScreen {
       querySelect("#linear_color_items_text").style.display = "none";
       openPickerView = "none";
 
-      querySelect(".tp-btn-apply").style.display = "none";
+      // querySelect(".tp-btn-apply").style.display = "none";
     };
 
     const linearTextColorEvent = () => {
@@ -3447,7 +3435,7 @@ class EditorScreen {
       querySelect("#solid_color_items_text").style.display = "none";
       querySelect("#picker_color_items_text").style.display = "none";
 
-      querySelect(".tp-btn-apply").style.display = "block";
+      // querySelect(".tp-btn-apply").style.display = "block";
       openPickerView = "none";
     };
 
@@ -3465,7 +3453,7 @@ class EditorScreen {
         "category_selected"
       );
 
-      querySelect(".tp-btn-apply").style.display = "none";
+      // querySelect(".tp-btn-apply").style.display = "none";
       querySelect("#picker_color_items_text").style.marginTop = "8px";
       openTextPickerView = "block";
     };
@@ -3511,7 +3499,7 @@ class EditorScreen {
       querySelect("#bg_solid_color_items_text").style.display = "flex";
       querySelect("#bg_picker_color_items_text").style.display = "none";
       querySelect("#bg_linear_color_items_text").style.display = "none";
-      querySelect(".tp-btn-applyBG").style.display = "none";
+      // querySelect(".tp-btn-applyBG").style.display = "none";
       openPickerViewBG = "none";
     };
 
@@ -3519,7 +3507,7 @@ class EditorScreen {
       querySelect("#bg_solid_color_items_text").style.display = "none";
       querySelect("#bg_picker_color_items_text").style.display = "flex";
       querySelect("#bg_linear_color_items_text").style.display = "none";
-      querySelect(".tp-btn-applyBG").style.display = "none";
+      // querySelect(".tp-btn-applyBG").style.display = "none";
 
       querySelect("#solid_color_text_modeBG").classList.remove(
         "category_selected"
@@ -3539,7 +3527,7 @@ class EditorScreen {
       querySelect("#bg_solid_color_items_text").style.display = "none";
       querySelect("#bg_picker_color_items_text").style.display = "none";
       querySelect("#bg_linear_color_items_text").style.display = "flex";
-      querySelect(".tp-btn-applyBG").style.display = "block";
+      // querySelect(".tp-btn-applyBG").style.display = "block";
 
       querySelect("#solid_color_text_modeBG").classList.remove(
         "category_selected"
