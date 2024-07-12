@@ -351,23 +351,21 @@ class EditorScreen {
 
     this.canvas.requestRenderAll();
 
-                        function resizeCanvas() {
-            self.canvas.setHeight(window.innerHeight / 2);
-            self.canvas.setWidth(window.innerWidth / 2);
+    function resizeCanvas() {
+      self.canvas.setHeight(window.innerHeight / 2);
+      self.canvas.setWidth(window.innerWidth / 2);
+      self.canvas.renderAll();
+    }
 
-            self.canvas.getObjects().forEach(function (obj) {
-                obj.scaleToWidth(self.canvas.getWidth() / 2);
-                // obj.set({
-                //     left: canvas.getWidth() / 2 - obj.getScaledWidth() / 2,
-                //     top: canvas.getHeight() / 2 - obj.getScaledHeight() / 2
-                // });
-                // obj.setCoords();
-            });
-            self.canvas.renderAll();
-        }
+    let resizeTimeout;
+    function handleResize() {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(resizeCanvas, 100);
+      location.reload();
+    }
 
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    window.addEventListener("resize", handleResize);
 
     this.updateActiveNavbar = () => {
       querySelectAll(".nav-item").forEach((item) => {
