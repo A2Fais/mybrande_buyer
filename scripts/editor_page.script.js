@@ -55,9 +55,7 @@ class EditorScreen {
     this.sloganName = "Slogan goes here";
     this.rotateRange = querySelect("#rotate-bar");
     this.saveBtn = querySelect("#save-btn");
-    this.scaleRange = querySelect("#progress-bar");
     this.scaleRangeUploads = querySelect("#progress-bar-uploads");
-    this.scaleElement = querySelect("#scale-value");
     this.flipHorizontal = querySelect("#flip-x");
     this.flipVertical = querySelect("#flip-y");
     this.activeLayerIndex = null;
@@ -117,7 +115,7 @@ class EditorScreen {
 
     this.fetchFonts = async () => {
       let apiResponse = await fetch(
-        "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyA3WEzwS9il6Md6nJW5RI3eMlerTso8tII"
+        "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyA3WEzwS9il6Md6nJW5RI3eMlerTso8tII",
       );
       apiResponse = await apiResponse.json();
       this.fontItems = apiResponse.items;
@@ -133,7 +131,7 @@ class EditorScreen {
         fontMaxCount = 20;
       const chunk = items.slice(
         currentFontIndex,
-        currentFontIndex + fontMaxCount
+        currentFontIndex + fontMaxCount,
       );
       currentFontIndex += fontMaxCount;
 
@@ -167,7 +165,7 @@ class EditorScreen {
       this.canvasHistory.saveHistory();
     });
 
-    this.canvas.save = function() {
+    this.canvas.save = function () {
       self?.canvasHistory?.saveHistory();
     };
     this.canvas.undoCB = () => {
@@ -217,7 +215,7 @@ class EditorScreen {
         active.setPositionByOrigin(
           new fabric.Point(currCoordinate.x, currCoordinate.y),
           "center",
-          "center"
+          "center",
         );
         active.setCoords();
         active.scaleValue = this.scaleValue;
@@ -274,7 +272,7 @@ class EditorScreen {
         left: 0,
         scaleX: 0.3,
         scaleY: 0.3,
-      }
+      },
     );
 
     this.canvas.on("after:render", () => {
@@ -285,7 +283,7 @@ class EditorScreen {
   hideCanvasGuides() {
     // Get positionlines objects ids in array
     let positionlines = this.canvas._objects.filter(
-      (obj) => obj.isPositioningLine
+      (obj) => obj.isPositioningLine,
     );
     // Hide all positionlines
     for (let i = 0; i < positionlines.length; i++) {
@@ -307,7 +305,7 @@ class EditorScreen {
 
     const refreshLayerNames = () => {
       let layerItems = Array.from(this.layers.childNodes).filter(
-        (i) => i.style.display !== "none"
+        (i) => i.style.display !== "none",
       );
       let count = 1;
       layerItems.forEach((l) => {
@@ -331,7 +329,7 @@ class EditorScreen {
           left: 0,
           scaleX: 0.3,
           scaleY: 0.3,
-        }
+        },
       );
     };
 
@@ -353,6 +351,24 @@ class EditorScreen {
 
     this.canvas.requestRenderAll();
 
+                        function resizeCanvas() {
+            self.canvas.setHeight(window.innerHeight / 2);
+            self.canvas.setWidth(window.innerWidth / 2);
+
+            self.canvas.getObjects().forEach(function (obj) {
+                obj.scaleToWidth(self.canvas.getWidth() / 2);
+                // obj.set({
+                //     left: canvas.getWidth() / 2 - obj.getScaledWidth() / 2,
+                //     top: canvas.getHeight() / 2 - obj.getScaledHeight() / 2
+                // });
+                // obj.setCoords();
+            });
+            self.canvas.renderAll();
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
     this.updateActiveNavbar = () => {
       querySelectAll(".nav-item").forEach((item) => {
         if (this.activeNavbarSetting.includes(item.innerText.toLowerCase())) {
@@ -368,7 +384,7 @@ class EditorScreen {
     const toTitleCase = (str) => {
       return str.replace(
         /\w\S*/g,
-        (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+        (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(),
       );
     };
 
@@ -383,7 +399,7 @@ class EditorScreen {
 
     querySelect(".font-family-selectbox").addEventListener(
       "change",
-      function() {
+      function () {
         let family = this.getAttribute("data-value"),
           loaded = this.getAttribute("data-loaded"),
           obj = self.canvas.getActiveObject(),
@@ -395,7 +411,7 @@ class EditorScreen {
             google: {
               families: [family],
             },
-            active: function() {
+            active: function () {
               obj.set("fontFamily", family);
               self.canvas.renderAll();
             },
@@ -435,8 +451,9 @@ class EditorScreen {
         variants.map((variant) => {
           const value = values[variant] ? values[variant] : variant;
 
-          variantsHtml += `<li value="${value == "regular" ? "normal" : value
-            }" style="text-transform:capitalize">${formatString(value)}</li>`;
+          variantsHtml += `<li value="${
+            value == "regular" ? "normal" : value
+          }" style="text-transform:capitalize">${formatString(value)}</li>`;
         });
 
         let target = querySelect(".font-weight-selector .ms-select-list-menu");
@@ -447,19 +464,19 @@ class EditorScreen {
         obj.setPositionByOrigin(
           new fabric.Point(currCoordinate.x, currCoordinate.y),
           "center",
-          "center"
+          "center",
         );
         obj.setCoords();
         self.canvas.requestRenderAll();
         updatePreview();
         self.canvas.save();
-      }
+      },
     );
 
     // Font Case
     querySelect(".text-case-select-box").addEventListener(
       "change",
-      function() {
+      function () {
         const selectedTextElement = this.getAttribute("data-value"),
           obj = self.canvas.getActiveObject();
         if (!obj) return false;
@@ -498,19 +515,19 @@ class EditorScreen {
         obj.setPositionByOrigin(
           new fabric.Point(currCoordinate.x, currCoordinate.y),
           "center",
-          "center"
+          "center",
         );
         obj.setCoords();
 
         self.canvas.renderAll();
         updatePreview();
         self.canvas.save();
-      }
+      },
     );
 
     querySelect(".font-weight-selector").addEventListener(
       "change",
-      function() {
+      function () {
         let weight = this.getAttribute("data-value"),
           obj = self.canvas.getActiveObject();
         if (!obj) return false;
@@ -527,10 +544,10 @@ class EditorScreen {
         self.canvas.renderAll();
         updatePreview();
         self.canvas.save();
-      }
+      },
     );
 
-    querySelect(".font-style-selector").addEventListener("change", function() {
+    querySelect(".font-style-selector").addEventListener("change", function () {
       let value = this.getAttribute("data-value"),
         obj = self.canvas.getActiveObject();
       if (!obj) return false;
@@ -552,7 +569,7 @@ class EditorScreen {
       this.isRotating = true;
       this.rotateValue = parseInt(e.target.value, 10);
       querySelect("#rotate_info").innerText = `Rotate: ${parseInt(
-        this.rotateValue
+        this.rotateValue,
       )}deg`;
       this.rotateObject();
     });
@@ -591,7 +608,7 @@ class EditorScreen {
         this.canvasBG,
         logoNameElement,
         sloganNameElement,
-        this.alignId
+        this.alignId,
       );
     });
 
@@ -613,7 +630,7 @@ class EditorScreen {
         logoNameElement,
         sloganNameElement,
         this.alignId,
-        true
+        true,
       );
     });
 
@@ -634,30 +651,61 @@ class EditorScreen {
       }, 50);
     });
 
-    this.scaleElement.value = 1;
-    this.scaleRange.addEventListener("input", (e) => {
-      const scaleValue = e.target.value;
+    function convertToZeroToTwo(value, minOriginal, maxOriginal) {
+      let rangeOriginal = maxOriginal - minOriginal;
+      let newValue = ((value - minOriginal) / rangeOriginal) * 2;
+      const res = Math.min(newValue, 2);
+      return res.toFixed(1);
+    }
 
-      if (scaleValue) {
-        if (this.isScaling <= 10) this.isScaling = true;
-        this.scaleValue = parseFloat(scaleValue, 10) / 10;
-        this.scaleObject();
-        this.scaleElement.value = this.scaleValue;
-        this.canvas.renderAll();
+    var newMaxScaleValue;
+    function setMaxScaleValue() {
+      const activeScaleObj = self.canvas.getActiveObject();
+      if (activeScaleObj) {
+        const maxScaleValue = activeScaleObj.getScaledWidth();
+        newMaxScaleValue = (maxScaleValue - 1) * 2;
+        const scaleRangeInput = querySelect("#scale-range");
+        scaleRangeInput.max = newMaxScaleValue;
+        scaleRangeInput.min = 0;
+        scaleRangeInput.value = maxScaleValue - 1;
+        querySelect("#scale-value").value = convertToZeroToTwo(
+          maxScaleValue,
+          0,
+          newMaxScaleValue,
+        );
+      }
+    }
+
+    self.canvas.on("selection:updated", setMaxScaleValue);
+    self.canvas.on("selection:created", setMaxScaleValue);
+
+    querySelect("#scale-range").addEventListener("input", (e) => {
+      const scaleValue = e.target.value;
+      querySelect("#scale-value").value = convertToZeroToTwo(
+        scaleValue,
+        0,
+        newMaxScaleValue,
+      );
+      const activeScaleObj = self.canvas.getActiveObject();
+      if (activeScaleObj) {
+        activeScaleObj.scaleToWidth(scaleValue);
+        self.canvas.requestRenderAll();
       }
     });
 
-    querySelect("#scale_up").addEventListener("click", (e) => {
-      this.scaleRange.value = parseInt(this.scaleRange.value) + 1;
-      this.scaleRange.dispatchEvent(new Event("input"));
+    querySelect("#scale_up").addEventListener("click", () => {
+      querySelect("#scale-range").value =
+        parseInt(querySelect("#scale-range").value) + 1;
+      querySelect("#scale-range").dispatchEvent(new Event("input"));
     });
 
-    querySelect("#scale_down").addEventListener("click", (e) => {
-      this.scaleRange.value = parseInt(this.scaleRange.value) - 1;
-      this.scaleRange.dispatchEvent(new Event("input"));
+    querySelect("#scale_down").addEventListener("click", () => {
+      querySelect("#scale-range").value =
+        parseInt(querySelect("#scale-range").value) - 1;
+      querySelect("#scale-range").dispatchEvent(new Event("input"));
     });
 
-    this.scaleRange.addEventListener("change", function() {
+    querySelect("#scale-range").addEventListener("change", function () {
       updatePreview();
       self.canvas.save();
     });
@@ -673,7 +721,7 @@ class EditorScreen {
         active.setPositionByOrigin(
           new fabric.Point(currCoordinate.x, currCoordinate.y),
           "center",
-          "center"
+          "center",
         );
         active.setCoords();
 
@@ -695,7 +743,7 @@ class EditorScreen {
         active.setPositionByOrigin(
           new fabric.Point(currCoordinate.x, currCoordinate.y),
           "center",
-          "center"
+          "center",
         );
         active.setCoords();
 
@@ -720,15 +768,15 @@ class EditorScreen {
       this.canvas.requestRenderAll();
     });
 
-    this.canvas.on("after:render", () => {
-      this.rotateObject();
-      this.scaleObject();
-    });
+    // this.canvas.on("after:render", () => {
+    //   this.rotateObject();
+    //   this.scaleObject();
+    // });
     let isScaling = false;
     this.canvas.on("object:scaling", () => {
       isScaling = true;
     });
-    this.canvas.on("mouse:up", function() {
+    this.canvas.on("mouse:up", function () {
       if (isScaling) {
         isScaling = false;
         self.canvas.save();
@@ -793,7 +841,7 @@ class EditorScreen {
       if (activeObject) {
         if (activeObject.text) {
           querySelect('.nav-item[data-name="text"]').dispatchEvent(
-            new Event("click")
+            new Event("click"),
           );
           this.activeSection = "text";
 
@@ -812,7 +860,7 @@ class EditorScreen {
           this.activeSection = "text";
 
           querySelect('.nav-item[data-name="logo"]').dispatchEvent(
-            new Event("click")
+            new Event("click"),
           );
 
           // set shadow values
@@ -915,7 +963,7 @@ class EditorScreen {
           let fontWeightSelector = querySelect(".font-weight-selector");
           fontWeightSelector.setAttribute(
             "data-value",
-            obj.orgFontWeight ? obj.orgFontWeight : "normal"
+            obj.orgFontWeight ? obj.orgFontWeight : "normal",
           );
           fontWeightSelector.dispatchEvent(new Event("valueChange"));
           fontWeightSelector.dispatchEvent(new Event("change"));
@@ -933,7 +981,7 @@ class EditorScreen {
               google: {
                 families: [family],
               },
-              active: function() {
+              active: function () {
                 familyData.loaded = true;
                 self.loadedFonts[family] = familyData;
 
@@ -949,17 +997,21 @@ class EditorScreen {
 
         // Set Scale
 
-        querySelect("#scale-value").value = obj.scaleValue || 1;
-        querySelect("#progress-bar").value = obj.scaleValue
-          ? obj.scaleValue * 10
-          : 10;
+        // querySelect("#scale-value").value = obj.scaleValue || 1;
+        // querySelect("#scale-range").value = obj.scaleValue
+        //   ? obj.scaleValue * 10
+        //   : 10;
 
-        querySelect("#letter-spacing-slider").value = Math.round(obj.charSpacing);
-        querySelect("#l_spacing_value").value = Math.round(obj.charSpacing) || 0;
+        querySelect("#letter-spacing-slider").value = Math.round(
+          obj.charSpacing,
+        );
+        querySelect("#l_spacing_value").value =
+          Math.round(obj.charSpacing) || 0;
 
         // Set Font Size
         if (obj.fontSize) {
-          querySelect("#font_size_title").value = Math.round(obj.fontSize) + "px";
+          querySelect("#font_size_title").value =
+            Math.round(obj.fontSize) + "px";
           querySelect("#font_size_range").value = Math.round(obj.fontSize);
         }
       }
@@ -1058,7 +1110,7 @@ class EditorScreen {
             }
 
             querySelect("#rotate_info").innerText = `Rotate: ${parseInt(
-              obj.get("angle")
+              obj.get("angle"),
             )}deg`;
             querySelect("#rotate-bar").value = obj.get("angle");
 
@@ -1195,31 +1247,31 @@ class EditorScreen {
     };
 
     this.backgroundMode.addEventListener("mouseover", () =>
-      onMouseOver(true, this.backgroundMode)
+      onMouseOver(true, this.backgroundMode),
     );
     this.backgroundMode.addEventListener("mouseleave", () =>
-      onMouseOver(false, this.backgroundMode)
+      onMouseOver(false, this.backgroundMode),
     );
     this.textMode.addEventListener("mouseover", () =>
-      onMouseOver(true, this.textMode)
+      onMouseOver(true, this.textMode),
     );
     this.textMode.addEventListener("mouseleave", () =>
-      onMouseOver(false, this.textMode)
+      onMouseOver(false, this.textMode),
     );
     this.logoMode.addEventListener("mouseover", () =>
-      onMouseOver(true, this.logoMode)
+      onMouseOver(true, this.logoMode),
     );
     this.uploadsMode.addEventListener("mouseover", () =>
-      onMouseOver(true, this.uploadsMode)
+      onMouseOver(true, this.uploadsMode),
     );
     this.logoMode.addEventListener("mouseleave", () =>
-      onMouseOver(false, this.logoMode)
+      onMouseOver(false, this.logoMode),
     );
     this.previewMode.addEventListener("mouseover", () =>
-      onMouseOver(true, this.previewMode)
+      onMouseOver(true, this.previewMode),
     );
     this.previewMode.addEventListener("mouseleave", () =>
-      onMouseOver(false, this.previewMode)
+      onMouseOver(false, this.previewMode),
     );
 
     this.uploadSettingsContainer.style.display = "none";
@@ -1267,12 +1319,12 @@ class EditorScreen {
         if (bgColor === this.canvasBG) {
           this.canvas.setBackgroundColor(
             null,
-            this.canvas.renderAll.bind(this.canvas)
+            this.canvas.renderAll.bind(this.canvas),
           );
         }
         this.canvas.setBackgroundImage(
           null,
-          this.canvas.renderAll.bind(this.canvas)
+          this.canvas.renderAll.bind(this.canvas),
         );
 
         querySelect(".preview-modal-bg").style.display = "block";
@@ -1314,18 +1366,17 @@ class EditorScreen {
       active.setPositionByOrigin(
         new fabric.Point(currCoordinate.x, currCoordinate.y),
         "center",
-        "center"
+        "center",
       );
       active.setCoords();
       this.canvas.requestRenderAll();
     });
 
-
     document
       .querySelector("#l_spacing_value")
-      .addEventListener("change", function(e) {
+      .addEventListener("change", function (e) {
         let value = e.target.value;
-        cl
+        cl;
         querySelect("#letter-spacing-slider").value = Math.round(value * 10);
         querySelect("#letter-spacing-slider").dispatchEvent(new Event("input"));
       });
@@ -1374,9 +1425,8 @@ class EditorScreen {
     querySelect("#logo-shadow-blur-slider").addEventListener("input", (e) => {
       this.logoShadowBlur = e.target.value;
       const active = this.canvas.getActiveObjects();
-      querySelect(
-        "#logo-shadow_blur_title"
-      ).innerText = ` :${e.target.value}px`;
+      querySelect("#logo-shadow_blur_title").innerText =
+        ` :${e.target.value}px`;
       active.forEach((item) => {
         if (item._objects) {
           item._objects.forEach((i) => {
@@ -1525,7 +1575,7 @@ class EditorScreen {
             const img = fabric.util.groupSVGElements(objects, options);
 
             var reader = new FileReader();
-            reader.onloadend = function() {
+            reader.onloadend = function () {
               img.set("dataUrl", reader.result);
               img.set("layerType", "image");
               img.set("ext", "svg");
@@ -1603,10 +1653,10 @@ class EditorScreen {
         this.textSelectorValue = "LogoName";
 
         querySelect("#font_style_tag").innerText = toTitleCase(
-          logoNameElement.get("fontStyle")
+          logoNameElement.get("fontStyle"),
         );
         querySelect("#font_case").innerText = toTitleCase(
-          getTextCase(logoNameElement.text)
+          getTextCase(logoNameElement.text),
         );
 
         const hasShadow = !!logoNameElement?.shadow?.blur;
@@ -1626,7 +1676,8 @@ class EditorScreen {
         }
 
         const charSpacing = logoNameElement.get("charSpacing");
-        querySelect("#l_spacing_value").value = Math.round(charSpacing / 10) || 0;
+        querySelect("#l_spacing_value").value =
+          Math.round(charSpacing / 10) || 0;
 
         let fillColor;
         const color = e.target.fill;
@@ -1707,10 +1758,10 @@ class EditorScreen {
         this.textSelectorValue = "SloganName";
 
         querySelect("#font_style_tag").innerText = toTitleCase(
-          sloganNameElement.get("fontStyle")
+          sloganNameElement.get("fontStyle"),
         );
         querySelect("#font_case").innerText = toTitleCase(
-          getTextCase(sloganNameElement.text)
+          getTextCase(sloganNameElement.text),
         );
 
         const hasShadow = !!sloganNameElement?.shadow?.blur;
@@ -1843,7 +1894,7 @@ class EditorScreen {
 
       initCurveText();
       let percentage_ =
-        value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25),
+          value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25),
         angle = (percentage_ * 3.6).toFixed(0);
 
       querySelect("#curve-text").value = angle;
@@ -1883,7 +1934,7 @@ class EditorScreen {
       querySelect("#curve-text").dispatchEvent(new Event("change"));
     });
 
-    querySelect("#curve-text").addEventListener("change", function(e) {
+    querySelect("#curve-text").addEventListener("change", function (e) {
       self.canvas.requestRenderAll();
 
       let inp = e.target,
@@ -1956,9 +2007,9 @@ class EditorScreen {
       this.canvas.remove(obj);
       this.canvas.add(curvedText);
 
-      if (curvedText.text == querySelect("#logoMainField").value) {
+      if (curvedText.text.toLowerCase().includes(querySelect("#logoMainField").value.toLowerCase())) {
         logoNameElement = curvedText;
-      } else if (curvedText.text == querySelect("#sloganNameField").value) {
+      } else if (curvedText.text.toLowerCase().includes(querySelect("#sloganNameField").value.toLowerCase())) {
         sloganNameElement = curvedText;
       }
 
@@ -2096,11 +2147,11 @@ class EditorScreen {
 
     querySelect("#font_size_up").addEventListener(
       "click",
-      () => void arrowFontResizer("increment")
+      () => void arrowFontResizer("increment"),
     );
     querySelect("#font_size_down").addEventListener(
       "click",
-      () => void arrowFontResizer("decrement")
+      () => void arrowFontResizer("decrement"),
     );
 
     querySelect("#font_size_title").addEventListener("keydown", (event) => {
@@ -2148,7 +2199,7 @@ class EditorScreen {
       document.getElementById("magnifier_img").style.rotate = "180deg";
       this.canvas.zoomToPoint(
         new fabric.Point(this.canvas.width / 2, this.canvas.height / 2),
-        1 / this.zoomSlider.value
+        1 / this.zoomSlider.value,
       );
       this.canvas.requestRenderAll();
     });
@@ -2158,7 +2209,7 @@ class EditorScreen {
         layerEl = null;
       if (active.layerId)
         layerEl = document.querySelector(
-          `.layer-container[data-id="${active.layerId}"]`
+          `.layer-container[data-id="${active.layerId}"]`,
         );
 
       if (active.id.includes("external_layer_") && !active.text) {
@@ -2182,12 +2233,12 @@ class EditorScreen {
             object.dublicate = true;
             this.canvas.add(object);
             layerEl = document.querySelector(
-              `.layer-container[data-id="${active._objects[i].layerId}"]`
+              `.layer-container[data-id="${active._objects[i].layerId}"]`,
             );
 
             const layerSection = new CreateLayerSection(this.layers);
             let idx = Array.from(this.layers.childNodes).filter(
-              (i) => i.style.display !== "none"
+              (i) => i.style.display !== "none",
             );
             layerSection.create(object, idx.length, layerEl);
             refreshLayerNames();
@@ -2211,7 +2262,7 @@ class EditorScreen {
 
           const layerSection = new CreateLayerSection(this.layers);
           let idx = Array.from(this.layers.childNodes).filter(
-            (i) => i.style.display !== "none"
+            (i) => i.style.display !== "none",
           );
           layerSection.create(cloned, idx.length, layerEl);
           refreshLayerNames();
@@ -2240,7 +2291,7 @@ class EditorScreen {
 
             if (obj.layerId) {
               let layerEl = querySelect(
-                `.layer-container[data-id="${obj.layerId}"]`
+                `.layer-container[data-id="${obj.layerId}"]`,
               );
               layerEl.style.display = "none";
             }
@@ -2252,7 +2303,7 @@ class EditorScreen {
 
         if (activeObj.layerId) {
           let layerEl = querySelect(
-            `.layer-container[data-id="${activeObj.layerId}"]`
+            `.layer-container[data-id="${activeObj.layerId}"]`,
           );
           layerEl.style.display = "none";
         }
@@ -2290,14 +2341,14 @@ class EditorScreen {
               if (text == querySelect("#logoMainField").value) {
                 save = false;
                 return toastNotification(
-                  "Logo Name or Slogan can not be duplicated"
+                  "Logo Name or Slogan can not be duplicated",
                 );
               } else save = true;
 
               if (text == querySelect("#sloganNameField").value) {
                 save = false;
                 return toastNotification(
-                  "Logo Name or Slogan can not be duplicated"
+                  "Logo Name or Slogan can not be duplicated",
                 );
               } else save = true;
             }
@@ -2315,13 +2366,13 @@ class EditorScreen {
             if (text == querySelect("#logoMainField").value) {
               save = false;
               return toastNotification(
-                "Logo Name or Slogan can not be duplicated"
+                "Logo Name or Slogan can not be duplicated",
               );
             }
             if (text == querySelect("#sloganNameField").value) {
               save = false;
               return toastNotification(
-                "Logo Name or Slogan can not be duplicated"
+                "Logo Name or Slogan can not be duplicated",
               );
             }
           }
@@ -2414,8 +2465,11 @@ class EditorScreen {
 
     var bgGrad1, bgGrad2;
     const palleteComponent = querySelect("#bg-pallete");
-    palleteComponent.addEventListener("colorChanged", function(c) {
-      [bgGrad1, bgGrad2] = [c.target.querySelector("#grad-1").value, c.target.querySelector("#grad-2").value];
+    palleteComponent.addEventListener("colorChanged", function (c) {
+      [bgGrad1, bgGrad2] = [
+        c.target.querySelector("#grad-1").value,
+        c.target.querySelector("#grad-2").value,
+      ];
       updatePreview();
       this.canvas.save();
     });
@@ -2445,7 +2499,7 @@ class EditorScreen {
         setCanvasBackground();
         this.canvas.setBackgroundColor(
           "#eeeeee",
-          this.canvas.renderAll.bind(this.canvas)
+          this.canvas.renderAll.bind(this.canvas),
         );
         this.canvas.requestRenderAll();
       } else {
@@ -2453,9 +2507,8 @@ class EditorScreen {
       }
 
       this.canvas.backgroundColor = color;
-      querySelect(
-        ".color-palette-gradient"
-      ).style.background = `linear-gradient(${angleColor}, ${grad1Value}, ${grad2Value})`;
+      querySelect(".color-palette-gradient").style.background =
+        `linear-gradient(${angleColor}, ${grad1Value}, ${grad2Value})`;
 
       const rect = new fabric.Rect({
         left: 150,
@@ -2475,7 +2528,10 @@ class EditorScreen {
     var lGrad1, lGrad2;
     const logoPalleteComponent = querySelect("#logo-pallete");
     logoPalleteComponent.addEventListener("colorChanged", (c) => {
-      [lGrad1, lGrad2] = [c.target.querySelector("#grad-1").value, c.target.querySelector("#grad-2").value];
+      [lGrad1, lGrad2] = [
+        c.target.querySelector("#grad-1").value,
+        c.target.querySelector("#grad-2").value,
+      ];
       updatePreview();
       this.canvas.save();
     });
@@ -2515,24 +2571,49 @@ class EditorScreen {
     var tGrad1, tGrad2;
     const textPalleteComponent = querySelect("#text-pallete");
     textPalleteComponent.addEventListener("colorChanged", (c) => {
-      [tGrad1, tGrad2] = [c.target.querySelector("#grad-1").value, c.target.querySelector("#grad-2").value];
+      [tGrad1, tGrad2] = [
+        c.target.querySelector("#grad-1").value,
+        c.target.querySelector("#grad-2").value,
+      ];
       updatePreview();
       this.canvas.save();
     });
 
-    document.addEventListener('DOMContentLoaded', () => {
-      querySelect("#text-pallete .color-palette-gradient").addEventListener('click', () => {
-        const applyColor = new applyLinearGradient(this.canvas, tGrad1, tGrad2);
-        applyColor.setColor();
-      })
-      querySelect("#logo-pallete .color-palette-gradient").addEventListener('click', () => {
-        const applyColor = new applyLinearGradient(this.canvas, lGrad1, lGrad2);
-        applyColor.setColor();
-      })
-      querySelect("#bg-pallete .color-palette-gradient").addEventListener('click', () => {
-        const applyColor = new applyLinearGradient(this.canvas, bgGrad1, bgGrad2);
-        applyColor.setColor(true);
-      })
+    document.addEventListener("DOMContentLoaded", () => {
+      querySelect("#text-pallete .color-palette-gradient").addEventListener(
+        "click",
+        () => {
+          const applyColor = new applyLinearGradient(
+            this.canvas,
+            tGrad1,
+            tGrad2,
+          );
+          applyColor.setColor();
+        },
+      );
+      querySelect("#logo-pallete .color-palette-gradient").addEventListener(
+        "click",
+        () => {
+          const applyColor = new applyLinearGradient(
+            this.canvas,
+            lGrad1,
+            lGrad2,
+          );
+          applyColor.setColor();
+        },
+      );
+      querySelect("#bg-pallete .color-palette-gradient").addEventListener(
+        "click",
+        () => {
+          const applyColor = new applyLinearGradient(
+            this.canvas,
+            bgGrad1,
+            bgGrad2,
+          );
+          applyColor.setColor(true);
+          updatePreview();
+        },
+      );
     });
 
     textPalleteComponent.addEventListener("colorChange", (e) => {
@@ -2600,7 +2681,7 @@ class EditorScreen {
       setCanvasBackground();
       this.canvas.setBackgroundColor(
         this.canvasBG,
-        this.canvas.renderAll.bind(this.canvas)
+        this.canvas.renderAll.bind(this.canvas),
       );
       querySelect(".preview-modal-bg").style.display = "none";
     });
@@ -2610,7 +2691,7 @@ class EditorScreen {
         setCanvasBackground();
         this.canvas.setBackgroundColor(
           "#eee",
-          this.canvas.renderAll.bind(this.canvas)
+          this.canvas.renderAll.bind(this.canvas),
         );
         querySelect(".preview-modal-bg").style.display = "none";
       }
@@ -2738,14 +2819,14 @@ class EditorScreen {
               addCurveText(
                 logoNameElement,
                 data.brandCurveDiameter,
-                data.brand_curve_percentage
+                data.brand_curve_percentage,
               );
 
             if (data.sloganCurveDiameter)
               addCurveText(
                 sloganNameElement,
                 data.sloganCurveDiameter,
-                data.slogan_curve_percentage
+                data.slogan_curve_percentage,
               );
 
             const brandBlur = data?.brandNameDropShadow?.split(",")[0];
@@ -2830,7 +2911,7 @@ class EditorScreen {
 
         const svgImg = svgCreator(
           icon.icon_svg,
-          iconList[index].category.iconcategory_name
+          iconList[index].category.iconcategory_name,
         );
         svgImg.setAttribute("data-category", name);
         svgImg.setAttribute("data-id", id);
@@ -2939,13 +3020,13 @@ class EditorScreen {
         querySelect("#logo-shadow-offsetY-slider").value =
           this.logoShadowOffsetY;
         querySelect("#logo-shadow-blur-slider").dispatchEvent(
-          new Event("input")
+          new Event("input"),
         );
         querySelect("#logo-shadow-offsetX-slider").dispatchEvent(
-          new Event("input")
+          new Event("input"),
         );
         querySelect("#logo-shadow-offsetY-slider").dispatchEvent(
-          new Event("input")
+          new Event("input"),
         );
 
         if (active._objects) {
@@ -3405,17 +3486,17 @@ class EditorScreen {
 
     const solidTextColorEvent = () => {
       querySelect("#picker_color_text_mode").classList.remove(
-        "category_selected"
+        "category_selected",
       );
       querySelect("#solid_color_text_mode").classList.add("category_selected");
       querySelect("#solid_color_items_text").style.display = "flex";
       querySelect("#picker_color_items_text").style.display = "none";
       querySelect("#picker_color_text_mode").classList.remove(
-        "category_selected"
+        "category_selected",
       );
 
       querySelect("#linear_color_text_mode").classList.remove(
-        "category_selected"
+        "category_selected",
       );
       querySelect("#linear_color_items_text").style.display = "none";
       openPickerView = "none";
@@ -3425,10 +3506,10 @@ class EditorScreen {
 
     const linearTextColorEvent = () => {
       querySelect("#picker_color_text_mode").classList.remove(
-        "category_selected"
+        "category_selected",
       );
       querySelect("#solid_color_text_mode").classList.remove(
-        "category_selected"
+        "category_selected",
       );
       querySelect("#linear_color_text_mode").classList.add("category_selected");
       querySelect("#linear_color_items_text").style.display = "flex";
@@ -3447,10 +3528,10 @@ class EditorScreen {
       querySelect("#linear_color_items_text").style.display = "none";
 
       querySelect("#solid_color_text_mode").classList.remove(
-        "category_selected"
+        "category_selected",
       );
       querySelect("#linear_color_text_mode").classList.remove(
-        "category_selected"
+        "category_selected",
       );
 
       // querySelect(".tp-btn-apply").style.display = "none";
@@ -3487,13 +3568,13 @@ class EditorScreen {
 
     const solidTextColorEventBG = () => {
       querySelect("#picker_color_text_modeBG").classList.remove(
-        "category_selected"
+        "category_selected",
       );
       querySelect("#linear_color_text_modeBG").classList.remove(
-        "category_selected"
+        "category_selected",
       );
       querySelect("#solid_color_text_modeBG").classList.add(
-        "category_selected"
+        "category_selected",
       );
 
       querySelect("#bg_solid_color_items_text").style.display = "flex";
@@ -3510,13 +3591,13 @@ class EditorScreen {
       // querySelect(".tp-btn-applyBG").style.display = "none";
 
       querySelect("#solid_color_text_modeBG").classList.remove(
-        "category_selected"
+        "category_selected",
       );
       querySelect("#linear_color_text_modeBG").classList.remove(
-        "category_selected"
+        "category_selected",
       );
       querySelect("#picker_color_text_modeBG").classList.add(
-        "category_selected"
+        "category_selected",
       );
 
       querySelect("#bg_picker_color_items_text").style.marginTop = "8px";
@@ -3530,13 +3611,13 @@ class EditorScreen {
       // querySelect(".tp-btn-applyBG").style.display = "block";
 
       querySelect("#solid_color_text_modeBG").classList.remove(
-        "category_selected"
+        "category_selected",
       );
       querySelect("#picker_color_text_modeBG").classList.remove(
-        "category_selected"
+        "category_selected",
       );
       querySelect("#linear_color_text_modeBG").classList.add(
-        "category_selected"
+        "category_selected",
       );
 
       querySelect("#bg_picker_color_items_text").style.marginTop = "8px";
@@ -3615,7 +3696,7 @@ class EditorScreen {
       activeElement,
       element1,
       element2,
-      removeClasses = true
+      removeClasses = true,
     ) => {
       if (removeClasses)
         document
@@ -3623,17 +3704,17 @@ class EditorScreen {
           .forEach((i) => i.classList.remove("active"));
 
       querySelect(element1 + "_view_BG").classList.remove(
-        "color_mode_title-active"
+        "color_mode_title-active",
       );
       querySelect(element1 + "_view_BG").style.display = "none";
 
       querySelect(element2 + "_view_BG").classList.remove(
-        "color_mode_title-active"
+        "color_mode_title-active",
       );
       querySelect(element2 + "_view_BG").style.display = "none";
 
       querySelect(activeElement + "_view_BG").classList.add(
-        "color_mode_title-active"
+        "color_mode_title-active",
       );
       querySelect(activeElement + "_view_BG").style.display = "flex";
     };
@@ -3790,7 +3871,7 @@ class EditorScreen {
         });
 
         querySelect("#custom_text_colors_wrapper").append(newColor);
-      }
+      },
     );
 
     querySelect("#custom_bg_color_generator").addEventListener(
@@ -3833,7 +3914,7 @@ class EditorScreen {
         });
 
         querySelect("#custom_bg_colors_wrapper").append(newColor);
-      }
+      },
     );
 
     querySelectAll("#solid_color").forEach((item) => {
@@ -3936,7 +4017,7 @@ class EditorScreen {
             const hexColor = convertRGBtoHex(
               parseInt(rgbValues[0]),
               parseInt(rgbValues[1]),
-              parseInt(rgbValues[2])
+              parseInt(rgbValues[2]),
             );
             colPicker.setAttribute("value", hexColor);
           }
@@ -4002,17 +4083,17 @@ class EditorScreen {
 
     const handleColorModeClick = (activeElement, element1, element2) => {
       querySelect(element1 + "_view").classList.remove(
-        "color_mode_title-active"
+        "color_mode_title-active",
       );
       querySelect(element1 + "_view").style.display = "none";
 
       querySelect(element2 + "_view").classList.remove(
-        "color_mode_title-active"
+        "color_mode_title-active",
       );
       querySelect(element2 + "_view").style.display = "none";
 
       querySelect(activeElement + "_view").classList.add(
-        "color_mode_title-active"
+        "color_mode_title-active",
       );
       querySelect(activeElement + "_view").style.display = "flex";
     };
@@ -4080,11 +4161,11 @@ class EditorScreen {
           .getObjects()
           .filter(
             (i) =>
-              !i.text && !i?.dublicate && !i.id?.includes("external_layer_")
+              !i.text && !i?.dublicate && !i.id?.includes("external_layer_"),
           ),
         {
           canvas: this.canvas,
-        }
+        },
       );
 
       const { width, height } = selection;
@@ -4118,7 +4199,7 @@ class EditorScreen {
       });
 
       querySelect(`.svg__icon[data-align-id="${position}"]`).classList.add(
-        "active"
+        "active",
       );
 
       switch (position) {
@@ -4133,7 +4214,7 @@ class EditorScreen {
             false,
             canvas,
             logoNameElement,
-            sloganNameElement
+            sloganNameElement,
           );
           break;
         case "2":
@@ -4147,7 +4228,7 @@ class EditorScreen {
             false,
             canvas,
             logoNameElement,
-            sloganNameElement
+            sloganNameElement,
           );
           break;
         case "3":
@@ -4161,7 +4242,7 @@ class EditorScreen {
             false,
             canvas,
             logoNameElement,
-            sloganNameElement
+            sloganNameElement,
           );
           break;
         case "4":
@@ -4175,7 +4256,7 @@ class EditorScreen {
             false,
             canvas,
             logoNameElement,
-            sloganNameElement
+            sloganNameElement,
           );
           break;
         case "5":
@@ -4189,7 +4270,7 @@ class EditorScreen {
             false,
             canvas,
             logoNameElement,
-            sloganNameElement
+            sloganNameElement,
           );
           break;
         case "6":
@@ -4203,7 +4284,7 @@ class EditorScreen {
             false,
             canvas,
             logoNameElement,
-            sloganNameElement
+            sloganNameElement,
           );
           break;
         case "7":
@@ -4217,7 +4298,7 @@ class EditorScreen {
             false,
             canvas,
             logoNameElement,
-            sloganNameElement
+            sloganNameElement,
           );
           break;
         case "8":
@@ -4231,7 +4312,7 @@ class EditorScreen {
             false,
             canvas,
             logoNameElement,
-            sloganNameElement
+            sloganNameElement,
           );
           break;
         case "9":
@@ -4245,7 +4326,7 @@ class EditorScreen {
             false,
             canvas,
             logoNameElement,
-            sloganNameElement
+            sloganNameElement,
           );
           break;
         case "10":
@@ -4259,7 +4340,7 @@ class EditorScreen {
             false,
             canvas,
             logoNameElement,
-            sloganNameElement
+            sloganNameElement,
           );
           break;
         case "11":
@@ -4273,7 +4354,7 @@ class EditorScreen {
             false,
             canvas,
             logoNameElement,
-            sloganNameElement
+            sloganNameElement,
           );
           break;
         case "12":
@@ -4287,7 +4368,7 @@ class EditorScreen {
             false,
             canvas,
             logoNameElement,
-            sloganNameElement
+            sloganNameElement,
           );
           break;
         case "13":
@@ -4301,7 +4382,7 @@ class EditorScreen {
             true,
             canvas,
             logoNameElement,
-            sloganNameElement
+            sloganNameElement,
           );
           break;
         case "14":
@@ -4315,7 +4396,7 @@ class EditorScreen {
             true,
             canvas,
             logoNameElement,
-            sloganNameElement
+            sloganNameElement,
           );
           break;
         case "15":
@@ -4329,7 +4410,7 @@ class EditorScreen {
             true,
             canvas,
             logoNameElement,
-            sloganNameElement
+            sloganNameElement,
           );
           break;
 
@@ -4345,7 +4426,7 @@ class EditorScreen {
             false,
             canvas,
             logoNameElement,
-            sloganNameElement
+            sloganNameElement,
           );
           break;
       }
@@ -4366,11 +4447,11 @@ class EditorScreen {
       const apiCheckValue = querySelect("#api_check").value;
       if (apiCheckValue === "1") {
         response = await axios.get(
-          `https://www.mybrande.com/api/find/logo/${logoId}`
+          `https://www.mybrande.com/api/find/logo/${logoId}`,
         );
       } else {
         response = await axios.get(
-          `https://www.mybrande.com/api/find/logo/buyer/${logoId}`
+          `https://www.mybrande.com/api/find/logo/buyer/${logoId}`,
         );
       }
 
@@ -4416,7 +4497,7 @@ class EditorScreen {
         google: {
           families: fontFamilies,
         },
-        active: function() {
+        active: function () {
           logoNameElement.set("fontFamily", brandNameFamily);
           sloganNameElement.set("fontFamily", sloganFamily);
           self.canvas.renderAll();
@@ -4579,7 +4660,7 @@ class EditorScreen {
       }
     };
 
-    this.initMSList = function() {
+    this.initMSList = function () {
       let lists = document.querySelectorAll(".ms-select-list");
 
       lists.forEach((list) => {
@@ -4592,7 +4673,7 @@ class EditorScreen {
         menu.querySelectorAll("li").forEach((li) => {
           // Check if the li is already initialized
           if (li.classList.contains("initialized")) return true;
-          li.addEventListener("click", function(e) {
+          li.addEventListener("click", function (e) {
             e.stopPropagation();
             let value = this.getAttribute("value");
             let text = this.innerText;
@@ -4611,14 +4692,14 @@ class EditorScreen {
           li.classList.add("initialized");
         });
 
-        list.addEventListener("valueChange", function(e) {
+        list.addEventListener("valueChange", function (e) {
           e.stopPropagation();
 
           let value = this.getAttribute("data-value"),
             toggleBtn = this.querySelector(".ms-list-toggle");
 
           let text = this.querySelector(
-            `.ms-select-list-menu li[value="${value}"]`
+            `.ms-select-list-menu li[value="${value}"]`,
           );
           if (value == "undefined") {
             text = this.getAttribute("data-default-value");
@@ -4631,19 +4712,19 @@ class EditorScreen {
         if (list.classList.contains("initialized")) return true;
         list
           .querySelector(".ms-list-toggle")
-          .addEventListener("click", function(e) {
+          .addEventListener("click", function (e) {
             e.stopPropagation();
             let lists = document.querySelectorAll(".ms-select-list");
             let parent = this.parentElement;
             lists.forEach((item) =>
-              item != parent ? item.classList.remove("show") : item
+              item != parent ? item.classList.remove("show") : item,
             );
             parent.classList.toggle("show");
           });
         list.classList.add("initialized");
       });
 
-      document.onclick = function(e) {
+      document.onclick = function (e) {
         let target = e.target;
         if (
           !target.classList.contains("ms-select-list") &&
@@ -4683,7 +4764,7 @@ class EditorScreen {
     const loadFonts = async (items) => {
       const chunk = items.slice(
         currentFontIndex,
-        currentFontIndex + fontMaxCount
+        currentFontIndex + fontMaxCount,
       );
       currentFontIndex += fontMaxCount;
 
@@ -4716,12 +4797,12 @@ class EditorScreen {
     const unloadFonts = (items) => {
       const itemsToRemove = items.slice(
         currentFontIndex - fontMaxCount,
-        currentFontIndex
+        currentFontIndex,
       );
       for (const item of itemsToRemove) {
         const { family } = item;
         const fontListItem = fontListMenu.querySelector(
-          `li[value="${family}"]`
+          `li[value="${family}"]`,
         );
         if (fontListItem) {
           fontListMenu.removeChild(fontListItem);
@@ -4744,7 +4825,7 @@ class EditorScreen {
             unloadFonts(fontItems);
           }
         }),
-        150
+        150,
       );
     })();
 
@@ -4758,7 +4839,7 @@ class EditorScreen {
       };
     };
 
-    const fontLiveSearch = function(element) {
+    const fontLiveSearch = function (element) {
       let val = element.value.toLowerCase(),
         fontList = querySelect("#font-family-con .collection");
 
@@ -4798,14 +4879,14 @@ class EditorScreen {
           google: {
             families: filteredFonts,
           },
-          active: function() { },
+          active: function () {},
         });
-      } catch (err) { }
+      } catch (err) {}
       fontList.innerHTML = liItems;
       this.initMSList();
     };
 
-    document.addEventListener("keyup", function(event) {
+    document.addEventListener("keyup", function (event) {
       if (event.target.classList.contains("live-search")) {
         fontLiveSearch(event.target);
       }
