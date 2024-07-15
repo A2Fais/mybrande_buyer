@@ -8,7 +8,6 @@ import WebFont from "webfontloader";
 import axios from "axios";
 import {
   rgbToHex,
-  convertRGBtoHex,
   hexToHsl,
   hexToRgb,
   rgbaToHex,
@@ -19,10 +18,8 @@ import { centerAndResizeElements } from "./center_resize";
 import SaveHistory from "./SaveHistory.js";
 import { curvedText } from "./curved_text.js";
 import { applyLinearGradient } from "./apply_linear_grad.js";
-
-const querySelect = (element) => document.querySelector(element);
-const querySelectAll = (element) => document.querySelectorAll(element);
-const getAttr = (element, attr) => querySelect(element).getAttribute(attr);
+import { bgColorAction, solidColorAction, solidColorTextAction, updateColorPickers, updateColorTextPickers } from "./color_events.js";
+import { getAttr, querySelect, querySelectAll } from "./selectors.js";
 
 fabric.CurvedText = curvedText;
 
@@ -352,7 +349,7 @@ class EditorScreen {
     this.canvas.requestRenderAll();
 
     function resizeCanvas() {
-      self.canvas.setHeight(window.innerHeight / 2);
+      self.canvas.setHeight(window.innerHeight / 1.8);
       self.canvas.setWidth(window.innerWidth / 2);
       self.canvas.renderAll();
     }
@@ -2005,9 +2002,17 @@ class EditorScreen {
       this.canvas.remove(obj);
       this.canvas.add(curvedText);
 
-      if (curvedText.text.toLowerCase().includes(querySelect("#logoMainField").value.toLowerCase())) {
+      if (
+        curvedText.text
+          .toLowerCase()
+          .includes(querySelect("#logoMainField").value.toLowerCase())
+      ) {
         logoNameElement = curvedText;
-      } else if (curvedText.text.toLowerCase().includes(querySelect("#sloganNameField").value.toLowerCase())) {
+      } else if (
+        curvedText.text
+          .toLowerCase()
+          .includes(querySelect("#sloganNameField").value.toLowerCase())
+      ) {
         sloganNameElement = curvedText;
       }
 
@@ -3187,85 +3192,7 @@ class EditorScreen {
     const solidColorTextMode = querySelect("#solid_color_text_mode");
     const linearColorTextMode = querySelect("#linear_color_text_mode");
     const pickerColorTextMode = querySelect("#picker_color_text_mode");
-
-    const getParsedColor = (color) => {
-      if (color && typeof color === "string") {
-        if (color?.includes("#")) {
-          return color;
-        } else if (color && color.colorStops) {
-          return rgbToHex(color?.colorStops[0]?.color);
-        } else {
-          return rgbToHex(color);
-        }
-      }
-    };
-
-    const updateColorPickers = () => {
-      for (let i = 0; i <= 1; i++) {
-        let colorSet = new Set();
-        const colorPalette = querySelectAll("#logo_colors_pallete")[i];
-
-        canvasObjects.forEach((item) => {
-          let itemFill = item.get("fill");
-          const colPicker = document.createElement("div");
-
-          if (getParsedColor(itemFill) !== undefined) {
-            let color = getParsedColor(itemFill);
-            color = color.padEnd(7, "0");
-
-            if (!colorSet.has(color)) {
-              colorSet.add(color);
-              colPicker.setAttribute("id", "color-layers-pickers");
-
-              colPicker.style.background = itemFill;
-              colPicker.className = "color-picker";
-              colPicker.style.borderRadius = "5px";
-              colorPalette.append(colPicker);
-              if (color.includes("#ffffff")) {
-                colPicker.style.border = "1px solid #aaaaaa";
-              }
-            }
-            colPicker.addEventListener("click", (event) => {
-              const color = rgbToHex(event.target.style.backgroundColor);
-              const activeElem = this.canvas.getActiveObject();
-
-              if (activeElem && activeElem._objects)
-                activeElem._objects.forEach((obj) => {
-                  obj.set("fill", color);
-                  // console.log(obj);
-                });
-
-              activeElem.set("fill", color);
-              colorPicker.color.set(color);
-              querySelect("#HEX").value = color;
-
-              let rgbValue = hexToRgb(color);
-              let rgbValues = rgbValue.match(/\d+/g);
-
-              if (rgbValues && rgbValues.length === 3) {
-                querySelect("#R").value = rgbValues[0];
-                querySelect("#G").value = rgbValues[1];
-                querySelect("#B").value = rgbValues[2];
-              }
-              let hslValue = hexToHsl(color);
-              let hslValues = hslValue.match(/\d+/g);
-
-              if (hslValues && hslValues.length === 3) {
-                querySelect("#H").value = hslValues[0];
-                querySelect("#S").value = hslValues[1];
-                querySelect("#L").value = hslValues[2];
-              }
-              this.canvas.renderAll();
-              updatePreview();
-              if (activeElem) this.canvas.save();
-            });
-          }
-        });
-      }
-      captureCanvasState();
-    };
-
-    updateColorPickers();
+    updateColorPickers(this.canvas, colorPicker);
 
     colorPicker.on("color:init", (color) => {
       color.set(pickerDefaultColor);
@@ -3796,8 +3723,9 @@ class EditorScreen {
 
       newColor.addEventListener("click", () => {
         const activeObj = this.canvas.getActiveObject();
-        if (activeObj._objects)
+        if (activeObj._objects) {
           activeObj._objects.forEach((i) => i.set("fill", color));
+        }
         activeObj.set("fill", color);
         colorPicker.color.set(color);
         querySelect("#HEX").value = color;
@@ -3916,125 +3844,26 @@ class EditorScreen {
     );
 
     querySelectAll("#solid_color").forEach((item) => {
-      item.addEventListener("click", (event) => {
-        if (this.canvas) {
-          const activeObj = this.canvas.getActiveObject();
-          if (activeObj) {
-            const bgColor = event.target.style.backgroundColor;
-            const match = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(bgColor);
-            if (match) {
-              const green = parseInt(match[2]);
-              const red = parseInt(match[1]);
-              const blue = parseInt(match[3]);
-              const hexColor = convertRGBtoHex(red, green, blue);
-              if (activeObj._objects) {
-                activeObj._objects.forEach((i) => {
-                  i.set("fill", hexColor);
-                });
-              }
-              activeObj.set("fill", hexColor);
-              colorPicker.color.set(hexColor);
-
-              const logoColorPickers = querySelectAll("#color-layers-pickers");
-              logoColorPickers.forEach((i) => i.remove());
-              updateColorPickers();
-              this.canvas.renderAll();
-              updatePreview();
-              captureCanvasState();
-              this.canvas.save();
-            }
-          }
-        }
-      });
+      solidColorAction(
+        item,
+        this.canvas,
+        colorPicker,
+        updatePreview,
+      );
     });
 
     querySelectAll("#solid_color_text").forEach((item) => {
-      item.addEventListener("click", (event) => {
-        if (this.canvas) {
-          const activeObj = this.canvas.getActiveObject();
-          if (activeObj) {
-            const bgColor = event.target.style.backgroundColor;
-            const match = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(bgColor);
-            if (match) {
-              const red = parseInt(match[1]);
-              const green = parseInt(match[2]);
-              const blue = parseInt(match[3]);
-              const hexColor = convertRGBtoHex(red, green, blue);
-              activeObj.set("fill", hexColor);
-              colorPickerText.color.set(hexColor);
-              this.canvas.renderAll();
-              updatePreview();
-              captureCanvasState();
-              this.canvas.save();
-              changeColorPickerText(colorPickerText.color);
-            }
-          }
-        }
-      });
+      if (this.canvas.getActiveObject()) {
+        solidColorTextAction(item, this.canvas, colorPickerText, updatePreview);
+        changeColorPickerText(colorPickerText.color);
+      }
     });
 
     querySelectAll("#solid_color-bg").forEach((item) => {
-      item.addEventListener("click", (event) => {
-        if (this.canvas) {
-          const bgColor = event.target.style.backgroundColor;
-          const match = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(bgColor);
-          if (match) {
-            const red = parseInt(match[1]);
-            const green = parseInt(match[2]);
-            const blue = parseInt(match[3]);
-            const hexColor = convertRGBtoHex(red, green, blue);
-            this.canvas.setBackgroundColor(hexColor);
-
-            const logoColorPickers = querySelectAll("#color-layers-pickers");
-            logoColorPickers.forEach((i) => i.remove());
-            updateColorPickers();
-            this.canvas.renderAll();
-            captureCanvasState();
-            this.canvas.save();
-          }
-          updatePreview();
-        }
-      });
+      bgColorAction(item, this.canvas, updatePreview)
     });
 
-    const updateColorTextPickers = () => {
-      let itemFill, colPicker;
-      canvasObjects.forEach((item) => {
-        itemFill = item.get("fill");
-
-        colPicker = document.createElement("input");
-        colPicker.setAttribute("id", "color-layers-pickers");
-        colPicker.setAttribute("type", "color");
-
-        if (typeof itemFill === "string") {
-          colPicker.setAttribute("value", itemFill);
-        } else {
-          const gradientColor = itemFill.colorStops[0].color;
-          const rgbValues = gradientColor.match(/\d+/g);
-          if (rgbValues && rgbValues.length === 3) {
-            const hexColor = convertRGBtoHex(
-              parseInt(rgbValues[0]),
-              parseInt(rgbValues[1]),
-              parseInt(rgbValues[2]),
-            );
-            colPicker.setAttribute("value", hexColor);
-          }
-        }
-
-        colPicker.className = "color-picker";
-        colPicker.style.borderRadius = "5px";
-
-        colPicker.addEventListener("input", (event) => {
-          const color = event.target.value;
-          item.set("fill", color);
-          this.canvas.requestRenderAll();
-        });
-      });
-      captureCanvasState();
-      updatePreview();
-    };
-
-    updateColorTextPickers();
+    updateColorTextPickers(this.canvas, updatePreview);
 
     colorPickerText.on("color:init", (color) => {
       color.set(pickerDefaultColor);
