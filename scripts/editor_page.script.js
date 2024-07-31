@@ -3228,7 +3228,7 @@ class EditorScreen {
 
       const logoColorPickers = querySelectAll("#color-layers-pickers");
       logoColorPickers.forEach((i) => i.remove());
-      updateColorPickers();
+      updateColorPickers(this.canvas, colorPicker);
       this.canvas.requestRenderAll();
       colorChanging = false;
     });
@@ -3852,23 +3852,6 @@ class EditorScreen {
       );
     });
 
-    querySelectAll("#solid_color_text").forEach((item) => {
-      if (this.canvas.getActiveObject()) {
-        solidColorTextAction(item, this.canvas, colorPickerText, updatePreview);
-        changeColorPickerText(colorPickerText.color);
-      }
-    });
-
-    querySelectAll("#solid_color-bg").forEach((item) => {
-      bgColorAction(item, this.canvas, updatePreview)
-    });
-
-    updateColorTextPickers(this.canvas, updatePreview);
-
-    colorPickerText.on("color:init", (color) => {
-      color.set(pickerDefaultColor);
-    });
-
     const changeColorPickerText = (color) => {
       pickerDefaultColor = color.rgbaString;
 
@@ -3898,14 +3881,30 @@ class EditorScreen {
 
       const logoColorPickers = querySelectAll("#color-layers-pickers");
       logoColorPickers.forEach((i) => i.remove());
-      updateColorPickers();
+      updateColorPickers(this.canvas, colorPicker);
       this.canvas.requestRenderAll();
     };
+
     colorPickerText.on("input:change", changeColorPickerText);
     colorPickerText.on("input:move", changeColorPickerText);
     colorPickerText.on("input:end", () => {
       updatePreview();
       this.canvas.save();
+    });
+
+    querySelectAll("#solid_color_text").forEach((item) => {
+        solidColorTextAction(item, this.canvas, colorPickerText, updatePreview);
+        changeColorPickerText(colorPickerText.color);
+    });
+
+    querySelectAll("#solid_color-bg").forEach((item) => {
+      bgColorAction(item, this.canvas, updatePreview)
+    });
+
+    updateColorTextPickers(this.canvas, updatePreview);
+
+    colorPickerText.on("color:init", (color) => {
+      color.set(pickerDefaultColor);
     });
 
     const handleColorModeClick = (activeElement, element1, element2) => {
@@ -4286,7 +4285,7 @@ class EditorScreen {
 
       const bg = responseData?.logo_backgroundcolor;
       logoPosition = responseData?.logo_position;
-      const svgData = responseData?.svg_data;
+      const svgData = responseData?.editor_svg_data;
       const brandCharSpacing = responseData?.brandName_letterSpace;
       const sloganCharSpacing = responseData?.slogan_letterSpace;
       const brandStyle = responseData?.brandName_fontStyle;

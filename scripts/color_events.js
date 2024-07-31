@@ -1,4 +1,9 @@
-import { convertRGBtoHex, hexToHsl, hexToRgb, rgbToHex } from "./color_converter";
+import {
+  convertRGBtoHex,
+  hexToHsl,
+  hexToRgb,
+  rgbToHex,
+} from "./color_converter";
 import { querySelect, querySelectAll } from "./selectors";
 
 export const getParsedColor = (color) => {
@@ -18,6 +23,7 @@ export function updateColorPickers(canvas, colorPicker) {
     let colorSet = new Set();
     const colorPalette = querySelectAll("#logo_colors_pallete")[i];
     const canvasObjects = canvas?.getObjects();
+    if (!canvasObjects) return;
     canvasObjects?.forEach((item) => {
       let itemFill = item.get("fill");
       const colPicker = document.createElement("div");
@@ -45,7 +51,6 @@ export function updateColorPickers(canvas, colorPicker) {
           if (activeElem && activeElem._objects)
             activeElem._objects.forEach((obj) => {
               obj.set("fill", color);
-              // console.log(obj);
             });
 
           activeElem.set("fill", color);
@@ -113,49 +118,48 @@ export function updateColorTextPickers(canvas, updatePreview) {
   updatePreview();
 }
 export function solidColorAction(item, canvas, colorPicker, updatePreview) {
+  if (!canvas) return;
   item.addEventListener("click", (event) => {
-    if (canvas) {
-      const activeObj = canvas.getActiveObject();
-      if (activeObj) {
-        const bgColor = event.target.style.backgroundColor;
-        const match = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(bgColor);
-        if (match) {
-          const green = parseInt(match[2]);
-          const red = parseInt(match[1]);
-          const blue = parseInt(match[3]);
-          const hexColor = convertRGBtoHex(red, green, blue);
-          if (activeObj._objects) {
-            activeObj._objects.forEach((i) => {
-              i.set("fill", hexColor);
-            });
-          }
-          activeObj.set("fill", hexColor);
-          colorPicker.color.set(hexColor);
-          querySelect("#HEX").value = hexColor;
-          const hslValue = hexToHsl(hexColor);
-          const hslValues = hslValue.match(/\d+/g);
-
-          if (hslValues && hslValues.length === 3) {
-            querySelect("#H").value = hslValues[0];
-            querySelect("#S").value = hslValues[1];
-            querySelect("#L").value = hslValues[2];
-          }
-          const rgbValue = hexToRgb(hexColor);
-          const rgbValues = rgbValue.match(/\d+/g);
-
-          if (rgbValues && rgbValues.length === 3) {
-            querySelect("#R").value = rgbValues[0];
-            querySelect("#G").value = rgbValues[1];
-            querySelect("#B").value = rgbValues[2];
-          }
-
-          const logoColorPickers = querySelectAll("#color-layers-pickers");
-          logoColorPickers.forEach((i) => i.remove());
-          updateColorPickers();
-          canvas.renderAll();
-          updatePreview();
-          canvas.save();
+    const activeObj = canvas.getActiveObject();
+    if (activeObj) {
+      const bgColor = event.target.style.backgroundColor;
+      const match = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(bgColor);
+      if (match) {
+        const green = parseInt(match[2]);
+        const red = parseInt(match[1]);
+        const blue = parseInt(match[3]);
+        const hexColor = convertRGBtoHex(red, green, blue);
+        if (activeObj._objects) {
+          activeObj._objects.forEach((i) => {
+            i.set("fill", hexColor);
+          });
         }
+        activeObj.set("fill", hexColor);
+        colorPicker.color.set(hexColor);
+        querySelect("#HEX").value = hexColor;
+        const hslValue = hexToHsl(hexColor);
+        const hslValues = hslValue.match(/\d+/g);
+
+        if (hslValues && hslValues.length === 3) {
+          querySelect("#H").value = hslValues[0];
+          querySelect("#S").value = hslValues[1];
+          querySelect("#L").value = hslValues[2];
+        }
+        const rgbValue = hexToRgb(hexColor);
+        const rgbValues = rgbValue.match(/\d+/g);
+
+        if (rgbValues && rgbValues.length === 3) {
+          querySelect("#R").value = rgbValues[0];
+          querySelect("#G").value = rgbValues[1];
+          querySelect("#B").value = rgbValues[2];
+        }
+
+        const logoColorPickers = querySelectAll("#color-layers-pickers");
+        logoColorPickers.forEach((i) => i.remove());
+        updateColorPickers(canvas, updatePreview);
+        canvas.renderAll();
+        updatePreview();
+        canvas.save();
       }
     }
   });
@@ -197,9 +201,11 @@ export function solidColorTextAction(
             querySelect("#G2").value = rgbValues[1];
             querySelect("#B2").value = rgbValues[2];
           }
+          const ColorPickers = querySelectAll("#color-layers-pickers");
+          ColorPickers.forEach((i) => i.remove());
+          updateColorPickers(canvas, updatePreview);
           canvas.renderAll();
           updatePreview();
-          captureCanvasState();
           canvas.save();
         }
       }
@@ -238,7 +244,7 @@ export function bgColorAction(item, canvas, updatePreview) {
 
         const logoColorPickers = querySelectAll("#color-layers-pickers");
         logoColorPickers.forEach((i) => i.remove());
-        updateColorPickers();
+        updateColorPickers(canvas, updatePreview);
         canvas.renderAll();
         canvas.save();
       }
