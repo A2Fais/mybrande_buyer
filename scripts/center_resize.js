@@ -1,9 +1,10 @@
 const querySelect = (element) => document.querySelector(element);
 
 const getCurveAngle = (logoNameElement) => {
-  const value = logoNameElement.get("diameter");
+  const diameter = logoNameElement.get("diameter");
   const per = logoNameElement.get("percentage");
-  let percentage = value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
+  let percentage =
+    diameter >= 2500 ? (diameter - 2500) / 25 : -((2500 - diameter) / 25);
   let angle = (percentage * 3.6).toFixed(0);
   const isPositiveOpening = per < 0 ? false : true;
   return { angle, percentage, isPositiveOpening };
@@ -26,21 +27,19 @@ export const centerAndResizeElements = (
     .filter((i) => !i.id?.includes("external_layer_") && !i?.dublicate);
   logoNameElement.charSpacing = 0;
   sloganNameElement.charSpacing = 0;
-  const logoMain = objects.filter(
-    (i) =>
-      !i?.dublicate &&
-      !i.text &&
-      !i.id?.includes("external_layer_") &&
-      !i.id?.includes("Layer_1"),
-  );
-
-  const timeout = 2;
+  const timeout = 5;
 
   const toTitleCase = (str) => {
     return str.replace(
       /\w\S*/g,
       (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(),
     );
+  };
+
+  const centerHorizontally = (...elements) => {
+    elements.forEach((element) => {
+      element.centerH();
+    });
   };
 
   const toSentenceCase = (str) => {
@@ -52,150 +51,153 @@ export const centerAndResizeElements = (
     return stack.join("");
   };
 
+  const logo = objects.find(
+    (obj) =>
+      (obj.type === "text" || obj.type === "curved-text") &&
+      obj.text.toLowerCase() ===
+        querySelect("#logoMainField").value.toLowerCase(),
+  );
+
+  const slogan = objects.find(
+    (obj) =>
+      (obj.type === "text" || obj.type === "curved-text") &&
+      obj.text.toLowerCase() ===
+        querySelect("#sloganNameField").value.toLowerCase(),
+  );
+
   switch (type) {
     case "topBottom":
       setTimeout(() => {
-        const logoNameElement = objects.find(
-          (obj) =>
-            obj.type === "text" ||
-            (obj.type === "curved-text" &&
-              obj.text.toLowerCase() ===
-                querySelect("#logoMainField").value.toLowerCase()),
-        );
+        const logoNameElement = logo;
+        const sloganNameElement = slogan;
+
         const { angle, isPositiveOpening } = getCurveAngle(logoNameElement);
-        console.log(angle);
-        const sloganNameElement = objects.find(
-          (obj) =>
-            obj.type === "text" &&
-            obj.text.toLowerCase() ===
-              querySelect("#sloganNameField").value.toLowerCase(),
-        );
 
-        logoNameElement?.set("fontSize", logoSize);
-        sloganNameElement?.set("fontSize", sloganSize);
+        logoNameElement.set("fontSize", logoSize);
+        sloganNameElement.set("fontSize", sloganSize);
 
-        logoNameElement?.set("charSpacing", 0);
-        sloganNameElement?.set("charSpacing", 0);
+        canvas.renderAll();
 
-        logoNameElement?.centerH();
-        sloganNameElement?.centerH();
+        const logoTopPosition = canvas.height / logoNameTop;
+        const sloganTopPosition = canvas.height / sloganTop;
 
-        logoNameElement?.set("top", canvas.height / logoNameTop);
-        sloganNameElement?.set("top", canvas.height / sloganTop);
+        logoNameElement.set("top", logoTopPosition);
+        sloganNameElement.set("top", sloganTopPosition);
+
+        logoNameElement.set("charSpacing", 0);
+        sloganNameElement.set("charSpacing", 0);
+        canvas.renderAll();
 
         if (letterSpaced) {
           logoNameElement.text = toTitleCase(logoNameElement.text);
           sloganNameElement.text = toSentenceCase(sloganNameElement.text);
 
-          logoNameElement?.set("fontFamily", "Poppins");
-          sloganNameElement?.set("fontFamily", "Poppins");
+          logoNameElement.set("fontFamily", "Poppins");
+          sloganNameElement.set("fontFamily", "Poppins");
 
           const logoNameWidth = logoNameElement.width;
-          sloganNameElement?.set("width", logoNameWidth);
+          sloganNameElement.set("width", logoNameWidth);
 
-          sloganNameElement?.set("charSpacing", 322);
-          sloganNameElement?.set("fontSize", 27);
+          sloganNameElement.set("charSpacing", 322);
+          sloganNameElement.set("fontSize", 27);
+          canvas.renderAll();
 
-          logoNameElement?.set("top", (logoNameElement.top += 20));
-          sloganNameElement?.set("top", (sloganNameElement.top += 20));
+          logoNameElement.set("top", (logoNameElement.top += 20));
+          sloganNameElement.set("top", (sloganNameElement.top += 20));
         }
 
-        const bottomPosition = logoNameElement.top + logoNameElement.height;
-        if (parseInt(angle)) {
+        const bottomPosition = logoNameElement?.top + logoNameElement?.height;
+        const parsedAngle = angle && parseInt(angle);
+        if (parsedAngle) {
           sloganNameElement.set("fontSize", 30);
-          if (parseInt(angle) < -180) {
-            console.log("FALLING IN THIS CONDITION < -180");
+          canvas.renderAll();
+
+          if (parsedAngle < -180) {
             if (isPositiveOpening) {
               sloganNameElement.set("top", bottomPosition);
             } else {
-              logoNameElement.set("top", logoNameElement.get("top") - 140);
-              sloganNameElement.set("top", bottomPosition - 100);
+              const top = logoTopPosition - 140;
+              top && logoNameElement.set("top", top);
+              bottomPosition &&
+                sloganNameElement.set("top", bottomPosition - 100);
             }
-          } else if (parseInt(angle) < -200) {
-            console.log("FALLING IN THIS CONDITION < -200");
-            logoNameElement.set("top", logoNameElement.get("top") - 200);
-            sloganNameElement.set("top", bottomPosition);
-          } else if (parseInt(angle) > -180) {
+          } else if (parsedAngle > -180) {
             sloganNameElement.set("top", bottomPosition);
             if (!isPositiveOpening) {
-              logoNameElement.set("top", logoNameElement.get("top") - 80);
-              sloganNameElement.set("top", bottomPosition - 50);
+              const top = logoTopPosition - 80;
+              top && logoNameElement.set("top", top);
+              bottomPosition &&
+                sloganNameElement.set("top", bottomPosition - 50);
             }
           }
         }
 
-        logoNameElement.centerH();
-        sloganNameElement.centerH();
-
+        centerHorizontally(logoNameElement, sloganNameElement);
         const newGrp = new fabric.Group(objects);
         canvas.viewportCenterObject(newGrp);
         newGrp.ungroupOnCanvas();
         canvas.renderAll();
-        // this.logoOrientation = 'vertical';
       }, timeout);
       break;
     case "bottomTop":
       setTimeout(() => {
-        const logoNameElement = objects.find(
-          (obj) =>
-            obj.type === "text" ||
-            (obj.type === "curved-text" &&
-              obj.text.toLowerCase() ===
-                querySelect("#logoMainField").value.toLowerCase()),
-        );
-
-        const sloganNameElement = objects.find(
-          (obj) =>
-            obj.type === "text" &&
-            obj.text.toLowerCase() ===
-              querySelect("#sloganNameField").value.toLowerCase(),
-        );
+        const logoNameElement = logo;
+        const sloganNameElement = slogan;
 
         const { angle, isPositiveOpening } = getCurveAngle(logoNameElement);
         logoNameElement.set("fontSize", logoSize);
         sloganNameElement.set("fontSize", sloganSize);
+        canvas.renderAll();
 
-        logoNameElement.centerH();
-        sloganNameElement.centerH();
+        centerHorizontally(logoNameElement, sloganNameElement);
 
-        logoNameElement.set("top", canvas.height / logoNameTop);
-        sloganNameElement.set("top", canvas.height / sloganTop);
+        const logoTopPosition = canvas.height / logoNameTop;
+        const sloganTopPosition = canvas.height / sloganTop;
+        logoNameElement.set("top", logoTopPosition);
+        sloganNameElement.set("top", sloganTopPosition);
 
-        if (parseInt(angle)) {
+        const parsedAngle = angle && parseInt(angle);
+
+        if (parsedAngle) {
           sloganNameElement.set("fontSize", 30);
-          if (!isPositiveOpening) {
-            logoNameElement.set("top", canvas.height / logoNameTop - 170);
-            sloganNameElement.set("top", sloganNameElement.get("top") - 30);
-          } else {
-            logoNameElement.set("top", logoNameElement.get("top") - 30);
-            sloganNameElement.set("top", sloganNameElement.get("top") + 15);
+          const bottomPosition = logoNameElement?.top + logoNameElement?.height;
+          if (parsedAngle < -260) {
+            console.log("LESS 260");
+            logoNameElement.set("fontSize", 44);
+            canvas.renderAll();
+            logoNameElement.set("top", logoTopPosition - 310);
+            sloganNameElement.set("top", bottomPosition - 300);
+          } else if (parsedAngle < -180) {
+            if (!isPositiveOpening) {
+              logoNameElement.set("top", logoTopPosition - 170);
+              sloganNameElement.set("top", sloganTopPosition - 30);
+            } else {
+              logoNameElement.set("top", logoTopPosition - 200);
+              sloganNameElement.set("top", bottomPosition - 200);
+            }
+          } else if (parsedAngle > -180) {
+            console.log("GREATER THAN -180");
+            if (!isPositiveOpening) {
+              logoNameElement.set("top", logoTopPosition - 130);
+              sloganNameElement.set("top", sloganTopPosition - 15);
+            } else {
+              logoNameElement.set("top", logoTopPosition - 30);
+              sloganNameElement.set("top", sloganTopPosition + 30);
+            }
           }
-          sloganNameElement.centerH();
+          centerHorizontally(sloganNameElement);
         }
 
         const newGrp = new fabric.Group(objects);
         canvas.viewportCenterObject(newGrp);
         newGrp.ungroupOnCanvas();
         canvas.renderAll();
-        // this.logoOrientation = 'vertical';
       }, timeout);
       break;
     case "leftRight":
       setTimeout(() => {
-        const logoNameElement = objects.find(
-          (obj) =>
-            obj.type === "text" ||
-            (obj.type === "curved-text" &&
-              obj.text.toLowerCase() ===
-                querySelect("#logoMainField").value.toLowerCase()),
-        );
-
-        const sloganNameElement = objects.find(
-          (obj) =>
-            obj.type === "text" &&
-            obj.text.toLowerCase() ===
-              querySelect("#sloganNameField").value.toLowerCase(),
-        );
+        const logoNameElement = logo;
+        const sloganNameElement = slogan;
 
         logoNameElement.center();
         sloganNameElement.center();
@@ -208,6 +210,7 @@ export const centerAndResizeElements = (
 
         logoNameElement.set("charSpacing", 0);
         sloganNameElement.set("charSpacing", 0);
+        canvas.renderAll();
 
         if (textPosition === "left") {
           logoNameElement.viewportCenter();
@@ -263,6 +266,7 @@ export const centerAndResizeElements = (
 
           sloganNameElement.set("charSpacing", 322);
           sloganNameElement.set("fontSize", 27);
+          canvas.renderAll();
 
           logoNameElement.set("left", canvas.width / 1.6);
           sloganNameElement.set("left", logoNameElement.left);
@@ -289,25 +293,12 @@ export const centerAndResizeElements = (
         canvas.viewportCenterObjectV(newGrp);
         newGrp.ungroupOnCanvas();
         canvas.requestRenderAll();
-        // this.logoOrientation = 'horizontal';
       }, timeout);
       break;
     case "rightLeft":
       setTimeout(() => {
-        const logoNameElement = objects.find(
-          (obj) =>
-            obj.type === "text" ||
-            (obj.type === "curved-text" &&
-              obj.text.toLowerCase() ===
-                querySelect("#logoMainField").value.toLowerCase()),
-        );
-
-        const sloganNameElement = objects.find(
-          (obj) =>
-            obj.type === "text" &&
-            obj.text.toLowerCase() ===
-              querySelect("#sloganNameField").value.toLowerCase(),
-        );
+        const logoNameElement = logo;
+        const sloganNameElement = slogan;
 
         logoNameElement.center();
         sloganNameElement.center();
@@ -320,6 +311,7 @@ export const centerAndResizeElements = (
 
         logoNameElement.set("charSpacing", 0);
         sloganNameElement.set("charSpacing", 0);
+        canvas.renderAll();
 
         if (textPosition === "left") {
           logoNameElement.viewportCenter();
@@ -371,6 +363,7 @@ export const centerAndResizeElements = (
 
             sloganNameElement.set("charSpacing", 322);
             sloganNameElement.set("fontSize", 27);
+            canvas.renderAll();
 
             const logoNameWidth = logoNameElement.width;
             sloganNameElement?.set("width", logoNameWidth);
@@ -471,10 +464,7 @@ export const centerAndResizeElements = (
         canvas.viewportCenterObjectV(newGrp);
         newGrp.ungroupOnCanvas();
         canvas.requestRenderAll();
-        // this.logoOrientation = 'horizontal';
       }, timeout);
       break;
   }
-  // captureCanvasState();
-  canvas.renderAll();
 };

@@ -6,19 +6,20 @@ import "alwan/dist/css/alwan.min.css";
 import iro from "@jaames/iro";
 import WebFont from "webfontloader";
 import axios from "axios";
-import {
-  rgbToHex,
-  hexToHsl,
-  hexToRgb,
-  rgbaToHex,
-} from "./color_converter";
+import { rgbToHex, hexToHsl, hexToRgb, rgbaToHex } from "./color_converter";
 import { rotateReset } from "./rotate_reset";
 import { saveCanvas } from "./save_canvas";
 import { centerAndResizeElements } from "./center_resize";
 import SaveHistory from "./SaveHistory.js";
 import { curvedText } from "./curved_text.js";
 import { applyLinearGradient } from "./apply_linear_grad.js";
-import { bgColorAction, solidColorAction, solidColorTextAction, updateColorPickers, updateColorTextPickers } from "./color_events.js";
+import {
+  bgColorAction,
+  solidColorAction,
+  solidColorTextAction,
+  updateColorPickers,
+  updateColorTextPickers,
+} from "./color_events.js";
 import { getAttr, querySelect, querySelectAll } from "./selectors.js";
 
 fabric.CurvedText = curvedText;
@@ -116,6 +117,7 @@ class EditorScreen {
       );
       apiResponse = await apiResponse.json();
       this.fontItems = apiResponse.items;
+      console.log("LOADED FONTS", apiResponse.items)
 
       this.fontItems.map((item) => {
         this.allFonts[item.family] = item;
@@ -134,20 +136,16 @@ class EditorScreen {
 
       let liItems = "";
       for (const item of chunk) {
-        const { family } = item;
-        this.loadedFonts[family] = {
-          variants: item.variants,
-        };
+        const { family, variants } = item;
 
-        self.loadedFonts[family] = {
-          variants: item.variants,
-        };
-
+        self.loadedFonts[family] = { variants };
         self.allFonts[family].loaded = true;
+
+        const familiesWithVariants = variants.map(variant => `${family}:${variant}`);
 
         WebFont.load({
           google: {
-            families: [family],
+            families: familiesWithVariants,
           },
         });
         liItems += `<li value="${family}" class="font-family-item" data-loaded="true">
@@ -183,7 +181,7 @@ class EditorScreen {
       this.canvas.refreshLayerNames();
     };
 
-    querySelect("#sloganNameField").addEventListener("change", (e) => {
+    querySelect("#sloganNameField").addEventListener("change", () => {
       this.canvasHistory.saveHistory();
     });
 
@@ -468,7 +466,6 @@ class EditorScreen {
       },
     );
 
-    // Font Case
     querySelect(".text-case-select-box").addEventListener(
       "change",
       function () {
@@ -520,27 +517,53 @@ class EditorScreen {
       },
     );
 
-    querySelect(".font-weight-selector").addEventListener(
-      "change",
-      function () {
-        let weight = this.getAttribute("data-value"),
-          obj = self.canvas.getActiveObject();
-        if (!obj) return false;
-        obj.set("orgFontWeight", weight);
-        if (weight.includes("italic")) {
-          weight = weight.replace("italic", "");
-          obj.set("fontStyle", "italic");
-          obj.set("fontweightapply", true);
-        } else {
-          if (obj.get("fontweightapply")) obj.set("fontStyle", "normal");
-        }
+querySelect(".font-weight-selector").addEventListener(
+  "change",
+  async function () {
+    let weight = this.getAttribute("data-value");
+    let obj = self.canvas.getActiveObject();
+    if (!obj) return false;
 
-        obj.set("fontWeight", weight);
-        self.canvas.renderAll();
-        updatePreview();
-        self.canvas.save();
-      },
-    );
+    let family = obj.get("fontFamily");
+
+    if (!self.loadedFonts[family]) {
+      console.error("Font family not found.");
+      return;
+    }
+
+    const availableVariants = self.loadedFonts[family].variants;
+
+    if (!availableVariants.includes(weight)) {
+      console.error("Font weight not found in available variants.");
+      return;
+    }
+
+    const familyWithWeight = `${family}:${weight}`;
+
+    await new Promise((resolve, reject) => {
+      WebFont.load({
+        google: {
+          families: [familyWithWeight],
+        },
+        active: resolve,
+        inactive: reject,
+      });
+    });
+
+    if (weight.includes("italic")) {
+      weight = weight.replace("italic", "").trim();
+      obj.set("fontStyle", "italic");
+      obj.set("fontweightapply", true);
+    } else {
+      if (obj.get("fontweightapply")) obj.set("fontStyle", "normal");
+    }
+
+    obj.set("fontWeight", weight || "normal");
+    self.canvas.renderAll();
+    updatePreview();
+    self.canvas.save();
+  }
+);
 
     querySelect(".font-style-selector").addEventListener("change", function () {
       let value = this.getAttribute("data-value"),
@@ -557,8 +580,6 @@ class EditorScreen {
       updatePreview();
       self.canvas.save();
     });
-
-    //#endregion Select Boxes
 
     this.rotateRange.addEventListener("input", (e) => {
       this.isRotating = true;
@@ -597,6 +618,7 @@ class EditorScreen {
       }
 
       const logoId = querySelect("#logo_id")?.value;
+      console.log("SAVE PARAM", logoNameElement);
       saveCanvas(
         logoId,
         this.canvas,
@@ -763,10 +785,6 @@ class EditorScreen {
       this.canvas.requestRenderAll();
     });
 
-    // this.canvas.on("after:render", () => {
-    //   this.rotateObject();
-    //   this.scaleObject();
-    // });
     let isScaling = false;
     this.canvas.on("object:scaling", () => {
       isScaling = true;
@@ -806,7 +824,7 @@ class EditorScreen {
       ],
     });
 
-    colorPicker.on("input:end", (color) => {
+    colorPicker.on("input:end", () => {
       updatePreview();
       this.canvas.save();
     });
@@ -1208,14 +1226,14 @@ class EditorScreen {
         return "Title Case";
       }
     };
-
-    const putAngleDownIcon = (className, additionalFunction) => {
-      const icon = document.createElement("i");
-      icon.className = "fa-solid fa-angle-down";
-      if (typeof additionalFunction === "function") {
-        icon.addEventListener("click", additionalFunction);
-      }
-    };
+    //
+    // const putAngleDownIcon = (className, additionalFunction) => {
+    //   const icon = document.createElement("i");
+    //   icon.className = "fa-solid fa-angle-down";
+    //   if (typeof additionalFunction === "function") {
+    //     icon.addEventListener("click", additionalFunction);
+    //   }
+    // };
 
     logoNameElement.on("mousedblclick", () => {
       const logoNameInput = querySelect("#logoMainField");
@@ -1376,14 +1394,14 @@ class EditorScreen {
         querySelect("#letter-spacing-slider").dispatchEvent(new Event("input"));
       });
 
-    querySelect("#letter-spacing-up").addEventListener("click", (e) => {
+    querySelect("#letter-spacing-up").addEventListener("click", () => {
       let value = parseInt(querySelect("#letter-spacing-slider").value);
       value += 10;
       querySelect("#letter-spacing-slider").value = Math.round(value);
       querySelect("#letter-spacing-slider").dispatchEvent(new Event("input"));
     });
 
-    querySelect("#letter-spacing-down").addEventListener("click", (e) => {
+    querySelect("#letter-spacing-down").addEventListener("click", () => {
       let value = parseInt(querySelect("#letter-spacing-slider").value);
       value -= 10;
       querySelect("#letter-spacing-slider").value = Math.round(value);
@@ -1413,7 +1431,7 @@ class EditorScreen {
       this.canvas.requestRenderAll();
     });
 
-    querySelect("#shadow-blur-slider")?.addEventListener("change", (e) => {
+    querySelect("#shadow-blur-slider")?.addEventListener("change", () => {
       this.canvas.save();
     });
 
@@ -1613,7 +1631,7 @@ class EditorScreen {
       }
     };
 
-    document.onmouseup = (event) => {
+    document.onmouseup = () => {
       this.hideCanvasGuides();
     };
 
@@ -1645,6 +1663,13 @@ class EditorScreen {
     const applyEventListners = () => {
       logoNameElement.on("mousedown", (e) => {
         e.e.preventDefault();
+        const value = logoNameElement.get("diameter");
+
+        let percentage_ =
+          value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
+        let angle = (percentage_ * 3.6).toFixed(0);
+        console.log(percentage_, angle);
+
         this.textSelectorValue = "LogoName";
 
         querySelect("#font_style_tag").innerText = toTitleCase(
@@ -1658,6 +1683,7 @@ class EditorScreen {
 
         querySelect("#drop-shadow").checked = hasShadow;
         isShadowAdjust = hasShadow;
+
         if (!hasShadow) {
           querySelect("#shadow-adjust").style.display = "none";
           querySelect("#shadow-blur").style.display = "none";
@@ -1725,7 +1751,6 @@ class EditorScreen {
             : " 0px";
           querySelect("#shadow-offsetY-slider").value = offsetY;
         }
-        captureCanvasState();
         this.canvas.requestRenderAll();
 
         this.activeNavbarSetting = "text";
@@ -1830,9 +1855,7 @@ class EditorScreen {
           querySelect("#shadow-offsetY-slider").value = offsetY;
         }
 
-        // captureCanvasState();
         this.canvas.requestRenderAll();
-
         this.activeNavbarSetting = "text";
         this.updateActiveNavbar();
       });
@@ -1889,8 +1912,8 @@ class EditorScreen {
 
       initCurveText();
       let percentage_ =
-          value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25),
-        angle = (percentage_ * 3.6).toFixed(0);
+        value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
+      let angle = (percentage_ * 3.6).toFixed(0);
 
       querySelect("#curve-text").value = angle;
       this.canvas.requestRenderAll();
@@ -2025,11 +2048,12 @@ class EditorScreen {
 
     const initCurveText = () => {
       let obj = this.canvas.getActiveObject();
-      if (!obj) return 0;
+      if (!obj) return;
 
-      let value = querySelect("#text-curve-range").value,
-        percentage =
-          value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
+      let value = querySelect("#text-curve-range").value;
+      // console.log("CURVE TEXT WORKING VALUE", value);
+      let percentage =
+        value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
 
       percentage = percentage.toFixed(0);
       if (percentage == -0 || percentage == "-0") percentage = 0;
@@ -2050,6 +2074,7 @@ class EditorScreen {
       if (value >= 2500) value = 2500 - (value - 2500);
 
       let isCurvedText = obj.type == "curved-text";
+
       if (hasCurveApply && !isCurvedText) {
         addCurveText(obj, value, percentage);
       } else if (!hasCurveApply) {
@@ -2081,6 +2106,7 @@ class EditorScreen {
         this.canvas.setActiveObject(text);
         this.canvas.save();
       } else if (hasCurveApply && isCurvedText) {
+        console.log("THE VALUE THAT IS BEING SET", value);
         obj.set("_cachedCanvas", null);
         obj.set("diameter", value);
         obj.set("flipped", isFlipped);
@@ -2088,14 +2114,11 @@ class EditorScreen {
         obj._updateObj("scaleX", obj.scaleX);
         obj._updateObj("scaleY", obj.scaleY);
       }
-
       this.canvas.requestRenderAll();
-
       const angle = (percentage * 3.6).toFixed(0);
-
       return angle;
     };
-    // Get Range From Percentage
+
     const getRangeFromPercentage = (percentage) => {
       percentage = parseInt(percentage) || 0;
       let rangeValue = 2500;
@@ -2171,25 +2194,6 @@ class EditorScreen {
 
       this.canvas.requestRenderAll();
     });
-
-    const convertFabricColorsToRGB = (canvasObj) => {
-      if (!canvasObj || canvasObj.type !== "radial" || !canvasObj.colorStops) {
-        console.error("Invalid canvas object or missing color information.");
-        return [];
-      }
-
-      const colors = canvasObj.colorStops.map((colorStop) => {
-        const { color } = colorStop;
-        const rgbValues = color.match(/\d+/g);
-        if (rgbValues.length !== 3) {
-          console.error("Invalid color format:", color);
-          return null;
-        }
-        return `rgb(${rgbValues[0]}, ${rgbValues[1]}, ${rgbValues[2]})`;
-      });
-
-      return colors.filter((color) => color !== null);
-    };
 
     this.zoomSlider.addEventListener("input", () => {
       let imgZoom = this.zoomSlider.value * 2;
@@ -2283,7 +2287,7 @@ class EditorScreen {
       this.canvas.requestRenderAll();
     });
 
-    querySelect("#removeElement").addEventListener("click", (event) => {
+    querySelect("#removeElement").addEventListener("click", () => {
       const activeObj = this.canvas.getActiveObject(),
         self = this;
       if (activeObj) {
@@ -2444,7 +2448,7 @@ class EditorScreen {
       if (activeObj) this.canvas.save();
     });
 
-    querySelect("#copyElement-uploads").addEventListener("click", (event) => {
+    querySelect("#copyElement-uploads").addEventListener("click", () => {
       this.canvas.getActiveObject().clone((cloned) => {
         this.canvas.add(cloned);
         this.canvas.centerObject(cloned);
@@ -2721,7 +2725,7 @@ class EditorScreen {
       }
     });
 
-    document.getElementById("close-btn").addEventListener("click", (e) => {
+    document.getElementById("close-btn").addEventListener("click", () => {
       querySelect("#popup-parent-icons").style.display = "none";
     });
 
@@ -2893,7 +2897,7 @@ class EditorScreen {
             sloganNameElement.centerH();
 
             updatePreview();
-            this.canvas.save(); // Save Initial History
+            this.canvas.save();
             this.canvas.renderAll();
           }, 1000);
         });
@@ -3844,12 +3848,7 @@ class EditorScreen {
     );
 
     querySelectAll("#solid_color").forEach((item) => {
-      solidColorAction(
-        item,
-        this.canvas,
-        colorPicker,
-        updatePreview,
-      );
+      solidColorAction(item, this.canvas, colorPicker, updatePreview);
     });
 
     const changeColorPickerText = (color) => {
@@ -3893,12 +3892,12 @@ class EditorScreen {
     });
 
     querySelectAll("#solid_color_text").forEach((item) => {
-        solidColorTextAction(item, this.canvas, colorPickerText, updatePreview);
-        changeColorPickerText(colorPickerText.color);
+      solidColorTextAction(item, this.canvas, colorPickerText, updatePreview);
+      changeColorPickerText(colorPickerText.color);
     });
 
     querySelectAll("#solid_color-bg").forEach((item) => {
-      bgColorAction(item, this.canvas, updatePreview)
+      bgColorAction(item, this.canvas, updatePreview);
     });
 
     updateColorTextPickers(this.canvas, updatePreview);
@@ -4256,7 +4255,7 @@ class EditorScreen {
           );
           break;
       }
-      canvas.requestRenderAll();
+      canvas.renderAll();
     }
 
     var logoPosition;
@@ -4376,7 +4375,7 @@ class EditorScreen {
 
     for (const singleEl in alignmentOptions) {
       let scaleValue = alignmentOptions[singleEl];
-      querySelect(`#${singleEl}`).addEventListener("click", () => {
+      querySelect("#" + singleEl).addEventListener("click", () => {
         if (anythingApplied) return true;
         discardSelectionForAlignments();
         this.alignId = getAttr(`#${singleEl}`, "data-align-id");

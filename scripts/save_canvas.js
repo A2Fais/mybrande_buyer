@@ -53,8 +53,13 @@ export async function saveCanvas(
   alignId,
   isPackage = false
 ) {
-  const thumbnailSVG = canvas.toSVG();
-  localStorage.setItem('thumbnail', thumbnailSVG)
+  const value = logoNameElement.get("diameter")
+  let percentage_ = value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
+  let angle = (percentage_ * 3.6).toFixed(0);
+  console.log({angle, percentage_})
+  return 
+  // const thumbnailSVG = canvas?.toSVG();
+  // localStorage.setItem('thumbnail', thumbnailSVG)
 
   let externalLayers = canvas._objects.filter((obj) => {
     return obj.id && obj.id.includes("external_layer_");
@@ -78,8 +83,8 @@ export async function saveCanvas(
   });
 
   const bgColor = canvas.get("backgroundColor");
-  canvas.setBackgroundImage(null);
-  canvas.setBackgroundColor(null, canvas.renderAll.bind(canvas));
+  // canvas.setBackgroundImage(null);
+  // canvas.setBackgroundColor(null, canvas.renderAll.bind(canvas));
 
   const currentCanvasSVG = canvas.toSVG();
 
@@ -125,7 +130,7 @@ export async function saveCanvas(
       brandName_fontFamely: logoNameElement.get("fontFamily"),
       brandName_fontSize: logoNameElement.get("fontSize"),
 
-      brandName_curve_diameter: logoNameElement.get("diameter"),
+      brandName_curve_diameter: logoNameElement.diameter,
       brand_curve_percentage: logoNameElement.get('percentage'),
 
       brandName_letterCase: getTextCase(logoNameElement.text),
@@ -152,38 +157,39 @@ export async function saveCanvas(
       thumbnail: localStorage?.getItem('thumbnail')
     };
 
-    try {
-      const response = await axios.post(
-        `https://www.mybrande.com/api/buyer/logo/store`,
-        postData
-      );
-      if (response?.status === 200) {
-        console.log(response.data)
-        const { buyer_logo_id } = response.data;
-        if (!buyer_logo_id)
-          return toastNotification("Error encountered with buyer logo ID");
-        querySelect("#buyer_logo_id").value = buyer_logo_id;
-        // canvas.setBackgroundColor(bgColor, canvas.renderAll.bind(canvas));
-        // canvas.setBackgroundImage(
-        //   "/static/pattern.png",
-        //   this.canvas.renderAll.bind(this.canvas),
-        //   {
-        //     opacity: 0.6,
-        //     originX: "left",
-        //     originY: "top",
-        //     top: 0,
-        //     left: 0,
-        //     scaleX: 0.3,
-        //     scaleY: 0.3,
-        //   }
-        // );
-        isPackage
-          ? (location.href = `https://www.mybrande.com/api/buyer/logo/downloadandpayment/${buyer_logo_id}`)
-          : (window.location.href = `https://www.mybrande.com/api/user/logo/preview/${buyer_logo_id}`);
-        toastNotification("Logo Saved Successfully");
-      }
-    } catch (error) {
-      console.log(error);
-    }
+
+    // try {
+    //   const response = await axios.post(
+    //     `https://www.mybrande.com/api/buyer/logo/store`,
+    //     postData
+    //   );
+    //   if (response?.status === 200) {
+    //     console.log(response.data)
+    //     const { buyer_logo_id } = response.data;
+    //     if (!buyer_logo_id)
+    //       return toastNotification("Error encountered with buyer logo ID");
+    //     querySelect("#buyer_logo_id").value = buyer_logo_id;
+    //     canvas.setBackgroundColor(bgColor, canvas.renderAll.bind(canvas));
+    //     canvas.setBackgroundImage(
+    //       "/static/pattern.png",
+    //       this.canvas.renderAll.bind(this.canvas),
+    //       {
+    //         opacity: 0.6,
+    //         originX: "left",
+    //         originY: "top",
+    //         top: 0,
+    //         left: 0,
+    //         scaleX: 0.3,
+    //         scaleY: 0.3,
+    //       }
+    //     );
+    //     isPackage
+    //       ? (location.href = `https://www.mybrande.com/api/buyer/logo/downloadandpayment/${buyer_logo_id}`)
+    //       : (window.location.href = `https://www.mybrande.com/api/user/logo/preview/${buyer_logo_id}`);
+    //     toastNotification("Logo Saved Successfully");
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
   }
 }
