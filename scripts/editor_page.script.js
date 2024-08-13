@@ -117,7 +117,6 @@ class EditorScreen {
       );
       apiResponse = await apiResponse.json();
       this.fontItems = apiResponse.items;
-      console.log("LOADED FONTS", apiResponse.items)
 
       this.fontItems.map((item) => {
         this.allFonts[item.family] = item;
@@ -982,7 +981,6 @@ querySelect(".font-weight-selector").addEventListener(
           fontWeightSelector.dispatchEvent(new Event("change"));
         };
 
-        // Set Font family
         let family = obj.get("fontFamily"),
           familyData = this.allFonts[family];
 
@@ -4583,7 +4581,6 @@ querySelect(".font-weight-selector").addEventListener(
 
     let currentFontIndex = 0,
       fontMaxCount = 20,
-      loadedFonts = {},
       fontListMenu = querySelect("#font-family-con .collection");
 
     const loadFonts = async (items) => {
@@ -4595,22 +4592,15 @@ querySelect(".font-weight-selector").addEventListener(
 
       let liItems = "";
       for (const item of chunk) {
-        const { family } = item;
-        loadedFonts[family] = {
-          variants: item.variants,
-        };
+        const { family, variants } = item;
 
-        self.loadedFonts[family] = {
-          variants: item.variants,
-        };
-
+        self.loadedFonts[family] = { variants };
         self.allFonts[family].loaded = true;
 
-        WebFont.load({
-          google: {
-            families: [family],
-          },
-        });
+        const families = variants.map(variant => `${family}:${variant}`);
+        
+        WebFont.load({ google: { families } });
+
         liItems += `<li value="${family}" class="font-family-item" data-loaded="true">
           <span style="font-family:${family}; font-weight: 500px" class="text">${family}</span></li>`;
       }
