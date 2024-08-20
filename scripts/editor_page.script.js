@@ -124,7 +124,7 @@ class EditorScreen {
       return apiResponse?.items;
     };
 
-    this.fetchFonts().then((items) => {
+    this.fetchFonts().then(async (items) => {
       let currentFontIndex = 0,
         fontMaxCount = 20;
       const chunk = items.slice(
@@ -140,15 +140,20 @@ class EditorScreen {
         self.loadedFonts[family] = { variants };
         self.allFonts[family].loaded = true;
 
-        const familiesWithVariants = variants.map(variant => `${family}:${variant}`);
+        const families = variants.map((variant) => `${family}:${variant}`);
 
-        WebFont.load({
-          google: {
-            families: familiesWithVariants,
-          },
+        await new Promise((resolve, reject) => {
+          WebFont.load({
+            google: {
+              families,
+            },
+            active: resolve,
+            inactive: reject,
+          });
         });
+
         liItems += `<li value="${family}" class="font-family-item" data-loaded="true">
-          <span style="font-family:${family}; font-weight: 500px" class="text">${family}</span></li>`;
+          <span style="font-family:${family}; font-weight: 500" class="text">${family}</span></li>`;
       }
 
       querySelect("#font-family-con .collection").innerHTML += liItems;
@@ -398,22 +403,22 @@ class EditorScreen {
           currCoordinate = obj.getCenterPoint();
         if (!obj) return false;
 
-        if (loaded == "false") {
-          WebFont.load({
-            google: {
-              families: [family],
-            },
-            active: function () {
-              obj.set("fontFamily", family);
-              self.canvas.renderAll();
-            },
-          });
-        }
-        if (self.changeFontWeight) {
-          obj.set("fontStyle", "normal");
-          obj.set("fontWeight", "normal");
-          obj.set("orgFontWeight", "normal");
-        }
+        // if (loaded == "false") {
+        //   WebFont.load({
+        //     google: {
+        //       families: [family],
+        //     },
+        //     active: function () {
+        //       obj.set("fontFamily", family);
+        //       self.canvas.renderAll();
+        //     },
+        //   });
+        // }
+        // if (self.changeFontWeight) {
+        //   obj.set("fontStyle", "normal");
+        //   obj.set("fontWeight", "normal");
+        //   obj.set("orgFontWeight", "normal");
+        // }
         obj.set("fontFamily", family);
         let { variants } = self.loadedFonts[family];
 
@@ -516,53 +521,46 @@ class EditorScreen {
       },
     );
 
-querySelect(".font-weight-selector").addEventListener(
-  "change",
-  async function () {
-    let weight = this.getAttribute("data-value");
-    let obj = self.canvas.getActiveObject();
-    if (!obj) return false;
+    querySelect(".font-weight-selector").addEventListener(
+      "change",
+      async function () {
+        let weight = this.getAttribute("data-value");
+        let obj = self.canvas.getActiveObject();
+        if (!obj) return false;
 
-    let family = obj.get("fontFamily");
+        let family = obj.get("fontFamily");
 
-    if (!self.loadedFonts[family]) {
-      console.error("Font family not found.");
-      return;
-    }
+        if (!self.loadedFonts[family]) {
+          console.error("Font family not found.");
+          return;
+        }
 
-    const availableVariants = self.loadedFonts[family].variants;
+        const familyWithWeight = `${family}:${weight}`;
 
-    if (!availableVariants.includes(weight)) {
-      console.error("Font weight not found in available variants.");
-      return;
-    }
+        await new Promise((resolve, reject) => {
+          WebFont.load({
+            google: {
+              families: [familyWithWeight],
+            },
+            active: resolve,
+            inactive: reject,
+          });
+        });
 
-    const familyWithWeight = `${family}:${weight}`;
+        if (weight.includes("italic")) {
+          weight = weight.replace("italic", "").trim();
+          obj.set("fontStyle", "italic");
+          obj.set("fontweightapply", true);
+        } else {
+          if (obj.get("fontweightapply")) obj.set("fontStyle", "normal");
+        }
 
-    await new Promise((resolve, reject) => {
-      WebFont.load({
-        google: {
-          families: [familyWithWeight],
-        },
-        active: resolve,
-        inactive: reject,
-      });
-    });
-
-    if (weight.includes("italic")) {
-      weight = weight.replace("italic", "").trim();
-      obj.set("fontStyle", "italic");
-      obj.set("fontweightapply", true);
-    } else {
-      if (obj.get("fontweightapply")) obj.set("fontStyle", "normal");
-    }
-
-    obj.set("fontWeight", weight || "normal");
-    self.canvas.renderAll();
-    updatePreview();
-    self.canvas.save();
-  }
-);
+        obj.set("fontWeight", weight || "normal");
+        self.canvas.renderAll();
+        updatePreview();
+        self.canvas.save();
+      },
+    );
 
     querySelect(".font-style-selector").addEventListener("change", function () {
       let value = this.getAttribute("data-value"),
@@ -671,7 +669,7 @@ querySelect(".font-weight-selector").addEventListener(
       let rangeOriginal = maxOriginal - minOriginal;
       let newValue = ((value - minOriginal) / rangeOriginal) * 2;
       const res = Math.min(newValue, 2);
-      return res.toFixed(1);
+      return res.toFixed(3);
     }
 
     var newMaxScaleValue;
@@ -1056,18 +1054,21 @@ querySelect(".font-weight-selector").addEventListener(
     var sloganNameElement = textMain({ text: this.sloganName });
 
     querySelect("#logoMainField").addEventListener("input", (e) => {
-      const val = e.target.value;
-      // console.log("LOGO MAIN FIELD", val.length)
-      this.logoName = val;
-      logoNameElement.set("text", val);
+      const value = e.target.value;
+      const objects = this.canvas.getObjects()
+      const logoIdx = objects.length - 2;
+      const logo = objects[logoIdx]
+      logo.set('text', value);
       this.canvas.renderAll();
     });
+
     // Slogan Name
     querySelect("#sloganNameField").addEventListener("input", (e) => {
-      const val = e.target.value;
-      // console.log("SLOGAN MAIN FIELD", val.length)
-
-      sloganNameElement.set("text", val);
+      const value = e.target.value;
+      const objects = this.canvas.getObjects()
+      const sloganIdx = objects.length - 1;
+      const slogan = objects[sloganIdx]
+      slogan.set('text', value);
       this.canvas.renderAll();
     });
 
@@ -1659,20 +1660,33 @@ querySelect(".font-weight-selector").addEventListener(
     });
 
     const applyEventListners = () => {
-      logoNameElement.on("mousedown", (e) => {
+      logoNameElement.on("mousedown", async (e) => {
         e.e.preventDefault();
-        const value = logoNameElement.get("diameter");
+        console.log(logoNameElement);
+        const weight = logoNameElement.get("fontWeight");
+        const family = logoNameElement.get("fontFamily");
+        const familyWithWeight = `${family}:${weight}`;
+        console.log("FAMILY WITH WEIGHT", familyWithWeight);
 
-        let percentage_ =
-          value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
-        let angle = (percentage_ * 3.6).toFixed(0);
-        console.log(percentage_, angle);
+        await new Promise((resolve, reject) => {
+          WebFont.load({
+            google: {
+              families: [familyWithWeight],
+            },
+            active: resolve,
+            inactive: reject,
+          });
+        });
+
+        e.target.set("fontWeight", weight);
+        this.canvas.renderAll();
 
         this.textSelectorValue = "LogoName";
 
         querySelect("#font_style_tag").innerText = toTitleCase(
           logoNameElement.get("fontStyle"),
         );
+
         querySelect("#font_case").innerText = toTitleCase(
           getTextCase(logoNameElement.text),
         );
@@ -1750,7 +1764,6 @@ querySelect(".font-weight-selector").addEventListener(
           querySelect("#shadow-offsetY-slider").value = offsetY;
         }
         this.canvas.requestRenderAll();
-
         this.activeNavbarSetting = "text";
         this.updateActiveNavbar();
 
@@ -3184,9 +3197,6 @@ querySelect(".font-weight-selector").addEventListener(
       }
     });
 
-    const canvasObjects = this.canvas.getObjects();
-    // const textPalette = querySelect("#logo_text_colors_pallete");
-
     const solidColorMode = querySelect("#solid_color_mode");
     const linearColorMode = querySelect("#linear_color_mode");
     const pickerColorMode = querySelect("#picker_color_mode");
@@ -3372,98 +3382,174 @@ querySelect(".font-weight-selector").addEventListener(
       this.canvas.requestRenderAll();
     });
 
+    var isSolidColor = true;
+    var isLinearColor = false;
+    var isPickerColor = false;
+
     const solidColorEvent = () => {
-      querySelect("#picker_color_mode").classList.remove("category_selected");
-      querySelect("#solid_color_mode").classList.add("category_selected");
-      querySelect("#linear_color_mode").classList.remove("category_selected");
+      isSolidColor = !isSolidColor;
+      isLinearColor = false;
+      isPickerColor = false;
 
-      querySelect("#solid_color_items").style.display = "flex";
-      querySelect("#linear_color_items").style.display = "none";
-      querySelect("#picker_color_items").style.display = "none";
+      if (isSolidColor) {
+        querySelect("#picker_color_mode").classList.remove("category_selected");
+        querySelect("#solid_color_mode").classList.add("category_selected");
+        querySelect("#linear_color_mode").classList.remove("category_selected");
 
-      // querySelect(".tp-btn-apply_solid").style.display = "none";
-      openPickerView = "none";
+        querySelect("#solid_color_items").style.display = "flex";
+        querySelect("#linear_color_items").style.display = "none";
+        querySelect("#picker_color_items").style.display = "none";
+
+        openPickerView = "none";
+      } else {
+        querySelect("#solid_color_items").style.display = "none";
+        querySelect("#linear_color_items").style.display = "none";
+        querySelect("#picker_color_items").style.display = "none";
+        querySelect("#solid_color_mode").classList.remove("category_selected");
+      }
     };
 
     const linearColorEvent = () => {
-      querySelect("#picker_color_mode").classList.remove("category_selected");
-      querySelect("#linear_color_mode").classList.add("category_selected");
-      querySelect("#solid_color_mode").classList.remove("category_selected");
+      isLinearColor = !isLinearColor;
+      isSolidColor = false;
+      isPickerColor = false;
 
-      querySelect("#linear_color_items").style.display = "flex";
-      querySelect("#solid_color_items").style.display = "none";
-      querySelect("#picker_color_items").style.display = "none";
+      if (isLinearColor) {
+        querySelect("#picker_color_mode").classList.remove("category_selected");
+        querySelect("#linear_color_mode").classList.add("category_selected");
+        querySelect("#solid_color_mode").classList.remove("category_selected");
 
-      // querySelect(".tp-btn-apply_solid").style.display = "block";
-      openPickerView = "none";
+        querySelect("#linear_color_items").style.display = "flex";
+        querySelect("#solid_color_items").style.display = "none";
+        querySelect("#picker_color_items").style.display = "none";
+
+        openPickerView = "none";
+      } else {
+        querySelect("#solid_color_items").style.display = "none";
+        querySelect("#linear_color_items").style.display = "none";
+        querySelect("#picker_color_items").style.display = "none";
+        querySelect("#linear_color_mode").classList.remove("category_selected");
+      }
     };
 
     const pickerColorEvent = () => {
-      querySelect("#solid_color_items").style.display = "none";
-      querySelect("#picker_color_items").style.display = "flex";
-      querySelect("#linear_color_items").style.display = "none";
-      querySelect("#linear_color_mode").classList.remove("category_selected");
-      querySelect("#solid_color_mode").classList.remove("category_selected");
-      querySelect("#picker_color_mode").classList.add("category_selected");
-      querySelect("#picker_color_items").style.marginTop = "8px";
+      isPickerColor = !isPickerColor;
+      isSolidColor = false;
+      isLinearColor = false;
 
-      // querySelect(".tp-btn-apply_solid").style.display = "none";
-      openTextPickerView = "block";
+      if (isPickerColor) {
+        querySelect("#solid_color_items").style.display = "none";
+        querySelect("#picker_color_items").style.display = "flex";
+        querySelect("#linear_color_items").style.display = "none";
+        querySelect("#linear_color_mode").classList.remove("category_selected");
+        querySelect("#solid_color_mode").classList.remove("category_selected");
+        querySelect("#picker_color_mode").classList.add("category_selected");
+        querySelect("#picker_color_items").style.marginTop = "8px";
+
+        openTextPickerView = "block";
+      } else {
+        querySelect("#solid_color_items").style.display = "none";
+        querySelect("#linear_color_items").style.display = "none";
+        querySelect("#picker_color_items").style.display = "none";
+        querySelect("#picker_color_mode").classList.remove("category_selected");
+      }
     };
 
+    var isSolidTextColor = true;
+    var isLinearTextColor = false;
+    var isPickerTextColor = false;
+
     const solidTextColorEvent = () => {
-      querySelect("#picker_color_text_mode").classList.remove(
-        "category_selected",
-      );
-      querySelect("#solid_color_text_mode").classList.add("category_selected");
-      querySelect("#solid_color_items_text").style.display = "flex";
-      querySelect("#picker_color_items_text").style.display = "none";
-      querySelect("#picker_color_text_mode").classList.remove(
-        "category_selected",
-      );
+      isSolidTextColor = !isSolidTextColor;
+      isLinearTextColor = false;
+      isPickerTextColor = false;
 
-      querySelect("#linear_color_text_mode").classList.remove(
-        "category_selected",
-      );
-      querySelect("#linear_color_items_text").style.display = "none";
-      openPickerView = "none";
+      if (isSolidTextColor) {
+        querySelect("#picker_color_text_mode").classList.remove(
+          "category_selected",
+        );
+        querySelect("#solid_color_text_mode").classList.add(
+          "category_selected",
+        );
+        querySelect("#linear_color_text_mode").classList.remove(
+          "category_selected",
+        );
 
-      // querySelect(".tp-btn-apply").style.display = "none";
+        querySelect("#solid_color_items_text").style.display = "flex";
+        querySelect("#linear_color_items_text").style.display = "none";
+        querySelect("#picker_color_items_text").style.display = "none";
+
+        openTextPickerView = "none";
+      } else {
+        querySelect("#solid_color_items_text").style.display = "none";
+        querySelect("#linear_color_items_text").style.display = "none";
+        querySelect("#picker_color_items_text").style.display = "none";
+        querySelect("#solid_color_text_mode").classList.remove(
+          "category_selected",
+        );
+      }
     };
 
     const linearTextColorEvent = () => {
-      querySelect("#picker_color_text_mode").classList.remove(
-        "category_selected",
-      );
-      querySelect("#solid_color_text_mode").classList.remove(
-        "category_selected",
-      );
-      querySelect("#linear_color_text_mode").classList.add("category_selected");
-      querySelect("#linear_color_items_text").style.display = "flex";
-      querySelect("#solid_color_items_text").style.display = "none";
-      querySelect("#picker_color_items_text").style.display = "none";
+      isLinearTextColor = !isLinearTextColor;
+      isSolidTextColor = false;
+      isPickerTextColor = false;
 
-      // querySelect(".tp-btn-apply").style.display = "block";
-      openPickerView = "none";
+      if (isLinearTextColor) {
+        querySelect("#picker_color_text_mode").classList.remove(
+          "category_selected",
+        );
+        querySelect("#linear_color_text_mode").classList.add(
+          "category_selected",
+        );
+        querySelect("#solid_color_text_mode").classList.remove(
+          "category_selected",
+        );
+
+        querySelect("#linear_color_items_text").style.display = "flex";
+        querySelect("#solid_color_items_text").style.display = "none";
+        querySelect("#picker_color_items_text").style.display = "none";
+
+        openTextPickerView = "none";
+      } else {
+        querySelect("#solid_color_items_text").style.display = "none";
+        querySelect("#linear_color_items_text").style.display = "none";
+        querySelect("#picker_color_items_text").style.display = "none";
+        querySelect("#linear_color_text_mode").classList.remove(
+          "category_selected",
+        );
+      }
     };
 
     const pickerTextColorEvent = () => {
-      querySelect("#picker_color_items_text").style.display = "flex";
-      querySelect("#picker_color_text_mode").classList.add("category_selected");
+      isPickerTextColor = !isPickerTextColor;
+      isSolidTextColor = false;
+      isLinearTextColor = false;
 
-      querySelect("#solid_color_items_text").style.display = "none";
-      querySelect("#linear_color_items_text").style.display = "none";
+      if (isPickerTextColor) {
+        querySelect("#solid_color_items_text").style.display = "none";
+        querySelect("#picker_color_items_text").style.display = "flex";
+        querySelect("#linear_color_items_text").style.display = "none";
+        querySelect("#linear_color_text_mode").classList.remove(
+          "category_selected",
+        );
+        querySelect("#solid_color_text_mode").classList.remove(
+          "category_selected",
+        );
+        querySelect("#picker_color_text_mode").classList.add(
+          "category_selected",
+        );
+        querySelect("#picker_color_items_text").style.marginTop = "8px";
 
-      querySelect("#solid_color_text_mode").classList.remove(
-        "category_selected",
-      );
-      querySelect("#linear_color_text_mode").classList.remove(
-        "category_selected",
-      );
-
-      // querySelect(".tp-btn-apply").style.display = "none";
-      querySelect("#picker_color_items_text").style.marginTop = "8px";
-      openTextPickerView = "block";
+        openTextPickerView = "block";
+      } else {
+        querySelect("#solid_color_items_text").style.display = "none";
+        querySelect("#linear_color_items_text").style.display = "none";
+        querySelect("#picker_color_items_text").style.display = "none";
+        querySelect("#picker_color_text_mode").classList.remove(
+          "category_selected",
+        );
+      }
     };
 
     let openPickerViewBG = "block";
@@ -4597,12 +4683,12 @@ querySelect(".font-weight-selector").addEventListener(
         self.loadedFonts[family] = { variants };
         self.allFonts[family].loaded = true;
 
-        const families = variants.map(variant => `${family}:${variant}`);
-        
+        const families = variants.map((variant) => `${family}:${variant}`);
+
         WebFont.load({ google: { families } });
 
         liItems += `<li value="${family}" class="font-family-item" data-loaded="true">
-          <span style="font-family:${family}; font-weight: 500px" class="text">${family}</span></li>`;
+          <span style="font-family:${family}; font-weight: 500" class="text">${family}</span></li>`;
       }
 
       fontListMenu.innerHTML += liItems;
