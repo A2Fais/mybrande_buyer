@@ -525,57 +525,56 @@ class EditorScreen {
       },
     );
 
+    querySelect(".font-weight-selector").addEventListener(
+      "change",
+      async function () {
+        let weight = this.getAttribute("data-value");
+        const obj = self.canvas.getActiveObject();
+        if (!obj) return false;
 
-querySelect(".font-weight-selector").addEventListener(
-  "change",
-  async function () {
-    let weight = this.getAttribute("data-value");
-    const obj = self.canvas.getActiveObject();
-    if (!obj) return false;
+        let family = obj.get("fontFamily");
 
-    let family = obj.get("fontFamily");
+        if (self.loadedFonts[family]) {
+          const familyWithWeight = `${family}:${weight}`;
 
-    if (self.loadedFonts[family]){
-      const familyWithWeight = `${family}:${weight}`;
+          await new Promise((resolve, reject) => {
+            WebFont.load({
+              google: {
+                families: [familyWithWeight],
+              },
+              active: resolve,
+              inactive: reject,
+            });
+          });
 
-      await new Promise((resolve, reject) => {
-        WebFont.load({
-          google: {
-            families: [familyWithWeight],
-          },
-          active: resolve,
-          inactive: reject,
-        });
-      });
+          if (weight.includes("italic")) {
+            weight = weight.replace("italic", "").trim();
+            obj.set("fontStyle", "italic");
+            obj.set("fontweightapply", true);
+          } else {
+            if (obj.get("fontweightapply")) obj.set("fontStyle", "normal");
+          }
 
-      if (weight.includes("italic")) {
-        weight = weight.replace("italic", "").trim();
-        obj.set("fontStyle", "italic");
-      } else {
-        obj.set("fontStyle", "normal");
+          obj.set("fontWeight", weight || "normal");
+          obj.set("orgFontWeight", weight || "normal");
+
+          self.canvas.renderAll();
+          updatePreview();
+          self.canvas.save();
+        }
+      },
+    );
+
+    self.canvas.on("object:selected", function () {
+      const obj = self.canvas.getActiveObject();
+      if (obj && obj.get("fontWeight")) {
+        obj.set("fontWeight", obj.get("fontWeight"));
+        if (obj.get("fontStyle") === "italic") {
+          obj.set("fontStyle", "italic");
+        }
+        self.canvas.renderAll();
       }
-
-      obj.set("fontWeight", weight || "normal");
-      obj.set("orgFontWeight", weight || "normal"); 
-
-      self.canvas.renderAll();
-      updatePreview();
-      self.canvas.save();
-        };
-  },
-);
-
-self.canvas.on("object:selected", function () {
-  const obj = self.canvas.getActiveObject();
-  if (obj && obj.get("fontWeight")) {
-    obj.set("fontWeight", obj.get("fontWeight"));
-    if (obj.get("fontStyle") === "italic") {
-      obj.set("fontStyle", "italic");
-    }
-    self.canvas.renderAll();
-  }
-});
-
+    });
 
     querySelect(".font-style-selector").addEventListener("change", function () {
       let value = this.getAttribute("data-value"),
