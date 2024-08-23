@@ -397,30 +397,34 @@ class EditorScreen {
     querySelect(".font-family-selectbox").addEventListener(
       "change",
       function () {
-        let family = this.getAttribute("data-value"),
-          loaded = this.getAttribute("data-loaded"),
-          obj = self.canvas.getActiveObject(),
-          currCoordinate = obj.getCenterPoint();
-        if (!obj) return false;
+        const family = this.getAttribute("data-value");
+        const loaded = this.getAttribute("data-loaded");
+        const obj = self.canvas.getActiveObject();
+        const currCoordinate = obj.getCenterPoint();
 
-        // if (loaded == "false") {
-        //   WebFont.load({
-        //     google: {
-        //       families: [family],
-        //     },
-        //     active: function () {
-        //       obj.set("fontFamily", family);
-        //       self.canvas.renderAll();
-        //     },
-        //   });
-        // }
-        // if (self.changeFontWeight) {
-        //   obj.set("fontStyle", "normal");
-        //   obj.set("fontWeight", "normal");
-        //   obj.set("orgFontWeight", "normal");
-        // }
-        obj.set("fontFamily", family);
+        if (!obj) return false;
         let { variants } = self.loadedFonts[family];
+
+        if (loaded == "false") {
+          const familyWithVariants = `${family}:${variants.join(",")}`;
+
+          WebFont.load({
+            google: {
+              families: [familyWithVariants],
+            },
+            active: function () {
+              obj.set("fontFamily", family);
+              self.canvas.renderAll();
+            },
+          });
+        }
+
+        if (self.changeFontWeight) {
+          obj.set("fontStyle", "normal");
+          obj.set("fontWeight", "normal");
+          obj.set("orgFontWeight", "normal");
+        }
+        obj.set("fontFamily", family);
 
         let variantsHtml = "";
         let values = {};
@@ -521,46 +525,56 @@ class EditorScreen {
       },
     );
 
-    querySelect(".font-weight-selector").addEventListener(
-      "change",
-      async function () {
-        let weight = this.getAttribute("data-value");
-        let obj = self.canvas.getActiveObject();
-        if (!obj) return false;
 
-        let family = obj.get("fontFamily");
+querySelect(".font-weight-selector").addEventListener(
+  "change",
+  async function () {
+    let weight = this.getAttribute("data-value");
+    const obj = self.canvas.getActiveObject();
+    if (!obj) return false;
 
-        if (!self.loadedFonts[family]) {
-          console.error("Font family not found.");
-          return;
-        }
+    let family = obj.get("fontFamily");
 
-        const familyWithWeight = `${family}:${weight}`;
+    if (!self.loadedFonts[family]) return;
+      const familyWithWeight = `${family}:${weight}`;
 
-        await new Promise((resolve, reject) => {
-          WebFont.load({
-            google: {
-              families: [familyWithWeight],
-            },
-            active: resolve,
-            inactive: reject,
-          });
+      await new Promise((resolve, reject) => {
+        WebFont.load({
+          google: {
+            families: [familyWithWeight],
+          },
+          active: resolve,
+          inactive: reject,
         });
+      });
 
-        if (weight.includes("italic")) {
-          weight = weight.replace("italic", "").trim();
-          obj.set("fontStyle", "italic");
-          obj.set("fontweightapply", true);
-        } else {
-          if (obj.get("fontweightapply")) obj.set("fontStyle", "normal");
-        }
+      if (weight.includes("italic")) {
+        weight = weight.replace("italic", "").trim();
+        obj.set("fontStyle", "italic");
+      } else {
+        obj.set("fontStyle", "normal");
+      }
 
-        obj.set("fontWeight", weight || "normal");
-        self.canvas.renderAll();
-        updatePreview();
-        self.canvas.save();
-      },
-    );
+      obj.set("fontWeight", weight || "normal");
+      obj.set("orgFontWeight", weight || "normal"); 
+
+      self.canvas.renderAll();
+      updatePreview();
+      self.canvas.save();
+  },
+);
+
+self.canvas.on("object:selected", function () {
+  const obj = self.canvas.getActiveObject();
+  if (obj && obj.get("fontWeight")) {
+    obj.set("fontWeight", obj.get("fontWeight"));
+    if (obj.get("fontStyle") === "italic") {
+      obj.set("fontStyle", "italic");
+    }
+    self.canvas.renderAll();
+  }
+});
+
 
     querySelect(".font-style-selector").addEventListener("change", function () {
       let value = this.getAttribute("data-value"),
@@ -1055,20 +1069,20 @@ class EditorScreen {
 
     querySelect("#logoMainField").addEventListener("input", (e) => {
       const value = e.target.value;
-      const objects = this.canvas.getObjects()
+      const objects = this.canvas.getObjects();
       const logoIdx = objects.length - 2;
-      const logo = objects[logoIdx]
-      logo.set('text', value);
+      const logo = objects[logoIdx];
+      logo.set("text", value);
       this.canvas.renderAll();
     });
 
     // Slogan Name
     querySelect("#sloganNameField").addEventListener("input", (e) => {
       const value = e.target.value;
-      const objects = this.canvas.getObjects()
+      const objects = this.canvas.getObjects();
       const sloganIdx = objects.length - 1;
-      const slogan = objects[sloganIdx]
-      slogan.set('text', value);
+      const slogan = objects[sloganIdx];
+      slogan.set("text", value);
       this.canvas.renderAll();
     });
 
@@ -1207,9 +1221,9 @@ class EditorScreen {
       this.canvas.renderAll();
     };
 
-    if (this.logoFile) {
-      renderCanvas(this.logoFile);
-    }
+    // if (this.logoFile) {
+    //   renderCanvas(this.logoFile);
+    // }
 
     const getTextCase = (text) => {
       if (text === text.toUpperCase()) {
@@ -2792,6 +2806,9 @@ class EditorScreen {
         });
 
         fetchCanvasData(this.canvas).then((data) => {
+          this.logoFile = data.svgData.AllData.svg_data;
+          localStorage.setItem("logo-file", this.logoFile);
+          renderCanvas(this.logoFile);
           const brandCase = data?.brandCase;
           const sloganCase = data?.sloganCase;
 
@@ -2826,7 +2843,7 @@ class EditorScreen {
           updatePreview();
           document.getElementById("top_bottom_1").click();
 
-          setTimeout(() => {
+          setTimeout(async () => {
             this.canvasHistory = new SaveHistory(this.canvas);
             querySelect("#loader_main").style.display = "none";
 
