@@ -535,7 +535,7 @@ querySelect(".font-weight-selector").addEventListener(
 
     let family = obj.get("fontFamily");
 
-    if (!self.loadedFonts[family]) return;
+    if (self.loadedFonts[family]){
       const familyWithWeight = `${family}:${weight}`;
 
       await new Promise((resolve, reject) => {
@@ -561,6 +561,7 @@ querySelect(".font-weight-selector").addEventListener(
       self.canvas.renderAll();
       updatePreview();
       self.canvas.save();
+        };
   },
 );
 
