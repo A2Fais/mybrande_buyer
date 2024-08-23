@@ -1069,18 +1069,17 @@ class EditorScreen {
 
     querySelect("#logoMainField").addEventListener("input", (e) => {
       const value = e.target.value;
-      const objects = this.canvas.getObjects();
-      const logoIdx = objects.length - 2;
-      const logo = objects[logoIdx];
-      logo.set("text", value);
+      const objects = this.canvas.getObjects().filter(i => i.text);
+      const logoIdx = 0;
+      const logo = objects[logoIdx]
+      logo.set('text', value);
       this.canvas.renderAll();
     });
 
-    // Slogan Name
     querySelect("#sloganNameField").addEventListener("input", (e) => {
       const value = e.target.value;
-      const objects = this.canvas.getObjects();
-      const sloganIdx = objects.length - 1;
+      const objects = this.canvas.getObjects().filter(i => i.text);
+      const sloganIdx = 1;
       const slogan = objects[sloganIdx];
       slogan.set("text", value);
       this.canvas.renderAll();
