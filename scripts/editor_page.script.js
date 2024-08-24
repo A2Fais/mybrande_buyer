@@ -629,7 +629,6 @@ class EditorScreen {
       }
 
       const logoId = querySelect("#logo_id")?.value;
-      console.log("SAVE PARAM", logoNameElement);
       saveCanvas(
         logoId,
         this.canvas,
@@ -868,9 +867,23 @@ class EditorScreen {
             new Event("click"),
           );
           this.activeSection = "text";
+        const hasShadow = !!activeObject?.shadow?.blur;
 
-          if (activeObject.shadow) {
-            // set shadow values
+        querySelect("#drop-shadow").checked = hasShadow;
+
+        if (!hasShadow) {
+          querySelect("#shadow-adjust").style.display = "none";
+          querySelect("#shadow-blur").style.display = "none";
+          querySelect("#shadow-offsetX").style.display = "none";
+          querySelect("#shadow-offsetY").style.display = "none";
+        } else {
+          querySelect("#shadow-adjust").style.display = "block";
+          querySelect("#shadow-blur").style.display = "block";
+          querySelect("#shadow-offsetX").style.display = "block";
+          querySelect("#shadow-offsetY").style.display = "block";
+        }
+
+          if (hasShadow) {
             let { offsetX, offsetY, blur } = activeObject.shadow;
             querySelect("#shadow-blur-slider").value = blur;
             querySelect("#shadow-offsetX-slider").value = offsetX;
@@ -878,7 +891,6 @@ class EditorScreen {
             this.shadowBlur = blur;
             this.shadowOffsetX = offsetX;
             this.shadowOffsetY = offsetY;
-            affectStroke: false;
           }
         } else {
           this.activeSection = "text";
@@ -1116,6 +1128,7 @@ class EditorScreen {
             querySelect("#flip-x").checked = this.isFlipX;
 
             const hasShadow = !!obj?.shadow?.blur;
+
             querySelect("#logo-drop-shadow").checked = hasShadow;
             if (!hasShadow)
               querySelect("#logo-shadow-adjust").classList.remove("active");
@@ -1679,7 +1692,6 @@ class EditorScreen {
         const weight = logoNameElement.get("fontWeight");
         const family = logoNameElement.get("fontFamily");
         const familyWithWeight = `${family}:${weight}`;
-        console.log("FAMILY WITH WEIGHT", familyWithWeight);
 
         await new Promise((resolve, reject) => {
           WebFont.load({
@@ -2808,6 +2820,7 @@ class EditorScreen {
           this.logoFile = data.svgData.AllData.svg_data;
           localStorage.setItem("logo-file", this.logoFile);
           renderCanvas(this.logoFile);
+          updateColorPickers(this.canvas, colorPicker);
           const brandCase = data?.brandCase;
           const sloganCase = data?.sloganCase;
 

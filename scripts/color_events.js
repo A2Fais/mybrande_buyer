@@ -19,6 +19,7 @@ export const getParsedColor = (color) => {
 };
 
 export function updateColorPickers(canvas, colorPicker) {
+  if (!canvas || !colorPicker) throw new Error("couldn't find canvas");
   for (let i = 0; i <= 1; i++) {
     let colorSet = new Set();
     const colorPalette = querySelectAll("#logo_colors_pallete")[i];
