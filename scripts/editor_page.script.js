@@ -351,7 +351,11 @@ class EditorScreen {
     this.canvas.requestRenderAll();
 
     function resizeCanvas() {
-      self.canvas.setHeight(window.innerHeight / 1.8);
+      if (window.innerHeight <= 900) {
+        self.canvas.setHeight(window.innerHeight / 1.6);
+      } else {
+        self.canvas.setHeight(window.innerHeight / 1.8);
+      }
       self.canvas.setWidth(window.innerWidth / 2);
       self.canvas.renderAll();
     }
@@ -867,21 +871,21 @@ class EditorScreen {
             new Event("click"),
           );
           this.activeSection = "text";
-        const hasShadow = !!activeObject?.shadow?.blur;
+          const hasShadow = !!activeObject?.shadow?.blur;
 
-        querySelect("#drop-shadow").checked = hasShadow;
+          querySelect("#drop-shadow").checked = hasShadow;
 
-        if (!hasShadow) {
-          querySelect("#shadow-adjust").style.display = "none";
-          querySelect("#shadow-blur").style.display = "none";
-          querySelect("#shadow-offsetX").style.display = "none";
-          querySelect("#shadow-offsetY").style.display = "none";
-        } else {
-          querySelect("#shadow-adjust").style.display = "block";
-          querySelect("#shadow-blur").style.display = "block";
-          querySelect("#shadow-offsetX").style.display = "block";
-          querySelect("#shadow-offsetY").style.display = "block";
-        }
+          if (!hasShadow) {
+            querySelect("#shadow-adjust").style.display = "none";
+            querySelect("#shadow-blur").style.display = "none";
+            querySelect("#shadow-offsetX").style.display = "none";
+            querySelect("#shadow-offsetY").style.display = "none";
+          } else {
+            querySelect("#shadow-adjust").style.display = "block";
+            querySelect("#shadow-blur").style.display = "block";
+            querySelect("#shadow-offsetX").style.display = "block";
+            querySelect("#shadow-offsetY").style.display = "block";
+          }
 
           if (hasShadow) {
             let { offsetX, offsetY, blur } = activeObject.shadow;
@@ -1081,23 +1085,23 @@ class EditorScreen {
 
     querySelect("#logoMainField").addEventListener("input", (e) => {
       const value = e.target.value;
-      const objects = this.canvas.getObjects().filter(i => i.text);
+      const objects = this.canvas.getObjects().filter((i) => i.text);
       const logoIdx = 0;
-      const logo = objects[logoIdx]
-      logo.set('text', value);
+      const logo = objects[logoIdx];
+      logo.set("text", value);
       this.canvas.renderAll();
     });
 
     querySelect("#sloganNameField").addEventListener("input", (e) => {
       const value = e.target.value;
-      const objects = this.canvas.getObjects().filter(i => i.text);
+      const objects = this.canvas.getObjects().filter((i) => i.text);
       const sloganIdx = 1;
       const slogan = objects[sloganIdx];
       slogan.set("text", value);
       this.canvas.renderAll();
     });
 
-    const renderCanvas = (SVG) => {
+    const renderCanvas = (SVG, logoPosition) => {
       fabric.loadSVGFromString(SVG, (objects, options) => {
         logoLayerGroup = new fabric.Group(objects, options);
 
@@ -1219,6 +1223,7 @@ class EditorScreen {
         logoLayerGroup.scaleToWidth(widthScaleFactor);
 
         logoLayerGroup.ungroupOnCanvas();
+
         this.canvas.renderAll();
       });
 
@@ -2819,7 +2824,9 @@ class EditorScreen {
         fetchCanvasData(this.canvas).then((data) => {
           this.logoFile = data.svgData.AllData.svg_data;
           localStorage.setItem("logo-file", this.logoFile);
-          renderCanvas(this.logoFile);
+          const logoPosition = data.svgData.AllData.logo_position;
+          renderCanvas(this.logoFile, logoPosition);
+
           updateColorPickers(this.canvas, colorPicker);
           const brandCase = data?.brandCase;
           const sloganCase = data?.sloganCase;
@@ -2853,11 +2860,12 @@ class EditorScreen {
           this.canvas.renderAll();
           this.alignId = +data.logoPosition;
           updatePreview();
-          document.getElementById("top_bottom_1").click();
 
           setTimeout(async () => {
             this.canvasHistory = new SaveHistory(this.canvas);
             querySelect("#loader_main").style.display = "none";
+            const alignItem = document.querySelector(`.svg__icon[data-align-id="${logoPosition}"]`);
+            alignItem.click();
 
             logoNameElement.set("fontSize", +data.brandSize);
             sloganNameElement.set("fontSize", +data.sloganSize);
@@ -2937,6 +2945,7 @@ class EditorScreen {
             sloganNameElement.centerH();
 
             updatePreview();
+
             this.canvas.save();
             this.canvas.renderAll();
           }, 1000);
