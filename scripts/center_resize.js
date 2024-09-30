@@ -71,7 +71,7 @@ export const centerAndResizeElements = (
         const logoNameElement = logo;
         const sloganNameElement = slogan;
 
-        const { angle, isPositiveOpening } = getCurveAngle(logoNameElement);
+        // const { angle, isPositiveOpening } = getCurveAngle(logoNameElement);
 
         logoNameElement.set("fontSize", logoSize);
         sloganNameElement.set("fontSize", sloganSize);
@@ -102,34 +102,8 @@ export const centerAndResizeElements = (
           sloganNameElement.set("fontSize", 27);
           canvas.renderAll();
 
-          logoNameElement.set("top", (logoNameElement.top += 20));
-          sloganNameElement.set("top", (sloganNameElement.top += 20));
-        }
-
-        const bottomPosition = logoNameElement?.top + logoNameElement?.height;
-        const parsedAngle = angle && parseInt(angle);
-        if (parsedAngle) {
-          sloganNameElement.set("fontSize", 30);
-          canvas.renderAll();
-
-          if (parsedAngle < -180) {
-            if (isPositiveOpening) {
-              sloganNameElement.set("top", bottomPosition);
-            } else {
-              const top = logoTopPosition - 140;
-              top && logoNameElement.set("top", top);
-              bottomPosition &&
-                sloganNameElement.set("top", bottomPosition - 100);
-            }
-          } else if (parsedAngle > -180) {
-            sloganNameElement.set("top", bottomPosition);
-            if (!isPositiveOpening) {
-              const top = logoTopPosition - 80;
-              top && logoNameElement.set("top", top);
-              bottomPosition &&
-                sloganNameElement.set("top", bottomPosition - 50);
-            }
-          }
+          logoNameElement.set("top", (logoNameElement.top += 30));
+          sloganNameElement.set("top", (sloganNameElement.top += 40));
         }
 
         centerHorizontally(logoNameElement, sloganNameElement);
@@ -144,7 +118,6 @@ export const centerAndResizeElements = (
         const logoNameElement = logo;
         const sloganNameElement = slogan;
 
-        const { angle, isPositiveOpening } = getCurveAngle(logoNameElement);
         logoNameElement.set("fontSize", logoSize);
         sloganNameElement.set("fontSize", sloganSize);
         canvas.renderAll();
@@ -155,38 +128,6 @@ export const centerAndResizeElements = (
         const sloganTopPosition = canvas.height / sloganTop;
         logoNameElement.set("top", logoTopPosition);
         sloganNameElement.set("top", sloganTopPosition);
-
-        const parsedAngle = angle && parseInt(angle);
-
-        if (parsedAngle) {
-          sloganNameElement.set("fontSize", 30);
-          const bottomPosition = logoNameElement?.top + logoNameElement?.height;
-          if (parsedAngle < -260) {
-            console.log("LESS 260");
-            logoNameElement.set("fontSize", 44);
-            canvas.renderAll();
-            logoNameElement.set("top", logoTopPosition - 310);
-            sloganNameElement.set("top", bottomPosition - 300);
-          } else if (parsedAngle < -180) {
-            if (!isPositiveOpening) {
-              logoNameElement.set("top", logoTopPosition - 170);
-              sloganNameElement.set("top", sloganTopPosition - 30);
-            } else {
-              logoNameElement.set("top", logoTopPosition - 200);
-              sloganNameElement.set("top", bottomPosition - 200);
-            }
-          } else if (parsedAngle > -180) {
-            console.log("GREATER THAN -180");
-            if (!isPositiveOpening) {
-              logoNameElement.set("top", logoTopPosition - 130);
-              sloganNameElement.set("top", sloganTopPosition - 15);
-            } else {
-              logoNameElement.set("top", logoTopPosition - 30);
-              sloganNameElement.set("top", sloganTopPosition + 30);
-            }
-          }
-          centerHorizontally(sloganNameElement);
-        }
 
         const newGrp = new fabric.Group(objects);
         canvas.viewportCenterObject(newGrp);
@@ -203,7 +144,7 @@ export const centerAndResizeElements = (
         sloganNameElement.center();
 
         logoNameElement.set("top", canvas.height / 2.3);
-        sloganNameElement.set("top", canvas.height / 1.9);
+        sloganNameElement.set("top", canvas.height / 1.8);
 
         logoNameElement.set("fontSize", 46);
         sloganNameElement.set("fontSize", 22);
@@ -217,7 +158,7 @@ export const centerAndResizeElements = (
           sloganNameElement.viewportCenter();
 
           logoNameElement.set("top", canvas.height / 2.3);
-          sloganNameElement.set("top", canvas.height / 1.9);
+          sloganNameElement.set("top", canvas.height / 1.8);
 
           if (logoNameElement.text.length <= 40) {
             logoNameElement.set("left", canvas.width / 1.6);
@@ -231,12 +172,12 @@ export const centerAndResizeElements = (
           sloganNameElement.viewportCenterH();
 
           if (logoNameElement.text.length <= 20) {
-            logoNameElement.set("left", canvas.width / 1.5);
+            logoNameElement.set("left", canvas.width / 1.6);
+
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-                logoNameElement.width / 2.5 -
-                sloganNameElement.width / 2.5,
+                (logoNameElement.width - sloganNameElement.width) / 2,
             );
           } else if (logoNameElement.text.length <= 30) {
             logoNameElement.set("left", canvas.width / 1.6);
@@ -272,22 +213,6 @@ export const centerAndResizeElements = (
           sloganNameElement.set("left", logoNameElement.left);
         }
 
-        const { angle, isPositiveOpening } = getCurveAngle(logoNameElement);
-        const bottomPosition = logoNameElement.top + logoNameElement.height;
-        if (parseInt(angle)) {
-          logoNameElement.set("fontSize", 40);
-          sloganNameElement.set("fontSize", 30);
-          sloganNameElement.set("left", sloganNameElement.get("left") * 1.04);
-          if (!isPositiveOpening) {
-            logoNameElement.set("top", canvas.height / logoNameTop - 260);
-            sloganNameElement.set("top", sloganNameElement.get("top") + 30);
-          } else {
-            logoNameElement.set("top", logoNameElement.get("top") - 60);
-            sloganNameElement.set("top", bottomPosition - 40);
-          }
-        }
-
-        // logoMain.forEach((i) => (i.left -= 500));
         const newGrp = new fabric.Group(objects);
         canvas.viewportCenterObjectH(newGrp);
         canvas.viewportCenterObjectV(newGrp);
@@ -304,7 +229,7 @@ export const centerAndResizeElements = (
         sloganNameElement.center();
 
         logoNameElement.set("top", canvas.height / 2.3);
-        sloganNameElement.set("top", canvas.height / 1.9);
+        sloganNameElement.set("top", canvas.height / 1.8);
 
         logoNameElement.set("fontSize", 46);
         sloganNameElement.set("fontSize", 22);
@@ -318,15 +243,15 @@ export const centerAndResizeElements = (
           sloganNameElement.viewportCenter();
 
           logoNameElement.set("top", canvas.height / 2.3);
-          sloganNameElement.set("top", canvas.height / 1.9);
+          sloganNameElement.set("top", canvas.height / 1.8);
 
           if (logoNameElement.text.length <= 20) {
-            logoNameElement.set("left", -(canvas.width / 100));
+            logoNameElement.set("left", -Math.round(canvas.width / 10));
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-                logoNameElement.width / 2.5 -
-                sloganNameElement.width / 2.5,
+                logoNameElement.width -
+                sloganNameElement.width,
             );
           } else if (logoNameElement.text.length <= 30) {
             logoNameElement.set("left", -(canvas.width / 7));
@@ -363,29 +288,23 @@ export const centerAndResizeElements = (
 
             sloganNameElement.set("charSpacing", 322);
             sloganNameElement.set("fontSize", 27);
+
             canvas.renderAll();
 
             const logoNameWidth = logoNameElement.width;
             sloganNameElement?.set("width", logoNameWidth);
-
-            sloganNameElement.set(
-              "left",
-              logoNameElement.left +
-                logoNameElement.width -
-                sloganNameElement.width,
-            );
           }
         } else {
           logoNameElement.viewportCenterH();
           sloganNameElement.viewportCenterH();
 
           if (logoNameElement.text.length <= 20) {
-            logoNameElement.set("left", -(canvas.width / 100));
+            logoNameElement.set("left", -Math.round(canvas.width / 10));
+
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-                logoNameElement.width / 2.5 -
-                sloganNameElement.width / 2.5,
+                (logoNameElement.width - sloganNameElement.width) / 2,
             );
           } else if (logoNameElement.text.length <= 30) {
             logoNameElement.set("left", -(canvas.width / 8));
@@ -417,13 +336,13 @@ export const centerAndResizeElements = (
           sloganNameElement.set("fontSize", 27);
 
           if (logoNameElement.text.length <= 20) {
-            logoNameElement.set("left", -(canvas.width / 3.6));
+            logoNameElement.set("left", -Math.round(canvas.width / 10));
 
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-                logoNameElement.width / 2.5 -
-                sloganNameElement.width / 2.5,
+                logoNameElement.width -
+                sloganNameElement.width,
             );
           } else if (logoNameElement.text.length <= 30) {
             logoNameElement.set("left", -(canvas.width / 4));
@@ -443,22 +362,8 @@ export const centerAndResizeElements = (
             );
           }
         }
-        const { angle, isPositiveOpening } = getCurveAngle(logoNameElement);
-        const bottomPosition = logoNameElement.top + logoNameElement.height;
-        if (parseInt(angle)) {
-          logoNameElement.set("fontSize", 40);
-          sloganNameElement.set("fontSize", 30);
-          sloganNameElement.set("left", sloganNameElement.get("left") / 1.1);
-          if (!isPositiveOpening) {
-            logoNameElement.set("top", canvas.height / logoNameTop - 260);
-            sloganNameElement.set("top", sloganNameElement.get("top") + 30);
-          } else {
-            logoNameElement.set("top", logoNameElement.get("top") - 60);
-            sloganNameElement.set("top", bottomPosition - 40);
-          }
-        }
 
-        // logoMain.forEach((i) => (i.left -= 500));
+        // logoMain.forEach((i) => (i.left += 500));
         const newGrp = new fabric.Group(objects);
         canvas.viewportCenterObjectH(newGrp);
         canvas.viewportCenterObjectV(newGrp);

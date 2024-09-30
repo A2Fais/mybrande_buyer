@@ -598,7 +598,7 @@ class EditorScreen {
 
     this.rotateRange.addEventListener("input", (e) => {
       this.isRotating = true;
-      this.rotateValue = parseInt(e.target.value, 10);
+      this.rotateValue = e.target.value;
       querySelect("#rotate_info").innerText = `Rotate: ${parseInt(
         this.rotateValue,
       )}deg`;
@@ -1101,7 +1101,7 @@ class EditorScreen {
       this.canvas.renderAll();
     });
 
-    const renderCanvas = (SVG, logoPosition) => {
+    const renderCanvas = (SVG) => {
       fabric.loadSVGFromString(SVG, (objects, options) => {
         logoLayerGroup = new fabric.Group(objects, options);
 
@@ -1916,6 +1916,7 @@ class EditorScreen {
 
       if (isCtrlZ && !anyThingRunning) {
         await this.canvasHistory.undoChanges();
+        self.canvas.undoCB();
         anyThingRunning = true;
       }
 
@@ -2322,10 +2323,25 @@ class EditorScreen {
 
     querySelect("#eyeElement").addEventListener("click", () => {
       const activeObj = this.canvas.getActiveObject();
-      let visibilty = Boolean(activeObj.get("opacity"));
+      let visibilty = Boolean(activeObj.get("visible"));
       visibilty = !visibilty;
-      activeObj.set("opacity", visibilty ? 1 : 0);
+      activeObj.set("visible", visibilty);
       this.canvas.requestRenderAll();
+      updatePreview();
+      if (activeObj) this.canvas.save();
+      const eyeElement = querySelect("#eyeElement");
+      const specificLabels = querySelectAll(".specific-setting-label");
+      const firstSpecificLabel = specificLabels[1];
+
+      const eyeColor = activeObj.visible
+        ? "var(--gray-lighter)"
+        : "var(--gold)";
+      const labelOpacity = activeObj.visible ? 0 : 1;
+      const labelColor = eyeColor;
+
+      eyeElement.style.color = eyeColor;
+      firstSpecificLabel.style.opacity = labelOpacity;
+      firstSpecificLabel.style.color = labelColor;
     });
 
     querySelect("#removeElement").addEventListener("click", () => {
@@ -2357,6 +2373,9 @@ class EditorScreen {
         }
         refreshLayerNames();
       }
+      setTimeout(() => {
+        updatePreview();
+      }, 100);
     });
 
     querySelect("#bringDownElement").addEventListener("click", () => {
@@ -2437,11 +2456,10 @@ class EditorScreen {
 
     querySelect("#eyeElement2").addEventListener("click", () => {
       const activeObj = this.canvas.getActiveObject();
-      if (!activeObj) return true;
-      let visibilty = Boolean(activeObj.get("opacity"));
+      let visibilty = Boolean(activeObj.get("visible"));
       visibilty = !visibilty;
-      activeObj.set("opacity", visibilty ? 1 : 0);
-      this.canvas.renderAll();
+      activeObj.set("visible", visibilty);
+      this.canvas.requestRenderAll();
       updatePreview();
       if (activeObj) this.canvas.save();
     });
@@ -2823,9 +2841,18 @@ class EditorScreen {
 
         fetchCanvasData(this.canvas).then((data) => {
           this.logoFile = data.svgData.AllData.svg_data;
-          localStorage.setItem("logo-file", this.logoFile);
           const logoPosition = data.svgData.AllData.logo_position;
-          renderCanvas(this.logoFile, logoPosition);
+          let parser = new DOMParser();
+          let svgDoc = parser.parseFromString(this.logoFile, "image/svg+xml");
+
+          let imageTag = svgDoc.querySelector("image");
+          if (imageTag) {
+            imageTag.remove();
+          }
+          let serializer = new XMLSerializer();
+          let updatedLogo = serializer.serializeToString(svgDoc);
+          localStorage.setItem("logo-file", updatedLogo);
+          renderCanvas(updatedLogo);
 
           updateColorPickers(this.canvas, colorPicker);
           const brandCase = data?.brandCase;
@@ -2864,7 +2891,9 @@ class EditorScreen {
           setTimeout(async () => {
             this.canvasHistory = new SaveHistory(this.canvas);
             querySelect("#loader_main").style.display = "none";
-            const alignItem = document.querySelector(`.svg__icon[data-align-id="${logoPosition}"]`);
+            const alignItem = document.querySelector(
+              `.svg__icon[data-align-id="${logoPosition}"]`,
+            );
             alignItem.click();
 
             logoNameElement.set("fontSize", +data.brandSize);
@@ -2944,15 +2973,13 @@ class EditorScreen {
             logoNameElement.centerH();
             sloganNameElement.centerH();
 
-            updatePreview();
-
             this.canvas.save();
             this.canvas.renderAll();
           }, 1000);
         });
       })
       .catch((error) => {
-        console.error("Error fetching icons:", error);
+        console.error("Error fetching CANVAS:", error);
       });
 
     querySelect("#category_type_title").addEventListener("click", (e) => {
@@ -2981,12 +3008,11 @@ class EditorScreen {
     let clickedObjectCoordinates = {};
 
     document.getElementById("clip-icons").addEventListener("click", (e) => {
-      let img = e.target,
-        itemId = img.getAttribute("data-id"),
-        category = img.getAttribute("data-category");
+      let img = e.target;
+      const itemId = img.getAttribute("data-id");
+      const category = img.getAttribute("data-category");
       const targetSrc = img.src;
       const decodedSrc = decodeURIComponent(targetSrc);
-
       const canvas = this.canvas;
 
       fabric.loadSVGFromURL(decodedSrc, (objects, options) => {
@@ -3001,16 +3027,7 @@ class EditorScreen {
         canvas.setActiveObject(img);
         canvas.viewportCenterObjectV(img);
         canvas.requestRenderAll();
-
-        // img.on("mousedown", (event) => {
-        //   // console.log(
-        //   //   "Clicked on object with ID:",
-        //   //   event.target.id,
-        //   //   event.target.top,
-        //   //   event.target.left
-        //   // );
-        //   canvas.renderAll();
-        // });
+        updatePreview();
       });
 
       layerCounter++;
@@ -3250,6 +3267,8 @@ class EditorScreen {
 
     let colorChanging = false;
     colorPicker.on("input:change", (color) => {
+      const active = this.canvas.getActiveObject();
+      if (!active) return;
       colorChanging = true;
 
       pickerDefaultColor = color.rgbaString;
@@ -3268,7 +3287,6 @@ class EditorScreen {
         querySelect("#HEX").value = color.hexString;
       }
 
-      const active = this.canvas.getActiveObject();
       if (active && active._objects) {
         active._objects.forEach((i) => {
           i.set("fill", color.rgbaString);
@@ -4506,6 +4524,7 @@ class EditorScreen {
         anythingApplied = true;
         setlogoPosition(this.alignId, this.canvas);
         setTimeout(() => {
+          updatePreview();
           this.canvas.save();
           anythingApplied = false;
         }, 100);
@@ -4602,7 +4621,6 @@ class EditorScreen {
             this.canvas.requestRenderAll();
           });
         }
-
         this.canvas.requestRenderAll();
       }
     };

@@ -40,7 +40,7 @@ export const setCanvasBackground = (canvas) => {
       left: 0,
       scaleX: 0.3,
       scaleY: 0.3,
-    }
+    },
   );
 };
 
@@ -51,13 +51,13 @@ export async function saveCanvas(
   logoNameElement,
   sloganNameElement,
   alignId,
-  isPackage = false
+  isPackage = false,
 ) {
-  const value = logoNameElement.get("diameter")
-  let percentage_ = value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
-  let angle = (percentage_ * 3.6).toFixed(0);
-  console.log({angle, percentage_})
-  return 
+  const value = logoNameElement.get("diameter");
+  // let percentage_ =
+  //   value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
+  // let angle = (percentage_ * 3.6).toFixed(0);
+  // console.log({ angle, percentage_ });
   // const thumbnailSVG = canvas?.toSVG();
   // localStorage.setItem('thumbnail', thumbnailSVG)
 
@@ -65,30 +65,38 @@ export async function saveCanvas(
     return obj.id && obj.id.includes("external_layer_");
   });
 
-
   let externalLayerElements = [],
     externalTextElements = [],
     externalImages = [];
 
   externalLayers.map((layer) => {
-    let data = layer.toJSON(['itemId', 'category', 'cacheHeight', 'cacheWidth', 'id', 'layerType', 'dataUrl', 'ext']);
+    let data = layer.toJSON([
+      "itemId",
+      "category",
+      "cacheHeight",
+      "cacheWidth",
+      "id",
+      "layerType",
+      "dataUrl",
+      "ext",
+    ]);
     if (layer.text) {
-      externalTextElements.push(data)
+      externalTextElements.push(data);
     } else if (layer.id.includes("upload_external_layer_")) {
-      externalImages.push(data)
+      externalImages.push(data);
     } else {
-      externalLayerElements.push(data)
-    };
+      externalLayerElements.push(data);
+    }
     canvas.remove(layer);
   });
 
   const bgColor = canvas.get("backgroundColor");
-  // canvas.setBackgroundImage(null);
-  // canvas.setBackgroundColor(null, canvas.renderAll.bind(canvas));
+  canvas.setBackgroundImage(null);
+  canvas.setBackgroundColor(null, canvas.renderAll.bind(canvas));
 
   const currentCanvasSVG = canvas.toSVG();
 
-  externalLayers.map(rmObj => {
+  externalLayers.map((rmObj) => {
     canvas.add(rmObj);
     canvas.requestRenderAll();
   });
@@ -131,7 +139,7 @@ export async function saveCanvas(
       brandName_fontSize: logoNameElement.get("fontSize"),
 
       brandName_curve_diameter: logoNameElement.diameter,
-      brand_curve_percentage: logoNameElement.get('percentage'),
+      brand_curve_percentage: logoNameElement.get("percentage"),
 
       brandName_letterCase: getTextCase(logoNameElement.text),
       brandName_fontStyle: logoNameElement.get("fontStyle"),
@@ -145,7 +153,7 @@ export async function saveCanvas(
       slogan_fontSize: sloganNameElement.get("fontSize"),
 
       slogan_curve_diameter: sloganNameElement.get("diameter"),
-      slogan_curve_percentage: sloganNameElement.get('percentage'),
+      slogan_curve_percentage: sloganNameElement.get("percentage"),
 
       slogan_letterCase: getTextCase(sloganNameElement.text),
       slogan_fontStyle: sloganNameElement.get("fontStyle"),
@@ -154,42 +162,42 @@ export async function saveCanvas(
       externalLayerElements: JSON.stringify(externalLayerElements),
       externalTextElements: JSON.stringify(externalTextElements),
       images: JSON.stringify(externalImages),
-      thumbnail: localStorage?.getItem('thumbnail')
+      thumbnail: localStorage?.getItem("thumbnail"),
     };
 
-
-    // try {
-    //   const response = await axios.post(
-    //     `https://www.mybrande.com/api/buyer/logo/store`,
-    //     postData
-    //   );
-    //   if (response?.status === 200) {
-    //     console.log(response.data)
-    //     const { buyer_logo_id } = response.data;
-    //     if (!buyer_logo_id)
-    //       return toastNotification("Error encountered with buyer logo ID");
-    //     querySelect("#buyer_logo_id").value = buyer_logo_id;
-    //     canvas.setBackgroundColor(bgColor, canvas.renderAll.bind(canvas));
-    //     canvas.setBackgroundImage(
-    //       "/static/pattern.png",
-    //       this.canvas.renderAll.bind(this.canvas),
-    //       {
-    //         opacity: 0.6,
-    //         originX: "left",
-    //         originY: "top",
-    //         top: 0,
-    //         left: 0,
-    //         scaleX: 0.3,
-    //         scaleY: 0.3,
-    //       }
-    //     );
-    //     isPackage
-    //       ? (location.href = `https://www.mybrande.com/api/buyer/logo/downloadandpayment/${buyer_logo_id}`)
-    //       : (window.location.href = `https://www.mybrande.com/api/user/logo/preview/${buyer_logo_id}`);
-    //     toastNotification("Logo Saved Successfully");
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      if (canvas.get("backgroundColor") !== null)
+        return toastNotification("backgroundColor issue while saving api");
+      const response = await axios.post(
+        `https://www.mybrande.com/api/buyer/logo/store`,
+        postData,
+      );
+      if (response?.status === 200) {
+        const { buyer_logo_id } = response.data;
+        if (!buyer_logo_id)
+          return toastNotification("Error encountered with buyer logo ID");
+        querySelect("#buyer_logo_id").value = buyer_logo_id;
+        canvas.setBackgroundColor(bgColor, canvas.renderAll.bind(canvas));
+        canvas.setBackgroundImage(
+          "/static/pattern.png",
+          canvas.renderAll.bind(canvas),
+          {
+            opacity: 0.6,
+            originX: "left",
+            originY: "top",
+            top: 0,
+            left: 0,
+            scaleX: 0.3,
+            scaleY: 0.3,
+          },
+        );
+        isPackage
+          ? (location.href = `https://www.mybrande.com/api/buyer/logo/downloadandpayment/${buyer_logo_id}`)
+          : (window.location.href = `https://www.mybrande.com/api/user/logo/preview/${buyer_logo_id}`);
+        toastNotification("Logo Saved Successfully");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
