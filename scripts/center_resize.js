@@ -246,12 +246,12 @@ export const centerAndResizeElements = (
           sloganNameElement.set("top", canvas.height / 1.8);
 
           if (logoNameElement.text.length <= 20) {
-            logoNameElement.set("left", -Math.round(canvas.width / 10));
+            logoNameElement.set("left", canvas.width / 4);
             sloganNameElement.set(
               "left",
               logoNameElement.left +
                 logoNameElement.width -
-                sloganNameElement.width,
+                sloganNameElement.width - 20,
             );
           } else if (logoNameElement.text.length <= 30) {
             logoNameElement.set("left", -(canvas.width / 7));
@@ -299,7 +299,7 @@ export const centerAndResizeElements = (
           sloganNameElement.viewportCenterH();
 
           if (logoNameElement.text.length <= 20) {
-            logoNameElement.set("left", -Math.round(canvas.width / 10));
+            logoNameElement.set("left", canvas.width / 4);
 
             sloganNameElement.set(
               "left",
@@ -307,7 +307,7 @@ export const centerAndResizeElements = (
                 (logoNameElement.width - sloganNameElement.width) / 2,
             );
           } else if (logoNameElement.text.length <= 30) {
-            logoNameElement.set("left", -(canvas.width / 8));
+            logoNameElement.set("left", canvas.width / 8);
             sloganNameElement.set(
               "left",
               logoNameElement.left +
@@ -336,7 +336,7 @@ export const centerAndResizeElements = (
           sloganNameElement.set("fontSize", 27);
 
           if (logoNameElement.text.length <= 20) {
-            logoNameElement.set("left", -Math.round(canvas.width / 10));
+            logoNameElement.set("left", canvas.width / 4);
 
             sloganNameElement.set(
               "left",
