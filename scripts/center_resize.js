@@ -251,7 +251,8 @@ export const centerAndResizeElements = (
               "left",
               logoNameElement.left +
                 logoNameElement.width -
-                sloganNameElement.width - 20,
+                sloganNameElement.width -
+                20,
             );
           } else if (logoNameElement.text.length <= 30) {
             logoNameElement.set("left", -(canvas.width / 7));
