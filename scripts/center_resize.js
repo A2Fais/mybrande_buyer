@@ -245,17 +245,24 @@ export const centerAndResizeElements = (
           logoNameElement.set("top", canvas.height / 2.3);
           sloganNameElement.set("top", canvas.height / 1.8);
 
-          if (logoNameElement.text.length <= 20) {
-            logoNameElement.set("left", canvas.width / 4);
+          if (logoNameElement.text.length < 16) {
+            logoNameElement.set("left", canvas.width / 8);
             sloganNameElement.set(
               "left",
               logoNameElement.left +
                 logoNameElement.width -
                 sloganNameElement.width -
-                20,
+                40,
+            );
+          } else if (logoNameElement.text.length >= 16) {
+            logoNameElement.set("left", canvas.width / 20);
+            sloganNameElement.set(
+              "left",
+              logoNameElement.left +
+                (logoNameElement.width - sloganNameElement.width) / 2,
             );
           } else if (logoNameElement.text.length <= 30) {
-            logoNameElement.set("left", -(canvas.width / 7));
+            logoNameElement.set("left", canvas.width / 8);
             sloganNameElement.set(
               "left",
               logoNameElement.left +
@@ -299,9 +306,17 @@ export const centerAndResizeElements = (
           logoNameElement.viewportCenterH();
           sloganNameElement.viewportCenterH();
 
-          if (logoNameElement.text.length <= 20) {
-            logoNameElement.set("left", canvas.width / 4);
+          if (logoNameElement.text.length < 16) {
+            logoNameElement.set("left", canvas.width / 8);
 
+            sloganNameElement.set(
+              "left",
+              logoNameElement.left +
+                (logoNameElement.width - sloganNameElement.width) / 2,
+            );
+          } else if (logoNameElement.text.length >= 16) {
+            console.log("THIS IS 16");
+            logoNameElement.set("left", canvas.width / 20);
             sloganNameElement.set(
               "left",
               logoNameElement.left +

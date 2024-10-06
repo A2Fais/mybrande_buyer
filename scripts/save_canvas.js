@@ -58,8 +58,6 @@ export async function saveCanvas(
   //   value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
   // let angle = (percentage_ * 3.6).toFixed(0);
   // console.log({ angle, percentage_ });
-  // const thumbnailSVG = canvas?.toSVG();
-  // localStorage.setItem('thumbnail', thumbnailSVG)
 
   let externalLayers = canvas._objects.filter((obj) => {
     return obj.id && obj.id.includes("external_layer_");
@@ -96,10 +94,18 @@ export async function saveCanvas(
 
   const currentCanvasSVG = canvas.toSVG();
 
-  externalLayers.map((rmObj) => {
-    canvas.add(rmObj);
-    canvas.requestRenderAll();
-  });
+  const addExternalLayersBackToCanvas = (externalLayers) => {
+    return new Promise((resolve) => {
+      externalLayers.map((rmObj) => {
+        canvas.add(rmObj);
+        canvas.renderAll();
+      });
+      const thumbnailSVG = canvas.toSVG();
+      resolve(thumbnailSVG);
+    });
+  };
+
+  const thumbnailSVG = await addExternalLayersBackToCanvas(externalLayers);
 
   if (currentCanvasSVG) {
     const getDropShadowValue = (element) => {
@@ -119,6 +125,7 @@ export async function saveCanvas(
 
     const brandColor = logoNameElement.get("fill");
     const sloganColor = sloganNameElement.get("fill");
+    const apiCheck = querySelect("#api_check").value;
 
     const postData = {
       buyer_logo_id: querySelect("#buyer_logo_id")?.value, // from response hidden input field
@@ -126,7 +133,7 @@ export async function saveCanvas(
       logo_id: logoId, // svg data id
       brand_name: querySelect("#logoMainField").value,
       slogan: querySelect("#sloganNameField").value,
-      svg_data: currentCanvasSVG, // thumbnailSVG
+      svg_data: thumbnailSVG, // thumbnailSVG
       editor_svg_data: currentCanvasSVG,
       /* logo_position: alignId, */
       logo_position: 1,
@@ -162,7 +169,8 @@ export async function saveCanvas(
       externalLayerElements: JSON.stringify(externalLayerElements),
       externalTextElements: JSON.stringify(externalTextElements),
       images: JSON.stringify(externalImages),
-      thumbnail: localStorage?.getItem("thumbnail"),
+      // thumbnail: localStorage?.getItem("thumbnail"),
+      api_check: apiCheck,
     };
 
     try {
@@ -174,8 +182,11 @@ export async function saveCanvas(
       );
       if (response?.status === 200) {
         const { buyer_logo_id } = response.data;
-        if (!buyer_logo_id)
+
+        if (!buyer_logo_id) {
           return toastNotification("Error encountered with buyer logo ID");
+        }
+
         querySelect("#buyer_logo_id").value = buyer_logo_id;
         canvas.setBackgroundColor(bgColor, canvas.renderAll.bind(canvas));
         canvas.setBackgroundImage(
@@ -193,7 +204,7 @@ export async function saveCanvas(
         );
         isPackage
           ? (location.href = `https://www.mybrande.com/api/buyer/logo/downloadandpayment/${buyer_logo_id}`)
-          : (window.location.href = `https://www.mybrande.com/api/user/logo/preview/${buyer_logo_id}`);
+          : (location.href = `https://www.mybrande.com/api/user/logo/preview/${buyer_logo_id}`);
         toastNotification("Logo Saved Successfully");
       }
     } catch (error) {

@@ -10,7 +10,7 @@ import { rgbToHex, hexToHsl, hexToRgb, rgbaToHex } from "./color_converter";
 import { rotateReset } from "./rotate_reset";
 import { saveCanvas } from "./save_canvas";
 import { centerAndResizeElements } from "./center_resize";
-import SaveHistory from "./SaveHistory.js";
+import SaveHistory from "./save_history.js";
 import { curvedText } from "./curved_text.js";
 import { applyLinearGradient } from "./apply_linear_grad.js";
 import {
@@ -1034,20 +1034,12 @@ class EditorScreen {
           }
         }
 
-        // Set Scale
-
-        // querySelect("#scale-value").value = obj.scaleValue || 1;
-        // querySelect("#scale-range").value = obj.scaleValue
-        //   ? obj.scaleValue * 10
-        //   : 10;
-
         querySelect("#letter-spacing-slider").value = Math.round(
           obj.charSpacing,
         );
         querySelect("#l_spacing_value").value =
           Math.round(obj.charSpacing) || 0;
 
-        // Set Font Size
         if (obj.fontSize) {
           querySelect("#font_size_title").value =
             Math.round(obj.fontSize) + "px";
@@ -1256,14 +1248,6 @@ class EditorScreen {
         return "Title Case";
       }
     };
-    //
-    // const putAngleDownIcon = (className, additionalFunction) => {
-    //   const icon = document.createElement("i");
-    //   icon.className = "fa-solid fa-angle-down";
-    //   if (typeof additionalFunction === "function") {
-    //     icon.addEventListener("click", additionalFunction);
-    //   }
-    // };
 
     logoNameElement.on("mousedblclick", () => {
       const logoNameInput = querySelect("#logoMainField");
@@ -1911,18 +1895,17 @@ class EditorScreen {
 
     document.addEventListener("keydown", async (e) => {
       let isCtrlZ = e.ctrlKey && e.key === "z",
-        isCtrlY = e.ctrlKey && e.key === "y",
-        anyThingRunning = false;
+        isCtrlY = e.ctrlKey && e.key === "y";
+      let isUndoRedoActive = false;
 
-      if (isCtrlZ && !anyThingRunning) {
+      if (isCtrlZ && !isUndoRedoActive) {
         await this.canvasHistory.undoChanges();
-        self.canvas.undoCB();
-        anyThingRunning = true;
+        isUndoRedoActive = true;
       }
 
-      if (isCtrlY && !anyThingRunning) {
+      if (isCtrlY && !isUndoRedoActive) {
         await this.canvasHistory.redoChanges();
-        anyThingRunning = true;
+        isUndoRedoActive = true;
       }
     });
     querySelect("#font_size_range").addEventListener("change", () => {
@@ -2348,7 +2331,6 @@ class EditorScreen {
       const activeObj = this.canvas.getActiveObject(),
         self = this;
       if (activeObj) {
-        this.canvas.save(); // For Position
         if (activeObj._objects && activeObj._objects.length) {
           activeObj._objects.forEach((obj) => {
             self.canvas.remove(obj);
@@ -2363,7 +2345,7 @@ class EditorScreen {
         }
         this.canvas.remove(activeObj);
         this.canvas.save();
-        this.canvas.requestRenderAll();
+        this.canvas.renderAll();
 
         if (activeObj.layerId) {
           let layerEl = querySelect(

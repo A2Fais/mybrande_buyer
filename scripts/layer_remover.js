@@ -1,3 +1,5 @@
+import SaveHistory from "./save_history";
+
 export class DeleteLayer {
   constructor(event, canvas, layers, activeLayerIndex) {
     this.event = event;
@@ -8,7 +10,7 @@ export class DeleteLayer {
 
   deleteLayer() {
     const selectedObject = this.canvas.getActiveObject();
-    if (this.event.key === 'Delete') {
+    if (this.event.key === "Delete") {
       if (this.layers.children.length === 1) {
         this.layers.removeChild(this.layers.firstChild);
         this.canvas.clear();
@@ -18,15 +20,17 @@ export class DeleteLayer {
         if (this.activeLayerIndex === this.layers.children.length - 1) {
           this.activeLayerIndex = 0;
         } else {
-          document.querySelectorAll('.layer-container').forEach((layer) => {
-            const layerIndex = parseInt(layer.getAttribute('data_layer'));
+          querySelectAll(".layer-container").forEach((layer) => {
+            const layerIndex = parseInt(layer.getAttribute("data_layer"));
             if (layerIndex > this.activeLayerIndex) {
-              layer.setAttribute('data_layer', layerIndex - 1);
+              layer.setAttribute("data_layer", layerIndex - 1);
             }
           });
         }
+
         this.canvas.setActiveObject(this.canvas.item(this.activeLayerIndex));
-        this.canvas.requestRenderAll();
+        this.canvas.renderAll();
+        SaveHistory.saveHistory();
       }
     }
   }
