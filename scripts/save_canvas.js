@@ -28,21 +28,21 @@ export function putAngleDownIcon(className, additionalFunction) {
   }
 }
 
-export const setCanvasBackground = (canvas) => {
-  canvas.setBackgroundImage(
-    "/static/pattern.png",
-    canvas.renderAll.bind(canvas),
-    {
-      opacity: 0.6,
-      originX: "left",
-      originY: "top",
-      top: 0,
-      left: 0,
-      scaleX: 0.3,
-      scaleY: 0.3,
-    },
-  );
-};
+// export const setCanvasBackground = (canvas) => {
+//   canvas.setBackgroundImage(
+//     "/static/pattern.png",
+//     canvas.renderAll.bind(canvas),
+//     {
+//       opacity: 0.6,
+//       originX: "left",
+//       originY: "top",
+//       top: 0,
+//       left: 0,
+//       scaleX: 0.3,
+//       scaleY: 0.3,
+//     },
+//   );
+// };
 
 export async function saveCanvas(
   logoId,
@@ -89,7 +89,7 @@ export async function saveCanvas(
   });
 
   const bgColor = canvas.get("backgroundColor");
-  canvas.setBackgroundImage(null);
+  // canvas.setBackgroundImage(null);
   canvas.setBackgroundColor(null, canvas.renderAll.bind(canvas));
 
   const currentCanvasSVG = canvas.toSVG();
@@ -189,19 +189,19 @@ export async function saveCanvas(
 
         querySelect("#buyer_logo_id").value = buyer_logo_id;
         canvas.setBackgroundColor(bgColor, canvas.renderAll.bind(canvas));
-        canvas.setBackgroundImage(
-          "/static/pattern.png",
-          canvas.renderAll.bind(canvas),
-          {
-            opacity: 0.6,
-            originX: "left",
-            originY: "top",
-            top: 0,
-            left: 0,
-            scaleX: 0.3,
-            scaleY: 0.3,
-          },
-        );
+        // canvas.setBackgroundImage(
+        //   "/static/pattern.png",
+        //   canvas.renderAll.bind(canvas),
+        //   {
+        //     opacity: 0.6,
+        //     originX: "left",
+        //     originY: "top",
+        //     top: 0,
+        //     left: 0,
+        //     scaleX: 0.3,
+        //     scaleY: 0.3,
+        //   },
+        // );
         isPackage
           ? (location.href = `https://www.mybrande.com/api/buyer/logo/downloadandpayment/${buyer_logo_id}`)
           : (location.href = `https://www.mybrande.com/api/user/logo/preview/${buyer_logo_id}`);

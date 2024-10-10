@@ -112,8 +112,9 @@ class EditorScreen {
     let self = this;
 
     this.fetchFonts = async () => {
+      const apiKey = "AIzaSyA3WEzwS9il6Md6nJW5RI3eMlerTso8tII";
       let apiResponse = await fetch(
-        "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyA3WEzwS9il6Md6nJW5RI3eMlerTso8tII",
+        `https://www.googleapis.com/webfonts/v1/webfonts?key=${apiKey}`,
       );
       apiResponse = await apiResponse.json();
       this.fontItems = apiResponse.items;
@@ -260,19 +261,19 @@ class EditorScreen {
       });
     };
 
-    this.canvas.setBackgroundImage(
-      "/static/pattern.png",
-      this.canvas.renderAll.bind(this.canvas),
-      {
-        opacity: 0.6,
-        originX: "left",
-        originY: "top",
-        top: 0,
-        left: 0,
-        scaleX: 0.3,
-        scaleY: 0.3,
-      },
-    );
+    // this.canvas.setBackgroundImage(
+    //   "/static/pattern.png",
+    //   this.canvas.renderAll.bind(this.canvas),
+    //   {
+    //     opacity: 0.6,
+    //     originX: "left",
+    //     originY: "top",
+    //     top: 0,
+    //     left: 0,
+    //     scaleX: 0.3,
+    //     scaleY: 0.3,
+    //   },
+    // );
 
     this.canvas.on("after:render", () => {
       querySelect("#loader_font").style.display = "none";
@@ -316,23 +317,23 @@ class EditorScreen {
     };
     this.canvas.refreshLayerNames = refreshLayerNames;
 
-    const setCanvasBackground = () => {
-      this.canvas.setBackgroundImage(
-        "/static/pattern.png",
-        this.canvas.renderAll.bind(this.canvas),
-        {
-          opacity: 0.6,
-          originX: "left",
-          originY: "top",
-          top: 0,
-          left: 0,
-          scaleX: 0.3,
-          scaleY: 0.3,
-        },
-      );
-    };
-
-    setCanvasBackground();
+    // const setCanvasBackground = () => {
+    //   this.canvas.setBackgroundImage(
+    //     "/static/pattern.png",
+    //     this.canvas.renderAll.bind(this.canvas),
+    //     {
+    //       opacity: 0.6,
+    //       originX: "left",
+    //       originY: "top",
+    //       top: 0,
+    //       left: 0,
+    //       scaleX: 0.3,
+    //       scaleY: 0.3,
+    //     },
+    //   );
+    // };
+    //
+    // setCanvasBackground();
 
     updatePreview();
 
@@ -364,6 +365,11 @@ class EditorScreen {
     function handleResize() {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(resizeCanvas, 100);
+      self.canvas.getObjects().forEach((obj) => {
+        obj.scaleX = 0.5;
+        obj.scaleY = 0.5;
+        obj.setCoords();
+      });
       location.reload();
     }
 
@@ -1349,10 +1355,10 @@ class EditorScreen {
             this.canvas.renderAll.bind(this.canvas),
           );
         }
-        this.canvas.setBackgroundImage(
-          null,
-          this.canvas.renderAll.bind(this.canvas),
-        );
+        // this.canvas.setBackgroundImage(
+        //   null,
+        //   this.canvas.renderAll.bind(this.canvas),
+        // );
 
         querySelect(".preview-modal-bg").style.display = "block";
         const logo = this.canvas.toDataURL({
@@ -1978,8 +1984,6 @@ class EditorScreen {
     });
 
     querySelect("#curve-text").addEventListener("change", function (e) {
-      self.canvas.requestRenderAll();
-
       let inp = e.target,
         val = parseInt(inp.value);
 
@@ -2006,7 +2010,6 @@ class EditorScreen {
       self.canvas.requestRenderAll();
     });
 
-    // Arrow up down event
     querySelect("#curve-text").addEventListener("keydown", (e) => {
       if (e.key == "ArrowUp") {
         querySelect("#text-curve-up").dispatchEvent(new Event("click"));
@@ -4156,8 +4159,8 @@ class EditorScreen {
             46,
             22,
             "center",
-            1.3,
-            1.45,
+            1.2,
+            1.38,
             false,
             canvas,
             logoNameElement,
@@ -4170,8 +4173,8 @@ class EditorScreen {
             40,
             20,
             "center",
-            1.3,
-            1.45,
+            1.22,
+            1.38,
             false,
             canvas,
             logoNameElement,
@@ -4184,8 +4187,8 @@ class EditorScreen {
             46,
             22,
             "center",
-            1.32,
-            1.5,
+            1.25,
+            1.45,
             false,
             canvas,
             logoNameElement,
@@ -4198,8 +4201,8 @@ class EditorScreen {
             46,
             22,
             "center",
-            3.8,
-            5.5,
+            5.2,
+            12,
             false,
             canvas,
             logoNameElement,
@@ -4212,8 +4215,8 @@ class EditorScreen {
             40,
             18,
             "center",
-            3.5,
-            5,
+            5.2,
+            12,
             false,
             canvas,
             logoNameElement,
@@ -4226,8 +4229,8 @@ class EditorScreen {
             46,
             22,
             "center",
-            3.3,
-            4.5,
+            4.8,
+            11,
             false,
             canvas,
             logoNameElement,
@@ -4240,8 +4243,8 @@ class EditorScreen {
             32,
             25,
             "center",
-            1.32,
-            1.5,
+            1.1,
+            1.8,
             false,
             canvas,
             logoNameElement,
@@ -4309,7 +4312,7 @@ class EditorScreen {
             "rightLeft",
             32,
             25,
-            "center",
+            "left",
             1.32,
             1.5,
             false,
@@ -4378,6 +4381,7 @@ class EditorScreen {
           break;
       }
       canvas.renderAll();
+      updatePreview();
     }
 
     var logoPosition;

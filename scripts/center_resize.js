@@ -103,7 +103,7 @@ export const centerAndResizeElements = (
           canvas.renderAll();
 
           logoNameElement.set("top", (logoNameElement.top += 30));
-          sloganNameElement.set("top", (sloganNameElement.top += 40));
+          sloganNameElement.set("top", (sloganNameElement.top += 60));
         }
 
         centerHorizontally(logoNameElement, sloganNameElement);
@@ -245,32 +245,24 @@ export const centerAndResizeElements = (
           logoNameElement.set("top", canvas.height / 2.3);
           sloganNameElement.set("top", canvas.height / 1.8);
 
-          if (logoNameElement.text.length < 16) {
-            logoNameElement.set("left", canvas.width / 8);
+          if (logoNameElement.text.length <= 20) {
+            logoNameElement.set("left", -Math.round(canvas.width / 10));
             sloganNameElement.set(
               "left",
               logoNameElement.left +
                 logoNameElement.width -
-                sloganNameElement.width -
-                40,
-            );
-          } else if (logoNameElement.text.length >= 16) {
-            logoNameElement.set("left", canvas.width / 20);
-            sloganNameElement.set(
-              "left",
-              logoNameElement.left +
-                (logoNameElement.width - sloganNameElement.width) / 2,
+                sloganNameElement.width,
             );
           } else if (logoNameElement.text.length <= 30) {
-            logoNameElement.set("left", canvas.width / 8);
+            logoNameElement.set("left", -Math.round(canvas.width / 3));
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-                logoNameElement.width / 1.25 -
-                sloganNameElement.width / 1.25,
+                logoNameElement.width -
+                sloganNameElement.width,
             );
           } else if (logoNameElement.text.length <= 40) {
-            logoNameElement.set("left", -(canvas.width / 2.9));
+            logoNameElement.set("left", -Math.round(canvas.width / 3.5));
             sloganNameElement.set(
               "left",
               logoNameElement.left +
@@ -306,29 +298,21 @@ export const centerAndResizeElements = (
           logoNameElement.viewportCenterH();
           sloganNameElement.viewportCenterH();
 
-          if (logoNameElement.text.length < 16) {
-            logoNameElement.set("left", canvas.width / 8);
+          if (logoNameElement.text.length <= 20) {
+            logoNameElement.set("left", -Math.round(canvas.width / 10));
 
             sloganNameElement.set(
               "left",
               logoNameElement.left +
                 (logoNameElement.width - sloganNameElement.width) / 2,
             );
-          } else if (logoNameElement.text.length >= 16) {
-            console.log("THIS IS 16");
-            logoNameElement.set("left", canvas.width / 20);
-            sloganNameElement.set(
-              "left",
-              logoNameElement.left +
-                (logoNameElement.width - sloganNameElement.width) / 2,
-            );
           } else if (logoNameElement.text.length <= 30) {
-            logoNameElement.set("left", canvas.width / 8);
+            logoNameElement.set("left", -Math.round(canvas.width / 3));
             sloganNameElement.set(
               "left",
               logoNameElement.left +
-                logoNameElement.width / 2.5 -
-                sloganNameElement.width / 2.5,
+                logoNameElement.width / 2 -
+                sloganNameElement.width / 2,
             );
           } else if (logoNameElement.text.length <= 40) {
             logoNameElement.set("left", -(canvas.width / 3));
@@ -352,7 +336,7 @@ export const centerAndResizeElements = (
           sloganNameElement.set("fontSize", 27);
 
           if (logoNameElement.text.length <= 20) {
-            logoNameElement.set("left", canvas.width / 4);
+            logoNameElement.set("left", -Math.round(canvas.width / 10));
 
             sloganNameElement.set(
               "left",
@@ -361,7 +345,7 @@ export const centerAndResizeElements = (
                 sloganNameElement.width,
             );
           } else if (logoNameElement.text.length <= 30) {
-            logoNameElement.set("left", -(canvas.width / 4));
+            logoNameElement.set("left", -Math.round(canvas.width / 3));
             sloganNameElement.set(
               "left",
               logoNameElement.left +

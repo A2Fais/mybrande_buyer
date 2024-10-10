@@ -1,4 +1,5 @@
 import SaveHistory from "./save_history";
+import { querySelectAll } from "./selectors";
 
 export class DeleteLayer {
   constructor(event, canvas, layers, activeLayerIndex) {
