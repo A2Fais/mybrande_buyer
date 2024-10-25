@@ -30,6 +30,30 @@ body {
   z-index: 20;
 }
 
+.chevron {
+  transition: ease-out 0.2s all;
+  cursor: pointer;
+}
+
+.chevron:hover {
+  transform: scale(1.2);
+}
+
+
+.slide {
+  animation: slideMenuAnimation 0.2s ease-out forwards;
+}
+
+@keyframes slideMenuAnimation {
+  0% {
+    transform: translateX(-40px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
 .canvas-actions {
   background-color: var(--lighter);
   border-bottom: 1px solid var(--light);
@@ -942,16 +966,34 @@ input:checked+.switch-slider:before {
   opacity: 0.8;
 }
 
+.magnifier_img {
+  height: 120px;
+  width: 240px;
+  object-fit: contain;
+  scale: 1;
+}
+
 .magnifier-container {
   position: absolute;
-  bottom: 30px;
-  left: 440px;
+  left: 380px;
+  bottom: 10px;
   outline: 1.5px solid var(--light);
   /* border: 1px solid #ccc; */
   /* box-shadow: 0px 0px 10px #5555552f; */
   /* background-color: var(--lighter); */
   border-radius: 8px;
   overflow: hidden;
+}
+
+@media (max-width: 1600px) {
+  .magnifier-container {
+    width: 140px;
+  }
+
+  .magnifier_img {
+    width: 140px;
+    height: 80px;
+  }
 }
 
 #zoom-slider {
@@ -1210,6 +1252,7 @@ input:checked+.switch-slider:before {
   transition: 0.2s all ease-out;
   user-select: none;
 }
+
 .svg__icon.active,
 .svg__icon:hover {
   background-color: #c5c5c5;
@@ -1226,6 +1269,30 @@ input:checked+.switch-slider:before {
   padding: 5px 10px;
   border: 1px solid #ddd;
   overflow-y: scroll;
+}
+
+.right-bar-contents {
+  margin-top: 100px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+}
+
+@media (max-width: 1300px) {
+  .right-bar {
+    width: 130px;
+  }
+
+  .right-bar-contents {
+    margin-top: 80px;
+    margin-bottom: 30px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .svg__icon {
+    width: 25px;
+    height: 25px;
+  }
 }
 
 #back-main {
@@ -1496,10 +1563,12 @@ body {
 .ms-select-list .ms-select-list-menu::-webkit-scrollbar {
   width: 8px;
 }
+
 .ms-select-list.show .ms-select-list-menu.collection-available .collection::-webkit-scrollbar-track,
 .ms-select-list .ms-select-list-menu::-webkit-scrollbar-track {
   background: var(--lighter);
 }
+
 .ms-select-list.show .ms-select-list-menu.collection-available .collection::-webkit-scrollbar-thumb,
 .ms-select-list .ms-select-list-menu::-webkit-scrollbar-thumb {
   border-radius: 5px;
@@ -1526,6 +1595,22 @@ body {
   gap: 6px;
   flex-wrap: wrap !important;
 }
+
 .ms-list-value br {
   display: none;
+}
+
+.rotate_loader {
+  transition: ease-out 0.2s all;
+  animation: rotate_loader 1s infinite;
+}
+
+@keyframes rotate_loader {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }

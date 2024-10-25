@@ -352,25 +352,45 @@ class EditorScreen {
     this.canvas.requestRenderAll();
 
     function resizeCanvas() {
-      if (window.innerHeight <= 900) {
-        self.canvas.setHeight(window.innerHeight / 1.6);
+      if (window.innerWidth <= 1400) {
+        if (window.innerWidth <= 1280) {
+          self.canvas.setHeight(window.innerHeight / 1.2);
+          self.canvas.setWidth(window.innerWidth / 1.6);
+        } else {
+          self.canvas.setHeight(window.innerHeight / 1.8);
+          self.canvas.setWidth(window.innerWidth / 2);
+        }
+
+        const scaleFactor = 0.8;
+        self.canvas.setZoom(scaleFactor);
+        self.canvas.getObjects().forEach(function (object) {
+          object.scaleX *= scaleFactor;
+          object.scaleY *= scaleFactor;
+          object.left *= scaleFactor;
+          object.top *= scaleFactor;
+          object.setCoords();
+        });
+        self.canvas.renderAll();
+      } else if (window.innerWidth <= 2560 && window.innerWidth >= 2048) {
+        self.canvas.setHeight(window.innerHeight / 2);
       } else {
-        self.canvas.setHeight(window.innerHeight / 1.8);
+        self.canvas.setHeight(window.innerHeight / 1.3);
+        self.canvas.setWidth(window.innerWidth / 2);
       }
-      self.canvas.setWidth(window.innerWidth / 2);
       self.canvas.renderAll();
     }
+    console.log(window.innerWidth);
 
     let resizeTimeout;
     function handleResize() {
+      const mainEditorCounter = localStorage.getItem("mainEditorCounter");
+      if (mainEditorCounter !== "1") return;
+
       clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(resizeCanvas, 100);
-      self.canvas.getObjects().forEach((obj) => {
-        obj.scaleX = 0.5;
-        obj.scaleY = 0.5;
-        obj.setCoords();
-      });
-      location.reload();
+      resizeTimeout = setTimeout(() => {
+        resizeCanvas();
+        location.reload();
+      }, 100);
     }
 
     resizeCanvas();
