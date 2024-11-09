@@ -112,9 +112,9 @@ class EditorScreen {
     let self = this;
 
     this.fetchFonts = async () => {
-      const apiKey = "AIzaSyA3WEzwS9il6Md6nJW5RI3eMlerTso8tII";
+      const key = "AIzaSyBoi7l2IikHgIpoQXsFocf3MzLOWx2mD9A";
       let apiResponse = await fetch(
-        `https://www.googleapis.com/webfonts/v1/webfonts?key=${apiKey}`,
+        `https://www.googleapis.com/webfonts/v1/webfonts?key=${key}`,
       );
       apiResponse = await apiResponse.json();
       this.fontItems = apiResponse.items;
@@ -125,7 +125,7 @@ class EditorScreen {
       return apiResponse?.items;
     };
 
-    this.fetchFonts().then(async (items) => {
+    this.fetchFonts().then(async (items = []) => {
       let currentFontIndex = 0,
         fontMaxCount = 20;
       const chunk = items.slice(
