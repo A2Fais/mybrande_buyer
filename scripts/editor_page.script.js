@@ -24,6 +24,7 @@ import { getAttr, querySelect, querySelectAll } from "./selectors.js";
 import resizeCanvas from "./resize_canvas.js";
 import renderCanvas from "./render_canvas.js";
 import setlogoPosition from "./logo_position.js";
+import initMultiSelectList from "./multi_select_list.js";
 
 fabric.CurvedText = curvedText;
 
@@ -161,7 +162,7 @@ class EditorScreen {
       }
 
       querySelect("#font-family-con .collection").innerHTML += liItems;
-      this.initMSList();
+      initMultiSelectList();
     });
 
     querySelect("#logoMainField").addEventListener("change", () => {
@@ -463,7 +464,7 @@ class EditorScreen {
         let target = querySelect(".font-weight-selector .ms-select-list-menu");
         target.innerHTML = variantsHtml;
 
-        self.initMSList();
+        initMultiSelectList();
 
         obj.setPositionByOrigin(
           new fabric.Point(currCoordinate.x, currCoordinate.y),
@@ -2705,11 +2706,8 @@ class EditorScreen {
             initialRotation: this.initialRotation,
             isFlipY: this.isFlipY,
             isFlipX: this.isFlipX,
-            colorPicker: this.colorPicker,
-            refreshLayerNames: refreshLayerNames,
-            rgbaToHex: this.rgbaToHex,
-            hexToRgb: this.hexToRgb,
-            hexToHsl: this.hexToHsl
+            colorPicker,
+            refreshLayerNames
           });
 
           updateColorPickers(this.canvas, colorPicker);
@@ -4006,7 +4004,6 @@ class EditorScreen {
       this.canvas.setBackgroundColor(this.canvasBG);
       this.canvas.renderAll();
       this.canvas.updatePreview();
-      // captureCanvasState();
     });
 
     const discardSelectionForAlignments = () => {
@@ -4242,101 +4239,6 @@ class EditorScreen {
       }
     };
 
-    this.initMSList = function () {
-      let lists = document.querySelectorAll(".ms-select-list");
-
-      lists.forEach((list) => {
-        let menu = list.querySelector(".ms-select-list-menu");
-        let defaultVal = list
-          .querySelector(".ms-list-toggle .ms-list-value")
-          .getAttribute("value");
-        list.setAttribute("data-default-value", defaultVal);
-
-        menu.querySelectorAll("li").forEach((li) => {
-          if (li.classList.contains("initialized")) return true;
-          li.addEventListener("click", function (e) {
-            e.stopPropagation();
-            let value = this.getAttribute("value");
-            let text = this.innerText;
-            let parent = this.parentElement.parentElement;
-            if (this.parentElement.classList.contains("collection")) {
-              parent = this.parentElement.parentElement.parentElement;
-            }
-            parent.classList.remove("show");
-
-            let toggleBtn = parent.querySelector(".ms-list-toggle");
-            toggleBtn.querySelector(".ms-list-value").innerText = text;
-            parent.setAttribute("data-value", value);
-            parent.dispatchEvent(new Event("change"));
-            this.classList.add("selected");
-          });
-          li.classList.add("initialized");
-        });
-
-        list.addEventListener("valueChange", function (e) {
-          e.stopPropagation();
-
-          let value = this.getAttribute("data-value"),
-            toggleBtn = this.querySelector(".ms-list-toggle");
-
-          let text = this.querySelector(
-            `.ms-select-list-menu li[value="${value}"]`,
-          );
-          if (value == "undefined") {
-            text = this.getAttribute("data-default-value");
-          } else if (text) {
-            text = text.innerText;
-          }
-          toggleBtn.querySelector(".ms-list-value").innerText = text;
-        });
-
-        if (list.classList.contains("initialized")) return true;
-        list
-          .querySelector(".ms-list-toggle")
-          .addEventListener("click", function (e) {
-            e.stopPropagation();
-            let lists = document.querySelectorAll(".ms-select-list");
-            let parent = this.parentElement;
-            lists.forEach((item) =>
-              item != parent ? item.classList.remove("show") : item,
-            );
-            parent.classList.toggle("show");
-          });
-        list.classList.add("initialized");
-      });
-
-      document.onclick = function (e) {
-        let target = e.target;
-        if (
-          !target.classList.contains("ms-select-list") &&
-          !target.classList.contains("live-search")
-        ) {
-          lists.forEach((list) => list.classList.remove("show"));
-        }
-
-        if (target.parentElement.tagName === "LI")
-          target = target.parentElement;
-        if (target.tagName !== "LI") return true;
-
-        e.stopPropagation();
-        let value = target.getAttribute("value");
-        let text = target.innerText;
-        let parent = target.parentElement.parentElement;
-        if (target.parentElement.classList.contains("collection")) {
-          parent = target.parentElement.parentElement.parentElement;
-        }
-
-        if (!parent.classList.contains("ms-select-list")) return true;
-        parent.classList.remove("show");
-
-        let toggleBtn = parent.querySelector(".ms-list-toggle");
-        toggleBtn.querySelector(".ms-list-value").innerText = text;
-        parent.setAttribute("data-value", value);
-        parent.dispatchEvent(new Event("change"));
-        target.classList.add("selected");
-      };
-    };
-
     let currentFontIndex = 0,
       fontMaxCount = 20,
       fontListMenu = querySelect("#font-family-con .collection");
@@ -4364,7 +4266,7 @@ class EditorScreen {
       }
 
       fontListMenu.innerHTML += liItems;
-      this.initMSList();
+      initMultiSelectList();
     };
 
     const unloadFonts = (items) => {
@@ -4382,7 +4284,7 @@ class EditorScreen {
         }
       }
       currentFontIndex -= fontMaxCount;
-      this.initMSList();
+      initMultiSelectList();
     };
 
     (async () => {
@@ -4456,7 +4358,7 @@ class EditorScreen {
         });
       } catch (err) {}
       fontList.innerHTML = liItems;
-      this.initMSList();
+      initMultiSelectList();
     };
 
     document.addEventListener("keyup", function (event) {
