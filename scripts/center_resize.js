@@ -24,7 +24,7 @@ export const centerAndResizeElements = (
 ) => {
   const objects = canvas
     ?.getObjects()
-    .filter((i) => !i.id?.includes("external_layer_") && !i?.dublicate);
+    .filter((i) => !i.id?.includes("external_layer_") && !i?.duplicate);
   logoNameElement.charSpacing = 0;
   sloganNameElement.charSpacing = 0;
   const timeout = 5;

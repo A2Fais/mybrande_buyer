@@ -23,6 +23,7 @@ import {
 import { getAttr, querySelect, querySelectAll } from "./selectors.js";
 import resizeCanvas from "./resize_canvas.js";
 import renderCanvas from "./render_canvas.js";
+import setlogoPosition from "./logo_position.js";
 
 fabric.CurvedText = curvedText;
 
@@ -2587,7 +2588,7 @@ class EditorScreen {
     querySelect("#close_modal").addEventListener("click", () => {
       setCanvasBackground();
       this.canvas.setBackgroundColor(
-        this.canvasBG,
+        this.canvasBG, 
         this.canvas.renderAll.bind(this.canvas),
       );
       querySelect(".preview-modal-bg").style.display = "none";
@@ -4013,249 +4014,6 @@ class EditorScreen {
       this.canvas.requestRenderAll();
     };
 
-    function setlogoPosition(position, canvas) {
-      if (!canvas) throw new Error("Canvas", canvas);
-
-      querySelectAll(".right-bar .svg__icon").forEach((i) => {
-        i.classList.remove("active");
-      });
-
-      querySelect(`.svg__icon[data-align-id="${position}"]`).classList.add(
-        "active",
-      );
-
-      switch (position) {
-        case "1":
-          centerAndResizeElements(
-            "topBottom",
-            46,
-            22,
-            "center",
-            1.2,
-            1.38,
-            false,
-            canvas,
-            logoNameElement,
-            sloganNameElement,
-          );
-          break;
-        case "2":
-          centerAndResizeElements(
-            "topBottom",
-            40,
-            20,
-            "center",
-            1.22,
-            1.38,
-            false,
-            canvas,
-            logoNameElement,
-            sloganNameElement,
-          );
-          break;
-        case "3":
-          centerAndResizeElements(
-            "topBottom",
-            46,
-            22,
-            "center",
-            1.25,
-            1.45,
-            false,
-            canvas,
-            logoNameElement,
-            sloganNameElement,
-          );
-          break;
-        case "4":
-          centerAndResizeElements(
-            "bottomTop",
-            46,
-            22,
-            "center",
-            5.2,
-            12,
-            false,
-            canvas,
-            logoNameElement,
-            sloganNameElement,
-          );
-          break;
-        case "5":
-          centerAndResizeElements(
-            "bottomTop",
-            40,
-            18,
-            "center",
-            5.2,
-            12,
-            false,
-            canvas,
-            logoNameElement,
-            sloganNameElement,
-          );
-          break;
-        case "6":
-          centerAndResizeElements(
-            "bottomTop",
-            46,
-            22,
-            "center",
-            4.8,
-            11,
-            false,
-            canvas,
-            logoNameElement,
-            sloganNameElement,
-          );
-          break;
-        case "7":
-          centerAndResizeElements(
-            "leftRight",
-            32,
-            25,
-            "center",
-            1.1,
-            1.8,
-            false,
-            canvas,
-            logoNameElement,
-            sloganNameElement,
-          );
-          break;
-        case "8":
-          centerAndResizeElements(
-            "leftRight",
-            32,
-            25,
-            "left",
-            1.32,
-            1.5,
-            false,
-            canvas,
-            logoNameElement,
-            sloganNameElement,
-          );
-          break;
-        case "9":
-          centerAndResizeElements(
-            "leftRight",
-            32,
-            25,
-            "left",
-            1.32,
-            1.5,
-            false,
-            canvas,
-            logoNameElement,
-            sloganNameElement,
-          );
-          break;
-        case "10":
-          centerAndResizeElements(
-            "rightLeft",
-            32,
-            25,
-            "center",
-            1.32,
-            1.5,
-            false,
-            canvas,
-            logoNameElement,
-            sloganNameElement,
-          );
-          break;
-        case "11":
-          centerAndResizeElements(
-            "rightLeft",
-            32,
-            25,
-            "left",
-            1.32,
-            1.5,
-            false,
-            canvas,
-            logoNameElement,
-            sloganNameElement,
-          );
-          break;
-        case "12":
-          centerAndResizeElements(
-            "rightLeft",
-            32,
-            25,
-            "left",
-            1.32,
-            1.5,
-            false,
-            canvas,
-            logoNameElement,
-            sloganNameElement,
-          );
-          break;
-        case "13":
-          centerAndResizeElements(
-            "topBottom",
-            46,
-            22,
-            "center",
-            1.32,
-            1.5,
-            true,
-            canvas,
-            logoNameElement,
-            sloganNameElement,
-          );
-          break;
-        case "14":
-          centerAndResizeElements(
-            "leftRight",
-            32,
-            25,
-            "center",
-            1.32,
-            1.5,
-            true,
-            canvas,
-            logoNameElement,
-            sloganNameElement,
-          );
-          break;
-        case "15":
-          centerAndResizeElements(
-            "rightLeft",
-            32,
-            25,
-            "center",
-            1.32,
-            1.5,
-            true,
-            canvas,
-            logoNameElement,
-            sloganNameElement,
-          );
-          break;
-
-        default:
-          scaleLogo(200);
-          centerAndResizeElements(
-            "topBottom",
-            46,
-            22,
-            "center",
-            1.32,
-            1.5,
-            false,
-            canvas,
-            logoNameElement,
-            sloganNameElement,
-          );
-          break;
-      }
-      canvas.renderAll();
-      updatePreview();
-    }
-
     var logoPosition;
     var external_layer;
     var external_text;
@@ -4380,7 +4138,9 @@ class EditorScreen {
 
         scaleLogo(scaleValue);
         anythingApplied = true;
-        setlogoPosition(this.alignId, this.canvas);
+
+        setlogoPosition(this, { logoPosition: this.alignId, logoNameElement, sloganNameElement, scaleLogo });
+
         setTimeout(() => {
           updatePreview();
           this.canvas.save();
