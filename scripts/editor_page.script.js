@@ -25,6 +25,8 @@ import resizeCanvas from "./resize_canvas.js";
 import renderCanvas from "./render_canvas.js";
 import setlogoPosition from "./logo_position.js";
 import initMultiSelectList from "./multi_select_list.js";
+import { attachHSLHandlers, attachRGBHandlers } from "./color_picker_util.js";
+import loadExternalLayers from "./exter_layers_loader.js";
 
 fabric.CurvedText = curvedText;
 
@@ -3157,72 +3159,12 @@ class EditorScreen {
       colorChanging = false;
     });
 
-    ["#R", "#G", "#B"].forEach((id) => {
-      querySelect(id).addEventListener("input", () => {
-        let r = querySelect("#R").value;
-        let g = querySelect("#G").value;
-        let b = querySelect("#B").value;
-        colorPicker.color.rgb = { r, g, b };
-        const a = this.canvas.getActiveObject();
-        if (a && a._objects) {
-          a._objects.forEach((i) => {
-            i.set("fill", colorPicker.color.hexString);
-          });
-        }
-        a.set("fill", colorPicker.color.hexString);
-        this.canvas.requestRenderAll();
-      });
-    });
-
-    ["#H", "#S", "#L"].forEach((id) => {
-      querySelect(id).addEventListener("input", () => {
-        let h = querySelect("#H").value;
-        let s = querySelect("#S").value;
-        let l = querySelect("#L").value;
-        colorPicker.color.hsl = { h, s, l };
-        const a = this.canvas.getActiveObject();
-        if (a && a._objects)
-          a._objects.forEach((i) => {
-            i.set("fill", colorPicker.color.hexString);
-          });
-        a.set("fill", colorPicker.color.hexString);
-        this.canvas.requestRenderAll();
-      });
-    });
-
-    ["#R2", "#G2", "#B2"].forEach((id) => {
-      querySelect(id).addEventListener("input", () => {
-        let r = querySelect("#R2").value;
-        let g = querySelect("#G2").value;
-        let b = querySelect("#B2").value;
-        colorPickerText.color.rgb = { r, g, b };
-        const a = this.canvas.getActiveObject();
-        if (a._objects)
-          a._objects.forEach((i) => {
-            i.set("fill", colorPickerText.color.hexString);
-          });
-        a.set("fill", colorPickerText.color.hexString);
-        this.canvas.requestRenderAll();
-      });
-    });
-
-    ["#H2", "#S2", "#L2"].forEach((id) => {
-      querySelect(id).addEventListener("input", () => {
-        let h = querySelect("#H2").value;
-        let s = querySelect("#S2").value;
-        let l = querySelect("#L2").value;
-        colorPickerText.color.hsl = { h, s, l };
-        const a = this.canvas.getActiveObject();
-
-        if (a._objects)
-          a._objects.forEach((i) => {
-            i.set("fill", colorPickerText.color.hexString);
-          });
-
-        a.set("fill", colorPickerText.color.hexString);
-        this.canvas.requestRenderAll();
-      });
-    });
+    attachRGBHandlers(colorPicker, this.canvas);
+    attachHSLHandlers(colorPicker, this.canvas);
+    
+    const textColorPickerSuffix = '2';
+    attachRGBHandlers(colorPickerText, this.canvas, textColorPickerSuffix);
+    attachHSLHandlers(colorPickerText, this.canvas, textColorPickerSuffix);
 
     let inputCountBG = 0;
     let inputCount2 = 0;
@@ -4145,99 +4087,6 @@ class EditorScreen {
         }, 100);
       });
     }
-
-    const loadExternalLayers = (layers = null, text = null, img = null) => {
-      layers = layers ? JSON.parse(layers) : [];
-      text = text ? JSON.parse(text) : [];
-      img = img ? JSON.parse(img) : [];
-      let self = this;
-
-      const externalLayers = [...layers, ...text, ...img];
-      if (!externalLayers.length) return false;
-
-      const loadSVGObject = (layer, objects, options) => {
-        objects.map((obj) => {
-          obj.set({
-            fill: layer.fill,
-          });
-        });
-
-        let img = fabric.util.groupSVGElements(objects, options);
-        img.scaleToWidth(layer.cacheWidth);
-        img.scaleToHeight(layer.cacheHeight);
-
-        img.set({
-          left: layer.left,
-          top: layer.top,
-          angle: layer.angle,
-          scaleX: layer.scaleX,
-          scaleY: layer.scaleY,
-          opacity: layer.opacity,
-          flipX: layer.flipX,
-          flipY: layer.flipY,
-          selectable: true,
-          id: layer.id,
-          layerType: layer.layerType,
-          fill: layer.fill,
-        });
-
-        self.canvas.add(img);
-
-        self.canvas.requestRenderAll();
-        return img;
-      };
-
-      for (const layer of externalLayers) {
-        let { layerType, ext } = layer;
-        if (layerType == "text") {
-          let textLayer = new fabric.IText(layer.text, layer);
-          this.canvas.add(textLayer);
-        } else if (ext == "svg") {
-          fabric.loadSVGFromURL(layer.dataUrl, (objects, options) => {
-            let img = loadSVGObject(layer, objects, options);
-            img.set("dataUrl", layer.dataUrl);
-          });
-        } else if (layerType === "image") {
-          fabric.Image.fromURL(layer.dataUrl, (img) => {
-            img.set({
-              dataUrl: layer.dataUrl,
-              left: layer.left,
-              top: layer.top,
-              angle: layer.angle,
-              scaleX: layer.scaleX,
-              scaleY: layer.scaleY,
-              opacity: layer.opacity,
-              flipX: layer.flipX,
-              flipY: layer.flipY,
-              selectable: true,
-              id: "upload_external_layer_" + uploadLayerCounter,
-              layerType: layer.layerType,
-              fill: layer.fill,
-            });
-
-            this.canvas.add(img);
-            this.canvas.requestRenderAll();
-            uploadLayerCounter++;
-          });
-        } else {
-          let { category, itemId } = layer;
-          if (!category) continue;
-          let svgContent = this.loadedIcons[category][parseInt(itemId)];
-          if (!svgContent) return false;
-
-          svgContent = svgContent.svg;
-          fabric.loadSVGFromString(svgContent, (objects, options) => {
-            let img = loadSVGObject(layer, objects, options);
-            img.set({
-              itemId,
-              category,
-            });
-            this.canvas.requestRenderAll();
-          });
-        }
-        this.canvas.requestRenderAll();
-      }
-    };
 
     let currentFontIndex = 0,
       fontMaxCount = 20,
