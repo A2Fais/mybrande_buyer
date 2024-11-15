@@ -1,5 +1,6 @@
 import { CreateLayerSection } from "./create_layer";
 import { querySelect } from "./selectors";
+import { rgbaToHex, hexToRgb, hexToHsl } from "./color_converter";
 
 const renderCanvas = ({
     SVG,
@@ -12,10 +13,7 @@ const renderCanvas = ({
     isFlipY,
     isFlipX,
     colorPicker,
-    refreshLayerNames,
-    rgbaToHex,
-    hexToRgb,
-    hexToHsl
+    refreshLayerNames
   }) => {
     let logoLayerGroup;
     let isLogoShadowAdjust;
