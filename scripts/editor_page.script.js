@@ -21,6 +21,8 @@ import {
   updateColorTextPickers,
 } from "./color_events.js";
 import { getAttr, querySelect, querySelectAll } from "./selectors.js";
+import resizeCanvas from "./resize_canvas.js";
+import renderCanvas from "./render_canvas.js";
 
 fabric.CurvedText = curvedText;
 
@@ -351,36 +353,6 @@ class EditorScreen {
 
     this.canvas.requestRenderAll();
 
-    function resizeCanvas() {
-      if (window.innerWidth <= 1400) {
-        if (window.innerWidth <= 1280) {
-          self.canvas.setHeight(window.innerHeight / 1.2);
-          self.canvas.setWidth(window.innerWidth / 1.6);
-        } else {
-          self.canvas.setHeight(window.innerHeight / 1.8);
-          self.canvas.setWidth(window.innerWidth / 2);
-        }
-
-        const scaleFactor = 0.8;
-        self.canvas.setZoom(scaleFactor);
-        self.canvas.getObjects().forEach(function (object) {
-          object.scaleX *= scaleFactor;
-          object.scaleY *= scaleFactor;
-          object.left *= scaleFactor;
-          object.top *= scaleFactor;
-          object.setCoords();
-        });
-        self.canvas.renderAll();
-      } else if (window.innerWidth <= 2560 && window.innerWidth >= 2048) {
-        self.canvas.setHeight(window.innerHeight / 2);
-      } else {
-        self.canvas.setHeight(window.innerHeight / 1.3);
-        self.canvas.setWidth(window.innerWidth / 2);
-      }
-      self.canvas.renderAll();
-    }
-    console.log(window.innerWidth);
-
     let resizeTimeout;
     function handleResize() {
       const mainEditorCounter = localStorage.getItem("mainEditorCounter");
@@ -388,12 +360,12 @@ class EditorScreen {
 
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => {
-        resizeCanvas();
+        resizeCanvas(self);
         location.reload();
       }, 100);
     }
 
-    resizeCanvas();
+    resizeCanvas(self);
     window.addEventListener("resize", handleResize);
 
     this.updateActiveNavbar = () => {
@@ -874,7 +846,7 @@ class EditorScreen {
         ? rgbToHex(element.get("fill").colorStops[0].color)
         : element.get("fill");
       colorPicker.color.set(color);
-      captureCanvasState();
+      // captureCanvasState();
     };
 
     const updatePickerHandler = (element) => {
@@ -1119,142 +1091,7 @@ class EditorScreen {
       this.canvas.renderAll();
     });
 
-    const renderCanvas = (SVG) => {
-      fabric.loadSVGFromString(SVG, (objects, options) => {
-        logoLayerGroup = new fabric.Group(objects, options);
 
-        objects.forEach((obj, idx) => {
-          const sloganIdx = objects.length - 1;
-          const logoIdx = objects.length - 2;
-          if (obj.id && obj.id.includes("external_layer_")) {
-            return;
-          }
-          if (sloganIdx === idx) {
-            obj.scale(800);
-            sloganNameElement = obj;
-            obj.text = querySelect("#sloganNameField").value;
-          } else if (logoIdx === idx) {
-            obj.scale(800);
-            logoNameElement = obj;
-            obj.text = querySelect("#logoMainField").value;
-          }
-
-          this.canvas.add(obj);
-          const layerSection = new CreateLayerSection(this.layers);
-          layerSection.create(obj, idx);
-
-          obj.on("mousedown", (e) => {
-            this.isFlipY = obj.get("flipY");
-            this.isFlipX = obj.get("flipX");
-            querySelect("#flip-y").checked = this.isFlipY;
-            querySelect("#flip-x").checked = this.isFlipX;
-
-            const hasShadow = !!obj?.shadow?.blur;
-
-            querySelect("#logo-drop-shadow").checked = hasShadow;
-            if (!hasShadow)
-              querySelect("#logo-shadow-adjust").classList.remove("active");
-            isLogoShadowAdjust = hasShadow;
-            if (!hasShadow) {
-              querySelect("#logo-shadow-adjust").style.display = "none";
-              querySelect("#logo-shadow-blur").style.display = "none";
-              querySelect("#logo-shadow-offsetX").style.display = "none";
-              querySelect("#logo-shadow-offsetY").style.display = "none";
-              querySelect("#logo-shadow-border").style.display = "none";
-            } else {
-              querySelect("#logo-shadow-adjust").style.display = "block";
-              querySelect("#logo-shadow-blur").style.display = "block";
-              querySelect("#logo-shadow-offsetX").style.display = "block";
-              querySelect("#logo-shadow-offsetY").style.display = "block";
-              querySelect("#logo-shadow-border").style.display = "block";
-            }
-
-            querySelect("#rotate_info").innerText = `Rotate: ${parseInt(
-              obj.get("angle"),
-            )}deg`;
-            querySelect("#rotate-bar").value = obj.get("angle");
-
-            const rotateAngle = obj.get("angle");
-            querySelect("#rotate-bar").value = rotateAngle;
-
-            let fillColor;
-            const color = e.target.fill;
-
-            if (typeof color === "object") {
-              fillColor = color.colorStops[0].color;
-            } else if (color && color.includes("#")) {
-              fillColor = color;
-            } else {
-              const newColor = rgbaToHex(color);
-              fillColor = newColor;
-            }
-
-            colorPicker.color.set(fillColor);
-            querySelect("#HEX").value = fillColor;
-
-            let rgbValue = hexToRgb(fillColor);
-            let rgbValues = rgbValue.match(/\d+/g);
-
-            if (rgbValues && rgbValues.length === 3) {
-              querySelect("#R").value = rgbValues[0];
-              querySelect("#G").value = rgbValues[1];
-              querySelect("#B").value = rgbValues[2];
-            }
-
-            let hslValue = hexToHsl(fillColor);
-            let hslValues = hslValue.match(/\d+/g);
-
-            if (hslValues && hslValues.length === 3) {
-              querySelect("#H").value = hslValues[0];
-              querySelect("#S").value = hslValues[1];
-              querySelect("#L").value = hslValues[2];
-            }
-            this.canvas.requestRenderAll();
-          });
-        });
-
-        refreshLayerNames();
-
-        var originalWidth = logoLayerGroup.width;
-        var originalHeight = logoLayerGroup.height;
-
-        const fixedWidth = 200;
-        const fixedHeight = 200;
-
-        const widthScaleFactor = fixedWidth / originalWidth;
-        const heightScaleFactor = fixedHeight / originalHeight;
-
-        logoLayerGroup.set({
-          scaleX: widthScaleFactor,
-          scaleY: heightScaleFactor,
-          width: fixedWidth,
-          height: fixedHeight,
-        });
-
-        logoLayerGroup.setCoords();
-        this.canvas.viewportCenterObject(logoLayerGroup);
-
-        this.initialRotation = {
-          centerPoint: logoLayerGroup.getCenterPoint(),
-          coords: logoLayerGroup.getCoords(),
-        };
-        logoLayerGroup.scaleToWidth(widthScaleFactor);
-
-        logoLayerGroup.ungroupOnCanvas();
-
-        this.canvas.renderAll();
-      });
-
-      logoNameElement.viewportCenter();
-      sloganNameElement.viewportCenter();
-
-      const selection = new fabric.ActiveSelection(this.canvas.getObjects(), {
-        canvas: this.canvas,
-      });
-      this.canvas.setActiveObject(selection);
-      this.canvas.discardActiveObject(selection);
-      this.canvas.renderAll();
-    };
 
     // if (this.logoFile) {
     //   renderCanvas(this.logoFile);
@@ -1915,9 +1752,9 @@ class EditorScreen {
 
     let captureTimeout = null;
 
-    const captureCanvasState = () => {
-      clearTimeout(captureTimeout);
-    };
+    // const captureCanvasState = () => {
+    //   clearTimeout(captureTimeout);
+    // };
 
     document.addEventListener("keydown", async (e) => {
       let isCtrlZ = e.ctrlKey && e.key === "z",
@@ -1942,7 +1779,6 @@ class EditorScreen {
     querySelect("#font_size_range").addEventListener("input", (event) => {
       const textSize = event.target.value;
       if (textSize > 0) {
-        // Use to fixed to remove decimal points
         querySelect("#font_size_title").value = `${Math.round(textSize)}px`;
         const active = this.canvas.getActiveObject();
 
@@ -2857,7 +2693,23 @@ class EditorScreen {
           let serializer = new XMLSerializer();
           let updatedLogo = serializer.serializeToString(svgDoc);
           localStorage.setItem("logo-file", updatedLogo);
-          renderCanvas(updatedLogo);
+
+          renderCanvas({
+            SVG: updatedLogo,
+            fabric: fabric, 
+            canvas: this.canvas,
+            logoNameElement,
+            sloganNameElement,
+            layers: this.layers,
+            initialRotation: this.initialRotation,
+            isFlipY: this.isFlipY,
+            isFlipX: this.isFlipX,
+            colorPicker: this.colorPicker,
+            refreshLayerNames: refreshLayerNames,
+            rgbaToHex: this.rgbaToHex,
+            hexToRgb: this.hexToRgb,
+            hexToHsl: this.hexToHsl
+          });
 
           updateColorPickers(this.canvas, colorPicker);
           const brandCase = data?.brandCase;
@@ -4537,7 +4389,6 @@ class EditorScreen {
       });
     }
 
-    // Load External Layers Function
     const loadExternalLayers = (layers = null, text = null, img = null) => {
       layers = layers ? JSON.parse(layers) : [];
       text = text ? JSON.parse(text) : [];
@@ -4642,7 +4493,6 @@ class EditorScreen {
         list.setAttribute("data-default-value", defaultVal);
 
         menu.querySelectorAll("li").forEach((li) => {
-          // Check if the li is already initialized
           if (li.classList.contains("initialized")) return true;
           li.addEventListener("click", function (e) {
             e.stopPropagation();
