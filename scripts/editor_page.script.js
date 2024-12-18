@@ -1095,8 +1095,6 @@ class EditorScreen {
       this.canvas.renderAll();
     });
 
-
-
     // if (this.logoFile) {
     //   renderCanvas(this.logoFile);
     // }
@@ -1544,7 +1542,6 @@ class EditorScreen {
     const applyEventListners = () => {
       logoNameElement.on("mousedown", async (e) => {
         e.e.preventDefault();
-        console.log(logoNameElement);
         const weight = logoNameElement.get("fontWeight");
         const family = logoNameElement.get("fontFamily");
         const familyWithWeight = `${family}:${weight}`;
@@ -1754,7 +1751,7 @@ class EditorScreen {
     };
     applyEventListners();
 
-    let captureTimeout = null;
+    // let captureTimeout = null;
 
     // const captureCanvasState = () => {
     //   clearTimeout(captureTimeout);
@@ -1798,32 +1795,31 @@ class EditorScreen {
     });
 
     querySelect("#text-curve-range").addEventListener("input", (e) => {
-      this.canvas.requestRenderAll();
       let value = e.target.value;
 
       initCurveText();
       let percentage_ =
         value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
       let angle = (percentage_ * 3.6).toFixed(0);
+      console.log("TEXT CURVE", value, percentage_, angle);
 
       querySelect("#curve-text").value = angle;
       this.canvas.requestRenderAll();
     });
 
-    querySelect("#text-curve-range").addEventListener("change", () => {
-      this.canvas.requestRenderAll();
-
-      const obj = this.canvas.getActiveObject();
-      if (!obj) return false;
-      if (obj.type !== "curved-text") return false;
-
-      obj._updateObj("scaleX", obj.scaleX);
-      obj._updateObj("scaleY", obj.scaleY);
-
-      updatePreview();
-      this.canvas.save();
-      this.canvas.requestRenderAll();
-    });
+    // querySelect("#text-curve-range").addEventListener("change", () => {
+    //
+    //   const obj = this.canvas.getActiveObject();
+    //   if (!obj) return false;
+    //   if (obj.type !== "curved-text") return false;
+    //
+    //   obj._updateObj("scaleX", obj.scaleX);
+    //   obj._updateObj("scaleY", obj.scaleY);
+    //
+    //   updatePreview();
+    //   this.canvas.save();
+    //   this.canvas.requestRenderAll();
+    // });
 
     querySelect("#text-curve-up").addEventListener("click", () => {
       let input = querySelect("#curve-text"),
@@ -1843,32 +1839,32 @@ class EditorScreen {
       querySelect("#curve-text").dispatchEvent(new Event("change"));
     });
 
-    querySelect("#curve-text").addEventListener("change", function (e) {
-      let inp = e.target,
-        val = parseInt(inp.value);
-
-      if (val > 360) inp.value = 360;
-      else if (val < -360) inp.value = -360;
-
-      let value = (parseInt(inp.value) / 360) * 100;
-
-      if (value > 90) value = 90;
-      else if (value < -90) value = -90;
-
-      let rangeValue = getRangeFromPercentage(value),
-        orgVal = rangeValue;
-
-      let input = querySelect("#text-curve-range");
-
-      if (value >= 90) rangeValue = 5000;
-      else if (value <= -90) rangeValue = 0;
-      input.value = orgVal;
-
-      initCurveText();
-      input.value = rangeValue;
-
-      self.canvas.requestRenderAll();
-    });
+    // querySelect("#curve-text").addEventListener("change", function (e) {
+    //   let inp = e.target,
+    //     val = parseInt(inp.value);
+    //
+    //   if (val > 360) inp.value = 360;
+    //   else if (val < -360) inp.value = -360;
+    //
+    //   let value = (parseInt(inp.value) / 360) * 100;
+    //
+    //   if (value > 90) value = 90;
+    //   else if (value < -90) value = -90;
+    //
+    //   let rangeValue = getRangeFromPercentage(value),
+    //     orgVal = rangeValue;
+    //
+    //   let input = querySelect("#text-curve-range");
+    //
+    //   if (value >= 90) rangeValue = 5000;
+    //   else if (value <= -90) rangeValue = 0;
+    //   input.value = orgVal;
+    //
+    //   initCurveText();
+    //   input.value = rangeValue;
+    //
+    //   self.canvas.requestRenderAll();
+    // });
 
     querySelect("#curve-text").addEventListener("keydown", (e) => {
       if (e.key == "ArrowUp") {
@@ -2591,7 +2587,7 @@ class EditorScreen {
     querySelect("#close_modal").addEventListener("click", () => {
       setCanvasBackground();
       this.canvas.setBackgroundColor(
-        this.canvasBG, 
+        this.canvasBG,
         this.canvas.renderAll.bind(this.canvas),
       );
       querySelect(".preview-modal-bg").style.display = "none";
@@ -2700,7 +2696,7 @@ class EditorScreen {
 
           renderCanvas({
             SVG: updatedLogo,
-            fabric: fabric, 
+            fabric: fabric,
             canvas: this.canvas,
             logoNameElement,
             sloganNameElement,
@@ -2709,7 +2705,7 @@ class EditorScreen {
             isFlipY: this.isFlipY,
             isFlipX: this.isFlipX,
             colorPicker,
-            refreshLayerNames
+            refreshLayerNames,
           });
 
           updateColorPickers(this.canvas, colorPicker);
@@ -2752,6 +2748,7 @@ class EditorScreen {
             const alignItem = document.querySelector(
               `.svg__icon[data-align-id="${logoPosition}"]`,
             );
+
             alignItem.click();
 
             logoNameElement.set("fontSize", +data.brandSize);
@@ -3161,8 +3158,8 @@ class EditorScreen {
 
     attachRGBHandlers(colorPicker, this.canvas);
     attachHSLHandlers(colorPicker, this.canvas);
-    
-    const textColorPickerSuffix = '2';
+
+    const textColorPickerSuffix = "2";
     attachRGBHandlers(colorPickerText, this.canvas, textColorPickerSuffix);
     attachHSLHandlers(colorPickerText, this.canvas, textColorPickerSuffix);
 
@@ -4065,6 +4062,9 @@ class EditorScreen {
       right_left_2: 160,
       right_left_3: 200,
       right_left_4: 200,
+      curve_1: 200,
+      curve_2: 200,
+      curve_3: 200,
     };
     let anythingApplied = false;
 
@@ -4078,7 +4078,12 @@ class EditorScreen {
         scaleLogo(scaleValue);
         anythingApplied = true;
 
-        setlogoPosition(this, { logoPosition: this.alignId, logoNameElement, sloganNameElement, scaleLogo });
+        setlogoPosition(this, {
+          logoPosition: this.alignId,
+          logoNameElement,
+          sloganNameElement,
+          scaleLogo,
+        });
 
         setTimeout(() => {
           updatePreview();

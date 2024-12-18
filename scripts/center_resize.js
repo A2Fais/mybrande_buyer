@@ -1,14 +1,20 @@
 const querySelect = (element) => document.querySelector(element);
 
-const getCurveAngle = (logoNameElement) => {
-  const diameter = logoNameElement.get("diameter");
-  const per = logoNameElement.get("percentage");
-  let percentage =
-    diameter >= 2500 ? (diameter - 2500) / 25 : -((2500 - diameter) / 25);
-  let angle = (percentage * 3.6).toFixed(0);
-  const isPositiveOpening = per < 0 ? false : true;
-  return { angle, percentage, isPositiveOpening };
-};
+// const getCurveAngle = (logoNameElement) => {
+//   const diameter = logoNameElement.get("diameter");
+//   const per = logoNameElement.get("percentage");
+//   let percentage =
+//     diameter >= 2500 ? (diameter - 2500) / 25 : -((2500 - diameter) / 25);
+//   let angle = (percentage * 3.6).toFixed(0);
+//   const isPositiveOpening = per < 0 ? false : true;
+//   return { angle, percentage, isPositiveOpening };
+// };
+function triggerSliderEvent(value) {
+  const slider = document.querySelector("#text-curve-range");
+  slider.value = value;
+  const event = new Event("input", { bubbles: true });
+  slider.dispatchEvent(event);
+}
 
 export const centerAndResizeElements = (
   type,
@@ -70,8 +76,6 @@ export const centerAndResizeElements = (
       setTimeout(() => {
         const logoNameElement = logo;
         const sloganNameElement = slogan;
-
-        // const { angle, isPositiveOpening } = getCurveAngle(logoNameElement);
 
         logoNameElement.set("fontSize", logoSize);
         sloganNameElement.set("fontSize", sloganSize);
@@ -363,12 +367,99 @@ export const centerAndResizeElements = (
           }
         }
 
-        // logoMain.forEach((i) => (i.left += 500));
         const newGrp = new fabric.Group(objects);
         canvas.viewportCenterObjectH(newGrp);
         canvas.viewportCenterObjectV(newGrp);
         newGrp.ungroupOnCanvas();
         canvas.requestRenderAll();
+      }, timeout);
+      break;
+
+    case "curve_1":
+      console.log("CURVE_1");
+
+      logo.set("fontSize", logoSize);
+      slogan.set("fontSize", sloganSize);
+
+      centerHorizontally(logo, slogan);
+
+      const logoTopPosition = canvas.height / logoNameTop;
+      const sloganTopPosition = canvas.height / sloganTop;
+
+      logo.set("top", logoTopPosition);
+      slogan.set("top", sloganTopPosition);
+      canvas.renderAll();
+
+      canvas.setActiveObject(logo);
+      triggerSliderEvent(4500);
+
+      canvas.setActiveObject(slogan);
+      triggerSliderEvent(2500);
+
+      const newGrp = new fabric.Group(objects);
+      canvas.viewportCenterObject(newGrp);
+      newGrp.ungroupOnCanvas();
+      canvas.renderAll();
+      canvas.discardActiveObject();
+      break;
+
+    case "curve_2":
+      console.log("CURVE_2");
+      setTimeout(() => {
+        const logoNameElement = logo;
+        const sloganNameElement = slogan;
+
+        logoNameElement.set("fontSize", logoSize);
+        sloganNameElement.set("fontSize", sloganSize);
+        canvas.renderAll();
+
+        centerHorizontally(logoNameElement, sloganNameElement);
+
+        const logoTopPosition = canvas.height / logoNameTop;
+        const sloganTopPosition = canvas.height / sloganTop;
+        logoNameElement.set("top", logoTopPosition);
+        sloganNameElement.set("top", sloganTopPosition);
+
+        canvas.setActiveObject(logo);
+        triggerSliderEvent(500);
+
+        canvas.setActiveObject(slogan);
+        triggerSliderEvent(2500);
+
+        const newGrp = new fabric.Group(objects);
+        canvas.viewportCenterObject(newGrp);
+        newGrp.ungroupOnCanvas();
+        canvas.renderAll();
+        canvas.discardActiveObject();
+      }, timeout);
+      break;
+
+    case "curve_3":
+      console.log("CURVE_3");
+      setTimeout(() => {
+        logo.set("fontSize", logoSize);
+        slogan.set("fontSize", sloganSize);
+
+        centerHorizontally(logo, slogan);
+
+        const logoTopPosition = canvas.height / logoNameTop;
+        const sloganTopPosition = canvas.height / sloganTop;
+
+        logo.set("top", logoTopPosition);
+        slogan.set("top", sloganTopPosition);
+        canvas.renderAll();
+
+        canvas.setActiveObject(logo);
+        triggerSliderEvent(4500);
+
+        canvas.setActiveObject(slogan);
+        triggerSliderEvent(420);
+
+        const newGrp = new fabric.Group(objects);
+        canvas.viewportCenterObject(newGrp);
+        newGrp.ungroupOnCanvas();
+        canvas.renderAll();
+        canvas.discardActiveObject();
       }, timeout);
       break;
   }
