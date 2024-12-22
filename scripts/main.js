@@ -9,7 +9,6 @@ import axios from "axios";
 import { rgbToHex, hexToHsl, hexToRgb, rgbaToHex } from "./color_converter";
 import { rotateReset } from "./rotate_reset";
 import { saveCanvas } from "./save_canvas";
-import { centerAndResizeElements } from "./center_resize";
 import SaveHistory from "./save_history.js";
 import { curvedText } from "./curved_text.js";
 import { applyLinearGradient } from "./apply_linear_grad.js";
@@ -406,7 +405,7 @@ class EditorScreen {
         const family = this.getAttribute("data-value");
         const loaded = this.getAttribute("data-loaded");
         const obj = self.canvas.getActiveObject();
-        const currCoordinate = obj.getCenterPoint();
+        const currCoordinate = obj?.getCenterPoint();
 
         if (!obj) return false;
         let { variants } = self.loadedFonts[family];
@@ -1796,6 +1795,7 @@ class EditorScreen {
 
     querySelect("#text-curve-range").addEventListener("input", (e) => {
       let value = e.target.value;
+      console.log("CURVE VALUE", value);
 
       initCurveText();
       let percentage_ =

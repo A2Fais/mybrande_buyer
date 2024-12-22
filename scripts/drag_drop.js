@@ -1,10 +1,10 @@
-import Cropper from 'cropperjs';
-import 'cropperjs/dist/cropper.css';
-import '../styles/style.css';
-import axios from 'axios';
-import Toastify from 'toastify-js';
+import Cropper from "cropperjs";
+import "cropperjs/dist/cropper.css";
+import "../styles/style.css";
+import axios from "axios";
+import Toastify from "toastify-js";
+import { querySelect } from "./selectors";
 
-export const querySelect = (id) => document.querySelector(id);
 const fileReader = new FileReader();
 
 const toastNotification = (text) => {
@@ -13,14 +13,14 @@ const toastNotification = (text) => {
     duration: 3000,
     newWindow: true,
     close: false,
-    gravity: 'top',
-    position: 'center',
+    gravity: "top",
+    position: "center",
     stopOnFocus: true,
     style: {
-      background: 'var(--gold)',
-      color: '#ffffff',
-      borderRadius: '8px',
-      cursor: 'context-menu',
+      background: "var(--gold)",
+      color: "#ffffff",
+      borderRadius: "8px",
+      cursor: "context-menu",
     },
     onClick: null,
   }).showToast();
@@ -28,19 +28,19 @@ const toastNotification = (text) => {
 
 var logoMainFile;
 const elements = {
-  detailsView: querySelect('#details_view'),
-  mainEditorView: querySelect('#main_editor_view'),
-  imgViewContainer: querySelect('#img-view-container'),
-  imgView: querySelect('#img-view'),
-  dragDrop: querySelect('#drag-drop'),
-  dragDropChild: querySelect('#drag-drop-child'),
+  detailsView: querySelect("#details_view"),
+  mainEditorView: querySelect("#main_editor_view"),
+  imgViewContainer: querySelect("#img-view-container"),
+  imgView: querySelect("#img-view"),
+  dragDrop: querySelect("#drag-drop"),
+  dragDropChild: querySelect("#drag-drop-child"),
   // cropElement: $('#crop'),
-  dragDropView: querySelect('#drag_drop_view'),
-  nextBtn: querySelect('#next_btn'),
-  backBtn: querySelect('#back-main'),
-  uploadFileBtn: querySelect('#upload_file_btn'),
+  dragDropView: querySelect("#drag_drop_view"),
+  nextBtn: querySelect("#next_btn"),
+  backBtn: querySelect("#back-main"),
+  uploadFileBtn: querySelect("#upload_file_btn"),
   // imger: $('#imger'),
-  inputPrimary: querySelect('#logo_name_input-primary'),
+  inputPrimary: querySelect("#logo_name_input-primary"),
 };
 
 const preventEvents = (event) => {
@@ -48,37 +48,37 @@ const preventEvents = (event) => {
   event.stopPropagation();
 };
 
-let mainEditorCounter = localStorage.getItem('mainEditorCounter');
-localStorage.setItem('mainEditorCounter', '1');
-if (mainEditorCounter === '1') {
-  elements.detailsView.style.display = 'none';
-  elements.mainEditorView.style.display = 'block';
-  elements.dragDropView.style.display = 'none';
-} else if (mainEditorCounter === '3') {
-  elements.dragDropView.style.display = 'none';
-  elements.mainEditorView.style.display = 'none';
-  elements.detailsView.style.display = 'block';
+let mainEditorCounter = localStorage.getItem("mainEditorCounter");
+localStorage.setItem("mainEditorCounter", "1");
+if (mainEditorCounter === "1") {
+  elements.detailsView.style.display = "none";
+  elements.mainEditorView.style.display = "block";
+  elements.dragDropView.style.display = "none";
+} else if (mainEditorCounter === "3") {
+  elements.dragDropView.style.display = "none";
+  elements.mainEditorView.style.display = "none";
+  elements.detailsView.style.display = "block";
 } else {
-  elements.dragDropView.style.display = 'block';
-  elements.mainEditorView.style.display = 'none';
-  elements.detailsView.style.display = 'none';
+  elements.dragDropView.style.display = "block";
+  elements.mainEditorView.style.display = "none";
+  elements.detailsView.style.display = "none";
 }
 
 const resizeSVG = (svgContent, width, height) => {
   const parser = new DOMParser();
-  const svgDOM = parser.parseFromString(svgContent, 'image/svg+xml');
+  const svgDOM = parser.parseFromString(svgContent, "image/svg+xml");
   const svgElement = svgDOM.documentElement;
 
-  svgElement.setAttribute('width', width);
-  svgElement.setAttribute('height', height);
+  svgElement.setAttribute("width", width);
+  svgElement.setAttribute("height", height);
 
-  let viewBox = svgElement.getAttribute('viewBox').split(' ').map(Number);
+  let viewBox = svgElement.getAttribute("viewBox").split(" ").map(Number);
   if (viewBox[2] > viewBox[3]) {
     viewBox[3] = (viewBox[2] / width) * height;
   } else {
     viewBox[2] = (viewBox[3] / height) * width;
   }
-  svgElement.setAttribute('viewBox', viewBox.join(' '));
+  svgElement.setAttribute("viewBox", viewBox.join(" "));
 
   const serializer = new XMLSerializer();
   const resizedSVGContent = serializer.serializeToString(svgElement);
@@ -86,13 +86,13 @@ const resizeSVG = (svgContent, width, height) => {
 };
 
 const uploadLocalFile = (file) => {
-  elements.imgViewContainer.style.display = 'block';
-  elements.imgView.style.display = 'block';
+  elements.imgViewContainer.style.display = "block";
+  elements.imgView.style.display = "block";
 
-  if (file.type !== 'image/svg+xml') {
+  if (file.type !== "image/svg+xml") {
     file = null;
-    toastNotification('Please use an SVG file instead');
-    elements.imgViewContainer.style.display = 'none';
+    toastNotification("Please use an SVG file instead");
+    elements.imgViewContainer.style.display = "none";
     return;
   }
 
@@ -101,33 +101,40 @@ const uploadLocalFile = (file) => {
     const svgContent = fileReader.result;
     const resizedSVGContent = resizeSVG(svgContent, 1000, 1000);
     logoMainFile = resizedSVGContent;
-    localStorage.setItem('logo-file', resizedSVGContent);
-    localStorage.setItem('mainEditorCounter', 0);
+    localStorage.setItem("logo-file", resizedSVGContent);
+    localStorage.setItem("mainEditorCounter", 0);
   };
 
-  elements.dragDropChild.style.display = 'none';
+  elements.dragDropChild.style.display = "none";
   const fileURL = URL.createObjectURL(file);
   elements.imgView.src = fileURL;
 };
 
-elements.dragDrop.addEventListener('dragover', preventEvents);
+elements.dragDrop.addEventListener("dragover", preventEvents);
 
-elements.dragDrop.addEventListener('drop', (event) => {
+elements.dragDrop.addEventListener("drop", (event) => {
   preventEvents(event);
   uploadLocalFile(event.dataTransfer.files[0]);
 });
 
 let uploaded = false;
-elements.uploadFileBtn.addEventListener('change', (event) => {
+elements.uploadFileBtn.addEventListener("change", (event) => {
   preventEvents(event);
   uploadLocalFile(event.target.files[0]);
   uploaded = true;
 });
 
-elements.imgViewContainer.style.display = 'none';
-elements.imgView.style.display = 'none';
+elements.imgViewContainer.style.display = "none";
+elements.imgView.style.display = "none";
 
-const dragDropEvent = (event, background, borderColor, borderWidth, height, width) => {
+const dragDropEvent = (
+  event,
+  background,
+  borderColor,
+  borderWidth,
+  height,
+  width,
+) => {
   preventEvents(event);
   elements.dragDrop.style.background = background;
   elements.dragDrop.style.borderColor = borderColor;
@@ -137,16 +144,16 @@ const dragDropEvent = (event, background, borderColor, borderWidth, height, widt
   uploaded = true;
 };
 
-elements.dragDrop.addEventListener('dragover', (event) => {
-  dragDropEvent(event, '#eeeeee77', '#4d4e4eaa', '6px', '500px', '550px');
+elements.dragDrop.addEventListener("dragover", (event) => {
+  dragDropEvent(event, "#eeeeee77", "#4d4e4eaa", "6px", "500px", "550px");
 });
 
-elements.dragDrop.addEventListener('dragleave', (event) => {
-  dragDropEvent(event, '#ffffff', '#4d4e4e55', '3px', '500px', '550px');
+elements.dragDrop.addEventListener("dragleave", (event) => {
+  dragDropEvent(event, "#ffffff", "#4d4e4e55", "3px", "500px", "550px");
 });
 
 let logoNameExists = false;
-elements.inputPrimary.addEventListener('input', (event) => {
+elements.inputPrimary.addEventListener("input", (event) => {
   const val = event.target.value;
   if (val.length >= 1) {
     logoNameExists = true;
@@ -154,17 +161,18 @@ elements.inputPrimary.addEventListener('input', (event) => {
 });
 
 let termsAccept = false;
-elements.nextBtn.addEventListener('click', async () => {
-  if (!termsAccept) return toastNotification('Please Accept the terms to continue');
+elements.nextBtn.addEventListener("click", async () => {
+  if (!termsAccept)
+    return toastNotification("Please Accept the terms to continue");
   if (!uploaded) {
-    toastNotification('Please upload an SVG file');
-    localStorage.removeItem('mainEditorCounter');
+    toastNotification("Please upload an SVG file");
+    localStorage.removeItem("mainEditorCounter");
     return location.reload();
   } else if (!logoNameExists) {
-    return toastNotification('Please include a logo name');
+    return toastNotification("Please include a logo name");
   }
-  const userId = querySelect('#logo_name_input-userId').value;
-  if (!userId) return toastNotification('Invalid User');
+  const userId = querySelect("#logo_name_input-userId").value;
+  if (!userId) return toastNotification("Invalid User");
   const apiUrl = `https://www.mybrande.com/api/logoname/store`;
 
   const response = await axios.post(apiUrl, {
@@ -179,25 +187,24 @@ elements.nextBtn.addEventListener('click', async () => {
 
   const sellerLogoInfoId = response.data.seller_logoinfo_id;
   if (sellerLogoInfoId) {
-    localStorage.setItem('seller_logoinfo_id', sellerLogoInfoId);
-    localStorage.setItem('mainEditorCounter', '1');
+    localStorage.setItem("seller_logoinfo_id", sellerLogoInfoId);
+    localStorage.setItem("mainEditorCounter", "1");
     location.reload();
   } else {
-    return toastNotification('Sever Error');
+    return toastNotification("Sever Error");
   }
 });
 
-querySelect('#terms-accept').addEventListener('click', () => {
+querySelect("#terms-accept").addEventListener("click", () => {
   termsAccept = !termsAccept;
   if (termsAccept) {
-    return querySelect('#terms-accept').classList.remove('btn-bordered');
+    return querySelect("#terms-accept").classList.remove("btn-bordered");
   }
-  return querySelect('#terms-accept').classList.add('btn-bordered');
+  return querySelect("#terms-accept").classList.add("btn-bordered");
 });
 
-elements.backBtn.addEventListener('click', () => {
-  elements.detailsView.style.display = 'none';
-  elements.mainEditorView.style.display = 'none';
-  elements.dragDropView.style.display = 'block';
+elements.backBtn.addEventListener("click", () => {
+  elements.detailsView.style.display = "none";
+  elements.mainEditorView.style.display = "none";
+  elements.dragDropView.style.display = "block";
 });
-

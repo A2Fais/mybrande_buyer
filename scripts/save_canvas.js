@@ -1,7 +1,7 @@
 import axios from "axios";
 import { toastNotification } from "./toast_notification";
 import { rgbToHex } from "./color_converter";
-const querySelect = (item) => document.querySelector(item);
+import { querySelect } from "./selectors";
 
 export function getTextCase(text) {
   if (text === text.toUpperCase()) {
@@ -28,22 +28,6 @@ export function putAngleDownIcon(className, additionalFunction) {
   }
 }
 
-// export const setCanvasBackground = (canvas) => {
-//   canvas.setBackgroundImage(
-//     "/static/pattern.png",
-//     canvas.renderAll.bind(canvas),
-//     {
-//       opacity: 0.6,
-//       originX: "left",
-//       originY: "top",
-//       top: 0,
-//       left: 0,
-//       scaleX: 0.3,
-//       scaleY: 0.3,
-//     },
-//   );
-// };
-
 export async function saveCanvas(
   logoId,
   canvas,
@@ -53,12 +37,6 @@ export async function saveCanvas(
   alignId,
   isPackage = false,
 ) {
-  const value = logoNameElement.get("diameter");
-  // let percentage_ =
-  //   value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
-  // let angle = (percentage_ * 3.6).toFixed(0);
-  // console.log({ angle, percentage_ });
-
   let externalLayers = canvas._objects.filter((obj) => {
     return obj.id && obj.id.includes("external_layer_");
   });
