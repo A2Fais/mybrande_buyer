@@ -52,14 +52,14 @@ export const centerAndResizeElements = (
     return stack.join("");
   };
 
-  const logo = objects.find(
+  let logo = objects.find(
     (obj) =>
       (obj.type === "text" || obj.type === "curved-text") &&
       obj.text.toLowerCase() ===
         querySelect("#logoMainField").value.toLowerCase(),
   );
 
-  const slogan = objects.find(
+  let slogan = objects.find(
     (obj) =>
       (obj.type === "text" || obj.type === "curved-text") &&
       obj.text.toLowerCase() ===
@@ -74,6 +74,7 @@ export const centerAndResizeElements = (
         const linearText = new fabric.Text(logo.text, options);
         canvas.remove(logo);
         canvas.add(linearText);
+        slogan = linearText;
         canvas.requestRenderAll();
       }
 
@@ -83,6 +84,7 @@ export const centerAndResizeElements = (
         const linearSloganText = new fabric.Text(slogan.text, sloganOptions);
         canvas.remove(slogan);
         canvas.add(linearSloganText);
+        logo = linearSloganText;
         canvas.requestRenderAll();
       }
 
@@ -95,6 +97,7 @@ export const centerAndResizeElements = (
 
       logo.set("top", logoTopPosition);
       slogan.set("top", sloganTopPosition);
+      canvas.renderAll();
 
       logo.set("charSpacing", 0);
       slogan.set("charSpacing", 0);
@@ -119,6 +122,7 @@ export const centerAndResizeElements = (
       }
 
       centerHorizontally(logo, slogan);
+
       const newGrp = new fabric.Group(objects);
       canvas.viewportCenterObject(newGrp);
       newGrp.ungroupOnCanvas();
@@ -159,7 +163,7 @@ export const centerAndResizeElements = (
       canvas.discardActiveObject();
       const objGrp = new fabric.Group(objects);
       canvas.viewportCenterObject(objGrp);
-      objGrp.top -= 50;
+      objGrp.top -= 40;
       objGrp.ungroupOnCanvas();
       canvas.renderAll();
       break;

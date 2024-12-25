@@ -331,7 +331,7 @@ function setlogoPosition(
       break;
     case "17":
       centerAndResizeElements(
-        "curve_3",
+        "curve_1",
         46,
         32,
         "center",
