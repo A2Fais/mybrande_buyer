@@ -1,3 +1,4 @@
+import { fabric } from "fabric";
 import { querySelect } from "./selectors";
 
 export const centerAndResizeElements = (
@@ -25,53 +26,7 @@ export const centerAndResizeElements = (
       (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(),
     );
   };
-  const addCurveText = (obj, diameter, percentage = null) => {
-    let props = obj.__dimensionAffectingProps,
-      options = {
-        ...props,
-        left: obj.left,
-        top: obj.top,
-        scaleX: obj.scaleX,
-        scaleY: obj.scaleY,
-        diameter: parseInt(diameter),
-        fill: obj.fill,
-        shadow: obj.shadow,
-        percentage,
-      };
 
-    let letterSpacing = (parseInt(obj.charSpacing) / 100) * 3;
-    letterSpacing = letterSpacing.toFixed(1);
-    if (letterSpacing < -1) letterSpacing = -1;
-
-    options.kerning = parseInt(letterSpacing);
-
-    const curvedText = new fabric.CurvedText(obj.text, options);
-
-    let index = this.canvas.getObjects().indexOf(obj);
-
-    this.canvas.remove(obj);
-    this.canvas.add(curvedText);
-
-    if (
-      curvedText.text
-        .toLowerCase()
-        .includes(querySelect("#logoMainField").value.toLowerCase())
-    ) {
-      logoNameElement = curvedText;
-    } else if (
-      curvedText.text
-        .toLowerCase()
-        .includes(querySelect("#sloganNameField").value.toLowerCase())
-    ) {
-      sloganNameElement = curvedText;
-    }
-
-    applyEventListners();
-
-    curvedText.moveTo(index);
-    this.canvas.setActiveObject(curvedText);
-    this.canvas.requestRenderAll();
-  };
   function triggerSliderEvent(value, obj) {
     obj && canvas.setActiveObject(obj);
     const slider = querySelect("#text-curve-range");
@@ -113,85 +68,102 @@ export const centerAndResizeElements = (
 
   switch (type) {
     case "topBottom":
-      if (logo.type === "curved-text" || slogan.type === "curved-text") {
-        canvas.setActiveObject(logo);
-        triggerSliderEvent(2500);
-        canvas.setActiveObject(slogan);
-        triggerSliderEvent(2500);
+      if (logo.type === "curved-text") {
+        const { diameter, _percentage, ...options } = logo;
+
+        const linearText = new fabric.Text(logo.text, options);
+        canvas.remove(logo);
+        canvas.add(linearText);
+        canvas.requestRenderAll();
       }
-      setTimeout(() => {
-        const logoNameElement = logo;
-        const sloganNameElement = slogan;
 
-        logoNameElement.set("fontSize", logoSize);
-        sloganNameElement.set("fontSize", sloganSize);
+      if (slogan.type === "curved-text") {
+        const { diameter, _percentage, ...sloganOptions } = slogan;
 
+        const linearSloganText = new fabric.Text(slogan.text, sloganOptions);
+        canvas.remove(slogan);
+        canvas.add(linearSloganText);
+        canvas.requestRenderAll();
+      }
+
+      logo.set("fontSize", logoSize);
+      slogan.set("fontSize", sloganSize);
+      canvas.renderAll();
+
+      const logoTopPosition = canvas.height / logoNameTop;
+      const sloganTopPosition = canvas.height / sloganTop;
+
+      logo.set("top", logoTopPosition);
+      slogan.set("top", sloganTopPosition);
+
+      logo.set("charSpacing", 0);
+      slogan.set("charSpacing", 0);
+      canvas.renderAll();
+
+      if (letterSpaced) {
+        logo.text = toTitleCase(logo.text);
+        slogan.text = toSentenceCase(slogan.text);
+
+        logo.set("fontFamily", "Poppins");
+        slogan.set("fontFamily", "Poppins");
+
+        const logoNameWidth = logo.width;
+        slogan.set("width", logoNameWidth);
+
+        slogan.set("charSpacing", 322);
+        slogan.set("fontSize", 27);
         canvas.renderAll();
 
-        const logoTopPosition = canvas.height / logoNameTop;
-        const sloganTopPosition = canvas.height / sloganTop;
+        logo.set("top", (logo.top += 30));
+        slogan.set("top", (slogan.top += 60));
+      }
 
-        logoNameElement.set("top", logoTopPosition);
-        sloganNameElement.set("top", sloganTopPosition);
-
-        logoNameElement.set("charSpacing", 0);
-        sloganNameElement.set("charSpacing", 0);
-        canvas.renderAll();
-
-        if (letterSpaced) {
-          logoNameElement.text = toTitleCase(logoNameElement.text);
-          sloganNameElement.text = toSentenceCase(sloganNameElement.text);
-
-          logoNameElement.set("fontFamily", "Poppins");
-          sloganNameElement.set("fontFamily", "Poppins");
-
-          const logoNameWidth = logoNameElement.width;
-          sloganNameElement.set("width", logoNameWidth);
-
-          sloganNameElement.set("charSpacing", 322);
-          sloganNameElement.set("fontSize", 27);
-          canvas.renderAll();
-
-          logoNameElement.set("top", (logoNameElement.top += 30));
-          sloganNameElement.set("top", (sloganNameElement.top += 60));
-        }
-
-        centerHorizontally(logoNameElement, sloganNameElement);
-        const newGrp = new fabric.Group(objects);
-        canvas.viewportCenterObject(newGrp);
-        newGrp.ungroupOnCanvas();
-        canvas.renderAll();
-      }, timeout);
+      centerHorizontally(logo, slogan);
+      const newGrp = new fabric.Group(objects);
+      canvas.viewportCenterObject(newGrp);
+      newGrp.ungroupOnCanvas();
+      canvas.renderAll();
       break;
+
     case "bottomTop":
       if (logo.type === "curved-text") {
-        canvas.setActiveObject(logo);
-        triggerSliderEvent(2500);
-      } else {
-        canvas.setActiveObject(slogan);
-        triggerSliderEvent(2500);
+        const { diameter, _percentage, ...options } = logo;
+
+        const linearText = new fabric.Text(logo.text, options);
+        canvas.remove(logo);
+        canvas.add(linearText);
+        canvas.requestRenderAll();
       }
-      setTimeout(() => {
-        const logoNameElement = logo;
-        const sloganNameElement = slogan;
 
-        logoNameElement.set("fontSize", logoSize);
-        sloganNameElement.set("fontSize", sloganSize);
-        canvas.renderAll();
+      if (slogan.type === "curved-text") {
+        const { diameter, _percentage, ...sloganOptions } = slogan;
 
-        centerHorizontally(logoNameElement, sloganNameElement);
+        const linearSloganText = new fabric.Text(slogan.text, sloganOptions);
+        canvas.remove(slogan);
+        canvas.add(linearSloganText);
+        canvas.requestRenderAll();
+      }
 
-        const logoTopPosition = canvas.height / logoNameTop;
-        const sloganTopPosition = canvas.height / sloganTop;
-        logoNameElement.set("top", logoTopPosition);
-        sloganNameElement.set("top", sloganTopPosition);
+      logo.set("fontSize", logoSize);
+      slogan.set("fontSize", sloganSize);
+      canvas.renderAll();
 
-        const newGrp = new fabric.Group(objects);
-        canvas.viewportCenterObject(newGrp);
-        newGrp.ungroupOnCanvas();
-        canvas.renderAll();
-      }, timeout);
+      centerHorizontally(logo, slogan);
+
+      const logoTopPos = canvas.height / logoNameTop;
+      const sloganTopPos = canvas.height / sloganTop;
+      logo.set("top", logoTopPos);
+      slogan.set("top", sloganTopPos);
+      canvas.requestRenderAll();
+
+      canvas.discardActiveObject();
+      const objGrp = new fabric.Group(objects);
+      canvas.viewportCenterObject(objGrp);
+      objGrp.top -= 50;
+      objGrp.ungroupOnCanvas();
+      canvas.renderAll();
       break;
+
     case "leftRight":
       setTimeout(() => {
         const logoNameElement = logo;
@@ -457,7 +429,6 @@ export const centerAndResizeElements = (
         canvas.renderAll();
       }
       setCurve();
-
       break;
 
     case "curve_2":
@@ -482,7 +453,6 @@ export const centerAndResizeElements = (
         centerHorizontally(logo, slogan);
       }
       setCurveTwo();
-
       break;
 
     case "curve_3":

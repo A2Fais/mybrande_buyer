@@ -1883,19 +1883,19 @@ class EditorScreen {
     });
 
     const addCurveText = (obj, diameter, percentage = null) => {
-      console.log("ADD CURVE TEXT", obj, diameter, percentage);
-      let props = obj.__dimensionAffectingProps,
-        options = {
-          ...props,
-          left: obj.left,
-          top: obj.top,
-          scaleX: obj.scaleX,
-          scaleY: obj.scaleY,
-          diameter: parseInt(diameter),
-          fill: obj.fill,
-          shadow: obj.shadow,
-          percentage,
-        };
+      // console.log("ADD CURVE TEXT", obj, diameter, percentage);
+      const props = obj.__dimensionAffectingProps;
+      const options = {
+        ...props,
+        left: obj.left,
+        top: obj.top,
+        scaleX: obj.scaleX,
+        scaleY: obj.scaleY,
+        diameter: parseInt(diameter),
+        fill: obj.fill,
+        shadow: obj.shadow,
+        percentage,
+      };
 
       let letterSpacing = (parseInt(obj.charSpacing) / 100) * 3;
       letterSpacing = letterSpacing.toFixed(1);
