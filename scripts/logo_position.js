@@ -74,7 +74,6 @@ function setlogoPosition(
         logoNameElement,
         sloganNameElement,
       );
-
       break;
     case "5":
       centerAndResizeElements(
@@ -234,12 +233,24 @@ function setlogoPosition(
     case "16":
       scaleLogo(200);
       centerAndResizeElements(
+        "curve_2",
+        46,
+        32,
+        "center",
+        1.3,
+        8,
+        false,
+        canvas,
+        logoNameElement,
+        sloganNameElement,
+      );
+      centerAndResizeElements(
         "curve_1",
         46,
         32,
         "center",
         1.3,
-        12,
+        8,
         false,
         canvas,
         logoNameElement,
@@ -247,6 +258,18 @@ function setlogoPosition(
       );
       break;
     case "17":
+      centerAndResizeElements(
+        "curve_3",
+        46,
+        32,
+        "center",
+        5,
+        2,
+        false,
+        canvas,
+        logoNameElement,
+        sloganNameElement,
+      );
       centerAndResizeElements(
         "curve_2",
         46,
@@ -273,16 +296,13 @@ function setlogoPosition(
         logoNameElement,
         sloganNameElement,
       );
-      break;
-    default:
-      scaleLogo(200);
       centerAndResizeElements(
-        "topBottom",
+        "curve_3",
         46,
-        22,
+        38,
         "center",
         1.4,
-        1.45,
+        8,
         false,
         canvas,
         logoNameElement,

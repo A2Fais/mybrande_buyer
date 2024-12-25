@@ -1795,12 +1795,12 @@ class EditorScreen {
 
     querySelect("#text-curve-range").addEventListener("input", (e) => {
       let value = e.target.value;
-      console.log("CURVE VALUE", value);
 
       initCurveText();
       let percentage_ =
         value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
       let angle = (percentage_ * 3.6).toFixed(0);
+
       console.log("TEXT CURVE", value, percentage_, angle);
 
       querySelect("#curve-text").value = angle;
@@ -1883,6 +1883,7 @@ class EditorScreen {
     });
 
     const addCurveText = (obj, diameter, percentage = null) => {
+      console.log("ADD CURVE TEXT", obj, diameter, percentage);
       let props = obj.__dimensionAffectingProps,
         options = {
           ...props,
@@ -1935,7 +1936,8 @@ class EditorScreen {
       if (!obj) return;
 
       let value = querySelect("#text-curve-range").value;
-      // console.log("CURVE TEXT WORKING VALUE", value);
+      console.log("CURVE TEXT WORKING VALUE", value);
+
       let percentage =
         value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
 
@@ -1952,16 +1954,19 @@ class EditorScreen {
         value = getRangeFromPercentage(percentage);
       }
 
-      let isFlipped = percentage < 0,
-        hasCurveApply = parseInt(percentage) != 0;
+      const isFlipped = percentage < 0;
+      const hasCurveApply = parseInt(percentage) != 0;
 
       if (value >= 2500) value = 2500 - (value - 2500);
 
-      let isCurvedText = obj.type == "curved-text";
+      const isCurvedText = obj.type === "curved-text";
 
       if (hasCurveApply && !isCurvedText) {
+        console.log("hasCurveApply && !isCurvedText");
+
         addCurveText(obj, value, percentage);
       } else if (!hasCurveApply) {
+        console.log("!hasCurveApply");
         let itext = true;
         if (obj.text == querySelect("#logoMainField").value) {
           itext = false;
@@ -1990,7 +1995,8 @@ class EditorScreen {
         this.canvas.setActiveObject(text);
         this.canvas.save();
       } else if (hasCurveApply && isCurvedText) {
-        console.log("THE VALUE THAT IS BEING SET", value);
+        console.log("hasCurveApply && !isCurvedText");
+
         obj.set("_cachedCanvas", null);
         obj.set("diameter", value);
         obj.set("flipped", isFlipped);
@@ -1998,7 +2004,7 @@ class EditorScreen {
         obj._updateObj("scaleX", obj.scaleX);
         obj._updateObj("scaleY", obj.scaleY);
       }
-      this.canvas.requestRenderAll();
+      this.canvas.renderAll();
       const angle = (percentage * 3.6).toFixed(0);
       return angle;
     };
