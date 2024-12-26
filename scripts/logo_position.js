@@ -25,8 +25,8 @@ function setlogoPosition(
         46,
         22,
         "center",
-        1.3,
         1.5,
+        1.7,
         false,
         canvas,
         logoNameElement,
@@ -46,18 +46,18 @@ function setlogoPosition(
       );
       break;
     case "2":
-      centerAndResizeElements(
-        "topBottom",
-        40,
-        20,
-        "center",
-        1.3,
-        1.5,
-        false,
-        canvas,
-        logoNameElement,
-        sloganNameElement,
-      );
+      // centerAndResizeElements(
+      //   "topBottom",
+      //   40,
+      //   20,
+      //   "center",
+      //   1.3,
+      //   1.5,
+      //   false,
+      //   canvas,
+      //   logoNameElement,
+      //   sloganNameElement,
+      // );
       centerAndResizeElements(
         "topBottom",
         40,

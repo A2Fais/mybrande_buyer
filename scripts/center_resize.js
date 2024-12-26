@@ -74,7 +74,7 @@ export const centerAndResizeElements = (
         const linearText = new fabric.Text(logo.text, options);
         canvas.remove(logo);
         canvas.add(linearText);
-        slogan = linearText;
+        logo = linearText;
         canvas.requestRenderAll();
       }
 
@@ -84,7 +84,7 @@ export const centerAndResizeElements = (
         const linearSloganText = new fabric.Text(slogan.text, sloganOptions);
         canvas.remove(slogan);
         canvas.add(linearSloganText);
-        logo = linearSloganText;
+        slogan = linearSloganText;
         canvas.requestRenderAll();
       }
 
