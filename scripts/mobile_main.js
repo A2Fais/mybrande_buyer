@@ -33,8 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
         categoryContent.innerHTML = `
         <div id="content-container" style="z-index: 10; background-color: #ffffff; height: auto; position: absolute; bottom: 0; width: 100vw; padding: 15px;">
           <div id="content-back-btn" style="display: flex; align-items: center; margin-bottom: 10px;">
-            <i class="fa-solid fa-arrow-left" style="color: var(--gray); font-size: 24px; margin-right: 10px;"></i>
-            <span style="font-size: 16px; color: var(--gray);">Back</span>
+            <i class="fa-solid fa-arrow-left" style="color: var(--gray); font-size: 20px; margin-right: 10px;"></i>
           </div>
           ${mobileCategoryData[category]}
         </div>`;

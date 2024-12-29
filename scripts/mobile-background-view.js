@@ -4,20 +4,20 @@ export const mobileBackgroundView = `
 <div id="mobile-background-view-categories" style="display: flex; justify-content: space-around; align-items: center;">
     <!-- Solid Category -->
     <div id="mobile-solid-category" style="text-align: center;">
-        <i class="fas fa-square" style="font-size: 2rem; color: var(--gray);"></i>
-        <p style="margin-top: 10px; font-size: 1rem; color: var(--gray);">Solid</p>
+        <i class="fas fa-square" style="font-size: 20px; color: var(--gray);"></i>
+        <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">Solid</p>
     </div>
 
     <!-- Linear Category -->
     <div id="mobile-linear-category" style="text-align: center;">
-        <i class="fas fa-arrows-alt-h" style="font-size: 2rem; color: var(--gray);"></i>
-        <p style="margin-top: 10px; font-size: 1rem; color: var(--gray);">Linear</p>
+        <i class="fas fa-arrows-alt-h" style="font-size: 20px; color: var(--gray);"></i>
+        <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">Linear</p>
     </div>
 
     <!-- None Category -->
     <div id="mobile-none-category" style="text-align: center;">
-        <i class="fas fa-ban" style="font-size: 2rem; color: var(--gray);"></i>
-        <p style="margin-top: 10px; font-size: 1rem; color: var(--gray);">None</p>
+        <i class="fas fa-ban" style="font-size: 20px; color: var(--gray);"></i>
+        <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">None</p>
     </div>
 </div>
 
