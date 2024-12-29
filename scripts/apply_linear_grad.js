@@ -2,6 +2,7 @@ import { fabric } from "fabric";
 
 export class applyLinearGradient {
   constructor(canvas, grad1, grad2) {
+    console.log(grad1, grad2);
     this.canvas = canvas;
     this.grad1 = grad1;
     this.grad2 = grad2;
@@ -21,7 +22,9 @@ export class applyLinearGradient {
         { offset: 1, color: this.grad2 ? this.grad2 : "#000000" },
       ],
     });
-    isBG ? this.canvas.setBackgroundColor(color) : this.active.set("fill", color);
+    isBG
+      ? this.canvas.setBackgroundColor(color)
+      : this.active.set("fill", color);
     this.canvas.renderAll();
   }
 }

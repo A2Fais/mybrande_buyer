@@ -29,7 +29,7 @@ import loadExternalLayers from "./exter_layers_loader.js";
 
 fabric.CurvedText = curvedText;
 
-class EditorScreen {
+export class EditorScreen {
   constructor() {
     this.canvasBG = "#ffffff";
 
@@ -4231,3 +4231,5 @@ class EditorScreen {
 
 const editorScreen = new EditorScreen();
 editorScreen.initialize();
+export const canvas = editorScreen.canvas;
+export const canvasBG = editorScreen.canvasBG;

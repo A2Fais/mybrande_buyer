@@ -202,7 +202,12 @@ export function solidColorTextAction(
   );
 }
 
-export function bgColorAction(item, canvas, updatePreview) {
+export function bgColorAction(
+  item,
+  canvas,
+  updatePreview = null,
+  isMobile = false,
+) {
   item.addEventListener("click", (event) => {
     if (canvas) {
       const bgColor = event.target.style.backgroundColor;
@@ -233,11 +238,13 @@ export function bgColorAction(item, canvas, updatePreview) {
 
         const logoColorPickers = querySelectAll("#color-layers-pickers");
         logoColorPickers.forEach((i) => i.remove());
-        updateColorPickers(canvas, updatePreview);
+        if (!isMobile) {
+          updateColorPickers(canvas, updatePreview);
+        }
         canvas.renderAll();
         canvas.save();
       }
-      updatePreview();
+      updatePreview && updatePreview();
     }
   });
 }

@@ -1,42 +1,125 @@
-const navItems = document.querySelectorAll("#mobile-nav-bar [data-name]");
-const categoryContent = document.querySelector("#mobile-category-content");
+import { mobileBackgroundView } from "./mobile-background-view.js";
+import { mobileLogoView } from "./mobile-logo-view.js";
+import { mobileAddView } from "./mobile-add-view.js";
+import { mobileTextView } from "./mobile-text-view.js";
+import { canvas, canvasBG } from "./main.js";
+import {
+  solidColorAction,
+  solidColorTextAction,
+  updateColorPickers,
+  updateColorTextPickers,
+  bgColorAction,
+} from "./color_events.js";
+import { applyLinearGradient } from "./apply_linear_grad.js";
 
-const categoryData = {
-  add: `<div>
-          <h3>Add New Item</h3>
-          <button>Add Item</button>
-        </div>`,
-  logo: `<div>
-          <h3>Logo Options</h3>
-          <button>Upload Logo</button>
-        </div>`,
-  text: `<div>
-          <h3>Text Settings</h3>
-          <input type="text" placeholder="Enter text" />
-        </div>`,
-  background: `
-              <div style="display: flex; justify-content: center; align-items: center; gap: 20px;">
-                 <h3>Background Settings</h3>
-                 <input type="color" />
-              <div>`,
-};
+document.addEventListener("DOMContentLoaded", () => {
+  const navItems = document.querySelectorAll("#mobile-nav-bar [data-name]");
+  const categoryContent = document.querySelector("#mobile-category-content");
 
-navItems.forEach((item) => {
-  item.addEventListener("click", (event) => {
-    event.stopPropagation();
-    const category = item.getAttribute("data-name");
+  const mobileCategoryData = {
+    add: mobileAddView,
+    logo: mobileLogoView,
+    text: mobileTextView,
+    background: mobileBackgroundView,
+  };
 
-    if (categoryData[category]) {
-      categoryContent.innerHTML = `<div style="background-color: #ffffff; height: 100px; position: absolute; bottom: 0; width: 100svw">
-          ${categoryData[category]}
+  navItems.forEach((item) => {
+    item.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const category = item.getAttribute("data-name");
+
+      // Display selected category
+      if (mobileCategoryData[category]) {
+        categoryContent.innerHTML = `
+        <div id="content-container" style="z-index: 10; background-color: #ffffff; height: auto; position: absolute; bottom: 0; width: 100vw; padding: 15px;">
+          <div id="content-back-btn" style="display: flex; align-items: center; margin-bottom: 10px;">
+            <i class="fa-solid fa-arrow-left" style="color: var(--gray); font-size: 24px; margin-right: 10px;"></i>
+            <span style="font-size: 16px; color: var(--gray);">Back</span>
+          </div>
+          ${mobileCategoryData[category]}
         </div>`;
-      categoryContent.style.display = "block";
-    }
-  });
-});
+        categoryContent.style.display = "block";
+      }
 
-document.addEventListener("click", (event) => {
-  if (!categoryContent.contains(event.target)) {
-    categoryContent.style.display = "none";
-  }
+      // Close button for category view
+      const contentBackBtn = document.querySelector("#content-back-btn");
+      contentBackBtn.addEventListener("click", () => {
+        categoryContent.style.display = "none";
+      });
+
+      const colorCategories = document?.getElementById(
+        "mobile-background-view-categories",
+      );
+      const solidCategory = document?.getElementById("mobile-solid-category");
+      const linearCategory = document?.getElementById("mobile-linear-category");
+      const noneCategory = document?.getElementById("mobile-none-category");
+
+      const solidSection = document.getElementById(
+        "mobile-solid-color-section",
+      );
+      const linearSection = document.getElementById(
+        "mobile-linear-color-section",
+      );
+      const noneSection = document.getElementById("mobile-none-color-section");
+
+      // Categories event listeners
+      solidCategory?.addEventListener("click", () => {
+        colorCategories.style.display = "none";
+        solidSection.style.display = "flex";
+        linearSection.style.display = "none";
+        noneSection.style.display = "none";
+      });
+
+      // Add Button Action
+      document
+        ?.querySelector("#mobile-bg-add-item")
+        ?.addEventListener("click", () => {
+          document.querySelector("#upload-file").click();
+        });
+
+      // Solid Colors Action
+      const bgColors = document.querySelectorAll("#solid_color-bg-mobile");
+      bgColors.forEach((item) => {
+        bgColorAction(item, canvas, null, true);
+      });
+
+      // Linear event listeners
+      linearCategory?.addEventListener("click", () => {
+        colorCategories.style.display = "none";
+        solidSection.style.display = "none";
+        linearSection.style.display = "flex";
+        noneSection.style.display = "none";
+      });
+
+      // Linear Colors Actions
+      var bgGrad1, bgGrad2;
+      const mobileBgPalleteComponent =
+        document.querySelector("#mobile-bg-pallete");
+      mobileBgPalleteComponent?.addEventListener("colorChanged", (c) => {
+        [bgGrad1, bgGrad2] = [
+          c.target.querySelector("#grad-1").value,
+          c.target.querySelector("#grad-2").value,
+        ];
+      });
+
+      if (!mobileBgPalleteComponent) return;
+      mobileBgPalleteComponent
+        ?.querySelector(".color-palette-gradient")
+        ?.addEventListener("click", () => {
+          const applyColor = new applyLinearGradient(
+            canvas,
+            bgGrad1,
+            bgGrad2,
+            true,
+          );
+          applyColor.setColor(true);
+        });
+
+      // None Background
+      noneCategory?.addEventListener("click", () => {
+        canvas.setBackgroundColor("#fff");
+        canvas.renderAll();
+      });
+    });
+  });
 });
