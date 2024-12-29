@@ -36,13 +36,13 @@ export const mobileLogoView = `<div id="mobile-logo-view" style="display: flex; 
     </div>
 
     <!-- Flip Horizontal Category -->
-    <div id="mobile-flip-horizontal-category" style="text-align: center;">
+    <div class="mobile-flip-horizontal-category" style="text-align: center;">
         <i class="fas fa-arrow-left" style="font-size: 20px; color: var(--gray);"></i>
         <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">FlipX</p>
     </div>
 
     <!-- Flip Vertical Category -->
-    <div id="mobile-flip-vertical-category" style="text-align: center;">
+    <div class="mobile-flip-vertical-category" style="text-align: center;">
         <i class="fas fa-arrow-up" style="font-size: 20px; color: var(--gray);"></i>
         <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">FlipY</p>
     </div>

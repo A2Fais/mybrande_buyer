@@ -120,5 +120,46 @@ document.addEventListener("DOMContentLoaded", () => {
         canvas.renderAll();
       });
     });
+
+    // END
   });
+
+  // Logo Actions
+  let isFlipY = false;
+  let isFlipX = false;
+  function flip(direction) {
+    console.log("WORKING");
+    const active = canvas.getActiveObject();
+    const currCoordinate = active.getCenterPoint();
+
+    if (active) {
+      if (direction === "horizontal") {
+        isFlipX = !isFlipX;
+        activeObject.set("flipX", isFlipX);
+      } else {
+        isFlipY = !isFlipY;
+        activeObject.set("flipY", isFlipY);
+      }
+
+      active.setPositionByOrigin(
+        new fabric.Point(currCoordinate.x, currCoordinate.y),
+        "center",
+        "center",
+      );
+      active.setCoords();
+
+      canvas.renderAll();
+    }
+  }
+  document
+    ?.querySelector("#mobile-logo-view .mobile-flip-horizontal-category")
+    ?.addEventListener("click", () => {
+      return flip("horizontal");
+    });
+
+  document
+    ?.querySelector("#mobile-logo-view .mobile-flip-vertical-category")
+    ?.addEventListener("click", () => {
+      return flip("vertical");
+    });
 });
