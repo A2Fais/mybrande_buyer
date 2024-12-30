@@ -1,165 +1,51 @@
+import { fabric } from "fabric";
 import { mobileBackgroundView } from "./mobile-background-view.js";
 import { mobileLogoView } from "./mobile-logo-view.js";
 import { mobileAddView } from "./mobile-add-view.js";
 import { mobileTextView } from "./mobile-text-view.js";
-import { canvas, canvasBG } from "./main.js";
-import {
-  solidColorAction,
-  solidColorTextAction,
-  updateColorPickers,
-  updateColorTextPickers,
-  bgColorAction,
-} from "./color_events.js";
-import { applyLinearGradient } from "./apply_linear_grad.js";
+import { mobileBackgroundMenu } from "./mobile-background-menu.js";
+import { mobileLogoMenu } from "./mobile-logo-menu.js";
 
-document.addEventListener("DOMContentLoaded", () => {
-  const navItems = document.querySelectorAll("#mobile-nav-bar [data-name]");
-  const categoryContent = document.querySelector("#mobile-category-content");
+const navItems = document.querySelectorAll("#mobile-nav-bar [data-name]");
+const categoryContent = document.querySelector("#mobile-category-content");
 
-  const mobileCategoryData = {
-    add: mobileAddView,
-    logo: mobileLogoView,
-    text: mobileTextView,
-    background: mobileBackgroundView,
-  };
+const mainCategoryData = {
+  add: mobileAddView,
+  logo: mobileLogoView,
+  text: mobileTextView,
+  background: mobileBackgroundView,
+};
 
-  navItems.forEach((item) => {
-    item.addEventListener("click", (event) => {
-      event.stopPropagation();
-      const category = item.getAttribute("data-name");
+const menuCategoryData = {
+  logo: mobileLogoMenu,
+  background: mobileBackgroundMenu,
+};
 
-      // Display selected category
-      if (mobileCategoryData[category]) {
-        categoryContent.innerHTML = `
+navItems.forEach((item) => {
+  item.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const category = item.getAttribute("data-name");
+
+    // MAIN CATEGORY -> Shows add, logo, text, background
+    if (!mainCategoryData[category]) return;
+    categoryContent.innerHTML = `
         <div id="content-container" style="z-index: 10; background-color: #ffffff; height: auto; position: absolute; bottom: 0; width: 100vw; padding: 15px;">
           <div id="content-back-btn" style="display: flex; align-items: center; margin-bottom: 10px;">
             <i class="fa-solid fa-arrow-left" style="color: var(--gray); font-size: 20px; margin-right: 10px;"></i>
           </div>
-          ${mobileCategoryData[category]}
+          ${mainCategoryData[category]}
         </div>`;
-        categoryContent.style.display = "block";
-      }
+    categoryContent.style.display = "block";
 
-      // Close button for category view
-      const contentBackBtn = document.querySelector("#content-back-btn");
-      contentBackBtn.addEventListener("click", () => {
-        categoryContent.style.display = "none";
-      });
-
-      const colorCategories = document?.getElementById(
-        "mobile-background-view-categories",
-      );
-      const solidCategory = document?.getElementById("mobile-solid-category");
-      const linearCategory = document?.getElementById("mobile-linear-category");
-      const noneCategory = document?.getElementById("mobile-none-category");
-
-      const solidSection = document.getElementById(
-        "mobile-solid-color-section",
-      );
-      const linearSection = document.getElementById(
-        "mobile-linear-color-section",
-      );
-      const noneSection = document.getElementById("mobile-none-color-section");
-
-      // Categories event listeners
-      solidCategory?.addEventListener("click", () => {
-        colorCategories.style.display = "none";
-        solidSection.style.display = "flex";
-        linearSection.style.display = "none";
-        noneSection.style.display = "none";
-      });
-
-      // Add Button Action
-      document
-        ?.querySelector("#mobile-bg-add-item")
-        ?.addEventListener("click", () => {
-          document.querySelector("#upload-file").click();
-        });
-
-      // Solid Colors Action
-      const bgColors = document.querySelectorAll("#solid_color-bg-mobile");
-      bgColors.forEach((item) => {
-        bgColorAction(item, canvas, null, true);
-      });
-
-      // Linear event listeners
-      linearCategory?.addEventListener("click", () => {
-        colorCategories.style.display = "none";
-        solidSection.style.display = "none";
-        linearSection.style.display = "flex";
-        noneSection.style.display = "none";
-      });
-
-      // Linear Colors Actions
-      var bgGrad1, bgGrad2;
-      const mobileBgPalleteComponent =
-        document.querySelector("#mobile-bg-pallete");
-      mobileBgPalleteComponent?.addEventListener("colorChanged", (c) => {
-        [bgGrad1, bgGrad2] = [
-          c.target.querySelector("#grad-1").value,
-          c.target.querySelector("#grad-2").value,
-        ];
-      });
-
-      if (!mobileBgPalleteComponent) return;
-      mobileBgPalleteComponent
-        ?.querySelector(".color-palette-gradient")
-        ?.addEventListener("click", () => {
-          const applyColor = new applyLinearGradient(
-            canvas,
-            bgGrad1,
-            bgGrad2,
-            true,
-          );
-          applyColor.setColor(true);
-        });
-
-      // None Background
-      noneCategory?.addEventListener("click", () => {
-        canvas.setBackgroundColor("#fff");
-        canvas.renderAll();
-      });
+    // Close button for category view
+    const contentBackBtn = document.querySelector("#content-back-btn");
+    contentBackBtn.addEventListener("click", () => {
+      categoryContent.style.display = "none";
     });
 
-    // END
-  });
-
-  // Logo Actions
-  let isFlipY = false;
-  let isFlipX = false;
-  function flip(direction) {
-    console.log("WORKING");
-    const active = canvas.getActiveObject();
-    const currCoordinate = active.getCenterPoint();
-
-    if (active) {
-      if (direction === "horizontal") {
-        isFlipX = !isFlipX;
-        activeObject.set("flipX", isFlipX);
-      } else {
-        isFlipY = !isFlipY;
-        activeObject.set("flipY", isFlipY);
-      }
-
-      active.setPositionByOrigin(
-        new fabric.Point(currCoordinate.x, currCoordinate.y),
-        "center",
-        "center",
-      );
-      active.setCoords();
-
-      canvas.renderAll();
+    // MAIN CATEGORY MENUS -> Opens add, logo, text, background
+    if (menuCategoryData[category]) {
+      menuCategoryData[category]();
     }
-  }
-  document
-    ?.querySelector("#mobile-logo-view .mobile-flip-horizontal-category")
-    ?.addEventListener("click", () => {
-      return flip("horizontal");
-    });
-
-  document
-    ?.querySelector("#mobile-logo-view .mobile-flip-vertical-category")
-    ?.addEventListener("click", () => {
-      return flip("vertical");
-    });
+  });
 });

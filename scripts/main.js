@@ -19,13 +19,13 @@ import {
   updateColorPickers,
   updateColorTextPickers,
 } from "./color_events.js";
-import { getAttr, querySelect, querySelectAll } from "./selectors.js";
 import resizeCanvas from "./resize_canvas.js";
 import renderCanvas from "./render_canvas.js";
 import setlogoPosition from "./logo_position.js";
 import initMultiSelectList from "./multi_select_list.js";
 import { attachHSLHandlers, attachRGBHandlers } from "./color_picker_util.js";
 import loadExternalLayers from "./exter_layers_loader.js";
+import { getAttr, querySelect, querySelectAll } from "./selectors.js";
 
 fabric.CurvedText = curvedText;
 
@@ -4232,4 +4232,3 @@ export class EditorScreen {
 const editorScreen = new EditorScreen();
 editorScreen.initialize();
 export const canvas = editorScreen.canvas;
-export const canvasBG = editorScreen.canvasBG;
