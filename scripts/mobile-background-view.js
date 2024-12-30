@@ -22,7 +22,7 @@ export const mobileBackgroundView = `
 </div>
 
 <!-- Solid Colors Section -->
-<div id="mobile-solid-color-section" style="display: flex; gap: 5px; justify-content: flex-start; padding-right: 30px; overflow-x: scroll; display: none;">
+<div id="mobile-solid-color-section" style="display: flex; gap: 5px; justify-content: flex-start; padding-inline: 30px; overflow-x: scroll; display: none;">
   <div style="display: flex;">
     <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #000000;"></span>
     <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #545454;"></span>

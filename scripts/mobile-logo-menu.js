@@ -12,38 +12,16 @@ export function mobileLogoMenu() {
   const shadowBtn = menuMain.querySelector("#mobile-drop-shadow-category");
   const colorsBtn = menuMain.querySelector("#mobile-colors-category");
   const actionBtn = menuMain.querySelector("#mobile-colors-category");
+
   const layerActionBtn = menuMain.querySelector(
     "#mobile-layer-action-category",
   );
 
-  flipXBtn.addEventListener("click", () => {
-    if (!canvas) {
-      console.error("Canvas is not initialized.");
-      return;
-    }
-    const activeObject = canvas.getActiveObject();
-    if (activeObject) {
-      activeObject.set({ flipX: !activeObject.flipX });
-      canvas.renderAll();
-    }
-  });
-
-  flipYBtn.addEventListener("click", () => {
-    if (!canvas) {
-      console.error("Canvas is not initialized.");
-      return;
-    }
-    const activeObject = canvas.getActiveObject();
-    if (activeObject) {
-      activeObject.set({ flipY: !activeObject.flipY });
-      canvas.renderAll();
-    }
-  });
-
   const rotateSubmenu = createSubmenu(
     menuMain,
     `<div style="position: relative; width: 100svw; max-width: 400px; margin: 0 auto;">
-    <label for="mobile-rotate-slider" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 14px; font-weight: bold;">Value: <span id="mobile-rotate-value">50</span></label>
+    <label for="mobile-rotate-slider" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 14px; font-weight: bold;">
+    Value: <span id="mobile-rotate-value">50</span></label>
     <input type="range" id="mobile-rotate-slider" style="width: 100%;" min="0" max="100" value="50" step="1" />
   </div>
 `,
@@ -52,7 +30,8 @@ export function mobileLogoMenu() {
   const scaleSubmenu = createSubmenu(
     menuMain,
     `<div style="position: relative; width: 100svw; max-width: 400px; margin: 0 auto;">
-    <label for="mobile-scale-slider" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 14px; font-weight: bold;">Value: <span id="mobile-slider-value">50</span></label>
+    <label for="mobile-scale-slider" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 14px; font-weight: bold;">
+    Value: <span id="mobile-slider-value">50</span></label>
     <input type="range" id="mobile-scale-slider" style="width: 100%;" min="0" max="100" value="50" step="1" />
   </div>
 `,
@@ -61,7 +40,6 @@ export function mobileLogoMenu() {
   const shadowSubmenu = createSubmenu(
     menuMain,
     `<div style="width: 90svw;">
-
     <label for="blur-slider" style="font-size: 14px; font-weight: bold;">Blur: <span id="blur-value">5</span></label>
     <input type="range" id="blur-slider" style="width: 100%;" min="0" max="100" value="5" step="1" />
     
@@ -72,8 +50,37 @@ export function mobileLogoMenu() {
     <label for="y-slider" style="font-size: 14px; font-weight: bold; margin-top: 50px;">
     Y Offset: <span id="y-value">0</span></label>
     <input type="range" id="y-slider" style="width: 100%;" min="-50" max="50" value="0" step="1" />
-
   </div>`,
+  );
+
+  const actionSubmenu = createSubmenu(
+    menuMain,
+    `<div style="position: relative; width: 100svw; max-width: 400px; margin: 0 auto;">
+
+<div style="display: flex; justify-content: space-around; width: 100%;">
+    <div style="text-align: center;" id="mobile-duplicate-layer">
+        <i class="fa-solid fa-copy" style="font-size: 20px; color: var(--gray-light);"></i>
+        <div style="font-size: 12px; color: var(--gray-light);">Duplicate</div>
+    </div>
+    <div style="text-align: center;" id="mobile-visible-layer">
+        <i class="fa-solid fa-eye" style="font-size: 20px; color: var(--gray-light);"></i>
+        <div style="font-size: 12px; color: var(--gray-light);">Visible</div>
+    </div>
+    <div style="text-align: center;" id="mobile-forward-layer">
+        <i class="fa-solid fa-arrow-up" style="font-size: 20px; color: var(--gray-light);"></i>
+        <div style="font-size: 12px; color: var(--gray-light);">Forward</div>
+    </div>
+    <div style="text-align: center;" id="mobile-backward-layer">
+        <i class="fa-solid fa-arrow-down" style="font-size: 20px; color: var(--gray-light);"></i>
+        <div style="font-size: 12px; color: var(--gray-light);">Backward</div>
+    </div>
+    <div style="text-align: center;" id="mobile-remove-layer">
+        <i class="fa-solid fa-trash" style="font-size: 20px; color: var(--gray-light);"></i>
+        <div style="font-size: 12px; color: var(--gray-light);">Remove</div>
+    </div>
+</div>
+  </div>
+`,
   );
 
   const colorsSubmenu = createSubmenu(menuMain, `<div>HAHAHAHAH</div>`);
@@ -116,5 +123,29 @@ export function mobileLogoMenu() {
   layerActionBtn.addEventListener("click", () => {
     menuMain.style.display = "none";
     actionSubmenu.style.display = "flex";
+  });
+
+  flipXBtn.addEventListener("click", () => {
+    if (!canvas) {
+      console.error("Canvas is not initialized.");
+      return;
+    }
+    const activeObject = canvas.getActiveObject();
+    if (activeObject) {
+      activeObject.set({ flipX: !activeObject.flipX });
+      canvas.renderAll();
+    }
+  });
+
+  flipYBtn.addEventListener("click", () => {
+    if (!canvas) {
+      console.error("Canvas is not initialized.");
+      return;
+    }
+    const activeObject = canvas.getActiveObject();
+    if (activeObject) {
+      activeObject.set({ flipY: !activeObject.flipY });
+      canvas.renderAll();
+    }
   });
 }

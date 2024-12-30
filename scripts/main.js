@@ -2127,7 +2127,7 @@ export class EditorScreen {
         active.clone((clonedGroup) => {
           clonedGroup._objects.forEach((object, i) => {
             if (object.text) return true;
-            object.dublicate = true;
+            object.duplicate = true;
             this.canvas.add(object);
             layerEl = document.querySelector(
               `.layer-container[data-id="${active._objects[i].layerId}"]`,
