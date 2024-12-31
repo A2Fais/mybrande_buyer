@@ -112,7 +112,7 @@ export function mobileLogoMenu(canvas) {
 </div>
 
 <!-- Solid Colors Section -->
-<div id="mobile-logo-solid-color-section" style="display: flex; gap: 5px; justify-content: flex-start; padding-inline: 30px; overflow-x: scroll; display: none;">
+<div id="mobile-logo-solid-color-section" style="display: grid; gap: 5px; justify-content: flex-start; padding-inline: 30px; overflow-x: scroll; display: none; grid-template-colums: repeat(4, 1fr); ">
   <div style="display: flex;">
     <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #000000;"></span>
     <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #545454;"></span>
@@ -241,18 +241,12 @@ export function mobileLogoMenu(canvas) {
   });
 
   flipXBtn.addEventListener("click", () => {
-    const activeObject = canvas.getActiveObject();
-    if (activeObject) {
-      activeObject.set({ flipX: !activeObject.flipX });
-      canvas.renderAll();
-    }
+    activeObject.set({ flipX: !activeObject.flipX });
+    canvas.renderAll();
   });
 
   flipYBtn.addEventListener("click", () => {
-    const activeObject = canvas.getActiveObject();
-    if (activeObject) {
-      activeObject.set({ flipY: !activeObject.flipY });
-      canvas.renderAll();
-    }
+    activeObject.set({ flipY: !activeObject.flipY });
+    canvas.renderAll();
   });
 }

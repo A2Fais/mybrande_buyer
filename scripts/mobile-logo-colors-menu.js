@@ -31,7 +31,8 @@ export function mobileLogoColorsMenu(activeObject) {
   // Categories event listeners
   solidCategory?.addEventListener("click", () => {
     colorCategories.style.display = "none";
-    solidSection.style.display = "flex";
+    solidSection.style.display = "grid";
+    solidSection.style.gridTemplateColumns = "repeat(4, 1fr)";
     linearSection.style.display = "none";
     noneSection.style.display = "none";
   });
@@ -44,8 +45,8 @@ export function mobileLogoColorsMenu(activeObject) {
     });
 
   // Solid Colors Action
-  const bgColors = document.querySelectorAll("#solid_color-bg-mobile");
-  bgColors.forEach((item) => {
+  const solidColors = document.querySelectorAll("#solid_color-bg-mobile");
+  solidColors.forEach((item) => {
     applyColorActionMobile(item, canvas, activeObject);
   });
 
@@ -58,12 +59,12 @@ export function mobileLogoColorsMenu(activeObject) {
   });
 
   // Linear Colors Actions
-  var bgGrad1, bgGrad2;
+  let bgGrad1, bgGrad2;
   const mobileBgPalleteComponent = document.querySelector("#mobile-bg-pallete");
-  mobileBgPalleteComponent?.addEventListener("colorChanged", (c) => {
+  mobileBgPalleteComponent?.addEventListener("colorChanged", ({ target }) => {
     [bgGrad1, bgGrad2] = [
-      c.target.querySelector("#grad-1").value,
-      c.target.querySelector("#grad-2").value,
+      target.querySeleor("#grad-1").value,
+      target.querySeleor("#grad-2").value,
     ];
   });
 

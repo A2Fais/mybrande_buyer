@@ -23,7 +23,8 @@ export function mobileBackgroundMenu() {
   // Categories event listeners
   solidCategory?.addEventListener("click", () => {
     colorCategories.style.display = "none";
-    solidSection.style.display = "flex";
+    solidSection.style.display = "grid";
+    solidSection.style.gridTemplateColumns = "repeat(4, 1fr)";
     linearSection.style.display = "none";
     noneSection.style.display = "none";
   });
