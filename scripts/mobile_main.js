@@ -1,3 +1,4 @@
+import { canvas } from "./main.js";
 import { fabric } from "fabric";
 import { mobileBackgroundView } from "./mobile-background-view.js";
 import { mobileLogoView } from "./mobile-logo-view.js";
@@ -45,7 +46,7 @@ navItems.forEach((item) => {
 
     // MAIN CATEGORY MENUS -> Opens add, logo, text, background
     if (menuCategoryData[category]) {
-      menuCategoryData[category]();
+      menuCategoryData[category](canvas);
     }
   });
 });

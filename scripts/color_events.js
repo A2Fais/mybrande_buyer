@@ -121,7 +121,7 @@ export function updateColorTextPickers(canvas, updatePreview) {
   updatePreview();
 }
 
-function applyColorAction(
+export function applyColorAction(
   item,
   canvas,
   colorPicker,
@@ -132,44 +132,92 @@ function applyColorAction(
 ) {
   item.addEventListener("click", (event) => {
     if (!canvas) return;
+
     const activeObj = canvas.getActiveObject();
-    if (activeObj) {
-      const bgColor = event.target.style.backgroundColor;
-      const match = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(bgColor);
-      if (match) {
-        const [red, green, blue] = match.slice(1, 4).map(Number);
-        const hexColor = convertRGBtoHex(red, green, blue);
+    if (!activeObj) return;
 
-        if (activeObj._objects) {
-          activeObj._objects.forEach((i) => i.set("fill", hexColor));
-        } else {
-          activeObj.set("fill", hexColor);
-        }
+    const bgColor = event.target.style.backgroundColor;
 
-        colorPicker.color.set(hexColor);
-        querySelect(hexInputId).value = hexColor;
+    const match = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(bgColor);
+    if (!match) return;
 
-        const hslValues = hexToHsl(hexColor).match(/\d+/g);
-        if (hslValues) {
-          hslValues.forEach(
-            (val, idx) => (querySelect(hslInputs[idx]).value = val),
-          );
-        }
+    const [red, green, blue] = match.slice(1, 4).map(Number);
+    const hexColor = convertRGBtoHex(red, green, blue);
 
-        const rgbValues = hexToRgb(hexColor).match(/\d+/g);
-        if (rgbValues) {
-          rgbValues.forEach(
-            (val, idx) => (querySelect(rgbInputs[idx]).value = val),
-          );
-        }
+    if (activeObj._objects) {
+      activeObj._objects.forEach((i) => i.set("fill", hexColor));
+    } else {
+      activeObj.set("fill", hexColor);
+    }
 
-        querySelectAll("#color-layers-pickers").forEach((i) => i.remove());
-        updateColorPickers(canvas, updatePreview);
-        canvas.renderAll();
-        updatePreview();
-        canvas.save();
+    if (colorPicker) {
+      colorPicker.color.set(hexColor);
+    }
+
+    if (hexInputId) {
+      querySelect(hexInputId).value = hexColor;
+    }
+
+    if (hslInputs) {
+      const hslValues = hexToHsl(hexColor).match(/\d+/g);
+      if (hslValues) {
+        hslValues.forEach((val, idx) => {
+          if (hslInputs[idx]) {
+            querySelect(hslInputs[idx]).value = val;
+          }
+        });
       }
     }
+
+    if (rgbInputs) {
+      const rgbValues = hexToRgb(hexColor).match(/\d+/g);
+      if (rgbValues) {
+        rgbValues.forEach((val, idx) => {
+          if (rgbInputs[idx]) {
+            querySelect(rgbInputs[idx]).value = val;
+          }
+        });
+      }
+    }
+
+    querySelectAll("#color-layers-pickers").forEach((i) => i.remove());
+
+    updateColorPickers(canvas, updatePreview);
+
+    canvas.renderAll();
+
+    if (updatePreview) {
+      updatePreview();
+    }
+
+    canvas.save();
+  });
+}
+
+export function applyColorActionMobile(item, canvas, active) {
+  item.addEventListener("click", (event) => {
+    if (!canvas || !active) return;
+
+    const bgColor = event.target.style.backgroundColor;
+
+    const match = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(bgColor);
+    if (!match) return;
+
+    const [red, green, blue] = match.slice(1, 4).map(Number);
+    const hexColor = convertRGBtoHex(red, green, blue);
+
+    if (active._objects) {
+      active._objects.forEach((i) => i.set("fill", hexColor));
+    } else {
+      active.set("fill", hexColor);
+    }
+
+    // if (colorPicker) {
+    //   colorPicker.color.set(hexColor);
+    // }
+
+    canvas.renderAll();
+    canvas.save();
   });
 }
 

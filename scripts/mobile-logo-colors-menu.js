@@ -4,11 +4,13 @@ import {
   solidColorTextAction,
   updateColorPickers,
   updateColorTextPickers,
-  bgColorAction,
+  applyColorActionMobile,
 } from "./color_events.js";
 import { applyLinearGradient } from "./apply_linear_grad.js";
 
-export function mobileLogoColorsMenu() {
+export function mobileLogoColorsMenu(activeObject) {
+  // console.log("ACTIVE OBJ FROM LOGO COLORS MENU", activeObject);
+
   const colorCategories = document?.getElementById(
     "mobile-logo-color-categories",
   );
@@ -44,7 +46,7 @@ export function mobileLogoColorsMenu() {
   // Solid Colors Action
   const bgColors = document.querySelectorAll("#solid_color-bg-mobile");
   bgColors.forEach((item) => {
-    bgColorAction(item, canvas, null, true);
+    applyColorActionMobile(item, canvas, activeObject);
   });
 
   // Linear event listeners
@@ -73,9 +75,9 @@ export function mobileLogoColorsMenu() {
         canvas,
         bgGrad1,
         bgGrad2,
-        true,
+        false,
       );
-      applyColor.setColor(true);
+      applyColor.setColor(false);
     });
 
   // None Background

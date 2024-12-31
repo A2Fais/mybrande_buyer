@@ -3,7 +3,10 @@ import { mobileBackgroundView } from "./mobile-background-view.js";
 import { mobileLogoColorsMenu } from "./mobile-logo-colors-menu.js";
 import createSubmenu from "./mobile-sub-menu.js";
 
-export function mobileLogoMenu() {
+export function mobileLogoMenu(canvas) {
+  if (!canvas) return;
+  const activeObject = canvas.getActiveObject();
+
   const menuMain = document.querySelector(
     "#mobile-category-content #mobile-logo-view-settings",
   );
@@ -22,7 +25,6 @@ export function mobileLogoMenu() {
   const rotateSubmenu = createSubmenu(
     menuMain,
     `<div style="position: relative; width: 100svw; max-width: 400px; margin: 0 auto;">
-    <label for="mobile-rotate-slider" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 14px; font-weight: bold;">
     Value: <span id="mobile-rotate-value">50</span></label>
     <input type="range" id="mobile-rotate-slider" style="width: 100%;" min="0" max="100" value="50" step="1" />
   </div>
@@ -192,9 +194,10 @@ export function mobileLogoMenu() {
 <div id="mobile-logo-none-color-section" style="display: flex; gap: 5px; justify-content: flex-start; padding-right: 30px; overflow-x: scroll; display: none;">
   <h1>None</h1> </div>
 </div>`,
+    activeObject,
   );
 
-  mobileLogoColorsMenu();
+  mobileLogoColorsMenu(activeObject);
 
   const layerActionSubmenu = createSubmenu(menuMain, `<div>HAHAHAHAH</div>`);
 
@@ -238,10 +241,6 @@ export function mobileLogoMenu() {
   });
 
   flipXBtn.addEventListener("click", () => {
-    if (!canvas) {
-      console.error("Canvas is not initialized.");
-      return;
-    }
     const activeObject = canvas.getActiveObject();
     if (activeObject) {
       activeObject.set({ flipX: !activeObject.flipX });
@@ -250,10 +249,6 @@ export function mobileLogoMenu() {
   });
 
   flipYBtn.addEventListener("click", () => {
-    if (!canvas) {
-      console.error("Canvas is not initialized.");
-      return;
-    }
     const activeObject = canvas.getActiveObject();
     if (activeObject) {
       activeObject.set({ flipY: !activeObject.flipY });

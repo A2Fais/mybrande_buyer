@@ -284,6 +284,7 @@ export class EditorScreen {
       querySelect("#loader_font").style.display = "none";
     });
   }
+
   // Hide all positioning line
   hideCanvasGuides() {
     // Get positionlines objects ids in array

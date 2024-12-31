@@ -1,6 +1,9 @@
 import { canvas } from "./main.js";
 
-export default function createSubmenu(parentMenu, submenuContent) {
+export default function createSubmenu(parentMenu, submenuContent, ...params) {
+  if (params) {
+    console.log("PARAMS", params);
+  }
   const submenu = document.createElement("div");
   submenu.style.width = "100%";
   submenu.style.height = "100%";
@@ -83,7 +86,6 @@ function events() {
     visibilty = !visibilty;
     active.set("visible", visibilty);
     canvas.requestRenderAll();
-    updatePreview();
     if (active) canvas.save();
     const eyeElement = querySelect("#eyeElement");
     const specificLabels = querySelectAll(".specific-setting-label");
