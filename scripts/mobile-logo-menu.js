@@ -1,6 +1,10 @@
 import { canvas } from "./main.js";
 import { mobileBackgroundView } from "./mobile-background-view.js";
 import { mobileLogoColorsMenu } from "./mobile-logo-colors-menu.js";
+import { mobileLogoShadowMenu } from "./mobile-logo-shadow-menu.js";
+import { mobileLogoScaleMenu } from "./mobile-logo-scale-menu.js";
+import { mobileLogoRotateMenu } from "./mobile-logo-rotate-menu.js";
+import { CreateLayerSection } from "./create_layer";
 import createSubmenu from "./mobile-sub-menu.js";
 
 export function mobileLogoMenu(canvas) {
@@ -17,6 +21,7 @@ export function mobileLogoMenu(canvas) {
   const shadowBtn = menuMain.querySelector("#mobile-drop-shadow-category");
   const colorsBtn = menuMain.querySelector("#mobile-colors-category");
   const actionBtn = menuMain.querySelector("#mobile-colors-category");
+  const mobileLayersBtn = menuMain.querySelector("#mobile-layers-category");
 
   const layerActionBtn = menuMain.querySelector(
     "#mobile-layer-action-category",
@@ -24,19 +29,18 @@ export function mobileLogoMenu(canvas) {
 
   const rotateSubmenu = createSubmenu(
     menuMain,
-    `<div style="position: relative; width: 100svw; max-width: 400px; margin: 0 auto;">
-    Value: <span id="mobile-rotate-value">50</span></label>
-    <input type="range" id="mobile-rotate-slider" style="width: 100%;" min="0" max="100" value="50" step="1" />
-  </div>
+    `<div style="position: relative; display:block; width: 80svw; margin: 0 auto; text-align: center;">
+      <output id="mobile-rotate-value" style="display: block; font-size: 14px; font-weight: bold; color: var(--gray);">Rotate: 0°</output>
+     <input class="mobile-slider" type="range" id="mobile-rotate-slider" style="width: 100%;" min="0" max="360" value="0" />
+</div>
 `,
   );
 
   const scaleSubmenu = createSubmenu(
     menuMain,
-    `<div style="position: relative; width: 100svw; max-width: 400px; margin: 0 auto;">
-    <label for="mobile-scale-slider" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 14px; font-weight: bold;">
-    Value: <span id="mobile-slider-value">50</span></label>
-    <input type="range" id="mobile-scale-slider" style="width: 100%;" min="0" max="100" value="50" step="1" />
+    `<div style="position: relative; display: block; width: 80svw; margin: 0 auto; text-align: center;">
+     <output id="mobile-scale-value" style="display: block; font-size: 14px; font-weight: bold; color: var(--gray);">Scale: 0</output>
+    <input class="mobile-slider" type="range" id="mobile-scale-slider" style="width: 100%;" min="0" max="100" value="50" step="1" />
   </div>
 `,
   );
@@ -44,16 +48,16 @@ export function mobileLogoMenu(canvas) {
   const shadowSubmenu = createSubmenu(
     menuMain,
     `<div style="width: 90svw;">
-    <label for="blur-slider" style="font-size: 14px; font-weight: bold;">Blur: <span id="blur-value">5</span></label>
-    <input type="range" id="blur-slider" style="width: 100%;" min="0" max="100" value="5" step="1" />
-    
-    <label for="x-slider" style="font-size: 14px; font-weight: bold; margin-top: 50px;">
+    <label id="blur-mobile-slider-title" style="font-size: 14px; font-weight: bold;">Blur: <span id="blur-value">5</span></label>
+    <input class="mobile-slider" type="range" id="blur-mobile-slider" style="width: 100%;" min="0" max="100" value="5" step="1" />
+
+    <label for="x-mobile-slider" style="font-size: 14px; font-weight: bold; margin-top: 50px;">
     X Offset: <span id="x-value">0</span></label>
-    <input type="range" id="x-slider" style="width: 100%;" min="-50" max="50" value="0" step="1" />
-    
-    <label for="y-slider" style="font-size: 14px; font-weight: bold; margin-top: 50px;">
+    <input class="mobile-slider" type="range" id="x-mobile-slider" style="width: 100%;" min="-50" max="50" value="0" step="1" />
+
+    <label for="y-mobile-slider" style="font-size: 14px; font-weight: bold; margin-top: 50px;">
     Y Offset: <span id="y-value">0</span></label>
-    <input type="range" id="y-slider" style="width: 100%;" min="-50" max="50" value="0" step="1" />
+    <input class="mobile-slider" type="range" id="y-mobile-slider" style="width: 100%;" min="-50" max="50" value="0" step="1" />
   </div>`,
   );
 
@@ -112,7 +116,7 @@ export function mobileLogoMenu(canvas) {
 </div>
 
 <!-- Solid Colors Section -->
-<div id="mobile-logo-solid-color-section" style="display: grid; gap: 5px; justify-content: flex-start; padding-inline: 30px; overflow-x: scroll; display: none; grid-template-colums: repeat(4, 1fr); ">
+<div id="mobile-logo-solid-color-section" style="display: grid; gap: 5px; justify-content: flex-start; padding-inline: 30px; overflow-x: scroll; display: none; grid-template-colums: repeat(4, 1fr);">
   <div style="display: flex;">
     <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #000000;"></span>
     <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #545454;"></span>
@@ -197,22 +201,42 @@ export function mobileLogoMenu(canvas) {
     activeObject,
   );
 
-  mobileLogoColorsMenu(activeObject);
+  const layersSubmenu = createSubmenu(
+    menuMain,
+    `<div id="mobile-layers" style="display: flex; overflow-x: scroll;">
+    </div>`,
+  );
 
-  const layerActionSubmenu = createSubmenu(menuMain, `<div>HAHAHAHAH</div>`);
+  const layers = document.getElementById("mobile-layers");
+  const SVG = localStorage.getItem("logo-file");
 
-  const rotateSlider = document.getElementById("mobile-rotate-slider");
-  const rotateSliderValue = document.getElementById("mobile-rotate-value");
-
-  const scaleSlider = document.getElementById("mobile-rotate-slider");
-  const scaleSliderValue = document.getElementById("mobile-slider-value");
-
-  rotateSlider.addEventListener("input", function () {
-    rotateSliderValue.textContent = rotateSliderValue.value;
+  fabric.loadSVGFromString(SVG, (objects) => {
+    objects.forEach((obj, idx) => {
+      const layerSection = new CreateLayerSection(layers, "mobile");
+      layerSection.create(obj, idx);
+    });
   });
 
-  scaleSliderValue.addEventListener("input", function () {
-    scaleSliderValue.textContent = scaleSliderValue.value;
+  const layersContainers = document.querySelectorAll(".layer-container");
+  layersContainers.forEach((container) => {
+    const layerId = parseInt(container.getAttribute("data_layer"));
+    container.addEventListener("click", () => {
+      const obj = canvas._objects[layerId];
+      if (obj) {
+        canvas.setActiveObject(obj);
+        canvas.requestRenderAll();
+      }
+    });
+  });
+
+  mobileLogoColorsMenu(activeObject);
+  mobileLogoShadowMenu(activeObject);
+  mobileLogoScaleMenu(activeObject);
+  mobileLogoRotateMenu(activeObject);
+
+  mobileLayersBtn.addEventListener("click", () => {
+    menuMain.style.display = "none";
+    layersSubmenu.style.display = "block";
   });
 
   rotateBtn.addEventListener("click", () => {

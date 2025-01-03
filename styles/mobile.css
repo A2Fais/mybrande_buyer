@@ -1,47 +1,44 @@
-  #mobile-slider::-webkit-slider-runnable-track {
-    background: var(--gold);
-    height: 8px;
-    border-radius: 5px;
-  }
+/* Webkit browsers (Chrome, Safari) */
+input[type='range'].mobile-slider::-webkit-slider-runnable-track {
+  background: var(--gold-light) !important;
+  height: 5px !important;
+}
 
-  #mobile-slider::-webkit-slider-thumb {
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    background: white;
-    border-radius: 50%;
-    border: 2px solid var(--gold);
-    cursor: pointer;
-  }
-  
-  #mobile-slider::-moz-range-track {
-    background: var(--gold);
-    height: 8px;
-    border-radius: 5px;
-  }
-  
-  #mobile-slider::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    background: white;
-    border-radius: 50%;
-    border: 2px solid var(--gold);
-    cursor: pointer;
-  }
-  
-  #mobile-slider::-ms-track {
-    background: var(--gold);
-    height: 8px;
-    border-radius: 5px;
-    border-color: transparent;
-    border-width: 0;
-  }
-  
-  #mobile-slider::-ms-thumb {
-    width: 20px;
-    height: 20px;
-    background: white;
-    border-radius: 50%;
-    border: 2px solid var(--gold);
-    cursor: pointer;
-  }
+input[type='range'].mobile-slider::-webkit-slider-thumb {
+  background: white !important;
+  color: var(--gold) !important;
+}
+
+/* Firefox */
+input[type='range'].mobile-slider::-moz-range-track {
+  background: var(--gold) !important;
+  height: 8px !important;
+  border-radius: 5px !important;
+}
+
+input[type='range'].mobile-slider::-moz-range-thumb {
+  width: 20px !important;
+  height: 20px !important;
+  background: white !important;
+  border-radius: 50% !important;
+  border: 2px solid var(--gold) !important;
+  cursor: pointer !important;
+}
+
+/* IE and Edge */
+input[type='range'].mobile-slider::-ms-track {
+  background: var(--gold) !important;
+  height: 8px !important;
+  border-radius: 5px !important;
+  border-color: transparent !important;
+  border-width: 0 !important;
+}
+
+input[type='range'].mobile-slider::-ms-thumb {
+  width: 20px !important;
+  height: 20px !important;
+  background: white !important;
+  border-radius: 50% !important;
+  border: 2px solid var(--gold) !important;
+  cursor: pointer !important;
+}

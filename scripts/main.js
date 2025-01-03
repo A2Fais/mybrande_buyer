@@ -266,20 +266,6 @@ export class EditorScreen {
       });
     };
 
-    // this.canvas.setBackgroundImage(
-    //   "/static/pattern.png",
-    //   this.canvas.renderAll.bind(this.canvas),
-    //   {
-    //     opacity: 0.6,
-    //     originX: "left",
-    //     originY: "top",
-    //     top: 0,
-    //     left: 0,
-    //     scaleX: 0.3,
-    //     scaleY: 0.3,
-    //   },
-    // );
-
     this.canvas.on("after:render", () => {
       querySelect("#loader_font").style.display = "none";
     });
@@ -789,8 +775,9 @@ export class EditorScreen {
     this.layers.addEventListener("click", (e) => {
       const target = e.target.closest(".layer-container");
 
-      let id = target.getAttribute("data-id"),
-        obj = null;
+      let id = target.getAttribute("data-id");
+      let obj = null;
+
       this.canvas._objects.forEach((object) => {
         if (object.layerId) {
           if (object.layerId == id) obj = object;

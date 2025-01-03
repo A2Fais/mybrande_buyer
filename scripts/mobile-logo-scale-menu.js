@@ -1,0 +1,30 @@
+import { canvas } from "./main.js";
+import { fabric } from "fabric";
+
+export function mobileLogoScaleMenu(activeObject) {
+  if (!activeObject) return;
+
+  const scaleRange = document.getElementById("mobile-scale-slider");
+  const scaleValueElement = document.getElementById("mobile-scale-value");
+
+  let newMaxScaleValue;
+
+  function setMaxScaleValue() {
+    const maxScaleValue = activeObject.getScaledWidth();
+    newMaxScaleValue = (maxScaleValue - 1) * 2;
+    scaleRange.max = newMaxScaleValue;
+    scaleRange.min = 0;
+    scaleRangeInput.value = maxScaleValue - 1;
+    scaleRange.value = convertToZeroToTwo(maxScaleValue, 0, newMaxScaleValue);
+  }
+
+  canvas.on("selection:updated", setMaxScaleValue);
+  canvas.on("selection:created", setMaxScaleValue);
+
+  scaleRange.addEventListener("input", (e) => {
+    const scaleValue = e.target.value;
+    scaleValueElement.innerText = (scaleValue / 100) * 2;
+    activeObject.scaleToWidth(scaleValue);
+    canvas.requestRenderAll();
+  });
+}
