@@ -6,6 +6,7 @@ import { mobileAddView } from "./mobile-add-view.js";
 import { mobileTextView } from "./mobile-text-view.js";
 import { mobileBackgroundMenu } from "./mobile-background-menu.js";
 import { mobileLogoMenu } from "./mobile-logo-menu.js";
+import { mobileTextMenu } from "./mobile-text-menu.js";
 
 const navItems = document.querySelectorAll("#mobile-nav-bar [data-name]");
 const categoryContent = document.querySelector("#mobile-category-content");
@@ -19,6 +20,7 @@ const mainCategoryData = {
 
 const menuCategoryData = {
   logo: mobileLogoMenu,
+  text: mobileTextMenu,
   background: mobileBackgroundMenu,
 };
 

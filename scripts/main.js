@@ -4220,3 +4220,4 @@ export class EditorScreen {
 const editorScreen = new EditorScreen();
 editorScreen.initialize();
 export const canvas = editorScreen.canvas;
+export const fetchedFonts = editorScreen.fetchFonts;
