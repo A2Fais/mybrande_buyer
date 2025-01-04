@@ -38,7 +38,6 @@ export class CreateLayerSection {
       layerContainer.style.gap = "5px";
       layerContainer.style.flexDirection = "column";
       layerContainer.style.textAlign = "center";
-      document.getElementById("content-container").style.height = "100px";
     }
     layerContainer.setAttribute("data_layer", idx);
     layerContainer.setAttribute("data-id", id);

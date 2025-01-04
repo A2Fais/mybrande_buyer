@@ -5,11 +5,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <title>Mybrande</title>
-  <script src="https://kit.fontawesome.com/c64b631310.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="styles/editor.style.css" type="text/css">
+  <link rel="stylesheet" href="styles/details.style.css" type="text/css">
+  <link rel="stylesheet" href="styles/mobile.css" type="text/css">
   <link rel="icon" type="image/x-icon" href="./assets/favicon.ico">
-  <link rel="stylesheet" href="styles/editor.style.css">
-  <link rel="stylesheet" href="styles/details.style.css">
-  <link rel="stylesheet" href="styles/mobile.css">
+  <script src="https://kit.fontawesome.com/c64b631310.js" crossorigin="anonymous"></script>
+  <style>
+    input[type="range"] {
+      all: unset;
+    }
+  </style>
 </head>
 
 <body>
@@ -1215,8 +1220,8 @@
     </div>
 
 <!-- MOBILE TOP BAR -->
-<div id="mobile-top-bar" style="position: absolute; top: 0; left: 0; background-color: #ffffff; height: 40px; 
-  width: 100svw; z-index: 1000; display: flex; justify-content: space-between; 
+<div id="mobile-top-bar" style="position: absolute; top: 0; left: 0; background-color: #ffffff; height: 40px;
+  width: 100svw; z-index: 1000; display: flex; justify-content: space-between;
   align-items: center; padding: 0 10px;">
 
     <div style="display: flex; justify-content: space-around; align-items: center; gap: 10px; width: 100%">
@@ -1253,7 +1258,7 @@
       <div id="canvas-container" tabindex="0">
         <canvas id="c" height="600vh" width="980vw"></canvas>
       </div>
-  
+
 <!-- MOBILE NAV BAR -->
 
 <div id="mobile-nav-bar" style="position: absolute; bottom: 0; background: #ffffff; height: 60px; width: 100svw;

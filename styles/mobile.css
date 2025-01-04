@@ -1,44 +1,44 @@
 /* Webkit browsers (Chrome, Safari) */
-input[type='range'].mobile-slider::-webkit-slider-runnable-track {
-  background: var(--gold-light) !important;
-  height: 5px !important;
+input[type="range"].mobile-slider::-webkit-slider-runnable-track {
+    background: var(--gray-lighter) !important;
+    height: 5px !important;
 }
 
-input[type='range'].mobile-slider::-webkit-slider-thumb {
-  background: white !important;
-  color: var(--gold) !important;
+input[type="range"].mobile-slider::-webkit-slider-thumb {
+    margin-top: -8px !important;
+    border: 1px solid var(--gray-light) !important;
 }
 
 /* Firefox */
-input[type='range'].mobile-slider::-moz-range-track {
-  background: var(--gold) !important;
-  height: 8px !important;
-  border-radius: 5px !important;
+input[type="range"].mobile-slider::-moz-range-track {
+    background: var(--gold) !important;
+    height: 8px !important;
+    border-radius: 5px !important;
 }
 
-input[type='range'].mobile-slider::-moz-range-thumb {
-  width: 20px !important;
-  height: 20px !important;
-  background: white !important;
-  border-radius: 50% !important;
-  border: 2px solid var(--gold) !important;
-  cursor: pointer !important;
+input[type="range"].mobile-slider::-moz-range-thumb {
+    width: 20px !important;
+    height: 20px !important;
+    background: white !important;
+    border-radius: 50% !important;
+    border: 2px solid var(--gold) !important;
+    cursor: pointer !important;
 }
 
 /* IE and Edge */
-input[type='range'].mobile-slider::-ms-track {
-  background: var(--gold) !important;
-  height: 8px !important;
-  border-radius: 5px !important;
-  border-color: transparent !important;
-  border-width: 0 !important;
+input[type="range"].mobile-slider::-ms-track {
+    background: var(--gold) !important;
+    height: 8px !important;
+    border-radius: 5px !important;
+    border-color: transparent !important;
+    border-width: 0 !important;
 }
 
-input[type='range'].mobile-slider::-ms-thumb {
-  width: 20px !important;
-  height: 20px !important;
-  background: white !important;
-  border-radius: 50% !important;
-  border: 2px solid var(--gold) !important;
-  cursor: pointer !important;
+input[type="range"].mobile-slider::-ms-thumb {
+    width: 20px !important;
+    height: 20px !important;
+    background: white !important;
+    border-radius: 50% !important;
+    border: 2px solid var(--gold) !important;
+    cursor: pointer !important;
 }

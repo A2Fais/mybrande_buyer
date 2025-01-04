@@ -1590,8 +1590,8 @@ body {
 }
 
 input[type="range"]::-webkit-slider-runnable-track {
-  background: var(--gold);
-  height: 6px;
+  background: var(--gray-lighter);
+  height: 4px;
   border-radius: 5px;
   width: 100%;
 }
@@ -1602,7 +1602,8 @@ input[type="range"]::-webkit-slider-thumb {
   height: 20px;
   background: white;
   border-radius: 50%;
-  border: 2px solid var(--gold);
+  border: 1px solid var(--gray-light);
+  margin-top: -8px;
   cursor: pointer;
 }
 
