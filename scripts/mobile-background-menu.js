@@ -25,6 +25,7 @@ export function mobileBackgroundMenu() {
     colorCategories.style.display = "none";
     solidSection.style.display = "grid";
     solidSection.style.gridTemplateColumns = "repeat(4, 1fr)";
+    solidSection.style.padding = "15px";
     linearSection.style.display = "none";
     noneSection.style.display = "none";
   });

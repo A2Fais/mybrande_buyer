@@ -11,6 +11,8 @@ import { mobileTextMenu } from "./mobile-text-menu.js";
 const navItems = document.querySelectorAll("#mobile-nav-bar [data-name]");
 const categoryContent = document.querySelector("#mobile-category-content");
 
+let category = "add";
+
 const mainCategoryData = {
   add: mobileAddView,
   logo: mobileLogoView,
@@ -24,31 +26,32 @@ const menuCategoryData = {
   background: mobileBackgroundMenu,
 };
 
+function renderCategoryView(category) {
+  if (!mainCategoryData[category]) return;
+
+  categoryContent.innerHTML = `
+    <div id="content-container" style="z-index: 10; background-color: #ffffff; height: auto; position: absolute; bottom: 0; width: 100vw; padding: 5px 15px 0 0;">
+      ${mainCategoryData[category]}
+    </div>`;
+  categoryContent.style.display = "block";
+
+  // MAIN CATEGORY MENUS -> Opens add, logo, text, background
+  if (menuCategoryData[category]) {
+    menuCategoryData[category](canvas);
+  }
+}
+
 navItems.forEach((item) => {
   item.addEventListener("click", (event) => {
     event.stopPropagation();
-    const category = item.getAttribute("data-name");
+    category = item.getAttribute("data-name");
 
-    // MAIN CATEGORY -> Shows add, logo, text, background
-    if (!mainCategoryData[category]) return;
-    categoryContent.innerHTML = `
-        <div id="content-container" style="z-index: 10; background-color: #ffffff; height: auto; position: absolute; bottom: 0; width: 100vw; padding: 15px;">
-          <div id="content-back-btn" style="display: flex; align-items: center; margin-bottom: 10px;">
-            <i class="fa-solid fa-arrow-left" style="color: var(--gray); font-size: 20px; margin-right: 10px;"></i>
-          </div>
-          ${mainCategoryData[category]}
-        </div>`;
-    categoryContent.style.display = "block";
-
-    // Close button for category view
-    const contentBackBtn = document.querySelector("#content-back-btn");
-    contentBackBtn.addEventListener("click", () => {
-      categoryContent.style.display = "none";
-    });
-
-    // MAIN CATEGORY MENUS -> Opens add, logo, text, background
-    if (menuCategoryData[category]) {
-      menuCategoryData[category](canvas);
-    }
+    renderCategoryView(category);
+    history.pushState({ category }, `${category} view`, `#${category}`);
   });
+});
+
+window.addEventListener("popstate", (e) => {
+  console.log(category);
+  categoryContent.style.display = "none";
 });

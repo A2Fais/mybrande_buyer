@@ -33,9 +33,11 @@ export async function mobileTextMenu(canvas) {
 
   function createFontElement(font) {
     const fontContainer = document.createElement("span");
+    fontContainer.className = "mobile-font-family-item";
     fontContainer.style.width = "max-content";
     fontContainer.style.height = "max-content";
     fontContainer.style.fontFamily = font.family;
+    fontContainer.style.padding = "14px";
     fontContainer.style.fontSize = "12px";
     fontContainer.style.fontWeight = "bold";
     fontContainer.style.alignItems = "center";
@@ -69,11 +71,11 @@ export async function mobileTextMenu(canvas) {
     const maxScrollLeft =
       mobileFontsContainer.scrollWidth - mobileFontsContainer.clientWidth;
 
-    if (touchCurrentX > touchStartX && scrollLeft === 0) {
+    if (touchCurrentX > touchStartX + 15 && scrollLeft === 0) {
       // LEFT
       if (scrollStartPos === 0) return;
       mobileFontsContainer.innerHTML = "";
-      scrollStartPos = scrollStartPos - 50;
+      scrollStartPos = Math.max(scrollStartPos - 50, 0);
       fontsData = slicedFontView(scrollStartPos);
       mobileFontsContainer.scrollLeft = maxScrollLeft;
     } else if (touchCurrentX < touchStartX && scrollLeft >= maxScrollLeft) {
@@ -86,6 +88,21 @@ export async function mobileTextMenu(canvas) {
 
     renderFontsList(fontsData);
     touchStartX = touchCurrentX;
+  });
+
+  const fontsItemBtn = document.querySelectorAll(".mobile-font-family-item");
+
+  fontsItemBtn.forEach((item) => {
+    item.addEventListener("click", () => {
+      const fontFamily = item.innerText;
+      console.log(fontFamily);
+      const left = activeObject.left;
+      const top = activeObject.top;
+      activeObject.set("fontFamily", fontFamily);
+      activeObject.set("left", left);
+      activeObject.set("top", top);
+      canvas.renderAll();
+    });
   });
 
   mobileTextBtn.addEventListener("click", () => {

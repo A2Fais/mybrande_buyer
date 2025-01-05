@@ -95,7 +95,7 @@ export function mobileLogoMenu(canvas) {
     menuMain,
     `<div id="mobile-colors-view" style="width: 100%">
 
-<div id="mobile-logo-color-categories" style="display: flex; justify-content: space-around; align-items: center; width: 100%;">
+<div id="mobile-logo-color-categories" style="display: flex; padding: 10px 10px 0px 10px; justify-content: center; align-items: center; height: 100%; gap: 40px; overflow-x: scroll;">
     <!-- Solid Category -->
     <div id="mobile-logo-solid-category" style="text-align: center;">
         <i class="fas fa-square" style="font-size: 20px; color: var(--gray);"></i>
@@ -116,7 +116,7 @@ export function mobileLogoMenu(canvas) {
 </div>
 
 <!-- Solid Colors Section -->
-<div id="mobile-logo-solid-color-section" style="display: grid; gap: 5px; justify-content: flex-start; padding-inline: 30px; overflow-x: scroll; display: none; grid-template-colums: repeat(4, 1fr);">
+<div id="mobile-logo-solid-color-section" style="display: none; gap: 5px; justify-content: flex-start; padding-inline: 0 0 10px 0; overflow-x: scroll; grid-template-colums: repeat(4, 1fr);">
   <div style="display: flex;">
     <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #000000;"></span>
     <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #545454;"></span>

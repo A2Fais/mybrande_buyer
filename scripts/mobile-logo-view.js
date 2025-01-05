@@ -1,4 +1,4 @@
-export const mobileLogoView = `<div id="mobile-logo-view-settings" style="display: flex; justify-content: space-around; align-items: center; padding-inline: 30px; gap: 40px; overflow-x: scroll;">
+export const mobileLogoView = `<div id="mobile-logo-view-settings" style="display: flex; padding: 10px 10px 0px 10px; align-items: center; height: 100%; gap: 40px; overflow-x: scroll;">
     <!-- Layers Category -->
     <div id="mobile-layers-category" style="text-align: center;">
         <i class="fas fa-layer-group" style="font-size: 20px; color: var(--gray);"></i>

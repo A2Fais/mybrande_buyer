@@ -1,5 +1,5 @@
 export const mobileTextView = `
-<div id="mobile-text-view" style="display: flex; justify-content: space-around; align-items: center; padding-right: 30px; gap: 40px; overflow-x: scroll;">
+<div id="mobile-text-view" style="display: flex; padding: 10px 10px 0px 10px; align-items: center; height: 100%; gap: 40px; overflow-x: scroll;">
     <!-- Input for Logo and Slogan -->
     <div id="mobile-input-category" style="text-align: center;">
         <i class="fas fa-keyboard" style="font-size: 20px; color: var(--gray);"></i>

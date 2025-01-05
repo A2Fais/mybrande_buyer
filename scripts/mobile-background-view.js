@@ -1,7 +1,7 @@
 export const mobileBackgroundView = `
 <div id="mobile-background-view">
 
-<div id="mobile-background-view-categories" style="display: flex; justify-content: space-around; align-items: center;">
+<div id="mobile-background-view-categories" style="display: flex; padding: 10px 10px 0px 10px; justify-content: center; align-items: center; height: 100%; gap: 40px; overflow-x: scroll;">
     <!-- Solid Category -->
     <div id="mobile-solid-category" style="text-align: center;">
         <i class="fas fa-square" style="font-size: 20px; color: var(--gray);"></i>
@@ -22,7 +22,7 @@ export const mobileBackgroundView = `
 </div>
 
 <!-- Solid Colors Section -->
-<div id="mobile-solid-color-section" style="display: grid; grid-template-colums: repeat(4, 1fr); gap: 5px; justify-content: flex-start; padding-inline: 30px; overflow-x: scroll; display: none;">
+<div id="mobile-solid-color-section" style="display: grid; grid-template-colums: repeat(4, 1fr); gap: 5px; justify-content: flex-start; padding: 10px 10px 0px 10px; overflow-x: scroll; display: none;">
   <div style="display: flex;">
     <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #000000;"></span>
     <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #545454;"></span>
