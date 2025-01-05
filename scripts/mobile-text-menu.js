@@ -23,10 +23,15 @@ export async function mobileTextMenu(canvas) {
   );
 
   const fonts = await fetchedFonts();
-  const fontData = fonts.filter((_, idx) => idx <= 10);
   const mobileFontsContainer = document.querySelector("#mobile-fonts");
 
-  fontData.map((font) => {
+  function slicedFontView(start = 0, numberOfItems = 50) {
+    const end = start + numberOfItems;
+    const slicedFonts = fonts.slice(start, end);
+    return slicedFonts;
+  }
+
+  function createFontElement(font) {
     const fontContainer = document.createElement("span");
     fontContainer.style.width = "max-content";
     fontContainer.style.height = "max-content";
@@ -36,9 +41,51 @@ export async function mobileTextMenu(canvas) {
     fontContainer.style.alignItems = "center";
     fontContainer.style.justifyContent = "center";
     fontContainer.style.textAlign = "center";
-
     fontContainer.append(font.family.split(",")[0]);
-    mobileFontsContainer.appendChild(fontContainer);
+    return fontContainer;
+  }
+
+  function renderFontsList(fontData) {
+    fontData.forEach((font) => {
+      const container = createFontElement(font);
+      mobileFontsContainer.appendChild(container);
+    });
+  }
+
+  const fontsData = slicedFontView();
+  renderFontsList(fontsData);
+
+  let scrollStartPos = 0;
+  let touchStartX = 1;
+
+  mobileFontsContainer.addEventListener("touchstart", (event) => {
+    touchStartX = event.touches[0].clientX;
+  });
+
+  mobileFontsContainer.addEventListener("touchmove", (event) => {
+    let fontsData = [];
+    const touchCurrentX = event.touches[0].clientX;
+    const scrollLeft = mobileFontsContainer.scrollLeft;
+    const maxScrollLeft =
+      mobileFontsContainer.scrollWidth - mobileFontsContainer.clientWidth;
+
+    if (touchCurrentX > touchStartX && scrollLeft === 0) {
+      // LEFT
+      if (scrollStartPos === 0) return;
+      mobileFontsContainer.innerHTML = "";
+      scrollStartPos = scrollStartPos - 50;
+      fontsData = slicedFontView(scrollStartPos);
+      mobileFontsContainer.scrollLeft = maxScrollLeft;
+    } else if (touchCurrentX < touchStartX && scrollLeft >= maxScrollLeft) {
+      // RIGHT
+      mobileFontsContainer.innerHTML = "";
+      scrollStartPos += 50;
+      fontsData = slicedFontView(scrollStartPos);
+      mobileFontsContainer.scrollLeft = scrollStartPos;
+    }
+
+    renderFontsList(fontsData);
+    touchStartX = touchCurrentX;
   });
 
   mobileTextBtn.addEventListener("click", () => {
