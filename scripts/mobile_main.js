@@ -26,32 +26,77 @@ const menuCategoryData = {
   background: mobileBackgroundMenu,
 };
 
-function renderCategoryView(category) {
-  if (!mainCategoryData[category]) return;
+navItems.forEach((item) => {
+  item.addEventListener("click", (event) => {
+    event.stopPropagation();
+    category = item.getAttribute("data-name");
+    history.pushState({ category }, null, `#${category}`);
+    routeHandler();
+  });
+});
 
-  categoryContent.innerHTML = `
+function routeHandler() {
+  const category = history?.state?.category;
+  console.log(category);
+
+  if (category) {
+    categoryContent.innerHTML = `
     <div id="content-container" style="z-index: 10; background-color: #ffffff; height: auto; position: absolute; bottom: 0; width: 100vw; padding: 5px 15px 0 0;">
       ${mainCategoryData[category]}
     </div>`;
-  categoryContent.style.display = "block";
-
-  // MAIN CATEGORY MENUS -> Opens add, logo, text, background
+    categoryContent.style.display = "block";
+  } else {
+    categoryContent.style.display = "none";
+  }
   if (menuCategoryData[category]) {
     menuCategoryData[category](canvas);
   }
 }
 
-navItems.forEach((item) => {
-  item.addEventListener("click", (event) => {
-    event.stopPropagation();
-    category = item.getAttribute("data-name");
+routeHandler();
 
-    renderCategoryView(category);
-    history.pushState({ category }, `${category} view`, `#${category}`);
-  });
-});
+window.addEventListener("popstate", routeHandler);
 
-window.addEventListener("popstate", (e) => {
-  console.log(category);
-  categoryContent.style.display = "none";
-});
+// export function renderCategoryView(category) {
+//   if (!mainCategoryData[category]) return;
+//
+//   history.pushState({ category }, null, `#${category}`);
+//
+//   categoryContent.innerHTML = `
+//     <div id="content-container" style="z-index: 10; background-color: #ffffff; height: auto; position: absolute; bottom: 0; width: 100vw; padding: 5px 15px 0 0;">
+//       ${mainCategoryData[category]}
+//     </div>`;
+//   categoryContent.style.display = "block";
+//
+//   if (menuCategoryData[category]) {
+//     menuCategoryData[category](canvas);
+//   }
+// }
+//
+// history.pushState({ category: "default" }, null, `#default`);
+// navItems.forEach((item) => {
+//   item.addEventListener("click", (event) => {
+//     event.stopPropagation();
+//     category = item.getAttribute("data-name");
+//     renderCategoryView(category);
+//   });
+// });
+//
+// window.addEventListener("popstate", function (event) {
+//   event.preventDefault();
+//   console.log(history.state);
+//
+//   const category = history?.state?.category;
+//   if (!category) {
+//     categoryContent.style.display = "none";
+//     return;
+//   }
+//   if (category === "default") {
+//     categoryContent.style.display = "none";
+//
+//     renderCategoryView("add");
+//   } else if (category === "logo") {
+//     categoryContent.style.display = "none";
+//     renderCategoryView("logo");
+//   }
+// });

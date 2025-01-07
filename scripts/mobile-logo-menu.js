@@ -63,7 +63,7 @@ export function mobileLogoMenu(canvas) {
 
   const actionSubmenu = createSubmenu(
     menuMain,
-    `<div style="position: relative; width: 100svw; max-width: 400px; margin: 0 auto;">
+    `<div style="position: relative; display: block; width: 80svw; margin: 10px auto; text-align: center;">
 
 <div style="display: flex; justify-content: space-around; width: 100%;">
     <div style="text-align: center;" id="mobile-duplicate-layer">
@@ -203,7 +203,7 @@ export function mobileLogoMenu(canvas) {
 
   const layersSubmenu = createSubmenu(
     menuMain,
-    `<div id="mobile-layers" style="display: flex; overflow-x: scroll;">
+    `<div id="mobile-layers" style="display: flex; overflow-x: scroll; margin: 10px auto; justify-content: center; height: 75px; overflow-y: hidden;">
     </div>`,
   );
 
@@ -235,6 +235,7 @@ export function mobileLogoMenu(canvas) {
   mobileLogoRotateMenu(activeObject);
 
   mobileLayersBtn.addEventListener("click", () => {
+    history.pushState({ category: "logo/layers" }, null, "#logo/layers");
     menuMain.style.display = "none";
     layersSubmenu.style.display = "block";
   });

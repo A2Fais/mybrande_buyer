@@ -107,6 +107,11 @@ export async function mobileTextMenu(canvas) {
 
   mobileTextBtn.addEventListener("click", () => {
     menuMain.style.display = "none";
+    history.pushState(
+      { category: "text/fontFamily" },
+      null,
+      "#text/fontFamily",
+    );
     fontFamilySubmenu.style.display = "block";
   });
 }

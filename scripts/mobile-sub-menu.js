@@ -2,6 +2,7 @@ import { canvas } from "./main.js";
 
 export default function createSubmenu(parentMenu, submenuContent, ...params) {
   const submenu = document.createElement("div");
+  submenu.id = "mobile-submenu";
   submenu.style.width = "100%";
   submenu.style.height = "100%";
   submenu.style.display = "none";
