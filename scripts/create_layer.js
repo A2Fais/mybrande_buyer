@@ -34,10 +34,13 @@ export class CreateLayerSection {
       imgElem.style.width = "15px";
       imgElem.style.height = "15px";
       layerSpan.style.fontSize = "12px";
-      layerContainer.style.marginBlock = 0;
-      layerContainer.style.gap = "5px";
-      layerContainer.style.flexDirection = "column";
+      layerSpan.style.width = "max-width"
       layerContainer.style.textAlign = "center";
+      layerContainer.style.gap = "0px";
+      layerContainer.style.margin = 0;
+      layerSpan.style.width = "60px";
+      layerSpan.style.marginInline = "7px";
+      layerContainer.style.textAlign = "left";
     }
     layerContainer.setAttribute("data_layer", idx);
     layerContainer.setAttribute("data-id", id);

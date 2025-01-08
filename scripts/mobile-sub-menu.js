@@ -7,9 +7,9 @@ export default function createSubmenu(parentMenu, submenuContent, ...params) {
   submenu.style.height = "100%";
   submenu.style.display = "none";
 
-  const contentElement = document.createElement("div");
-  contentElement.innerHTML = submenuContent;
-  submenu.append(contentElement);
+  // const contentElement = document.createElement("div");
+  // contentElement.innerHTML = submenuContent;
+  submenu.innerHTML = submenuContent;
 
   parentMenu.parentElement.append(submenu);
   events();

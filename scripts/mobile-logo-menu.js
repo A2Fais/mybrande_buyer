@@ -1,5 +1,3 @@
-import { canvas } from "./main.js";
-import { mobileBackgroundView } from "./mobile-background-view.js";
 import { mobileLogoColorsMenu } from "./mobile-logo-colors-menu.js";
 import { mobileLogoShadowMenu } from "./mobile-logo-shadow-menu.js";
 import { mobileLogoScaleMenu } from "./mobile-logo-scale-menu.js";
@@ -20,7 +18,6 @@ export function mobileLogoMenu(canvas) {
   const scaleBtn = menuMain.querySelector("#mobile-scale-category");
   const shadowBtn = menuMain.querySelector("#mobile-drop-shadow-category");
   const colorsBtn = menuMain.querySelector("#mobile-colors-category");
-  const actionBtn = menuMain.querySelector("#mobile-colors-category");
   const mobileLayersBtn = menuMain.querySelector("#mobile-layers-category");
 
   const layerActionBtn = menuMain.querySelector(
@@ -29,43 +26,58 @@ export function mobileLogoMenu(canvas) {
 
   const rotateSubmenu = createSubmenu(
     menuMain,
-    `<div style="position: relative; display:block; width: 80svw; margin: 0 auto; text-align: center;">
-      <output id="mobile-rotate-value" style="display: block; font-size: 14px; font-weight: bold; color: var(--gray);">Rotate: 0°</output>
-     <input class="mobile-slider" type="range" id="mobile-rotate-slider" style="width: 100%;" min="0" max="360" value="0" />
-</div>
-`,
+    `<div class="mobile-category-container">
+      <div style="position: absolute; bottom: 0; left: 0; display: flex; gap: 10px; 
+      flex-direction: column; width: 100svw; background: #ffffff; padding: 20px;">
+        <output id="mobile-rotate-value" style="display: block; font-size: 14px; font-weight: bold; color: var(--gray);">Rotate: 0°</output>
+        <input class="mobile-slider" type="range" id="mobile-rotate-slider" style="width: 90%;" min="0" max="360" value="0" />
+      </div>
+    </div>`,
   );
 
   const scaleSubmenu = createSubmenu(
     menuMain,
-    `<div style="position: relative; display: block; width: 80svw; margin: 0 auto; text-align: center;">
-     <output id="mobile-scale-value" style="display: block; font-size: 14px; font-weight: bold; color: var(--gray);">Scale: 0</output>
-    <input class="mobile-slider" type="range" id="mobile-scale-slider" style="width: 100%;" min="0" max="100" value="50" step="1" />
-  </div>
+    `<div class="mobile-category-container">
+      <div style="position: absolute; bottom: 0; left: 0; display: flex; gap: 10px;
+      flex-direction: column; width: 100svw; background: #ffffff; padding: 20px;">
+        <output id="mobile-scale-value" style="display: block; font-size: 14px; font-weight: bold; color: var(--gray);">Scale: 0</output>
+        <input class="mobile-slider" type="range" id="mobile-scale-slider" style="width: 90%;" min="0" max="100" value="50" step="1" />
+      </div>
+    </div>
 `,
   );
 
   const shadowSubmenu = createSubmenu(
     menuMain,
-    `<div style="width: 90svw;">
-    <label id="blur-mobile-slider-title" style="font-size: 14px; font-weight: bold;">Blur: <span id="blur-value">5</span></label>
-    <input class="mobile-slider" type="range" id="blur-mobile-slider" style="width: 100%;" min="0" max="100" value="5" step="1" />
+    `<div class="mobile-category-container"> 
+      <div style="position: absolute; bottom: 0; left: 0; display: flex; flex-direction: column; 
+      width: 100svw; background: #ffffff; padding: 20px; gap: 20px;">
 
-    <label for="x-mobile-slider" style="font-size: 14px; font-weight: bold; margin-top: 50px;">
-    X Offset: <span id="x-value">0</span></label>
-    <input class="mobile-slider" type="range" id="x-mobile-slider" style="width: 100%;" min="-50" max="50" value="0" step="1" />
+        <div>
+          <label id="blur-mobile-slider-title" style="font-size: 14px; font-weight: bold; color: var(--gray);">Blur: <span id="blur-value">5</span></label>
+          <input class="mobile-slider" type="range" id="blur-mobile-slider" style="width: 90%;" min="0" max="100" value="5" step="1" />
+        </div>
 
-    <label for="y-mobile-slider" style="font-size: 14px; font-weight: bold; margin-top: 50px;">
-    Y Offset: <span id="y-value">0</span></label>
-    <input class="mobile-slider" type="range" id="y-mobile-slider" style="width: 100%;" min="-50" max="50" value="0" step="1" />
-  </div>`,
+        <div>
+          <label for="x-mobile-slider" style="font-size: 14px; font-weight: bold; color: var(--gray);">
+          X Offset: <span id="x-value">0</span></label>
+          <input class="mobile-slider" type="range" id="x-mobile-slider" style="width: 90%;" min="-50" max="50" value="0" step="1" />
+        </div>
+
+        <div>
+          <label for="y-mobile-slider" style="font-size: 14px; font-weight: bold; color: var(--gray);">
+          Y Offset: <span id="y-value">0</span></label>
+          <input class="mobile-slider" type="range" id="y-mobile-slider" style="width: 90%;" min="-50" max="50" value="0" step="1" />
+        </div>
+
+     </div>
+    </div>`,
   );
 
   const actionSubmenu = createSubmenu(
     menuMain,
-    `<div style="position: relative; display: block; width: 80svw; margin: 10px auto; text-align: center;">
-
-<div style="display: flex; justify-content: space-around; width: 100%;">
+    `<div class="mobile-category-container" style="padding: 0;">
+  <div style="display: flex; justify-content: space-around; width: 100%;">
     <div style="text-align: center;" id="mobile-duplicate-layer">
         <i class="fa-solid fa-copy" style="font-size: 20px; color: var(--gray-light);"></i>
         <div style="font-size: 12px; color: var(--gray-light);">Duplicate</div>
@@ -86,32 +98,32 @@ export function mobileLogoMenu(canvas) {
         <i class="fa-solid fa-trash" style="font-size: 20px; color: var(--gray-light);"></i>
         <div style="font-size: 12px; color: var(--gray-light);">Remove</div>
     </div>
-</div>
+    </div>
   </div>
 `,
   );
 
   const colorsSubmenu = createSubmenu(
     menuMain,
-    `<div id="mobile-colors-view" style="width: 100%">
+    `<div id="mobile-colors-view" >
 
-<div id="mobile-logo-color-categories" style="display: flex; padding: 10px 10px 0px 10px; justify-content: center; align-items: center; height: 100%; gap: 40px; overflow-x: scroll;">
+<div id="mobile-logo-color-categories" class="mobile-category-container" style="justify-content: center">
     <!-- Solid Category -->
-    <div id="mobile-logo-solid-category" style="text-align: center;">
-        <i class="fas fa-square" style="font-size: 20px; color: var(--gray);"></i>
-        <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">Solid</p>
+    <div id="mobile-logo-solid-category" class="mobile-category">
+        <i class="fas fa-square mobile-category-icon"></i>
+        <p class="mobile-category-text">Solid</p>
     </div>
 
     <!-- Linear Category -->
-    <div id="mobile-logo-linear-category" style="text-align: center;">
-        <i class="fas fa-arrows-alt-h" style="font-size: 20px; color: var(--gray);"></i>
-        <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">Linear</p>
+    <div id="mobile-logo-linear-category" class="mobile-category">
+        <i class="fas fa-arrows-alt-h mobile-category-icon"></i>
+        <p class="mobile-category-text">Linear</p>
     </div>
 
     <!-- None Category -->
-    <div id="mobile-logo-none-category" style="text-align: center;">
-        <i class="fas fa-ban" style="font-size: 20px; color: var(--gray);"></i>
-        <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">None</p>
+    <div id="mobile-logo-none-category" class="mobile-category">
+        <i class="fas fa-ban mobile-category-icon" ></i>
+        <p class="mobile-category-text">None</p>
     </div>
 </div>
 
@@ -191,7 +203,7 @@ export function mobileLogoMenu(canvas) {
   </div>
 </div>
 
-<div id="mobile-logo-linear-color-section" style="display: flex; gap: 5px; justify-content: center;overflow-x: scroll; display: none;">
+<div id="mobile-logo-linear-color-section" style="display: flex; width: 100svw; align-items: center; height: 90px; gap: 5px; justify-content: center; overflow-x: scroll; display: none;">
   <mobile-pallete-component id="mobile-bg-pallete"></mobile-pallete-component>
 </div>
 
@@ -203,7 +215,7 @@ export function mobileLogoMenu(canvas) {
 
   const layersSubmenu = createSubmenu(
     menuMain,
-    `<div id="mobile-layers" style="display: flex; overflow-x: scroll; margin: 10px auto; justify-content: center; height: 75px; overflow-y: hidden;">
+    `<div id="mobile-layers" class="mobile-category-container" style="gap: 0; padding: 20px; gap: 10px;">
     </div>`,
   );
 
@@ -241,28 +253,34 @@ export function mobileLogoMenu(canvas) {
   });
 
   rotateBtn.addEventListener("click", () => {
+    history.pushState({ category: "logo/rotate" }, null, "#logo/rotate");
     menuMain.style.display = "none";
     rotateSubmenu.style.display = "block";
   });
 
   scaleBtn.addEventListener("click", () => {
+    history.pushState({ category: "logo/scale" }, null, "#logo/scale");
     menuMain.style.display = "none";
     scaleSubmenu.style.display = "block";
   });
 
   shadowBtn.addEventListener("click", () => {
+    history.pushState({ category: "logo/shadow" }, null, "#logo/shadow");
     menuMain.style.display = "none";
-    shadowSubmenu.style.display = "block";
+    shadowSubmenu.style.display = "flex";
   });
 
   colorsBtn.addEventListener("click", () => {
+    history.pushState({ category: "logo/colors" }, null, "#logo/colors");
     menuMain.style.display = "none";
     colorsSubmenu.style.display = "block";
   });
 
   layerActionBtn.addEventListener("click", () => {
+    history.pushState({ category: "logo/actions" }, null, "#logo/actions");
     menuMain.style.display = "none";
-    actionSubmenu.style.display = "block";
+    actionSubmenu.style.display = "flex";
+    actionSubmenu.style.padding = "0";
   });
 
   flipXBtn.addEventListener("click", () => {

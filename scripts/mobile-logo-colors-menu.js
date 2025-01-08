@@ -34,6 +34,7 @@ export function mobileLogoColorsMenu(activeObject) {
     solidSection.style.display = "grid";
     solidSection.style.gridTemplateColumns = "repeat(4, 1fr)";
     solidSection.style.padding = "15px";
+    document.querySelector("#content-container").style.height = "100px";
     linearSection.style.display = "none";
     noneSection.style.display = "none";
   });

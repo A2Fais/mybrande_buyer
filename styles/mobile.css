@@ -42,3 +42,51 @@ input[type="range"].mobile-slider::-ms-thumb {
     border: 2px solid var(--gold) !important;
     cursor: pointer !important;
 }
+
+.mobile-category-container {
+  display: flex;
+  padding: 15px 10px 0px 10px;
+  align-items: center;
+  height: 100%;
+  width: 100svw;
+  gap: 20px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+
+.mobile-category {
+  text-align: center;
+  margin-inline: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.mobile-category .mobile-category-icon:hover {
+  background-color: var(--light);
+  border-radius: 70%;
+}
+
+.mobile-category-icon {
+  font-size: 20px;
+  color: var(--gray-light);
+}
+
+.mobile-category-text {
+  margin-top: 5px;
+  font-size: 12px;
+  color: var(--gray);
+}
+
+input[type="color"] {
+	-webkit-appearance: none;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+	padding: 0;
+  border: 1px solid var(--light);
+}
+
+input[type="color"]::-webkit-color-swatch {
+	border: none;
+
+}
+

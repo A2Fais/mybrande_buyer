@@ -7,6 +7,7 @@ import { mobileTextView } from "./mobile-text-view.js";
 import { mobileBackgroundMenu } from "./mobile-background-menu.js";
 import { mobileLogoMenu } from "./mobile-logo-menu.js";
 import { mobileTextMenu } from "./mobile-text-menu.js";
+import createSubmenu from "./mobile-sub-menu.js";
 
 const navItems = document.querySelectorAll("#mobile-nav-bar [data-name]");
 const categoryContent = document.querySelector("#mobile-category-content");
@@ -41,7 +42,7 @@ function routeHandler() {
 
   if (category) {
     categoryContent.innerHTML = `
-    <div id="content-container" style="z-index: 10; background-color: #ffffff; height: auto; position: absolute; bottom: 0; width: 100vw; padding: 5px 15px 0 0;">
+    <div id="content-container" style="z-index: 10; height: 70px; background: #ffffff; position: absolute; bottom: 0; display: flex;">
       ${mainCategoryData[category]}
     </div>`;
     categoryContent.style.display = "block";
@@ -49,7 +50,7 @@ function routeHandler() {
     categoryContent.style.display = "none";
   }
   if (menuCategoryData[category]) {
-    menuCategoryData[category](canvas);
+      menuCategoryData[category](canvas);
   }
 }
 

@@ -66,6 +66,8 @@ export const centerAndResizeElements = (
         querySelect("#sloganNameField").value.toLowerCase(),
   );
 
+  if (!logo && !slogan) return 
+
   switch (type) {
     case "topBottom":
       if (logo.type === "curved-text") {

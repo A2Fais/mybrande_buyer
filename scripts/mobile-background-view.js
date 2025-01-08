@@ -1,23 +1,21 @@
-export const mobileBackgroundView = `
-<div id="mobile-background-view">
-
-<div id="mobile-background-view-categories" style="display: flex; padding: 10px 10px 0px 10px; justify-content: center; align-items: center; height: 100%; gap: 40px; overflow-x: scroll;">
+export const mobileBackgroundView = `<div id="mobile-background-view">
+<div id="mobile-background-view-categories" class="mobile-category-container" style="justify-content: center; gap: 40px;">
     <!-- Solid Category -->
-    <div id="mobile-solid-category" style="text-align: center;">
-        <i class="fas fa-square" style="font-size: 20px; color: var(--gray);"></i>
-        <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">Solid</p>
+    <div id="mobile-solid-category" class="mobile-category">
+        <i class="fas fa-square mobile-category-icon"></i>
+        <p class="mobile-category-text">Solid</p>
     </div>
 
     <!-- Linear Category -->
-    <div id="mobile-linear-category" style="text-align: center;">
-        <i class="fas fa-arrows-alt-h" style="font-size: 20px; color: var(--gray);"></i>
-        <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">Linear</p>
+    <div id="mobile-linear-category" class="mobile-category">
+        <i class="fas fa-arrows-alt-h mobile-category-icon"></i>
+        <p class="mobile-category-text">Linear</p>
     </div>
 
     <!-- None Category -->
-    <div id="mobile-none-category" style="text-align: center;">
-        <i class="fas fa-ban" style="font-size: 20px; color: var(--gray);"></i>
-        <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">None</p>
+    <div id="mobile-none-category" class="mobile-category">
+        <i class="fas fa-ban mobile-category-icon"></i>
+        <p class="mobile-category-text">None</p>
     </div>
 </div>
 

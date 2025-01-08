@@ -1,75 +1,75 @@
 export const mobileTextView = `
-<div id="mobile-text-view" style="display: flex; padding: 10px 10px 0px 10px; align-items: center; height: 100%; gap: 40px; overflow-x: scroll;">
+<div id="mobile-text-view" class="mobile-category-container">
     <!-- Input for Logo and Slogan -->
-    <div id="mobile-input-category" style="text-align: center;">
-        <i class="fas fa-keyboard" style="font-size: 20px; color: var(--gray);"></i>
-        <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">Input</p>
+    <div class="mobile-category" id="mobile-input-category">
+        <i class="fas fa-keyboard mobile-category-icon"></i>
+        <p class="mobile-category-text">Input</p>
     </div>
 
     <!-- Layer Actions -->
-    <div id="mobile-text-layer-actions-category" style="text-align: center;">
-        <i class="fas fa-cogs" style="font-size: 20px; color: var(--gray);"></i>
-        <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">Actions</p>
+    <div class="mobile-category" id="mobile-text-layer-actions-category">
+        <i class="fas fa-cogs mobile-category-icon"></i>
+        <p class="mobile-category-text">Actions</p>
     </div>
 
     <!-- Layer Colors -->
-    <div id="mobile-text-layer-colors-category" style="text-align: center;">
-        <i class="fas fa-palette" style="font-size: 20px; color: var(--gray);"></i>
-        <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">Colors</p>
+    <div class="mobile-category" id="mobile-text-layer-colors-category">
+        <i class="fas fa-palette mobile-category-icon"></i>
+        <p class="mobile-category-text">Colors</p>
     </div>
 
     <!-- Font Size -->
-    <div id="mobile-font-size-category" style="text-align: center;">
-        <i class="fas fa-text-height" style="font-size: 20px; color: var(--gray);"></i>
-        <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">Size</p>
+    <div class="mobile-category" id="mobile-font-size-category">
+        <i class="fas fa-text-height mobile-category-icon"></i>
+        <p class="mobile-category-text">Size</p>
     </div>
 
     <!-- Font Family -->
-    <div id="mobile-font-family-category" style="text-align: center;">
-        <i class="fas fa-font" style="font-size: 20px; color: var(--gray);"></i>
-        <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">Family</p>
+    <div class="mobile-category" id="mobile-font-family-category">
+        <i class="fas fa-font mobile-category-icon"></i>
+        <p class="mobile-category-text">Family</p>
     </div>
 
     <!-- Font Weight -->
-    <div id="mobile-font-weight-category" style="text-align: center;">
-        <i class="fas fa-bold" style="font-size: 20px; color: var(--gray);"></i>
-        <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">Weight</p>
+    <div class="mobile-category" id="mobile-font-weight-category">
+        <i class="fas fa-bold mobile-category-icon"></i>
+        <p class="mobile-category-text">Weight</p>
     </div>
 
     <!-- Font Style -->
-    <div id="mobile-font-style-category" style="text-align: center;">
-        <i class="fas fa-italic" style="font-size: 20px; color: var(--gray);"></i>
-        <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">Style</p>
+    <div class="mobile-category" id="mobile-font-style-category">
+        <i class="fas fa-italic mobile-category-icon"></i>
+        <p class="mobile-category-text">Style</p>
     </div>
 
     <!-- Letter Case -->
-    <div id="mobile-letter-case-category" style="text-align: center;">
-        <i class="fas fa-text-width" style="font-size: 20px; color: var(--gray);"></i>
-        <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">Case</p>
+    <div class="mobile-category" id="mobile-letter-case-category">
+        <i class="fas fa-text-width mobile-category-icon"></i>
+        <p class="mobile-category-text">Case</p>
     </div>
 
     <!-- Curve Text -->
-    <div id="mobile-curve-text-category" style="text-align: center;">
-        <i class="fas fa-ellipsis-h" style="font-size: 20px; color: var(--gray);"></i>
-        <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">Curve</p>
+    <div class="mobile-category" id="mobile-curve-text-category">
+        <i class="fas fa-ellipsis-h mobile-category-icon"></i>
+        <p class="mobile-category-text">Curve</p>
     </div>
 
     <!-- Rotate -->
-    <div id="mobile-rotate-category" style="text-align: center;">
-        <i class="fas fa-sync-alt" style="font-size: 20px; color: var(--gray);"></i>
-        <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">Rotate</p>
+    <div class="mobile-category" id="mobile-rotate-category">
+        <i class="fas fa-sync-alt mobile-category-icon"></i>
+        <p class="mobile-category-text">Rotate</p>
     </div>
 
     <!-- Letter Spacing -->
-    <div id="mobile-letter-spacing-category" style="text-align: center;">
-        <i class="fas fa-text-width" style="font-size: 20px; color: var(--gray);"></i>
-        <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">Spacing</p>
+    <div class="mobile-category" id="mobile-letter-spacing-category">
+        <i class="fas fa-text-width mobile-category-icon"></i>
+        <p class="mobile-category-text">Spacing</p>
     </div>
 
     <!-- Drop Shadow -->
-    <div id="mobile-text-drop-shadow-category" style="text-align: center;">
-        <i class="fa-brands fa-first-order-alt" style="font-size: 20px; color: var(--gray);"></i>
-        <p style="margin-top: 10px; font-size: 12px; color: var(--gray);">Shadow</p>
+    <div class="mobile-category" id="mobile-text-drop-shadow-category">
+        <i class="fa-brands fa-first-order-alt mobile-category-icon"></i>
+        <p class="mobile-category-text">Shadow</p>
     </div>
 </div>
 `;
