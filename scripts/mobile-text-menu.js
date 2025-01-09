@@ -11,13 +11,6 @@ import createSubmenu from "./mobile-sub-menu.js";
 export async function mobileTextMenu(canvas) {
   if (!canvas) return;
 
-  canvas.on("object:selected", (e) => {
-    const activeObject = canvas.getActiveObject();
-    console.log(activeObject);
-  });
-
-  const activeObject = canvas.getActiveObject();
-
   const menuMain = document.querySelector(
     "#mobile-category-content #mobile-text-view",
   );
@@ -121,19 +114,24 @@ export async function mobileTextMenu(canvas) {
     touchStartX = touchCurrentX;
   });
 
-  const fontsItemBtn = document.querySelectorAll(".mobile-font-family-item");
+  const fontFamilyBtns = document.querySelectorAll(".mobile-font-family-item");
 
-  fontsItemBtn.forEach((item) => {
-    item.addEventListener("click", () => {
-      const fontFamily = item.innerText;
-      console.log(fontFamily);
-      const left = activeObject.left;
-      const top = activeObject.top;
-      activeObject.set("fontFamily", fontFamily);
-      activeObject.set("left", left);
-      activeObject.set("top", top);
-      canvas.renderAll();
-    });
+  function fontFamilyBtnAction(fontFamilyBtn) {
+    const activeObject = canvas.getActiveObject();
+    if (!activeObject) return;
+    const fontFamily = fontFamilyBtn.innerText;
+    const left = activeObject.left;
+    const top = activeObject.top;
+    activeObject.set("fontFamily", fontFamily);
+    activeObject.set("left", left);
+    activeObject.set("top", top);
+    canvas.renderAll();
+  }
+
+  fontFamilyBtns.forEach((fontFamilyBtn) => {
+    fontFamilyBtn.addEventListener("click", () =>
+      fontFamilyBtnAction(fontFamilyBtn),
+    );
   });
 
   mobileTextBtn.addEventListener("click", () => {
@@ -163,10 +161,11 @@ export async function mobileTextMenu(canvas) {
   });
 
   function updateFontStyle(style, underline = false) {
-    const obj = activeObject;
-    obj.set("fontStyle_", style);
-    obj.set("fontStyle", style);
-    obj.set("underline", underline);
+    const activeObject = canvas.getActiveObject();
+    if (!activeObject) return;
+    activeObject.set("fontStyle_", style);
+    activeObject.set("fontStyle", style);
+    activeObject.set("underline", underline);
     canvas.renderAll();
     canvas.save();
   }
