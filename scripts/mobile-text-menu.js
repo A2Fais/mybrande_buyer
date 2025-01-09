@@ -1,32 +1,29 @@
-import { canvas } from "./main.js";
 import { fetchedFonts } from "./main.js";
-import { mobileBackgroundView } from "./mobile-background-view.js";
-import { mobileLogoColorsMenu } from "./mobile-logo-colors-menu.js";
-import { mobileLogoShadowMenu } from "./mobile-logo-shadow-menu.js";
-import { mobileLogoScaleMenu } from "./mobile-logo-scale-menu.js";
-import { mobileLogoRotateMenu } from "./mobile-logo-rotate-menu.js";
-import { CreateLayerSection } from "./create_layer";
 import createSubmenu from "./mobile-sub-menu.js";
 
 export async function mobileTextMenu(canvas) {
   if (!canvas) return;
 
+  const fonts = await fetchedFonts();
+
   const menuMain = document.querySelector(
     "#mobile-category-content #mobile-text-view",
   );
   const mobileTextBtn = menuMain.querySelector("#mobile-font-family-category");
-
   const rotateBtn = menuMain.querySelector("#mobile-rotate-category");
+  const mobileFontStyleBtn = menuMain.querySelector(
+    "#mobile-font-style-category",
+  );
+  const mobileLetterCaseBtn = document.querySelector(
+    "#mobile-letter-case-category",
+  );
+  const fontFamilyBtns = document.querySelectorAll(".mobile-font-family-item");
+
   const fontFamilySubmenu = createSubmenu(
     menuMain,
     `<div id="mobile-fonts" style="display: flex; padding-right: 30px; gap: 30px; overflow-x: scroll; width: 90vw;"></div>`,
   );
 
-  const mobileFontStyleBtn = menuMain.querySelector(
-    "#mobile-font-style-category",
-  );
-
-  const fonts = await fetchedFonts();
   const mobileFontsContainer = document.querySelector("#mobile-fonts");
 
   const rotateSubmenu = createSubmenu(
@@ -46,6 +43,16 @@ export async function mobileTextMenu(canvas) {
           <div id="mobile-font-normal" class="mobile-list mobile-category" value="Normal" style="text-align: center;"><i class="fas fa-font mobile-category-icon" style="font-size: 20px;"></i><br><span style="font-size: 12px">Normal</san></div>
           <div id="mobile-font-italic" class="mobile-list mobile-category" value="Italic" style="text-align: center;"><i class="fas fa-italic mobile-category-icon" style="font-size: 20px;"></i><br><span style="font-size: 12px;">Italic</san></div>
           <div id="mobile-font-underline" class="mobile-list mobile-category" value="Underline" style="text-align: center;"><i class="fas fa-underline mobile-category-icon" style="font-size: 20px;"></i><br><span style="font-size: 12px;">Underline</san></div>
+    </div>`,
+  );
+
+  const letterCaseSubmenu = createSubmenu(
+    menuMain,
+    `<div id="mobile-font-style-category" class="mobile-category-container" style="display: flex; justify-content: center; align-items: center; height: 100%; padding: 10px 0; overflow-x: scroll;">
+          <div id="mobile-font-uppercase" class="mobile-list mobile-category" value="Uppercase" style="text-align: center;"><i class="fas fa-arrow-up mobile-category-icon" style="font-size: 20px;"></i><br><span style="font-size: 12px">Uppercase</span></div>
+          <div id="mobile-font-lowercase" class="mobile-list mobile-category" value="Lowercase" style="text-align: center;"><i class="fas fa-arrow-down mobile-category-icon" style="font-size: 20px;"></i><br><span style="font-size: 12px;">Lowercase</span></div>
+          <div id="mobile-font-titlecase" class="mobile-list mobile-category" value="Title Case" style="text-align: center;"><i class="fas fa-heading mobile-category-icon" style="font-size: 20px;"></i><br><span style="font-size: 12px;">Title Case</span></div>
+          <div id="mobile-font-sentencecase" class="mobile-list mobile-category" value="Sentence Case" style="text-align: center;"><i class="fas fa-paragraph mobile-category-icon" style="font-size: 20px;"></i><br><span style="font-size: 12px;">Sentence Case</span></div>
     </div>`,
   );
 
@@ -72,6 +79,7 @@ export async function mobileTextMenu(canvas) {
   }
 
   function renderFontsList(fontData) {
+    if (!mobileFontsContainer) return;
     fontData.forEach((font) => {
       const container = createFontElement(font);
       mobileFontsContainer.appendChild(container);
@@ -84,7 +92,7 @@ export async function mobileTextMenu(canvas) {
   let scrollStartPos = 0;
   let touchStartX = 1;
 
-  mobileFontsContainer.addEventListener("touchstart", (event) => {
+  mobileFontsContainer?.addEventListener("touchstart", (event) => {
     touchStartX = event.touches[0].clientX;
   });
 
@@ -113,8 +121,6 @@ export async function mobileTextMenu(canvas) {
     renderFontsList(fontsData);
     touchStartX = touchCurrentX;
   });
-
-  const fontFamilyBtns = document.querySelectorAll(".mobile-font-family-item");
 
   function fontFamilyBtnAction(fontFamilyBtn) {
     const activeObject = canvas.getActiveObject();
@@ -160,12 +166,52 @@ export async function mobileTextMenu(canvas) {
     rotateSubmenu.style.display = "block";
   });
 
+  mobileLetterCaseBtn.addEventListener("click", () => {
+    history.pushState({ category: "text/leterCase" }, null, "#text/letterCase");
+    menuMain.style.display = "none";
+    letterCaseSubmenu.style.display = "block";
+  });
+
   function updateFontStyle(style, underline = false) {
     const activeObject = canvas.getActiveObject();
     if (!activeObject) return;
     activeObject.set("fontStyle_", style);
     activeObject.set("fontStyle", style);
     activeObject.set("underline", underline);
+    canvas.renderAll();
+    canvas.save();
+  }
+
+  function updateLetterCase(caseType) {
+    const activeObject = canvas.getActiveObject();
+    if (!activeObject) return;
+
+    const text = activeObject.text;
+    let newText = text;
+
+    switch (caseType) {
+      case "Uppercase":
+        newText = text.toUpperCase();
+        break;
+      case "Lowercase":
+        newText = text.toLowerCase();
+        break;
+      case "Title Case":
+        newText = text
+          .split(" ")
+          .map(
+            (word) =>
+              word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+          )
+          .join(" ");
+        break;
+      case "Sentence Case":
+        newText = text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+        break;
+    }
+
+    activeObject.set("text", newText);
+    activeObject.set("letterCase", caseType);
     canvas.renderAll();
     canvas.save();
   }
@@ -186,5 +232,29 @@ export async function mobileTextMenu(canvas) {
     .querySelector("#mobile-font-underline")
     .addEventListener("click", () => {
       updateFontStyle("underline", true);
+    });
+
+  document
+    .querySelector("#mobile-font-uppercase")
+    .addEventListener("click", () => {
+      updateLetterCase("Uppercase");
+    });
+
+  document
+    .querySelector("#mobile-font-lowercase")
+    .addEventListener("click", () => {
+      updateLetterCase("Lowercase");
+    });
+
+  document
+    .querySelector("#mobile-font-titlecase")
+    .addEventListener("click", () => {
+      updateLetterCase("Title Case");
+    });
+
+  document
+    .querySelector("#mobile-font-sentencecase")
+    .addEventListener("click", () => {
+      updateLetterCase("Sentence Case");
     });
 }
