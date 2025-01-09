@@ -4,26 +4,15 @@ import createSubmenu from "./mobile-sub-menu.js";
 export async function mobileTextMenu(canvas) {
   if (!canvas) return;
 
-  const fonts = await fetchedFonts();
-
   const menuMain = document.querySelector(
     "#mobile-category-content #mobile-text-view",
   );
-  const mobileTextBtn = menuMain.querySelector("#mobile-font-family-category");
-  const rotateBtn = menuMain.querySelector("#mobile-rotate-category");
-  const mobileFontStyleBtn = menuMain.querySelector(
-    "#mobile-font-style-category",
-  );
-  const mobileLetterCaseBtn = document.querySelector(
-    "#mobile-letter-case-category",
-  );
-  const fontFamilyBtns = document.querySelectorAll(".mobile-font-family-item");
 
   const fontFamilySubmenu = createSubmenu(
     menuMain,
     `<div id="mobile-fonts" style="display: flex; padding-right: 30px; gap: 30px; overflow-x: scroll; width: 90vw;"></div>`,
   );
-
+  const fonts = await fetchedFonts();
   const mobileFontsContainer = document.querySelector("#mobile-fonts");
 
   const rotateSubmenu = createSubmenu(
@@ -51,11 +40,68 @@ export async function mobileTextMenu(canvas) {
     `<div id="mobile-font-style-category" class="mobile-category-container" style="display: flex; justify-content: center; align-items: center; height: 100%; padding: 10px 0; overflow-x: scroll;">
           <div id="mobile-font-uppercase" class="mobile-list mobile-category" value="Uppercase" style="text-align: center;"><i class="fas fa-arrow-up mobile-category-icon" style="font-size: 20px;"></i><br><span style="font-size: 12px">Uppercase</span></div>
           <div id="mobile-font-lowercase" class="mobile-list mobile-category" value="Lowercase" style="text-align: center;"><i class="fas fa-arrow-down mobile-category-icon" style="font-size: 20px;"></i><br><span style="font-size: 12px;">Lowercase</span></div>
-          <div id="mobile-font-titlecase" class="mobile-list mobile-category" value="Title Case" style="text-align: center;"><i class="fas fa-heading mobile-category-icon" style="font-size: 20px;"></i><br><span style="font-size: 12px;">Title Case</span></div>
-          <div id="mobile-font-sentencecase" class="mobile-list mobile-category" value="Sentence Case" style="text-align: center;"><i class="fas fa-paragraph mobile-category-icon" style="font-size: 20px;"></i><br><span style="font-size: 12px;">Sentence Case</span></div>
+          <div id="mobile-font-titlecase" class="mobile-list mobile-category" value="Title Case" style="text-align: center;"><i class="fas fa-heading mobile-category-icon" style="font-size: 20px;"></i><br><span style="font-size: 12px;">Title</span></div>
+          <div id="mobile-font-sentencecase" class="mobile-list mobile-category" value="Sentence Case" style="text-align: center;"><i class="fas fa-paragraph mobile-category-icon" style="font-size: 20px;"></i><br><span style="font-size: 12px;">Sentence</span></div>
     </div>`,
   );
 
+  const fontCurveSubmenu = createSubmenu(
+    menuMain,
+    `<div id="mobile-font-curve-category" class="mobile-category-container" style="display: flex; justify-content: center; align-items: center; height: 100%; padding: 10px 0; overflow-x: scroll;">
+    <h1>Font Curve</h1>
+    </div>`,
+  );
+
+  const fontSpacingSubmenu = createSubmenu(
+    menuMain,
+    `<div id="mobile-font-spacing-category" class="mobile-category-container" style="display: flex; justify-content: center; align-items: center; height: 100%; padding: 10px 0; overflow-x: scroll;">
+    <h1>Font Spacing</h1>
+    </div>`,
+  );
+
+  const fontWeightSubmenu = createSubmenu(
+    menuMain,
+    `<div id="mobile-font-weight-category" class="mobile-category-container" style="display: flex; justify-content: center; align-items: center; height: 100%; padding: 10px 0; overflow-x: scroll;">
+    <h1>Font Weight</h1>
+    </div>`,
+  );
+
+  // NAVIGATION BUTTONS
+  const mobileFontFamilyBtn = menuMain.querySelector(
+    "#mobile-font-family-category",
+  );
+  const mobileTextRotateBtn = menuMain.querySelector("#mobile-rotate-category");
+
+  const mobileFontStyleBtn = menuMain.querySelector(
+    "#mobile-font-style-category",
+  );
+  const mobileFontWeightBtn = document.querySelector(
+    "#mobile-font-weight-category",
+  );
+  const mobileFontCurveBtn = document.querySelector(
+    "#mobile-curve-text-category",
+  );
+  const mobileFontSpacingBtn = document.querySelector(
+    "#mobile-letter-spacing-category",
+  );
+  const mobileLetterCaseBtn = document.querySelector(
+    "#mobile-letter-case-category",
+  );
+  const mobileTextLayersBtn = document.querySelector(
+    "#mobile-text-layer-actions-category",
+  );
+  const mobileFontSizeBtn = document.querySelector(
+    "#mobile-font-size-category",
+  );
+  const mobileTextColorsBtn = document.querySelector(
+    "#mobile-text-layer-colors-category",
+  );
+  const mobileInputsbtn = document.querySelector("#mobile-input-category");
+  const mobileTextShadowBtn = document.querySelector(
+    "#mobile-text-drop-shadow-category",
+  );
+
+  // FONT VIEW HORIZONTAL LIST VIRTUALIZATION
   function slicedFontView(start = 0, numberOfItems = 50) {
     const end = start + numberOfItems;
     const slicedFonts = fonts.slice(start, end);
@@ -122,25 +168,23 @@ export async function mobileTextMenu(canvas) {
     touchStartX = touchCurrentX;
   });
 
-  function fontFamilyBtnAction(fontFamilyBtn) {
-    const activeObject = canvas.getActiveObject();
-    if (!activeObject) return;
-    const fontFamily = fontFamilyBtn.innerText;
-    const left = activeObject.left;
-    const top = activeObject.top;
-    activeObject.set("fontFamily", fontFamily);
-    activeObject.set("left", left);
-    activeObject.set("top", top);
-    canvas.renderAll();
-  }
+  // BUTTON EVENTS
 
+  const fontFamilyBtns = document.querySelectorAll(".mobile-font-family-item");
   fontFamilyBtns.forEach((fontFamilyBtn) => {
-    fontFamilyBtn.addEventListener("click", () =>
-      fontFamilyBtnAction(fontFamilyBtn),
-    );
+    return fontFamilyBtn.addEventListener("click", () => {
+      console.log("fontFamilyBtn");
+      const activeObject = canvas.getActiveObject();
+      if (!activeObject) return;
+
+      const fontFamily = fontFamilyBtn.innerText;
+      console.log(fontFamily);
+      activeObject.set("fontFamily", fontFamily);
+      canvas.renderAll();
+    });
   });
 
-  mobileTextBtn.addEventListener("click", () => {
+  mobileFontFamilyBtn.addEventListener("click", () => {
     menuMain.style.display = "none";
     history.pushState(
       { category: "text/fontFamily" },
@@ -160,21 +204,50 @@ export async function mobileTextMenu(canvas) {
     fontStyleSubmenu.style.display = "block";
   });
 
-  rotateBtn.addEventListener("click", () => {
+  mobileTextRotateBtn.addEventListener("click", () => {
     history.pushState({ category: "text/rotate" }, null, "#text/rotate");
     menuMain.style.display = "none";
     rotateSubmenu.style.display = "block";
   });
 
   mobileLetterCaseBtn.addEventListener("click", () => {
-    history.pushState({ category: "text/leterCase" }, null, "#text/letterCase");
+    history.pushState({ category: "text/letercase" }, null, "#text/lettercase");
     menuMain.style.display = "none";
     letterCaseSubmenu.style.display = "block";
   });
 
+  mobileFontWeightBtn.addEventListener("click", () => {
+    history.pushState(
+      { category: "text/fontweight" },
+      null,
+      "#text/fontweight",
+    );
+    menuMain.style.display = "none";
+    fontWeightSubmenu.style.display = "block";
+  });
+
+  mobileFontSpacingBtn.addEventListener("click", () => {
+    history.pushState(
+      { category: "text/fontspacing" },
+      null,
+      "#text/fontspacing",
+    );
+    menuMain.style.display = "none";
+    fontSpacingSubmenu.style.display = "block";
+  });
+
+  mobileFontCurveBtn.addEventListener("click", () => {
+    history.pushState({ category: "text/fontcurve" }, null, "#text/fontcurve");
+    menuMain.style.display = "none";
+    fontCurveSubmenu.style.display = "block";
+  });
+
+  // NESTED SUBMENU EVENTS
+
   function updateFontStyle(style, underline = false) {
     const activeObject = canvas.getActiveObject();
     if (!activeObject) return;
+
     activeObject.set("fontStyle_", style);
     activeObject.set("fontStyle", style);
     activeObject.set("underline", underline);
