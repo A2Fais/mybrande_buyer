@@ -7,4 +7,4 @@
 - [ ] Text Curve
 - [ ] Font Size
 - [ ] Font Spacing
-- [ ] Font Weight
+- [] Font Weight

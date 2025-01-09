@@ -12,6 +12,11 @@ import createSubmenu from "./mobile-sub-menu.js";
 const navItems = document.querySelectorAll("#mobile-nav-bar [data-name]");
 const categoryContent = document.querySelector("#mobile-category-content");
 
+canvas.on("selection:updated", () => {
+  const activeObject = canvas.getActiveObject();
+  console.log(activeObject);
+});
+
 let category = "add";
 
 const mainCategoryData = {

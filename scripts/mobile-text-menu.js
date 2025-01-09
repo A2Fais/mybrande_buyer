@@ -4,6 +4,14 @@ import createSubmenu from "./mobile-sub-menu.js";
 export async function mobileTextMenu(canvas) {
   if (!canvas) return;
 
+  canvas.on("selection:created", () => {
+    setFontweightElement();
+  });
+
+  canvas.on("selection:updated", () => {
+    setFontweightElement();
+  });
+
   const menuMain = document.querySelector(
     "#mobile-category-content #mobile-text-view",
   );
@@ -202,21 +210,23 @@ export async function mobileTextMenu(canvas) {
     return formatted;
   }
 
-  function getFontWeights() {
+  function setFontweightElement() {
     const activeObject = canvas.getActiveObject();
     const fontWeightContainer = document.querySelector("#mobile-font-list");
     fontWeightContainer.innerHTML = "";
 
-    const targetFontFamily = activeObject
+    const currentActiveTextObject = activeObject
       ? activeObject.get("fontFamily").toLowerCase()
       : "poppins";
 
     fonts.forEach((font) => {
-      if (font.family.toLowerCase() === targetFontFamily) {
+      if (font.family.toLowerCase() === currentActiveTextObject) {
         font.variants.forEach((variant) => {
+          const value = variant === "regular" ? "normal" : variant;
           const textElement = document.createElement("section");
-          textElement.innerText = variant;
+          textElement.innerText = formatFontWeightString(value);
           textElement.style.fontSize = "14px";
+          textElement.style.width = "200px";
           textElement.style.color = "var(--gray)";
           fontWeightContainer.append(textElement);
         });
@@ -257,10 +267,6 @@ export async function mobileTextMenu(canvas) {
   });
 
   mobileFontWeightBtn.addEventListener("click", () => {
-    // const activeObject = canvas.getActiveObject();
-    // if (!activeObject) return;
-    //
-    // console.log(activeObject.text);
     history.pushState(
       { category: "text/fontweight" },
       null,
@@ -268,7 +274,7 @@ export async function mobileTextMenu(canvas) {
     );
     menuMain.style.display = "none";
     fontWeightSubmenu.style.display = "block";
-    getFontWeights();
+    setFontweightElement();
   });
 
   mobileFontSpacingBtn.addEventListener("click", () => {
