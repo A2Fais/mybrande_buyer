@@ -13,6 +13,7 @@ export async function mobileTextMenu(canvas) {
     `<div id="mobile-fonts" style="display: flex; padding-right: 30px; gap: 30px; overflow-x: scroll; width: 90vw;"></div>`,
   );
   const fonts = await fetchedFonts();
+
   const mobileFontsContainer = document.querySelector("#mobile-fonts");
 
   const rotateSubmenu = createSubmenu(
@@ -61,8 +62,8 @@ export async function mobileTextMenu(canvas) {
 
   const fontWeightSubmenu = createSubmenu(
     menuMain,
-    `<div id="mobile-font-weight-category" class="mobile-category-container" style="display: flex; justify-content: center; align-items: center; height: 100%; padding: 10px 0; overflow-x: scroll;">
-    <h1>Font Weight</h1>
+    `<div id="mobile-font-weight-category" class="mobile-category-container">
+    <div id="mobile-font-list"  style="display: flex; justify-content: center; align-items: center; height: 100%; padding: 10px 0; overflow-x: scroll;"></div>
     </div>`,
   );
 
@@ -181,6 +182,48 @@ export async function mobileTextMenu(canvas) {
 
   // BUTTON EVENTS
 
+  function formatFontWeightString(input) {
+    const fontTitle = {
+      100: "Thin",
+      200: "Extra Light",
+      300: "Light",
+      400: "Regular",
+      500: "Medium",
+      600: "Semi Bold",
+      700: "Bold",
+      800: "Extra Bold",
+      900: "Black",
+    };
+
+    const formatted = input.replace(/([0-9]+)/g, (item) => {
+      const key = parseInt(item);
+      return fontTitle[key] + " " + key + " ";
+    });
+    return formatted;
+  }
+
+  function getFontWeights() {
+    const activeObject = canvas.getActiveObject();
+    const fontWeightContainer = document.querySelector("#mobile-font-list");
+    fontWeightContainer.innerHTML = "";
+
+    const targetFontFamily = activeObject
+      ? activeObject.get("fontFamily").toLowerCase()
+      : "poppins";
+
+    fonts.forEach((font) => {
+      if (font.family.toLowerCase() === targetFontFamily) {
+        font.variants.forEach((variant) => {
+          const textElement = document.createElement("section");
+          textElement.innerText = variant;
+          textElement.style.fontSize = "14px";
+          textElement.style.color = "var(--gray)";
+          fontWeightContainer.append(textElement);
+        });
+      }
+    });
+  }
+
   mobileFontFamilyBtn.addEventListener("click", () => {
     menuMain.style.display = "none";
     history.pushState(
@@ -214,6 +257,10 @@ export async function mobileTextMenu(canvas) {
   });
 
   mobileFontWeightBtn.addEventListener("click", () => {
+    // const activeObject = canvas.getActiveObject();
+    // if (!activeObject) return;
+    //
+    // console.log(activeObject.text);
     history.pushState(
       { category: "text/fontweight" },
       null,
@@ -221,6 +268,7 @@ export async function mobileTextMenu(canvas) {
     );
     menuMain.style.display = "none";
     fontWeightSubmenu.style.display = "block";
+    getFontWeights();
   });
 
   mobileFontSpacingBtn.addEventListener("click", () => {
@@ -245,7 +293,9 @@ export async function mobileTextMenu(canvas) {
     textInputsSubmenu.style.display = "block";
   });
 
+  //
   // NESTED SUBMENU EVENTS
+  //
 
   document
     .querySelector("#mobile-logoMainField")
@@ -272,7 +322,6 @@ export async function mobileTextMenu(canvas) {
   const fontFamilyBtns = document.querySelectorAll(".mobile-font-family-item");
   fontFamilyBtns.forEach((fontFamilyBtn) => {
     return fontFamilyBtn.addEventListener("click", () => {
-      console.log("fontFamilyBtn");
       const activeObject = canvas.getActiveObject();
       if (!activeObject) return;
 
@@ -282,9 +331,11 @@ export async function mobileTextMenu(canvas) {
       canvas.renderAll();
     });
   });
+
   function updateFontStyle(style, underline = false) {
     const activeObject = canvas.getActiveObject();
     if (!activeObject) return;
+    console.log(activeObject.get("fontFamily"));
 
     activeObject.set("fontStyle_", style);
     activeObject.set("fontStyle", style);
