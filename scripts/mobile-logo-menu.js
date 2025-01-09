@@ -76,7 +76,7 @@ export function mobileLogoMenu(canvas) {
 
   const actionSubmenu = createSubmenu(
     menuMain,
-    `<div class="mobile-category-container" style="padding: 0;">
+    `<div class="mobile-category-container" style="padding: 5px 0;">
   <div style="display: flex; justify-content: space-around; width: 100%;">
     <div style="text-align: center;" id="mobile-duplicate-layer">
         <i class="fa-solid fa-copy" style="font-size: 20px; color: var(--gray-light);"></i>

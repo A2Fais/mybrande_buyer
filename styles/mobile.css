@@ -90,3 +90,9 @@ input[type="color"]::-webkit-color-swatch {
 
 }
 
+.mobile-list {
+  list-style: none;
+  color: var(--gray);
+  font-size: 14px;
+}
+
