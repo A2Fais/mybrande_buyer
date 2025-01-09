@@ -38,9 +38,8 @@ navItems.forEach((item) => {
 
 function routeHandler() {
   const category = history?.state?.category;
-  console.log(category);
 
-  if (category) {
+  if (category && mainCategoryData[category]) {
     categoryContent.innerHTML = `
     <div id="content-container" style="z-index: 10; height: 70px; background: #ffffff; position: absolute; bottom: 0; display: flex;">
       ${mainCategoryData[category]}
@@ -50,7 +49,7 @@ function routeHandler() {
     categoryContent.style.display = "none";
   }
   if (menuCategoryData[category]) {
-      menuCategoryData[category](canvas);
+    menuCategoryData[category](canvas);
   }
 }
 

@@ -1,6 +1,6 @@
 # MOBILE TEXT VIEW
 
-- [ ] Input Fields
+- [x] Input Fields
 - [x] Font Style
 - [x] Letter Case
 - [ ] Text Curve

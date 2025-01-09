@@ -215,7 +215,7 @@ export function mobileLogoMenu(canvas) {
 
   const layersSubmenu = createSubmenu(
     menuMain,
-    `<div id="mobile-layers" class="mobile-category-container" style="gap: 0; padding: 20px; gap: 10px;">
+    `<div id="mobile-layers" class="mobile-category-container" style="gap: 0; padding: 0 10px 0 10px; gap: 10px;">
     </div>`,
   );
 

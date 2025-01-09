@@ -66,6 +66,17 @@ export async function mobileTextMenu(canvas) {
     </div>`,
   );
 
+  const textInputsSubmenu = createSubmenu(
+    menuMain,
+    `<div id="mobile-text-input-category" class="mobile-category-container" style="justify-content: center; height: 80px; background: #ffffff; padding: 8px; position: absolute; bottom: 0">
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+      <input type="text" id="mobile-logoMainField" placeholder="Logo Name" style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;" />
+      <input type="text" id="mobile-sloganNameField" placeholder="Slogan Name" style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;" />
+      </div>
+    </div>
+    `,
+  );
+
   // NAVIGATION BUTTONS
   const mobileFontFamilyBtn = menuMain.querySelector(
     "#mobile-font-family-category",
@@ -170,20 +181,6 @@ export async function mobileTextMenu(canvas) {
 
   // BUTTON EVENTS
 
-  const fontFamilyBtns = document.querySelectorAll(".mobile-font-family-item");
-  fontFamilyBtns.forEach((fontFamilyBtn) => {
-    return fontFamilyBtn.addEventListener("click", () => {
-      console.log("fontFamilyBtn");
-      const activeObject = canvas.getActiveObject();
-      if (!activeObject) return;
-
-      const fontFamily = fontFamilyBtn.innerText;
-      console.log(fontFamily);
-      activeObject.set("fontFamily", fontFamily);
-      canvas.renderAll();
-    });
-  });
-
   mobileFontFamilyBtn.addEventListener("click", () => {
     menuMain.style.display = "none";
     history.pushState(
@@ -242,8 +239,49 @@ export async function mobileTextMenu(canvas) {
     fontCurveSubmenu.style.display = "block";
   });
 
+  mobileInputsbtn.addEventListener("click", () => {
+    history.pushState({ category: "text/inputs" }, null, "#text/inputs");
+    menuMain.style.display = "none";
+    textInputsSubmenu.style.display = "block";
+  });
+
   // NESTED SUBMENU EVENTS
 
+  document
+    .querySelector("#mobile-logoMainField")
+    .addEventListener("input", (e) => {
+      const value = e.target.value;
+      const objects = canvas.getObjects().filter((i) => i.text);
+      const logoIdx = 0;
+      const logo = objects[logoIdx];
+      logo.set("text", value);
+      canvas.renderAll();
+    });
+
+  document
+    .querySelector("#mobile-sloganNameField")
+    .addEventListener("input", (e) => {
+      const value = e.target.value;
+      const objects = canvas.getObjects().filter((i) => i.text);
+      const sloganIdx = 1;
+      const slogan = objects[sloganIdx];
+      slogan.set("text", value);
+      canvas.renderAll();
+    });
+
+  const fontFamilyBtns = document.querySelectorAll(".mobile-font-family-item");
+  fontFamilyBtns.forEach((fontFamilyBtn) => {
+    return fontFamilyBtn.addEventListener("click", () => {
+      console.log("fontFamilyBtn");
+      const activeObject = canvas.getActiveObject();
+      if (!activeObject) return;
+
+      const fontFamily = fontFamilyBtn.innerText;
+      console.log(fontFamily);
+      activeObject.set("fontFamily", fontFamily);
+      canvas.renderAll();
+    });
+  });
   function updateFontStyle(style, underline = false) {
     const activeObject = canvas.getActiveObject();
     if (!activeObject) return;
