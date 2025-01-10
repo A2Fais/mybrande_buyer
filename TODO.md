@@ -4,7 +4,7 @@
 - [x] Input Fields
 - [x] Font Style
 - [x] Letter Case
-- [ ] Text Curve
+- [] Text Curve
 - [ ] Font Size
 - [ ] Font Spacing
-- [] Font Weight
+- [x] Font Weight

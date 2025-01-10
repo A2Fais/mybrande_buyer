@@ -57,7 +57,11 @@ export async function mobileTextMenu(canvas) {
   const fontCurveSubmenu = createSubmenu(
     menuMain,
     `<div id="mobile-font-curve-category" class="mobile-category-container" style="display: flex; justify-content: center; align-items: center; height: 100%; padding: 10px 0; overflow-x: scroll;">
-    <h1>Font Curve</h1>
+      <div style="position: absolute; bottom: 0; left: 0; display: flex; gap: 10px; 
+      flex-direction: column; width: 100svw; background: #ffffff; padding: 20px;">
+        <output id="mobile-curve-value" style="display: block; font-size: 14px; font-weight: bold; color: var(--gray);">Curve: 0°</output>
+        <input class="mobile-slider" type="range" id="mobile-curve-slider" style="width: 90%;" min="0" max="5000" value="0" />
+      </div>
     </div>`,
   );
 
@@ -190,6 +194,24 @@ export async function mobileTextMenu(canvas) {
   });
 
   // BUTTON EVENTS
+
+  function triggerSliderEvent(value, obj) {
+    const slider = document.querySelector("#text-curve-range");
+    slider.value = value;
+    const event = new Event("input", { bubbles: true });
+    slider.dispatchEvent(event);
+    // canvas.discardActiveObject();
+    canvas.renderAll();
+  }
+
+  document
+    .querySelector("#mobile-curve-slider")
+    .addEventListener("input", (event) => {
+      const activeObject = canvas.getActiveObject();
+      if (!activeObject) return;
+      const value = event.target.value;
+      triggerSliderEvent(value, activeObject);
+    });
 
   function setFontweightElement() {
     const activeObject = canvas.getActiveObject();
