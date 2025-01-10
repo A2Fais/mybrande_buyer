@@ -18,7 +18,7 @@ export async function mobileTextMenu(canvas) {
 
   const fontFamilySubmenu = createSubmenu(
     menuMain,
-    `<div id="mobile-fonts" style="display: flex; padding-right: 30px; gap: 30px; overflow-x: scroll; width: 90vw;"></div>`,
+    `<div id="mobile-fonts" style="display: flex; padding-right: 30px; gap: 30px; overflow-x: scroll; width: 90vw; align-items: center;"></div>`,
   );
   const fonts = await fetchedFonts();
 
@@ -70,8 +70,8 @@ export async function mobileTextMenu(canvas) {
 
   const fontWeightSubmenu = createSubmenu(
     menuMain,
-    `<div id="mobile-font-weight-category" class="mobile-category-container">
-    <div id="mobile-font-list"  style="display: flex; justify-content: center; align-items: center; height: 100%; padding: 10px 0; overflow-x: scroll;"></div>
+    `<div id="mobile-font-weight-category" class="mobile-category-container" style="padding: 0px;">
+    <div id="mobile-font-list"  style="display: flex; align-items: center; height: 100%; padding: 10px; overflow-x: scroll; gap: 30px;"></div>
     </div>`,
   );
 
@@ -135,12 +135,13 @@ export async function mobileTextMenu(canvas) {
     fontContainer.style.height = "max-content";
     fontContainer.style.fontFamily = font.family;
     fontContainer.style.padding = "14px";
-    fontContainer.style.fontSize = "12px";
+    fontContainer.style.fontSize = "14px";
     fontContainer.style.fontWeight = "bold";
     fontContainer.style.alignItems = "center";
     fontContainer.style.justifyContent = "center";
     fontContainer.style.textAlign = "center";
-    fontContainer.append(font.family.split(",")[0]);
+    const fontText = font.family.split(",")[0].replace(/ /g, "\u00A0");
+    fontContainer.append(fontText);
     return fontContainer;
   }
 
@@ -190,43 +191,30 @@ export async function mobileTextMenu(canvas) {
 
   // BUTTON EVENTS
 
-  function formatFontWeightString(input) {
-    const fontTitle = {
-      100: "Thin",
-      200: "Extra Light",
-      300: "Light",
-      400: "Regular",
-      500: "Medium",
-      600: "Semi Bold",
-      700: "Bold",
-      800: "Extra Bold",
-      900: "Black",
-    };
-
-    const formatted = input.replace(/([0-9]+)/g, (item) => {
-      const key = parseInt(item);
-      return fontTitle[key] + " " + key + " ";
-    });
-    return formatted;
-  }
-
   function setFontweightElement() {
     const activeObject = canvas.getActiveObject();
     const fontWeightContainer = document.querySelector("#mobile-font-list");
     fontWeightContainer.innerHTML = "";
 
     const currentActiveTextObject = activeObject
-      ? activeObject.get("fontFamily").toLowerCase()
+      ? activeObject.get("fontFamily")?.toLowerCase()
       : "poppins";
 
     fonts.forEach((font) => {
-      if (font.family.toLowerCase() === currentActiveTextObject) {
+      if (font.family?.toLowerCase() === currentActiveTextObject) {
         font.variants.forEach((variant) => {
           const value = variant === "regular" ? "normal" : variant;
-          const textElement = document.createElement("section");
-          textElement.innerText = formatFontWeightString(value);
+          const textElement = document.createElement("h3");
+          const [text, number] = value.split(/(\d+)/).filter(Boolean);
+          let str = "";
+          if (number) {
+            str += `${number}\u00A0`; // Non-breaking space
+          }
+          str += text;
+          textElement.append(str);
+          textElement.style.textTransform = "capitalize";
+          textElement.style.textOverflow = "ellipsis";
           textElement.style.fontSize = "14px";
-          textElement.style.width = "200px";
           textElement.style.color = "var(--gray)";
           fontWeightContainer.append(textElement);
         });
@@ -241,7 +229,7 @@ export async function mobileTextMenu(canvas) {
       null,
       "#text/fontFamily",
     );
-    fontFamilySubmenu.style.display = "block";
+    fontFamilySubmenu.style.display = "flex";
   });
 
   mobileFontStyleBtn.addEventListener("click", () => {
