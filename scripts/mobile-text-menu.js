@@ -1,4 +1,5 @@
 import { fetchedFonts } from "./main.js";
+import { mobileLogoColorsMenu } from "./mobile-logo-colors-menu.js";
 import createSubmenu from "./mobile-sub-menu.js";
 
 export async function mobileTextMenu(canvas) {
@@ -68,7 +69,11 @@ export async function mobileTextMenu(canvas) {
   const fontSpacingSubmenu = createSubmenu(
     menuMain,
     `<div id="mobile-font-spacing-category" class="mobile-category-container" style="display: flex; justify-content: center; align-items: center; height: 100%; padding: 10px 0; overflow-x: scroll;">
-    <h1>Font Spacing</h1>
+      <div style="position: absolute; bottom: 0; left: 0; display: flex; gap: 10px; 
+      flex-direction: column; width: 100svw; background: #ffffff; padding: 20px;">
+        <output id="mobile-spacing-value" style="display: block; font-size: 14px; font-weight: bold; color: var(--gray);">Spacing: 0°</output>
+        <input class="mobile-slider" type="range" id="mobile-spacing-slider" style="width: 90%;" min="-140" max="500" value="0" />
+      </div>
     </div>`,
   );
 
@@ -88,6 +93,144 @@ export async function mobileTextMenu(canvas) {
       </div>
     </div>
     `,
+  );
+
+  const actionSubmenu = createSubmenu(
+    menuMain,
+    `<div class="mobile-category-container" style="padding: 5px 0;">
+  <div style="display: flex; justify-content: space-around; width: 100%;">
+    <div style="text-align: center;" id="mobile-duplicate-layer">
+        <i class="fa-solid fa-copy" style="font-size: 20px; color: var(--gray-light);"></i>
+        <div style="font-size: 12px; color: var(--gray-light);">Duplicate</div>
+    </div>
+    <div style="text-align: center;" id="mobile-visible-layer">
+        <i class="fa-solid fa-eye" style="font-size: 20px; color: var(--gray-light);"></i>
+        <div style="font-size: 12px; color: var(--gray-light);">Visible</div>
+    </div>
+    <div style="text-align: center;" id="mobile-forward-layer">
+        <i class="fa-solid fa-arrow-up" style="font-size: 20px; color: var(--gray-light);"></i>
+        <div style="font-size: 12px; color: var(--gray-light);">Forward</div>
+    </div>
+    <div style="text-align: center;" id="mobile-backward-layer">
+        <i class="fa-solid fa-arrow-down" style="font-size: 20px; color: var(--gray-light);"></i>
+        <div style="font-size: 12px; color: var(--gray-light);">Backward</div>
+    </div>
+    <div style="text-align: center;" id="mobile-remove-layer">
+        <i class="fa-solid fa-trash" style="font-size: 20px; color: var(--gray-light);"></i>
+        <div style="font-size: 12px; color: var(--gray-light);">Remove</div>
+    </div>
+    </div>
+  </div>
+`,
+  );
+
+  const colorsSubmenu = createSubmenu(
+    menuMain,
+    `<div id="mobile-colors-view" >
+
+<div id="mobile-logo-color-categories" class="mobile-category-container" style="justify-content: center">
+    <!-- Solid Category -->
+    <div id="mobile-logo-solid-category" class="mobile-category">
+        <i class="fas fa-square mobile-category-icon"></i>
+        <p class="mobile-category-text">Solid</p>
+    </div>
+
+    <!-- Linear Category -->
+    <div id="mobile-logo-linear-category" class="mobile-category">
+        <i class="fas fa-arrows-alt-h mobile-category-icon"></i>
+        <p class="mobile-category-text">Linear</p>
+    </div>
+
+    <!-- None Category -->
+    <div id="mobile-logo-none-category" class="mobile-category">
+        <i class="fas fa-ban mobile-category-icon" ></i>
+        <p class="mobile-category-text">None</p>
+    </div>
+</div>
+
+<!-- Solid Colors Section -->
+<div id="mobile-logo-solid-color-section" style="display: none; gap: 5px; justify-content: flex-start; padding-inline: 0 0 10px 0; overflow-x: scroll; grid-template-colums: repeat(4, 1fr);">
+  <div style="display: flex;">
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #000000;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #545454;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #737373;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #a6a6a6;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #d9d9d9;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #f5f5f5;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #ffffff;"></span>
+  </div>
+  <div style="display: flex;">
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #b25d1f;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #e37627;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #fc832b;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #fd964b;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #febb8a;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #fedfc9;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #fff2e9;"></span>
+  </div>
+  <div style="display: flex;">
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #ab2d2d;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #de3a3a;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #f74040;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #f85d5d;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #fcb3b3;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #fed0d0;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #ffeded;"></span>
+  </div>
+  <div style="display: flex;">
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #8a6e10;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #b89e1e;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #e5c100;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #ffdd00;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #ffea66;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #fff59d;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #ffffe0;"></span>
+  </div>
+  <div style="display: flex;">
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #126f43;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #168a53;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #1dbf73;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #62d49f;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #a6eaca;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #c9f4e0;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #e8faf4;"></span>
+  </div>
+  <div style="display: flex;">
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #1b8996;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #25a1b0;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #3ad0e6;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #75dfee;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #afedf7;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #cdf5fb;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #ecfcff;"></span>
+  </div>
+  <div style="display: flex;">
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #284389;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #3f63c8;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #4a73e8;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #819ef0;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #9db4f3;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #d4defb;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #f0f4ff;"></span>
+  </div>
+  <div style="display: flex;">
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #6731a1;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #984ae8;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #a866ec;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #b881f0;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #d8b9f7;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #ecddfb;"></span>
+    <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #f8f0ff;"></span>
+  </div>
+</div>
+
+<div id="mobile-logo-linear-color-section" style="display: flex; width: 100svw; align-items: center; height: 90px; gap: 5px; justify-content: center; overflow-x: scroll; display: none;">
+  <mobile-pallete-component id="mobile-bg-pallete"></mobile-pallete-component>
+</div>
+
+<div id="mobile-logo-none-color-section" style="display: flex; gap: 5px; justify-content: flex-start; padding-right: 30px; overflow-x: scroll; display: none;">
+  <h1>None</h1> </div>
+</div>`,
   );
 
   // NAVIGATION BUTTONS
@@ -244,6 +387,15 @@ export async function mobileTextMenu(canvas) {
     });
   }
 
+  document
+    .querySelector("#mobile-text-layer-actions-category")
+    .addEventListener("click", () => {
+      history.pushState({ category: "text/actions" }, null, "#text/actions");
+      menuMain.style.display = "none";
+      actionSubmenu.style.display = "flex";
+      actionSubmenu.style.padding = "0";
+    });
+
   mobileFontFamilyBtn.addEventListener("click", () => {
     menuMain.style.display = "none";
     history.pushState(
@@ -309,9 +461,28 @@ export async function mobileTextMenu(canvas) {
     textInputsSubmenu.style.display = "block";
   });
 
+  mobileTextColorsBtn.addEventListener("click", () => {
+    history.pushState({ category: "text/colors" }, null, "#text/colors");
+    menuMain.style.display = "none";
+    colorsSubmenu.style.display = "block";
+  });
+
+  mobileLogoColorsMenu();
+
   //
   // NESTED SUBMENU EVENTS
   //
+
+  document
+    .querySelector("#mobile-spacing-slider")
+    .addEventListener("input", (e) => {
+      const letterSpacingSlider = document.querySelector(
+        "#letter-spacing-slider",
+      );
+      letterSpacingSlider.value = e.target.value;
+      const event = new Event("input");
+      letterSpacingSlider.dispatchEvent(event);
+    });
 
   document
     .querySelector("#mobile-logoMainField")

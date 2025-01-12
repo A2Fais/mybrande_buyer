@@ -8,7 +8,10 @@ import {
 } from "./color_events.js";
 import { applyLinearGradient } from "./apply_linear_grad.js";
 
-export function mobileLogoColorsMenu(activeObject) {
+export function mobileLogoColorsMenu() {
+  if (!canvas) return;
+  const activeObject = canvas?.getActiveObject();
+
   // console.log("ACTIVE OBJ FROM LOGO COLORS MENU", activeObject);
 
   const colorCategories = document?.getElementById(

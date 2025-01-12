@@ -4,7 +4,11 @@
 - [x] Input Fields
 - [x] Font Style
 - [x] Letter Case
-- [] Text Curve
+- [x] Text Curve
+- [x] Font Weight
+- [x] Text Actions
 - [ ] Font Size
 - [ ] Font Spacing
-- [x] Font Weight
+- [ ] Acive obj issue with colors
+- [ ] Rotate
+- [ ] Spacing
