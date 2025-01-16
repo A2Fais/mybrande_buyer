@@ -105,6 +105,8 @@ export async function saveCanvas(
     const sloganColor = sloganNameElement.get("fill");
     const apiCheck = querySelect("#api_check").value;
 
+    // layer colors
+    // gradiant
     const postData = {
       buyer_logo_id: querySelect("#buyer_logo_id")?.value, // from response hidden input field
       buyer_id: querySelect("#buyer_Id")?.value, // hidden input field

@@ -467,8 +467,6 @@ export async function mobileTextMenu(canvas) {
     colorsSubmenu.style.display = "block";
   });
 
-  mobileLogoColorsMenu();
-
   //
   // NESTED SUBMENU EVENTS
   //

@@ -1,3 +1,4 @@
+import { canvas } from "./main.js";
 import { mobileLogoColorsMenu } from "./mobile-logo-colors-menu.js";
 import { mobileLogoShadowMenu } from "./mobile-logo-shadow-menu.js";
 import { mobileLogoScaleMenu } from "./mobile-logo-scale-menu.js";
@@ -5,9 +6,23 @@ import { mobileLogoRotateMenu } from "./mobile-logo-rotate-menu.js";
 import { CreateLayerSection } from "./create_layer";
 import createSubmenu from "./mobile-sub-menu.js";
 
-export function mobileLogoMenu(canvas) {
+export function mobileLogoMenu() {
   if (!canvas) return;
-  const activeObject = canvas.getActiveObject();
+
+  let activeObject = null;
+  canvas.on("selection:created", () => {
+    activeObject = canvas.getActiveObject();
+    console.log("ACTIVE OBJECT", activeObject);
+  });
+
+  canvas.on("selection:updated", () => {
+    activeObject = canvas.getActiveObject();
+    console.log("ACTIVE OBJECT", activeObject);
+    mobileLogoColorsMenu(canvas, activeObject);
+  });
+  mobileLogoShadowMenu(activeObject);
+  mobileLogoScaleMenu(activeObject);
+  mobileLogoRotateMenu(activeObject);
 
   const menuMain = document.querySelector(
     "#mobile-category-content #mobile-logo-view-settings",
@@ -240,12 +255,6 @@ export function mobileLogoMenu(canvas) {
       }
     });
   });
-
-  mobileLogoColorsMenu(activeObject);
-  mobileLogoShadowMenu(activeObject);
-  mobileLogoScaleMenu(activeObject);
-  mobileLogoRotateMenu(activeObject);
-
   mobileLayersBtn.addEventListener("click", () => {
     history.pushState({ category: "logo/layers" }, null, "#logo/layers");
     menuMain.style.display = "none";

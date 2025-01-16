@@ -1,5 +1,11 @@
 import { canvas } from "./main.js";
-import { fabric } from "fabric";
+
+function convertToZeroToTwo(value, minOriginal, maxOriginal) {
+  let rangeOriginal = maxOriginal - minOriginal;
+  let newValue = ((value - minOriginal) / rangeOriginal) * 2;
+  const res = Math.min(newValue, 2);
+  return res.toFixed(3);
+}
 
 export function mobileLogoScaleMenu(activeObject) {
   if (!activeObject) return;
@@ -14,7 +20,7 @@ export function mobileLogoScaleMenu(activeObject) {
     newMaxScaleValue = (maxScaleValue - 1) * 2;
     scaleRange.max = newMaxScaleValue;
     scaleRange.min = 0;
-    scaleRangeInput.value = maxScaleValue - 1;
+    scaleRange.value = maxScaleValue - 1;
     scaleRange.value = convertToZeroToTwo(maxScaleValue, 0, newMaxScaleValue);
   }
 

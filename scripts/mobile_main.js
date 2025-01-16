@@ -1,5 +1,4 @@
 import { canvas } from "./main.js";
-import { fabric } from "fabric";
 import { mobileBackgroundView } from "./mobile-background-view.js";
 import { mobileLogoView } from "./mobile-logo-view.js";
 import { mobileAddView } from "./mobile-add-view.js";
@@ -7,15 +6,9 @@ import { mobileTextView } from "./mobile-text-view.js";
 import { mobileBackgroundMenu } from "./mobile-background-menu.js";
 import { mobileLogoMenu } from "./mobile-logo-menu.js";
 import { mobileTextMenu } from "./mobile-text-menu.js";
-import createSubmenu from "./mobile-sub-menu.js";
 
 const navItems = document.querySelectorAll("#mobile-nav-bar [data-name]");
 const categoryContent = document.querySelector("#mobile-category-content");
-
-canvas.on("selection:updated", () => {
-  const activeObject = canvas.getActiveObject();
-  console.log(activeObject);
-});
 
 let category = "add";
 
@@ -53,6 +46,8 @@ function routeHandler() {
   } else {
     categoryContent.style.display = "none";
   }
+
+  // inside logo menu
   if (menuCategoryData[category]) {
     menuCategoryData[category](canvas);
   }

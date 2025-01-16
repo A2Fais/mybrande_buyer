@@ -85,8 +85,8 @@ function events() {
     active.set("visible", visibilty);
     canvas.requestRenderAll();
     if (active) canvas.save();
-    const eyeElement = querySelect("#eyeElement");
-    const specificLabels = querySelectAll(".specific-setting-label");
+    const eyeElement = document.querySelector("#mobile-visible-layer");
+    const specificLabels = document.querySelectorAll(".specific-setting-label");
     const firstSpecificLabel = specificLabels[1];
 
     const eyeColor = active.visible ? "var(--gray-lighter)" : "var(--gold)";

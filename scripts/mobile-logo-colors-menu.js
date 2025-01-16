@@ -1,18 +1,10 @@
-import { canvas } from "./main.js";
-import {
-  solidColorAction,
-  solidColorTextAction,
-  updateColorPickers,
-  updateColorTextPickers,
-  applyColorActionMobile,
-} from "./color_events.js";
+import { applyColorActionMobile } from "./color_events.js";
 import { applyLinearGradient } from "./apply_linear_grad.js";
 
-export function mobileLogoColorsMenu() {
-  if (!canvas) return;
-  const activeObject = canvas?.getActiveObject();
+export function mobileLogoColorsMenu(canvas, activeObject) {
+  if (!activeObject) return;
 
-  // console.log("ACTIVE OBJ FROM LOGO COLORS MENU", activeObject);
+  console.log("ACTIVE OBJECT", activeObject);
 
   const colorCategories = document?.getElementById(
     "mobile-logo-color-categories",
