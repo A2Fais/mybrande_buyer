@@ -27,7 +27,7 @@ export function mobileLogoScaleMenu(activeObject) {
   canvas.on("selection:updated", setMaxScaleValue);
   canvas.on("selection:created", setMaxScaleValue);
 
-  scaleRange.addEventListener("input", (e) => {
+  scaleRange?.addEventListener("input", (e) => {
     const scaleValue = e.target.value;
     scaleValueElement.innerText = (scaleValue / 100) * 2;
     activeObject.scaleToWidth(scaleValue);

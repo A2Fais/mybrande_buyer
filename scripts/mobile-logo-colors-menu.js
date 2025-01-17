@@ -1,19 +1,17 @@
 import { applyColorActionMobile } from "./color_events.js";
 import { applyLinearGradient } from "./apply_linear_grad.js";
 
-export function mobileLogoColorsMenu(canvas, activeObject) {
+export function mobileLogoColorsMenu(activeObject) {
   if (!activeObject) return;
-
-  console.log("ACTIVE OBJECT", activeObject);
 
   const colorCategories = document?.getElementById(
     "mobile-logo-color-categories",
   );
-  const solidCategory = document?.getElementById("mobile-logo-solid-category");
-  const linearCategory = document?.getElementById(
-    "mobile-logo-linear-category",
-  );
-  const noneCategory = document?.getElementById("mobile-logo-none-category");
+  const solidCategory = document.querySelector("#mobile-logo-solid-category");
+  const linearCategory = document.querySelector("#mobile-logo-linear-category");
+  const noneCategory = document.querySelector("#mobile-logo-none-category");
+
+  console.log(solidCategory);
 
   const solidSection = document.getElementById(
     "mobile-logo-solid-color-section",
@@ -25,6 +23,7 @@ export function mobileLogoColorsMenu(canvas, activeObject) {
 
   // Categories event listeners
   solidCategory?.addEventListener("click", () => {
+    console.log("clicked");
     colorCategories.style.display = "none";
     solidSection.style.display = "grid";
     solidSection.style.gridTemplateColumns = "repeat(4, 1fr)";
@@ -44,7 +43,7 @@ export function mobileLogoColorsMenu(canvas, activeObject) {
   // Solid Colors Action
   const solidColors = document.querySelectorAll("#solid_color-bg-mobile");
   solidColors.forEach((item) => {
-    applyColorActionMobile(item, canvas, activeObject);
+    // applyColorActionMobile(item, canvas, activeObject);
   });
 
   // Linear event listeners

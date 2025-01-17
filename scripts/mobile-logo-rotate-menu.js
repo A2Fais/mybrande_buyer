@@ -7,7 +7,7 @@ export function mobileLogoRotateMenu(activeObject) {
   const rotateSlider = document.querySelector("#mobile-rotate-slider");
   const rotateValueElement = document.getElementById("mobile-rotate-value");
 
-  rotateSlider.addEventListener("input", (event) => {
+  rotateSlider?.addEventListener("input", (event) => {
     const rotateValue = event.target.value;
     activeObject.rotate(rotateValue);
     canvas.requestRenderAll();

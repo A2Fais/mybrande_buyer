@@ -6,23 +6,20 @@ import { mobileLogoRotateMenu } from "./mobile-logo-rotate-menu.js";
 import { CreateLayerSection } from "./create_layer";
 import createSubmenu from "./mobile-sub-menu.js";
 
-export function mobileLogoMenu() {
+export function mobileLogoMenu(canvas) {
   if (!canvas) return;
 
-  let activeObject = null;
-  canvas.on("selection:created", () => {
-    activeObject = canvas.getActiveObject();
-    console.log("ACTIVE OBJECT", activeObject);
-  });
-
-  canvas.on("selection:updated", () => {
-    activeObject = canvas.getActiveObject();
-    console.log("ACTIVE OBJECT", activeObject);
-    mobileLogoColorsMenu(canvas, activeObject);
-  });
-  mobileLogoShadowMenu(activeObject);
-  mobileLogoScaleMenu(activeObject);
-  mobileLogoRotateMenu(activeObject);
+  let activeObject = canvas.getActiveObject();
+  // canvas.on("selection:created", () => {
+  //   activeObject = canvas.getActiveObject();
+  //   console.log("ACTIVE OBJECT", activeObject);
+  // });
+  //
+  // canvas.on("selection:updated", () => {
+  //   activeObject = canvas.getActiveObject();
+  //   console.log("ACTIVE OBJECT", activeObject);
+  //   mobileLogoColorsMenu(canvas, activeObject);
+  // });
 
   const menuMain = document.querySelector(
     "#mobile-category-content #mobile-logo-view-settings",
@@ -143,7 +140,8 @@ export function mobileLogoMenu() {
 </div>
 
 <!-- Solid Colors Section -->
-<div id="mobile-logo-solid-color-section" style="display: none; gap: 5px; justify-content: flex-start; padding-inline: 0 0 10px 0; overflow-x: scroll; grid-template-colums: repeat(4, 1fr);">
+<div id="mobile-logo-solid-color-section" style="display: none; gap: 5px; justify-content: flex-start; padding-inline: 0 0 10px 0; 
+  overflow-x: scroll; grid-template-colums: repeat(4, 1fr); width: 100svw;">
   <div style="display: flex;">
     <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #000000;"></span>
     <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #545454;"></span>
@@ -234,6 +232,11 @@ export function mobileLogoMenu() {
     </div>`,
   );
 
+  mobileLogoShadowMenu(activeObject);
+  mobileLogoScaleMenu(activeObject);
+  mobileLogoRotateMenu(activeObject);
+  mobileLogoColorsMenu(activeObject);
+
   const layers = document.getElementById("mobile-layers");
   const SVG = localStorage.getItem("logo-file");
 
@@ -255,6 +258,7 @@ export function mobileLogoMenu() {
       }
     });
   });
+
   mobileLayersBtn.addEventListener("click", () => {
     history.pushState({ category: "logo/layers" }, null, "#logo/layers");
     menuMain.style.display = "none";
