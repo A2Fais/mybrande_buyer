@@ -1,3 +1,4 @@
+import { canvas } from "./main.js";
 import { fetchedFonts } from "./main.js";
 import { mobileLogoColorsMenu } from "./mobile-logo-colors-menu.js";
 import createSubmenu from "./mobile-sub-menu.js";
@@ -232,6 +233,8 @@ export async function mobileTextMenu(canvas) {
   <h1>None</h1> </div>
 </div>`,
   );
+
+  mobileLogoColorsMenu(canvas);
 
   // NAVIGATION BUTTONS
   const mobileFontFamilyBtn = menuMain.querySelector(

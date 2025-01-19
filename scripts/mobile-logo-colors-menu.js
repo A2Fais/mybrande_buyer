@@ -1,8 +1,9 @@
 import { applyColorActionMobile } from "./color_events.js";
 import { applyLinearGradient } from "./apply_linear_grad.js";
+import { convertRGBtoHex } from "./color_converter.js";
 
-export function mobileLogoColorsMenu(activeObject) {
-  if (!activeObject) return;
+export function mobileLogoColorsMenu(canvas) {
+  if (!canvas) return;
 
   const colorCategories = document?.getElementById(
     "mobile-logo-color-categories",
@@ -10,8 +11,6 @@ export function mobileLogoColorsMenu(activeObject) {
   const solidCategory = document.querySelector("#mobile-logo-solid-category");
   const linearCategory = document.querySelector("#mobile-logo-linear-category");
   const noneCategory = document.querySelector("#mobile-logo-none-category");
-
-  console.log(solidCategory);
 
   const solidSection = document.getElementById(
     "mobile-logo-solid-color-section",
@@ -22,8 +21,7 @@ export function mobileLogoColorsMenu(activeObject) {
   const noneSection = document.getElementById("mobile-logo-none-color-section");
 
   // Categories event listeners
-  solidCategory?.addEventListener("click", () => {
-    console.log("clicked");
+  solidCategory.addEventListener("click", () => {
     colorCategories.style.display = "none";
     solidSection.style.display = "grid";
     solidSection.style.gridTemplateColumns = "repeat(4, 1fr)";
@@ -43,6 +41,30 @@ export function mobileLogoColorsMenu(activeObject) {
   // Solid Colors Action
   const solidColors = document.querySelectorAll("#solid_color-bg-mobile");
   solidColors.forEach((item) => {
+    item.addEventListener("click", (event) => {
+      const activeObject = canvas.getActiveObject();
+      if (!activeObject) return;
+      const bgColor = event.target.style.backgroundColor;
+
+      const match = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(bgColor);
+      if (!match) return;
+
+      const [red, green, blue] = match.slice(1, 4).map(Number);
+      const hexColor = convertRGBtoHex(red, green, blue);
+
+      if (activeObject._objects) {
+        activeObject._objects.forEach((i) => i.set("fill", hexColor));
+      } else {
+        activeObject.set("fill", hexColor);
+      }
+
+      // if (colorPicker) {
+      //   colorPicker.color.set(hexColor);
+      // }
+
+      canvas.renderAll();
+      canvas.save();
+    });
     // applyColorActionMobile(item, canvas, activeObject);
   });
 

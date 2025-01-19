@@ -235,7 +235,7 @@ export function mobileLogoMenu(canvas) {
   mobileLogoShadowMenu(activeObject);
   mobileLogoScaleMenu(activeObject);
   mobileLogoRotateMenu(activeObject);
-  mobileLogoColorsMenu(activeObject);
+  mobileLogoColorsMenu(canvas);
 
   const layers = document.getElementById("mobile-layers");
   const SVG = localStorage.getItem("logo-file");
