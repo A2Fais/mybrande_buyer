@@ -1,9 +1,8 @@
-import { canvas } from "./main.js";
-import { WebFont } from "webfontloader";
 import { fetchedFonts } from "./main.js";
 import { mobileLogoColorsMenu } from "./mobile-logo-colors-menu.js";
 import { mobileLogoShadowMenu } from "./mobile-logo-shadow-menu.js";
 import createSubmenu from "./mobile-sub-menu.js";
+import { mobileLogoScaleMenu } from "./mobile-logo-scale-menu.js";
 
 export async function mobileTextMenu(canvas) {
   if (!canvas) return;
@@ -282,6 +281,8 @@ export async function mobileTextMenu(canvas) {
     </div>`,
   );
 
+  mobileLogoColorsMenu(canvas);
+  mobileLogoScaleMenu(canvas);
   mobileLogoColorsMenu(canvas);
   mobileLogoShadowMenu(canvas);
 

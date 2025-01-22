@@ -1,5 +1,3 @@
-import { canvas } from "./main.js";
-
 function convertToZeroToTwo(value, minOriginal, maxOriginal) {
   let rangeOriginal = maxOriginal - minOriginal;
   let newValue = ((value - minOriginal) / rangeOriginal) * 2;
@@ -7,7 +5,8 @@ function convertToZeroToTwo(value, minOriginal, maxOriginal) {
   return res.toFixed(3);
 }
 
-export function mobileLogoScaleMenu(activeObject) {
+export function mobileLogoScaleMenu(canvas) {
+  const activeObject = canvas.getActiveObject();
   if (!activeObject) return;
 
   const scaleRange = document.getElementById("mobile-scale-slider");
@@ -27,10 +26,11 @@ export function mobileLogoScaleMenu(activeObject) {
   canvas.on("selection:updated", setMaxScaleValue);
   canvas.on("selection:created", setMaxScaleValue);
 
-  scaleRange?.addEventListener("input", (e) => {
+  if (!scaleRange) return;
+  scaleRange.addEventListener("input", (e) => {
     const scaleValue = e.target.value;
     scaleValueElement.innerText = (scaleValue / 100) * 2;
-    activeObject.scaleToWidth(scaleValue);
+    activeObject.scale(scaleValue);
     canvas.requestRenderAll();
   });
 }

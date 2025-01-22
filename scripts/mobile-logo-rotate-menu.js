@@ -1,15 +1,13 @@
-import { canvas } from "./main.js";
-import { rotateReset } from "./rotate_reset";
-
-export function mobileLogoRotateMenu(activeObject) {
+export function mobileLogoRotateMenu(canvas) {
+  const activeObject = canvas.getActiveObject();
   if (!activeObject) return;
 
   const rotateSlider = document.querySelector("#mobile-rotate-slider");
   const rotateValueElement = document.getElementById("mobile-rotate-value");
 
   rotateSlider?.addEventListener("input", (event) => {
-    const rotateValue = event.target.value;
-    activeObject.rotate(rotateValue);
+    const rotateValue = parseInt(event.target.value, 100);
+    activeObject.set("angle", rotateValue);
     canvas.requestRenderAll();
     rotateValueElement.innerText = `Rotate: ${rotateValue}°`;
   });

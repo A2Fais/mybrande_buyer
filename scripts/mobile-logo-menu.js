@@ -220,8 +220,8 @@ export function mobileLogoMenu(canvas) {
   );
 
   mobileLogoShadowMenu(canvas);
-  // mobileLogoScaleMenu(activeObject);
-  // mobileLogoRotateMenu(activeObject);
+  mobileLogoScaleMenu(canvas);
+  mobileLogoRotateMenu(canvas);
   mobileLogoColorsMenu(canvas);
 
   const layers = document.getElementById("mobile-layers");
