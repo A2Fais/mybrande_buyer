@@ -1,18 +1,28 @@
 import { canvas } from "./main.js";
+import { WebFont } from "webfontloader";
 import { fetchedFonts } from "./main.js";
 import { mobileLogoColorsMenu } from "./mobile-logo-colors-menu.js";
+import { mobileLogoShadowMenu } from "./mobile-logo-shadow-menu.js";
 import createSubmenu from "./mobile-sub-menu.js";
 
 export async function mobileTextMenu(canvas) {
   if (!canvas) return;
 
-  canvas.on("selection:created", () => {
-    setFontweightElement();
-  });
+  const updateDisplay = () => {
+    const activeObject = canvas.getActiveObject();
+    if (!activeObject) return;
+    const fontSize = activeObject ? activeObject.get("fontSize") : 0;
+    const charSpacing = activeObject.get("charSpacing");
+    document.querySelector("#mobile-font-size-value").innerText =
+      `Font Size: ${fontSize} px`;
+    document.querySelector("#mobile-spacing-value").innerText =
+      `Spacing: ${charSpacing} px`;
+    document.querySelector("#mobile-text-rotate-value").innerText =
+      `Rotate: ${activeObject.get("angle")}°`;
+  };
 
-  canvas.on("selection:updated", () => {
-    setFontweightElement();
-  });
+  canvas.on("selection:created", updateDisplay);
+  canvas.on("selection:updated", updateDisplay);
 
   const menuMain = document.querySelector(
     "#mobile-category-content #mobile-text-view",
@@ -31,7 +41,7 @@ export async function mobileTextMenu(canvas) {
     `<div class="mobile-category-container">
       <div style="position: absolute; bottom: 0; left: 0; display: flex; gap: 10px; 
       flex-direction: column; width: 100svw; background: #ffffff; padding: 20px;">
-        <output id="mobile-rotate-value" style="display: block; font-size: 14px; font-weight: bold; color: var(--gray);">Rotate: 0°</output>
+        <output id="mobile-text-rotate-value" style="display: block; font-size: 14px; font-weight: bold; color: var(--gray);">Rotate: 0°</output>
         <input class="mobile-slider" type="range" id="mobile-rotate-slider" style="width: 90%;" min="0" max="360" value="0" />
       </div>
     </div>`,
@@ -72,7 +82,7 @@ export async function mobileTextMenu(canvas) {
     `<div id="mobile-font-spacing-category" class="mobile-category-container" style="display: flex; justify-content: center; align-items: center; height: 100%; padding: 10px 0; overflow-x: scroll;">
       <div style="position: absolute; bottom: 0; left: 0; display: flex; gap: 10px; 
       flex-direction: column; width: 100svw; background: #ffffff; padding: 20px;">
-        <output id="mobile-spacing-value" style="display: block; font-size: 14px; font-weight: bold; color: var(--gray);">Spacing: 0°</output>
+        <output id="mobile-spacing-value" style="display: block; font-size: 14px; font-weight: bold; color: var(--gray);">Spacing: 0px</output>
         <input class="mobile-slider" type="range" id="mobile-spacing-slider" style="width: 90%;" min="-140" max="500" value="0" />
       </div>
     </div>`,
@@ -81,7 +91,7 @@ export async function mobileTextMenu(canvas) {
   const fontWeightSubmenu = createSubmenu(
     menuMain,
     `<div id="mobile-font-weight-category" class="mobile-category-container" style="padding: 0px;">
-    <div id="mobile-font-list"  style="display: flex; align-items: center; height: 100%; padding: 10px; overflow-x: scroll; gap: 30px;"></div>
+    <div id="mobile-font-weight-list"  style="display: flex; align-items: center; height: 100%; padding: 10px; overflow-x: scroll; gap: 30px;"></div>
     </div>`,
   );
 
@@ -94,6 +104,17 @@ export async function mobileTextMenu(canvas) {
       </div>
     </div>
     `,
+  );
+
+  const fontSizeSubmenu = createSubmenu(
+    menuMain,
+    `<div id="mobile-font-size-category" class="mobile-category-container" style="display: flex; justify-content: center; align-items: center; height: 100%; padding: 10px 0; overflow-x: scroll;">
+      <div style="position: absolute; bottom: 0; left: 0; display: flex; gap: 10px; 
+      flex-direction: column; width: 100svw; background: #ffffff; padding: 20px;">
+        <output id="mobile-font-size-value" style="display: block; font-size: 14px; font-weight: bold; color: var(--gray);">Font Size: 0px</output>
+        <input class="mobile-slider" type="range" id="mobile-font-size-slider" style="width: 90%;" min="0" max="130" value="0" />
+      </div>
+    </div>`,
   );
 
   const actionSubmenu = createSubmenu(
@@ -234,7 +255,35 @@ export async function mobileTextMenu(canvas) {
 </div>`,
   );
 
+  const txtShadowSubmenu = createSubmenu(
+    menuMain,
+    `<div class="mobile-category-container"> 
+      <div style="position: absolute; bottom: 0; left: 0; display: flex; flex-direction: column; 
+      width: 100svw; background: #ffffff; padding: 20px; gap: 20px;">
+
+        <div>
+          <label id="blur-mobile-slider-title" style="font-size: 14px; font-weight: bold; color: var(--gray);">Blur: <span id="blur-value">5</span></label>
+          <input class="mobile-slider" type="range" id="blur-mobile-slider" style="width: 90%;" min="0" max="100" value="5" step="1" />
+        </div>
+
+        <div>
+          <label for="x-mobile-slider" style="font-size: 14px; font-weight: bold; color: var(--gray);">
+          X Offset: <span id="x-value">0</span></label>
+          <input class="mobile-slider" type="range" id="x-mobile-slider" style="width: 90%;" min="-50" max="50" value="0" step="1" />
+        </div>
+
+        <div>
+          <label for="y-mobile-slider" style="font-size: 14px; font-weight: bold; color: var(--gray);">
+          Y Offset: <span id="y-value">0</span></label>
+          <input class="mobile-slider" type="range" id="y-mobile-slider" style="width: 90%;" min="-50" max="50" value="0" step="1" />
+        </div>
+
+     </div>
+    </div>`,
+  );
+
   mobileLogoColorsMenu(canvas);
+  mobileLogoShadowMenu(canvas);
 
   // NAVIGATION BUTTONS
   const mobileFontFamilyBtn = menuMain.querySelector(
@@ -340,13 +389,11 @@ export async function mobileTextMenu(canvas) {
   });
 
   // BUTTON EVENTS
-
-  function triggerSliderEvent(value, obj) {
+  function triggerCurveSlider(value, obj) {
     const slider = document.querySelector("#text-curve-range");
     slider.value = value;
     const event = new Event("input", { bubbles: true });
     slider.dispatchEvent(event);
-    // canvas.discardActiveObject();
     canvas.renderAll();
   }
 
@@ -356,12 +403,14 @@ export async function mobileTextMenu(canvas) {
       const activeObject = canvas.getActiveObject();
       if (!activeObject) return;
       const value = event.target.value;
-      triggerSliderEvent(value, activeObject);
+      triggerCurveSlider(value, activeObject);
     });
 
   function setFontweightElement() {
     const activeObject = canvas.getActiveObject();
-    const fontWeightContainer = document.querySelector("#mobile-font-list");
+    const fontWeightContainer = document.querySelector(
+      "#mobile-font-weight-list",
+    );
     fontWeightContainer.innerHTML = "";
 
     const currentActiveTextObject = activeObject
@@ -384,7 +433,27 @@ export async function mobileTextMenu(canvas) {
           textElement.style.textOverflow = "ellipsis";
           textElement.style.fontSize = "14px";
           textElement.style.color = "var(--gray)";
+          textElement.setAttribute("data-value", value);
+          textElement.className = "mobile-font-weight-item";
+          textElement.setAttribute("fontFamily", font.family);
           fontWeightContainer.append(textElement);
+
+          textElement.addEventListener("click", (event) => {
+            let weight = event.target.getAttribute("data-value");
+            if (weight.includes("italic")) {
+              weight = weight.replace("italic", "").trim();
+              activeObject.set("fontStyle", "italic");
+              activeObject.set("fontweightapply", true);
+            } else {
+              if (activeObject.get("fontweightapply"))
+                activeObject.set("fontStyle", "normal");
+            }
+
+            activeObject.set("fontWeight", weight || "normal");
+            activeObject.set("orgFontWeight", weight || "normal");
+            canvas.renderAll();
+            canvas.save();
+          });
         });
       }
     });
@@ -417,6 +486,12 @@ export async function mobileTextMenu(canvas) {
     );
     menuMain.style.display = "none";
     fontStyleSubmenu.style.display = "block";
+  });
+
+  mobileFontSizeBtn.addEventListener("click", () => {
+    history.pushState({ category: "text/font-size" }, null, "#text/font-size");
+    menuMain.style.display = "none";
+    fontSizeSubmenu.style.display = "block";
   });
 
   mobileTextRotateBtn.addEventListener("click", () => {
@@ -470,19 +545,46 @@ export async function mobileTextMenu(canvas) {
     colorsSubmenu.style.display = "block";
   });
 
-  //
-  // NESTED SUBMENU EVENTS
-  //
+  mobileTextShadowBtn.addEventListener("click", () => {
+    history.pushState({ category: "text/shadow" }, null, "#text/shadow");
+    menuMain.style.display = "none";
+    txtShadowSubmenu.style.display = "block";
+  });
 
+  // NESTED SUBMENU EVENTS
   document
     .querySelector("#mobile-spacing-slider")
     .addEventListener("input", (e) => {
+      const value = e.target.value;
       const letterSpacingSlider = document.querySelector(
         "#letter-spacing-slider",
       );
-      letterSpacingSlider.value = e.target.value;
+      letterSpacingSlider.value = value;
+
       const event = new Event("input");
       letterSpacingSlider.dispatchEvent(event);
+      document.querySelector("#mobile-spacing-value").value =
+        `Spacing: ${value} px`;
+    });
+
+  document
+    .querySelector("#mobile-font-size-slider")
+    .addEventListener("input", (event) => {
+      const textSize = event.target.value;
+      if (textSize > 0) {
+        document.querySelector("#mobile-font-size-value").value =
+          `Font Size: ${Math.round(textSize)}px`;
+        const active = canvas.getActiveObject();
+
+        const fontSize = textSize;
+        if (active.type == "curved-text") {
+          active.set("_cachedCanvas", null);
+          if (fontSize < 5) return false;
+          active.set("fontSize", fontSize);
+        } else active.set("fontSize", fontSize);
+
+        canvas.requestRenderAll();
+      }
     });
 
   document
@@ -497,6 +599,19 @@ export async function mobileTextMenu(canvas) {
     });
 
   document
+    .querySelector("#mobile-rotate-slider")
+    .addEventListener("input", (e) => {
+      const activeObject = canvas.getActiveObject();
+      if (!activeObject) return;
+
+      const value = parseInt(e.target.value, 10);
+      activeObject.set("angle", value);
+      document.querySelector("#mobile-text-rotate-value").innerText =
+        `Rotate: ${activeObject.get("angle")}°`;
+      canvas.renderAll();
+    });
+
+  document
     .querySelector("#mobile-sloganNameField")
     .addEventListener("input", (e) => {
       const value = e.target.value;
@@ -507,23 +622,9 @@ export async function mobileTextMenu(canvas) {
       canvas.renderAll();
     });
 
-  const fontFamilyBtns = document.querySelectorAll(".mobile-font-family-item");
-  fontFamilyBtns.forEach((fontFamilyBtn) => {
-    return fontFamilyBtn.addEventListener("click", () => {
-      const activeObject = canvas.getActiveObject();
-      if (!activeObject) return;
-
-      const fontFamily = fontFamilyBtn.innerText;
-      console.log(fontFamily);
-      activeObject.set("fontFamily", fontFamily);
-      canvas.renderAll();
-    });
-  });
-
   function updateFontStyle(style, underline = false) {
     const activeObject = canvas.getActiveObject();
     if (!activeObject) return;
-    console.log(activeObject.get("fontFamily"));
 
     activeObject.set("fontStyle_", style);
     activeObject.set("fontStyle", style);
@@ -565,6 +666,20 @@ export async function mobileTextMenu(canvas) {
     canvas.renderAll();
     canvas.save();
   }
+
+  const fontWeightBtns = document.querySelectorAll(".mobile-font-weight-item");
+  fontWeightBtns.forEach((fontWeightBtn, idx) => {
+    return fontWeightBtn.addEventListener("click", (event) => {
+      const newActiveObject = canvas.getActiveObject();
+      console.log("click");
+      console.log(newActiveObject);
+      const weight = event.target.getAttribute("data-value");
+      activeObject.set("fontWeight", weight || "normal");
+      activeObject.set("orgFontWeight", weight || "normal");
+      canvas.renderAll();
+      canvas.save();
+    });
+  });
 
   document
     .querySelector("#mobile-font-normal")

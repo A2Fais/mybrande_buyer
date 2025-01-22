@@ -9,18 +9,6 @@ import createSubmenu from "./mobile-sub-menu.js";
 export function mobileLogoMenu(canvas) {
   if (!canvas) return;
 
-  let activeObject = canvas.getActiveObject();
-  // canvas.on("selection:created", () => {
-  //   activeObject = canvas.getActiveObject();
-  //   console.log("ACTIVE OBJECT", activeObject);
-  // });
-  //
-  // canvas.on("selection:updated", () => {
-  //   activeObject = canvas.getActiveObject();
-  //   console.log("ACTIVE OBJECT", activeObject);
-  //   mobileLogoColorsMenu(canvas, activeObject);
-  // });
-
   const menuMain = document.querySelector(
     "#mobile-category-content #mobile-logo-view-settings",
   );
@@ -223,7 +211,6 @@ export function mobileLogoMenu(canvas) {
 <div id="mobile-logo-none-color-section" style="display: flex; gap: 5px; justify-content: flex-start; padding-right: 30px; overflow-x: scroll; display: none;">
   <h1>None</h1> </div>
 </div>`,
-    activeObject,
   );
 
   const layersSubmenu = createSubmenu(
@@ -232,9 +219,9 @@ export function mobileLogoMenu(canvas) {
     </div>`,
   );
 
-  mobileLogoShadowMenu(activeObject);
-  mobileLogoScaleMenu(activeObject);
-  mobileLogoRotateMenu(activeObject);
+  mobileLogoShadowMenu(canvas);
+  // mobileLogoScaleMenu(activeObject);
+  // mobileLogoRotateMenu(activeObject);
   mobileLogoColorsMenu(canvas);
 
   const layers = document.getElementById("mobile-layers");

@@ -520,11 +520,11 @@ export class EditorScreen {
     querySelect(".font-weight-selector").addEventListener(
       "change",
       async function () {
-        let weight = this.getAttribute("data-value");
+        const weight = this.getAttribute("data-value");
         const obj = self.canvas.getActiveObject();
         if (!obj) return false;
 
-        let family = obj.get("fontFamily");
+        const family = obj.get("fontFamily");
 
         if (self.loadedFonts[family]) {
           const familyWithWeight = `${family}:${weight}`;
