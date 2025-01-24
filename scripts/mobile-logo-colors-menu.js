@@ -31,13 +31,6 @@ export function mobileLogoColorsMenu(canvas) {
     noneSection.style.display = "none";
   });
 
-  // Add Button Action
-  document
-    ?.querySelector("#mobile-bg-add-item")
-    ?.addEventListener("click", () => {
-      document.querySelector("#upload-file").click();
-    });
-
   // Solid Colors Action
   const solidColors = document.querySelectorAll("#solid_color-bg-mobile");
   solidColors.forEach((item) => {

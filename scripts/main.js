@@ -2905,7 +2905,7 @@ export class EditorScreen {
     });
 
     querySelect(".item-title").addEventListener("click", () => {
-      const IText = new fabric.IText("Add Text", { fontFamily: "Poppins" });
+      const IText = new fabric.IText("New Text", { fontFamily: "Poppins" });
       this.canvas.add(IText);
       IText.center();
       IText.set("id", "external_layer_" + Date.now());

@@ -9,6 +9,6 @@
 - [x] Implement Undo/Redo attachments for the mobile view
 - [x] Enable saving for event attachments
 - [ ] Fix mobile view alignments
-- [ ] Fix the Add menu 
+- [x] Fix the Add menu 
 - [ ] Create a modal for adding icons
 - [ ] Fix Desktop Curve alignments
