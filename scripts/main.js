@@ -56,6 +56,7 @@ export class EditorScreen {
     this.galleryMode = querySelect('.nav-item[data-name="gallery"]');
     this.logoName = "My Brand Name";
     this.sloganName = "Slogan goes here";
+    this.iconList = null;
     this.rotateRange = querySelect("#rotate-bar");
     this.saveBtn = querySelect("#save-btn");
     this.scaleRangeUploads = querySelect("#progress-bar-uploads");
@@ -2640,210 +2641,363 @@ export class EditorScreen {
       return img;
     }
 
-    let currIconIndex = 0,
-      iconList;
+    let currIconIndex = 0;
     querySelect("#loader_main").style.display = "block";
 
-    axios
-      .get(iconUrl)
-      .then((resp) => {
-        iconList = resp.data.CategoryWiseIcon;
-        iconList.forEach((icon, index) => {
-          let catslug = icon.category.iconcategory_slug;
-          this.loadedIcons[catslug] = {};
-          icon.Icons.forEach((i) => {
-            this.loadedIcons[catslug][i.id] = {
-              id: i.id,
-              svg: i.icon_svg,
-            };
-          });
-          if (!icon.Icons[currIconIndex]) return true;
-          let { icon_svg, id } = icon.Icons[currIconIndex];
-          const name = icon.category.iconcategory_name;
-          const categoryTitle = querySelect("#category_type_title");
+    // axios
+    //   .get(iconUrl)
+    //   .then((resp) => {
+    //     this.iconList = resp.data.CategoryWiseIcon;
+    //     this.iconList.forEach((icon, index) => {
+    //       let catslug = icon.category.iconcategory_slug;
+    //       this.loadedIcons[catslug] = {};
+    //       icon.Icons.forEach((i) => {
+    //         this.loadedIcons[catslug][i.id] = {
+    //           id: i.id,
+    //           svg: i.icon_svg,
+    //         };
+    //       });
+    //       if (!icon.Icons[currIconIndex]) return true;
+    //       let { icon_svg, id } = icon.Icons[currIconIndex];
+    //       const name = icon.category.iconcategory_name;
+    //       const categoryTitle = querySelect("#category_type_title");
 
-          const span = document.createElement("span");
-          span.setAttribute("index", index);
-          span.classList.add("search-icon-category-text");
-          span.innerText = name;
-          categoryTitle.append(span);
+    //       const span = document.createElement("span");
+    //       span.setAttribute("index", index);
+    //       span.classList.add("search-icon-category-text");
+    //       span.innerText = name;
+    //       categoryTitle.append(span);
 
-          const svgImg = svgCreator(icon_svg, name);
-          svgImg.setAttribute("data-id", id);
-          svgImg.setAttribute("data-category", icon.category.iconcategory_slug);
-          querySelect("#clip-icons").appendChild(svgImg);
+    //       const svgImg = svgCreator(icon_svg, name);
+    //       svgImg.setAttribute("data-id", id);
+    //       svgImg.setAttribute("data-category", icon.category.iconcategory_slug);
+    //       querySelect("#clip-icons").appendChild(svgImg);
+    //     });
+
+    //     fetchCanvasData(this.canvas).then((data) => {
+    //       this.logoFile = data.svgData.AllData.svg_data;
+    //       const logoPosition = data.svgData.AllData.logo_position;
+    //       let parser = new DOMParser();
+    //       let svgDoc = parser.parseFromString(this.logoFile, "image/svg+xml");
+
+    //       let imageTag = svgDoc.querySelector("image");
+    //       if (imageTag) {
+    //         imageTag.remove();
+    //       }
+    //       let serializer = new XMLSerializer();
+    //       let updatedLogo = serializer.serializeToString(svgDoc);
+    //       localStorage.setItem("logo-file", updatedLogo);
+
+    //       renderCanvas({
+    //         SVG: updatedLogo,
+    //         fabric: fabric,
+    //         canvas: this.canvas,
+    //         logoNameElement,
+    //         sloganNameElement,
+    //         layers: this.layers,
+    //         initialRotation: this.initialRotation,
+    //         isFlipY: this.isFlipY,
+    //         isFlipX: this.isFlipX,
+    //         colorPicker,
+    //         refreshLayerNames,
+    //       });
+
+    //       updateColorPickers(this.canvas, colorPicker);
+    //       const brandCase = data?.brandCase;
+    //       const sloganCase = data?.sloganCase;
+
+    //       if (!sessionStorage.getItem("reloaded")) {
+    //         sessionStorage.setItem("reloaded", "true");
+    //         location.reload();
+    //       }
+    //       if (data?.bg?.includes(",")) {
+    //         const colorGrad = data.bg.split(",");
+    //         let color = new fabric.Gradient({
+    //           type: "linear",
+    //           coords: {
+    //             x1: 0,
+    //             y1: 0,
+    //             x2: this.canvas.width,
+    //             y2: this.canvas.height,
+    //           },
+    //           colorStops: [
+    //             { offset: 0, color: colorGrad[0] },
+    //             { offset: 1, color: colorGrad[1] },
+    //           ],
+    //         });
+    //         this.canvas.setBackgroundColor(color);
+    //       } else {
+    //         data.bg === "transparent"
+    //           ? this.canvas.setBackgroundColor("#ffffff")
+    //           : this.canvas.setBackgroundColor(data.bg);
+    //       }
+
+    //       this.canvas.renderAll();
+    //       this.alignId = +data.logoPosition;
+    //       updatePreview();
+
+    //       setTimeout(async () => {
+    //         this.canvasHistory = new SaveHistory(this.canvas);
+    //         querySelect("#loader_main").style.display = "none";
+    //         const alignItem = document.querySelector(
+    //           `.svg__icon[data-align-id="${logoPosition}"]`,
+    //         );
+
+    //         alignItem.click();
+
+    //         logoNameElement.set("fontSize", +data.brandSize);
+    //         sloganNameElement.set("fontSize", +data.sloganSize);
+
+    //         if (data.brandCurveDiameter)
+    //           addCurveText(
+    //             logoNameElement,
+    //             data.brandCurveDiameter,
+    //             data.brand_curve_percentage,
+    //           );
+
+    //         if (data.sloganCurveDiameter)
+    //           addCurveText(
+    //             sloganNameElement,
+    //             data.sloganCurveDiameter,
+    //             data.slogan_curve_percentage,
+    //           );
+
+    //         const brandBlur = data?.brandNameDropShadow?.split(",")[0];
+    //         const brandOffsetX = data?.brandNameDropShadow?.split(",")[1];
+    //         const brandOffsetY = data?.brandNameDropShadow?.split(",")[2];
+
+    //         const sloganBlur = data?.sloganDropShadow?.split(",")[0];
+    //         const sloganOffsetX = data?.sloganDropShadow?.split(",")[1];
+    //         const sloganOffsetY = data?.sloganDropShadow?.split(",")[2];
+
+    //         logoNameElement.set("shadow", {
+    //           offsetX: +brandOffsetX,
+    //           offsetY: +brandOffsetY,
+    //           blur: +brandBlur,
+    //         });
+
+    //         sloganNameElement.set("shadow", {
+    //           offsetX: +sloganOffsetX,
+    //           offsetY: +sloganOffsetY,
+    //           blur: +sloganBlur,
+    //         });
+
+    //         logoNameElement.set("charSpacing", data.brandCharSpacing);
+    //         sloganNameElement.set("charSpacing", data.sloganCharSpacing);
+
+    //         if (brandCase === "Uppercase") {
+    //           logoNameElement.text = logoNameElement.text.toUpperCase();
+    //         } else if (brandCase === "Lowercase") {
+    //           logoNameElement.text = logoNameElement.text.toLowerCase();
+    //         } else if (brandCase === "Title Case") {
+    //           logoNameElement.text = toTitleCase(logoNameElement.text);
+    //         } else if (brandCase === "Sentence Case") {
+    //           logoNameElement.text = toSentenceCase(logoNameElement.text);
+    //         }
+
+    //         if (sloganCase === "Uppercase") {
+    //           sloganNameElement.text = sloganNameElement.text.toUpperCase();
+    //         } else if (sloganCase === "Lowercase") {
+    //           sloganNameElement.text = sloganNameElement.text.toLowerCase();
+    //         } else if (sloganCase === "Title Case") {
+    //           sloganNameElement.text = toTitleCase(sloganNameElement.text);
+    //         } else if (sloganCase === "Sentence Case") {
+    //           sloganNameElement.text = toSentenceCase(sloganNameElement.text);
+    //         }
+
+    //         if (data.brandStyle === "underline") {
+    //           logoNameElement.set("underline", true);
+    //         } else {
+    //           logoNameElement.set("underline", false);
+    //           logoNameElement.set("fontStyle", data.brandStyle);
+    //         }
+
+    //         if (data.sloganStyle === "underline") {
+    //           sloganNameElement.set("underline", true);
+    //         } else {
+    //           sloganNameElement.set("underline", false);
+    //           sloganNameElement.set("fontStyle", data.sloganStyle);
+    //         }
+
+    //         logoNameElement.centerH();
+    //         sloganNameElement.centerH();
+
+    //         this.canvas.save();
+    //         this.canvas.renderAll();
+    //       }, 1000);
+    //     });
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error fetching CANVAS:", error);
+    //   });
+
+
+      fetchCanvasData(this.canvas).then((data) => {
+        this.logoFile = data.svgData.AllData.svg_data;
+        const logoPosition = data.svgData.AllData.logo_position;
+        let parser = new DOMParser();
+        let svgDoc = parser.parseFromString(this.logoFile, "image/svg+xml");
+
+        let imageTag = svgDoc.querySelector("image");
+        if (imageTag) {
+          imageTag.remove();
+        }
+        let serializer = new XMLSerializer();
+        let updatedLogo = serializer.serializeToString(svgDoc);
+        localStorage.setItem("logo-file", updatedLogo);
+
+        renderCanvas({
+          SVG: updatedLogo,
+          fabric: fabric,
+          canvas: this.canvas,
+          logoNameElement,
+          sloganNameElement,
+          layers: this.layers,
+          initialRotation: this.initialRotation,
+          isFlipY: this.isFlipY,
+          isFlipX: this.isFlipX,
+          colorPicker,
+          refreshLayerNames,
         });
 
-        fetchCanvasData(this.canvas).then((data) => {
-          this.logoFile = data.svgData.AllData.svg_data;
-          const logoPosition = data.svgData.AllData.logo_position;
-          let parser = new DOMParser();
-          let svgDoc = parser.parseFromString(this.logoFile, "image/svg+xml");
+        updateColorPickers(this.canvas, colorPicker);
+        const brandCase = data?.brandCase;
+        const sloganCase = data?.sloganCase;
 
-          let imageTag = svgDoc.querySelector("image");
-          if (imageTag) {
-            imageTag.remove();
-          }
-          let serializer = new XMLSerializer();
-          let updatedLogo = serializer.serializeToString(svgDoc);
-          localStorage.setItem("logo-file", updatedLogo);
-
-          renderCanvas({
-            SVG: updatedLogo,
-            fabric: fabric,
-            canvas: this.canvas,
-            logoNameElement,
-            sloganNameElement,
-            layers: this.layers,
-            initialRotation: this.initialRotation,
-            isFlipY: this.isFlipY,
-            isFlipX: this.isFlipX,
-            colorPicker,
-            refreshLayerNames,
+        if (!sessionStorage.getItem("reloaded")) {
+          sessionStorage.setItem("reloaded", "true");
+          location.reload();
+        }
+        if (data?.bg?.includes(",")) {
+          const colorGrad = data.bg.split(",");
+          let color = new fabric.Gradient({
+            type: "linear",
+            coords: {
+              x1: 0,
+              y1: 0,
+              x2: this.canvas.width,
+              y2: this.canvas.height,
+            },
+            colorStops: [
+              { offset: 0, color: colorGrad[0] },
+              { offset: 1, color: colorGrad[1] },
+            ],
           });
+          this.canvas.setBackgroundColor(color);
+        } else {
+          data.bg === "transparent"
+            ? this.canvas.setBackgroundColor("#ffffff")
+            : this.canvas.setBackgroundColor(data.bg);
+        }
 
-          updateColorPickers(this.canvas, colorPicker);
-          const brandCase = data?.brandCase;
-          const sloganCase = data?.sloganCase;
+        this.canvas.renderAll();
+        this.alignId = +data.logoPosition;
+        updatePreview();
 
-          if (!sessionStorage.getItem("reloaded")) {
-            sessionStorage.setItem("reloaded", "true");
-            location.reload();
-          }
-          if (data?.bg?.includes(",")) {
-            const colorGrad = data.bg.split(",");
-            let color = new fabric.Gradient({
-              type: "linear",
-              coords: {
-                x1: 0,
-                y1: 0,
-                x2: this.canvas.width,
-                y2: this.canvas.height,
-              },
-              colorStops: [
-                { offset: 0, color: colorGrad[0] },
-                { offset: 1, color: colorGrad[1] },
-              ],
-            });
-            this.canvas.setBackgroundColor(color);
-          } else {
-            data.bg === "transparent"
-              ? this.canvas.setBackgroundColor("#ffffff")
-              : this.canvas.setBackgroundColor(data.bg);
-          }
+        setTimeout(async () => {
+          this.canvasHistory = new SaveHistory(this.canvas);
+          querySelect("#loader_main").style.display = "none";
+          const alignItem = document.querySelector(
+            `.svg__icon[data-align-id="${logoPosition}"]`,
+          );
 
-          this.canvas.renderAll();
-          this.alignId = +data.logoPosition;
-          updatePreview();
+          alignItem.click();
 
-          setTimeout(async () => {
-            this.canvasHistory = new SaveHistory(this.canvas);
-            querySelect("#loader_main").style.display = "none";
-            const alignItem = document.querySelector(
-              `.svg__icon[data-align-id="${logoPosition}"]`,
+          logoNameElement.set("fontSize", +data.brandSize);
+          sloganNameElement.set("fontSize", +data.sloganSize);
+
+          if (data.brandCurveDiameter)
+            addCurveText(
+              logoNameElement,
+              data.brandCurveDiameter,
+              data.brand_curve_percentage,
             );
 
-            alignItem.click();
+          if (data.sloganCurveDiameter)
+            addCurveText(
+              sloganNameElement,
+              data.sloganCurveDiameter,
+              data.slogan_curve_percentage,
+            );
 
-            logoNameElement.set("fontSize", +data.brandSize);
-            sloganNameElement.set("fontSize", +data.sloganSize);
+          const brandBlur = data?.brandNameDropShadow?.split(",")[0];
+          const brandOffsetX = data?.brandNameDropShadow?.split(",")[1];
+          const brandOffsetY = data?.brandNameDropShadow?.split(",")[2];
 
-            if (data.brandCurveDiameter)
-              addCurveText(
-                logoNameElement,
-                data.brandCurveDiameter,
-                data.brand_curve_percentage,
-              );
+          const sloganBlur = data?.sloganDropShadow?.split(",")[0];
+          const sloganOffsetX = data?.sloganDropShadow?.split(",")[1];
+          const sloganOffsetY = data?.sloganDropShadow?.split(",")[2];
 
-            if (data.sloganCurveDiameter)
-              addCurveText(
-                sloganNameElement,
-                data.sloganCurveDiameter,
-                data.slogan_curve_percentage,
-              );
+          logoNameElement.set("shadow", {
+            offsetX: +brandOffsetX,
+            offsetY: +brandOffsetY,
+            blur: +brandBlur,
+          });
 
-            const brandBlur = data?.brandNameDropShadow?.split(",")[0];
-            const brandOffsetX = data?.brandNameDropShadow?.split(",")[1];
-            const brandOffsetY = data?.brandNameDropShadow?.split(",")[2];
+          sloganNameElement.set("shadow", {
+            offsetX: +sloganOffsetX,
+            offsetY: +sloganOffsetY,
+            blur: +sloganBlur,
+          });
 
-            const sloganBlur = data?.sloganDropShadow?.split(",")[0];
-            const sloganOffsetX = data?.sloganDropShadow?.split(",")[1];
-            const sloganOffsetY = data?.sloganDropShadow?.split(",")[2];
+          logoNameElement.set("charSpacing", data.brandCharSpacing);
+          sloganNameElement.set("charSpacing", data.sloganCharSpacing);
 
-            logoNameElement.set("shadow", {
-              offsetX: +brandOffsetX,
-              offsetY: +brandOffsetY,
-              blur: +brandBlur,
-            });
+          if (brandCase === "Uppercase") {
+            logoNameElement.text = logoNameElement.text.toUpperCase();
+          } else if (brandCase === "Lowercase") {
+            logoNameElement.text = logoNameElement.text.toLowerCase();
+          } else if (brandCase === "Title Case") {
+            logoNameElement.text = toTitleCase(logoNameElement.text);
+          } else if (brandCase === "Sentence Case") {
+            logoNameElement.text = toSentenceCase(logoNameElement.text);
+          }
 
-            sloganNameElement.set("shadow", {
-              offsetX: +sloganOffsetX,
-              offsetY: +sloganOffsetY,
-              blur: +sloganBlur,
-            });
+          if (sloganCase === "Uppercase") {
+            sloganNameElement.text = sloganNameElement.text.toUpperCase();
+          } else if (sloganCase === "Lowercase") {
+            sloganNameElement.text = sloganNameElement.text.toLowerCase();
+          } else if (sloganCase === "Title Case") {
+            sloganNameElement.text = toTitleCase(sloganNameElement.text);
+          } else if (sloganCase === "Sentence Case") {
+            sloganNameElement.text = toSentenceCase(sloganNameElement.text);
+          }
 
-            logoNameElement.set("charSpacing", data.brandCharSpacing);
-            sloganNameElement.set("charSpacing", data.sloganCharSpacing);
+          if (data.brandStyle === "underline") {
+            logoNameElement.set("underline", true);
+          } else {
+            logoNameElement.set("underline", false);
+            logoNameElement.set("fontStyle", data.brandStyle);
+          }
 
-            if (brandCase === "Uppercase") {
-              logoNameElement.text = logoNameElement.text.toUpperCase();
-            } else if (brandCase === "Lowercase") {
-              logoNameElement.text = logoNameElement.text.toLowerCase();
-            } else if (brandCase === "Title Case") {
-              logoNameElement.text = toTitleCase(logoNameElement.text);
-            } else if (brandCase === "Sentence Case") {
-              logoNameElement.text = toSentenceCase(logoNameElement.text);
-            }
+          if (data.sloganStyle === "underline") {
+            sloganNameElement.set("underline", true);
+          } else {
+            sloganNameElement.set("underline", false);
+            sloganNameElement.set("fontStyle", data.sloganStyle);
+          }
 
-            if (sloganCase === "Uppercase") {
-              sloganNameElement.text = sloganNameElement.text.toUpperCase();
-            } else if (sloganCase === "Lowercase") {
-              sloganNameElement.text = sloganNameElement.text.toLowerCase();
-            } else if (sloganCase === "Title Case") {
-              sloganNameElement.text = toTitleCase(sloganNameElement.text);
-            } else if (sloganCase === "Sentence Case") {
-              sloganNameElement.text = toSentenceCase(sloganNameElement.text);
-            }
+          logoNameElement.centerH();
+          sloganNameElement.centerH();
 
-            if (data.brandStyle === "underline") {
-              logoNameElement.set("underline", true);
-            } else {
-              logoNameElement.set("underline", false);
-              logoNameElement.set("fontStyle", data.brandStyle);
-            }
-
-            if (data.sloganStyle === "underline") {
-              sloganNameElement.set("underline", true);
-            } else {
-              sloganNameElement.set("underline", false);
-              sloganNameElement.set("fontStyle", data.sloganStyle);
-            }
-
-            logoNameElement.centerH();
-            sloganNameElement.centerH();
-
-            this.canvas.save();
-            this.canvas.renderAll();
-          }, 1000);
-        });
-      })
-      .catch((error) => {
-        console.error("Error fetching CANVAS:", error);
+          this.canvas.save();
+          this.canvas.renderAll();
+        }, 1000);
       });
 
     querySelect("#category_type_title").addEventListener("click", (e) => {
       querySelect("#clip-icons").innerHTML = null;
       const index = e.target.getAttribute("index");
-      const currIndexIcons = iconList[index].Icons;
+      const currIndexIcons = this.iconList[index].Icons;
       let count = 0;
       currIndexIcons.forEach((icon) => {
         let cat_id = icon.icon_category_id;
-        const name = iconList[index].category.iconcategory_slug,
+        const name = this.iconList[index].category.iconcategory_slug,
           id = icon.id;
 
         const svgImg = svgCreator(
           icon.icon_svg,
-          iconList[index].category.iconcategory_name,
+          this.iconList[index].category.iconcategory_name,
         );
         svgImg.setAttribute("data-category", name);
         svgImg.setAttribute("data-id", id);

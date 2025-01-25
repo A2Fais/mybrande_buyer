@@ -111,7 +111,6 @@ function routeHandler() {
     categoryContent.style.display = "none";
   }
 
-  // inside logo menu
   if (menuCategoryData[category]) {
     menuCategoryData[category](canvas);
   }
