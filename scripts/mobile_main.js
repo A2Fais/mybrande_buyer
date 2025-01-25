@@ -2,6 +2,7 @@ import { canvas } from "./main.js";
 import { mobileBackgroundView } from "./mobile-background-view.js";
 import { mobileLogoView } from "./mobile-logo-view.js";
 import { mobileAddView } from "./mobile-add-view.js";
+import { mobileAddMenu } from "./mobile-add-menu.js";
 import { mobileTextView } from "./mobile-text-view.js";
 import { mobileBackgroundMenu } from "./mobile-background-menu.js";
 import { mobileLogoMenu } from "./mobile-logo-menu.js";
@@ -20,6 +21,7 @@ const mainCategoryData = {
 };
 
 const menuCategoryData = {
+  add: mobileAddMenu,
   logo: mobileLogoMenu,
   text: mobileTextMenu,
   background: mobileBackgroundMenu,
