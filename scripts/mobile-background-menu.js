@@ -7,6 +7,7 @@ import {
   bgColorAction,
 } from "./color_events.js";
 import { applyLinearGradient } from "./apply_linear_grad.js";
+import iro from "@jaames/iro";
 
 export function mobileBackgroundMenu() {
   const colorCategories = document?.getElementById(
@@ -15,9 +16,13 @@ export function mobileBackgroundMenu() {
   const solidCategory = document?.getElementById("mobile-solid-category");
   const linearCategory = document?.getElementById("mobile-linear-category");
   const noneCategory = document?.getElementById("mobile-none-category");
+  const pickerCategory = document?.getElementById(
+    "mobile-picker-color-category",
+  );
 
   const solidSection = document.getElementById("mobile-solid-color-section");
   const linearSection = document.getElementById("mobile-linear-color-section");
+  const pickerSection = document.getElementById("mobile-picker-color-section");
   const noneSection = document.getElementById("mobile-none-color-section");
 
   // Categories event listeners
@@ -43,12 +48,49 @@ export function mobileBackgroundMenu() {
     bgColorAction(item, canvas, null, true);
   });
 
+  // Picker event listeners
+  pickerCategory?.addEventListener("click", () => {
+    colorCategories.style.display = "none";
+    pickerSection.style.display = "flex";
+    solidSection.style.display = "none";
+    linearSection.style.display = "none";
+    noneSection.style.display = "none";
+  });
+
   // Linear event listeners
   linearCategory?.addEventListener("click", () => {
     colorCategories.style.display = "none";
     solidSection.style.display = "none";
     linearSection.style.display = "flex";
     noneSection.style.display = "none";
+  });
+
+  const colorPicker = new iro.ColorPicker("#mobile-picker-color-section", {
+    width: 130,
+    layoutDirection: "horizontal",
+    color: "#ffffff",
+    layout: [
+      {
+        component: iro.ui.Box,
+      },
+      {
+        component: iro.ui.Slider,
+        options: {
+          sliderType: "hue",
+        },
+      },
+      {
+        component: iro.ui.Slider,
+        options: {
+          sliderType: "alpha",
+        },
+      },
+    ],
+  });
+
+  colorPicker.on("color:change", (color) => {
+    const hexColor = color.hexString;
+    canvas.setBackgroundColor(hexColor, canvas.renderAll.bind(canvas));
   });
 
   // Linear Colors Actions

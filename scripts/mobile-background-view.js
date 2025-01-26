@@ -6,6 +6,12 @@ export const mobileBackgroundView = `<div id="mobile-background-view">
         <p class="mobile-category-text">Solid</p>
     </div>
 
+    <!-- mobile picker category -->
+    <div id="mobile-picker-color-category" class="mobile-category">
+        <i class="fas fa-palette mobile-category-icon"></i>
+        <p class="mobile-category-text">C.Picker</p>
+    </div>
+
     <!-- Linear Category -->
     <div id="mobile-linear-category" class="mobile-category">
         <i class="fas fa-arrows-alt-h mobile-category-icon"></i>
@@ -98,6 +104,10 @@ export const mobileBackgroundView = `<div id="mobile-background-view">
 <div id="mobile-linear-color-section" style="display: flex; width: 100svw; align-items: center; height: 90px; gap: 5px; justify-content: center; overflow-x: scroll; display: none;">
   <mobile-pallete-component id="mobile-bg-pallete"></mobile-pallete-component>
 </div>
+
+
+<div id="mobile-picker-color-section" style="position: absolute; bottom: 0; left: 0; background-color: #fff; display: flex; width: 100svw; align-items: center; height: 160px; gap: 5px; justify-content: center; overflow-x: scroll; display: none;">
+ </div>
 
 <div id="mobile-none-color-section" style="display: flex; gap: 5px; justify-content: flex-start; padding-right: 30px; overflow-x: scroll; display: none;">
   <h1>None</h1> </div>
