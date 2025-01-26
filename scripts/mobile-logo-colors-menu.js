@@ -1,6 +1,7 @@
 import { applyColorActionMobile } from "./color_events.js";
 import { applyLinearGradient } from "./apply_linear_grad.js";
 import { convertRGBtoHex } from "./color_converter.js";
+import iro from "@jaames/iro";
 
 export function mobileLogoColorsMenu(canvas) {
   if (!canvas) return;
@@ -9,11 +10,17 @@ export function mobileLogoColorsMenu(canvas) {
     "mobile-logo-color-categories",
   );
   const solidCategory = document.querySelector("#mobile-logo-solid-category");
+  const pickerCategory = document.querySelector(
+    "#mobile-logo-color-picker-category",
+  );
   const linearCategory = document.querySelector("#mobile-logo-linear-category");
   const noneCategory = document.querySelector("#mobile-logo-none-category");
 
   const solidSection = document.getElementById(
     "mobile-logo-solid-color-section",
+  );
+  const pickerSection = document.getElementById(
+    "mobile-logo-picker-color-section",
   );
   const linearSection = document.getElementById(
     "mobile-logo-linear-color-section",
@@ -61,6 +68,15 @@ export function mobileLogoColorsMenu(canvas) {
     // applyColorActionMobile(item, canvas, activeObject);
   });
 
+  // Color picker event listeners
+  pickerCategory?.addEventListener("click", () => {
+    colorCategories.style.display = "none";
+    pickerSection.style.display = "flex";
+    solidSection.style.display = "none";
+    linearSection.style.display = "none";
+    noneSection.style.display = "none";
+  });
+
   // Linear event listeners
   linearCategory?.addEventListener("click", () => {
     colorCategories.style.display = "none";
@@ -96,5 +112,44 @@ export function mobileLogoColorsMenu(canvas) {
   noneCategory?.addEventListener("click", () => {
     canvas.setBackgroundColor("#fff");
     canvas.renderAll();
+  });
+
+  const colorPicker = new iro.ColorPicker("#mobile-logo-picker-color-section", {
+    width: 130,
+    layoutDirection: "horizontal",
+    color: "#ffffff",
+    layout: [
+      {
+        component: iro.ui.Box,
+      },
+      {
+        component: iro.ui.Slider,
+        options: {
+          sliderType: "hue",
+        },
+      },
+      {
+        component: iro.ui.Slider,
+        options: {
+          sliderType: "alpha",
+        },
+      },
+    ],
+  });
+
+  colorPicker.on("color:change", function (color) {
+    const activeObject = canvas.getActiveObject();
+    if (!activeObject) return;
+
+    const hexColor = color.hexString;
+
+    if (activeObject._objects) {
+      activeObject._objects.forEach((i) => i.set("fill", hexColor));
+    } else {
+      activeObject.set("fill", hexColor);
+    }
+
+    canvas.renderAll();
+    canvas.save();
   });
 }
