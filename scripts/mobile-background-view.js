@@ -95,7 +95,7 @@ export const mobileBackgroundView = `<div id="mobile-background-view">
   </div>
 </div>
 
-<div id="mobile-linear-color-section" style="display: flex; gap: 5px; justify-content: center;overflow-x: scroll; display: none;">
+<div id="mobile-linear-color-section" style="display: flex; width: 100svw; align-items: center; height: 90px; gap: 5px; justify-content: center; overflow-x: scroll; display: none;">
   <mobile-pallete-component id="mobile-bg-pallete"></mobile-pallete-component>
 </div>
 
