@@ -3,6 +3,7 @@ import { mobileLogoColorsMenu } from "./mobile-logo-colors-menu.js";
 import { mobileLogoShadowMenu } from "./mobile-logo-shadow-menu.js";
 import createSubmenu from "./mobile-sub-menu.js";
 import { mobileLogoScaleMenu } from "./mobile-logo-scale-menu.js";
+import iro from "@jaames/iro";
 
 export async function mobileTextMenu(canvas) {
   if (!canvas) return;
@@ -156,6 +157,12 @@ export async function mobileTextMenu(canvas) {
         <p class="mobile-category-text">Solid</p>
     </div>
 
+    <!-- Color Picker Category -->
+    <div id="mobile-logo-color-picker-category" class="mobile-category">
+        <i class="fas fa-palette mobile-category-icon"></i>
+        <p class="mobile-category-text">C.Picker</p>
+    </div>
+
     <!-- Linear Category -->
     <div id="mobile-logo-linear-category" class="mobile-category">
         <i class="fas fa-arrows-alt-h mobile-category-icon"></i>
@@ -163,7 +170,7 @@ export async function mobileTextMenu(canvas) {
     </div>
 
     <!-- None Category -->
-    <div id="mobile-logo-none-category" class="mobile-category">
+    <div id="mobile-logo-none-category" class="mobile-category" style="display: none;">
         <i class="fas fa-ban mobile-category-icon" ></i>
         <p class="mobile-category-text">None</p>
     </div>
@@ -249,6 +256,9 @@ export async function mobileTextMenu(canvas) {
   <mobile-pallete-component id="mobile-bg-pallete"></mobile-pallete-component>
 </div>
 
+<div id="mobile-logo-picker-color-section" style="position: absolute; bottom: 0; left: 0; background-color: #fff; display: flex; width: 100svw; align-items: center; height: 160px; gap: 5px; justify-content: center; overflow-x: scroll; display: none;">
+ </div>
+
 <div id="mobile-logo-none-color-section" style="display: flex; gap: 5px; justify-content: flex-start; padding-right: 30px; overflow-x: scroll; display: none;">
   <h1>None</h1> </div>
 </div>`,
@@ -281,7 +291,6 @@ export async function mobileTextMenu(canvas) {
     </div>`,
   );
 
-  mobileLogoColorsMenu(canvas);
   mobileLogoScaleMenu(canvas);
   mobileLogoColorsMenu(canvas);
   mobileLogoShadowMenu(canvas);

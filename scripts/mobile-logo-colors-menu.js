@@ -137,7 +137,7 @@ export function mobileLogoColorsMenu(canvas) {
     ],
   });
 
-  colorPicker.on("color:change", function (color) {
+  colorPicker.on("color:change", (color) => {
     const activeObject = canvas.getActiveObject();
     if (!activeObject) return;
 
