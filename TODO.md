@@ -1,14 +1,8 @@
 # Current TODOS
 
-- [x] Adjust font size for consistency
-- [x] Modify font weight for better readability
-- [x] Implement text rotation feature
-- [x] Add text shadow effect
-- [x] Correct range string events handling
-- [ ] Integrate color picker for all color fields
-- [x] Implement Undo/Redo attachments for the mobile view
-- [x] Enable saving for event attachments
 - [ ] Fix mobile view alignments
-- [x] Fix the Add menu 
-- [ ] Create a modal for adding icons
 - [ ] Fix Desktop Curve alignments
+- [ ] Thumbnail Property in save API, icon
+- [x] Layer Colors in save API, layer_colors
+- [ ] Check fabric.js Gradiants to CSS for save API
+- [ ] layer colors for mobile view
