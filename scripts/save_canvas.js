@@ -1,4 +1,5 @@
 import axios from "axios";
+import { fabric } from "fabric";
 import { toastNotification } from "./toast_notification";
 import { rgbToHex } from "./color_converter";
 import { querySelect } from "./selectors";
@@ -35,7 +36,7 @@ export async function saveCanvas(
   logoNameElement,
   sloganNameElement,
   alignId,
-  isPackage = false
+  isPackage = false,
 ) {
   let externalLayers = canvas._objects.filter((obj) => {
     return obj.id && obj.id.includes("external_layer_");
@@ -69,32 +70,74 @@ export async function saveCanvas(
   const bgColor = canvas.get("backgroundColor");
   canvas.setBackgroundColor(null, canvas.renderAll.bind(canvas));
 
-  const removedTextLayers = [];
-  const textlessCanvas = (() => {
-    canvas.getObjects().filter((layer) => {
-      if (layer.type === "text") {
-        removedTextLayers.push(layer);
-        canvas.remove(layer);
-        return false;
-      }
-      return true;
-    });
-    return canvas.toSVG();
-  })();
+  function centerSVGElements(svgElement) {
+    if (!(svgElement instanceof SVGElement)) {
+      console.error("The provided parameter is not a valid SVG element.");
+      return null;
+    }
 
-  // add the text layers back to the canvas
-  for (const layer of removedTextLayers) {
-    const left = layer.left;
-    const top = layer.top;
-    canvas.add(layer);
-    layer.set({
-      left: left,
-      top: top,
-    });
-    canvas.renderAll();
+    const svgWidth = parseFloat(svgElement.getAttribute("width"));
+    const svgHeight = parseFloat(svgElement.getAttribute("height"));
+    const centerX = svgWidth / 2;
+    const centerY = svgHeight / 2;
+    const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    while (svgElement.firstChild) {
+      group.appendChild(svgElement.firstChild);
+    }
+    svgElement.appendChild(group);
+    group.setAttribute("transform", `translate(${centerX}, ${centerY})`);
+    return new XMLSerializer().serializeToString(svgElement);
   }
 
-  // const currentCanvasSVG = canvas.toSVG();
+  let oldTexts = [];
+  const objects = canvas.getObjects();
+  const textLessCanvas = objects.filter((obj) => !obj.text);
+  const logoGroup = new fabric.Group(textLessCanvas);
+
+  const oldScaleValueY = logoGroup.get("scaleY");
+  const oldScaleValueX = logoGroup.get("scaleX");
+
+  const oldLeft = logoGroup.get("left");
+  const oldTop = logoGroup.get("top");
+  let svgElementIcon = null;
+
+  const getSvgIcon = () => {
+    objects.forEach((obj) => {
+      if (obj.text) {
+        oldTexts.push(obj);
+        canvas.remove(obj);
+      }
+    });
+    const newScaleValue = 3.2;
+    logoGroup.scale(newScaleValue);
+    canvas.viewportCenterObject(logoGroup);
+    canvas.renderAll();
+
+    const svgData = canvas.toSVG();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(svgData, "image/svg+xml");
+    const svgElement = doc.querySelector("svg");
+
+    svgElementIcon = centerSVGElements(svgElement);
+    console.log(svgElementIcon);
+    return svgElementIcon;
+  };
+
+  getSvgIcon();
+
+  logoGroup.set("scaleY", oldScaleValueY);
+  logoGroup.set("scaleX", oldScaleValueX);
+  logoGroup.set("left", oldLeft);
+  logoGroup.set("top", oldTop);
+  logoGroup.ungroupOnCanvas();
+
+  oldTexts.forEach((obj) => {
+    canvas.add(obj);
+    obj.setCoords();
+  });
+  canvas.renderAll();
+
+  document.querySelector("#top_bottom_1").click();
 
   const addExternalLayersBackToCanvas = (externalLayers) => {
     return new Promise((resolve) => {
@@ -109,7 +152,10 @@ export async function saveCanvas(
 
   const svgData = await addExternalLayersBackToCanvas(externalLayers);
 
-  // if (currentCanvasSVG) {
+  // temp
+  // console.log("DONE");
+  // return;
+
   const getDropShadowValue = (element) => {
     if (!element) return null;
     const { blur, offsetX, offsetY } = element;
@@ -121,7 +167,6 @@ export async function saveCanvas(
         return "0";
       }
     }
-
     return resultString;
   };
 
@@ -130,21 +175,19 @@ export async function saveCanvas(
   const apiCheck = querySelect("#api_check").value;
 
   const layerColors = Array.from(
-    querySelect("#logo_colors_pallete").children
+    querySelect("#logo_colors_pallete").children,
   ).map((child) => rgbToHex(child.style.backgroundColor));
 
-  // gradiant
   const postData = {
     buyer_logo_id: querySelect("#buyer_logo_id")?.value, // from response hidden input field
     buyer_id: querySelect("#buyer_Id")?.value, // hidden input field
     logo_id: logoId, // svg data id
     brand_name: querySelect("#logoMainField").value,
     slogan: querySelect("#sloganNameField").value,
-    svg_data: svgData, // svgData
-    // editor_svg_data: currentCanvasSVG,
+    svg_data: svgData && svgData,
     logo_position: alignId,
-    icon: textlessCanvas,
-    layer_colors: layerColors,
+    icon: svgElementIcon,
+    layer_colors: layerColors.join(","),
     logo_backgroundcolor: bgColor === "#efefef" ? "transparent" : bgColor,
 
     brandName_color: !brandColor.includes("#")
@@ -181,14 +224,15 @@ export async function saveCanvas(
     api_check: apiCheck,
   };
 
-  console.log({ svg: postData.svg_data, icon: postData.icon });
+  // console.log(postData.icon);
+  // return;
 
   try {
     if (canvas.get("backgroundColor") !== null)
       return toastNotification("backgroundColor issue while saving api");
     const response = await axios.post(
       `https://www.mybrande.com/api/buyer/logo/store`,
-      postData
+      postData,
     );
     if (response?.status === 200) {
       const { buyer_logo_id } = response.data;
