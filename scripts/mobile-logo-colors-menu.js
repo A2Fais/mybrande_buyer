@@ -83,9 +83,10 @@ export function mobileLogoColorsMenu(canvas) {
     layerColor.addEventListener("click", (event) => {
       const activeObject = canvas.getActiveObject();
       if (!activeObject) return;
-      const bgColor = event.target.style.backgroundColor;
 
+      const bgColor = event.target.style.backgroundColor;
       const match = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(bgColor);
+      console.log(match, bgColor);
       if (!match) return;
 
       const [red, green, blue] = match.slice(1, 4).map(Number);
@@ -106,10 +107,10 @@ export function mobileLogoColorsMenu(canvas) {
     if (obj.text) return;
     const color = obj.fill;
     const layerColor = createLayerColor(color);
-    mobileLayerSection.append(layerColor);
+    mobileLayerSection?.append(layerColor);
   });
 
-  mobileLayerColors.addEventListener("click", () => {
+  mobileLayerColors?.addEventListener("click", () => {
     mobileLayerSection.style.display = "flex";
     colorCategories.style.display = "none";
     pickerSection.style.display = "none";

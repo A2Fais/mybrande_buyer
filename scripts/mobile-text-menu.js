@@ -162,6 +162,12 @@ export async function mobileTextMenu(canvas) {
         <i class="fas fa-palette mobile-category-icon"></i>
         <p class="mobile-category-text">C.Picker</p>
     </div>
+    
+    <div id="mobile-logo-layer-colors" class="mobile-category">
+        <i class="fas fa-layer-group mobile-category-icon"></i>
+        <p class="mobile-category-text">Layer Colors</p>
+    </div>
+
 
     <!-- Linear Category -->
     <div id="mobile-logo-linear-category" class="mobile-category">
@@ -250,6 +256,9 @@ export async function mobileTextMenu(canvas) {
     <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #ecddfb;"></span>
     <span id="solid_color-bg-mobile" class="color-picker solid_color_section" style="background-color: #f8f0ff;"></span>
   </div>
+</div>
+
+<div id="mobile-logo-layer-section" style="display: flex; width: 100svw; align-items: center; height: 70px; gap: 15px; justify-content: center; overflow-x: scroll; display: none; margin-inline: 10px">
 </div>
 
 <div id="mobile-logo-linear-color-section" style="display: flex; width: 100svw; align-items: center; height: 90px; gap: 5px; justify-content: center; overflow-x: scroll; display: none;">
