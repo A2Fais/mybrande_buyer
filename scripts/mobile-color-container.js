@@ -8,6 +8,7 @@ const paletteMarkup = /*html*/ `
           <!-- <div style="text-align: center; font-size: 12px; color: var(--gray-light);">Linear Gradient Panel</div> -->
       </div>
 
+
       <div id="gradient-panel" style="display: flex; justify-content: center; gap: 20px; width: 100%;">
         <div style="display: flex; flex-direction: column; align-items: center;">
           <input type="color" value="#ffffff" id="grad-1" style="width: 40px; height: 30px; border: none; outline: none; background: #ffffff;">

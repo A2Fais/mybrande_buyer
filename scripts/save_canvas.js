@@ -99,8 +99,8 @@ export async function saveCanvas(
 
   const oldLeft = logoGroup.get("left");
   const oldTop = logoGroup.get("top");
-  let svgElementIcon = null;
 
+  let svgElementIcon = null;
   const getSvgIcon = () => {
     objects.forEach((obj) => {
       if (obj.text) {
@@ -122,7 +122,6 @@ export async function saveCanvas(
     console.log(svgElementIcon);
     return svgElementIcon;
   };
-
   getSvgIcon();
 
   logoGroup.set("scaleY", oldScaleValueY);

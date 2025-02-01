@@ -25,6 +25,10 @@ export function mobileLogoColorsMenu(canvas) {
   const linearSection = document.getElementById(
     "mobile-logo-linear-color-section",
   );
+  const mobileLayerColors = document.getElementById("mobile-logo-layer-colors");
+  const mobileLayerSection = document.getElementById(
+    "mobile-logo-layer-section",
+  );
   const noneSection = document.getElementById("mobile-logo-none-color-section");
 
   // Categories event listeners
@@ -66,6 +70,52 @@ export function mobileLogoColorsMenu(canvas) {
       canvas.save();
     });
     // applyColorActionMobile(item, canvas, activeObject);
+  });
+
+  function createLayerColor(color) {
+    const layerColor = document.createElement("div");
+    layerColor.style.backgroundColor = color;
+    layerColor.classList.add("mobile-layer-color-picker");
+    layerColor.style.width = "32px";
+    layerColor.style.height = "32px";
+    layerColor.style.borderColor = color;
+    layerColor.style.borderRadius = "5px";
+    layerColor.addEventListener("click", (event) => {
+      const activeObject = canvas.getActiveObject();
+      if (!activeObject) return;
+      const bgColor = event.target.style.backgroundColor;
+
+      const match = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(bgColor);
+      if (!match) return;
+
+      const [red, green, blue] = match.slice(1, 4).map(Number);
+      const hexColor = convertRGBtoHex(red, green, blue);
+
+      if (activeObject._objects) {
+        activeObject._objects.forEach((i) => i.set("fill", hexColor));
+      } else {
+        activeObject.set("fill", hexColor);
+      }
+      canvas.renderAll();
+      canvas.save();
+    });
+    return layerColor;
+  }
+
+  canvas.getObjects().forEach((obj) => {
+    if (obj.text) return;
+    const color = obj.fill;
+    const layerColor = createLayerColor(color);
+    mobileLayerSection.append(layerColor);
+  });
+
+  mobileLayerColors.addEventListener("click", () => {
+    mobileLayerSection.style.display = "flex";
+    colorCategories.style.display = "none";
+    pickerSection.style.display = "none";
+    solidSection.style.display = "none";
+    linearSection.style.display = "none";
+    noneSection.style.display = "none";
   });
 
   // Color picker event listeners
