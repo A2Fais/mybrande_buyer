@@ -92,6 +92,10 @@ export async function saveCanvas(
   let oldTexts = [];
   const objects = canvas.getObjects();
   const textLessCanvas = objects.filter((obj) => !obj.text);
+
+  const oldCanvasWidth = canvas.get("width");
+  const oldCanvasHeight = canvas.get("height");
+
   const logoGroup = new fabric.Group(textLessCanvas);
 
   const oldScaleValueY = logoGroup.get("scaleY");
@@ -108,8 +112,12 @@ export async function saveCanvas(
         canvas.remove(obj);
       }
     });
+    canvas.set("width", 300);
+    canvas.set("height", 300);
+    canvas.renderAll();
     const newScaleValue = 3.2;
-    logoGroup.scale(newScaleValue);
+    logoGroup.set("scaleX", newScaleValue);
+    logoGroup.set("scaleY", newScaleValue);
     canvas.viewportCenterObject(logoGroup);
     canvas.renderAll();
 
@@ -123,6 +131,10 @@ export async function saveCanvas(
     return svgElementIcon;
   };
   getSvgIcon();
+
+  canvas.set("width", oldCanvasWidth);
+  canvas.set("height", oldCanvasHeight);
+  canvas.renderAll();
 
   logoGroup.set("scaleY", oldScaleValueY);
   logoGroup.set("scaleX", oldScaleValueX);
@@ -150,10 +162,6 @@ export async function saveCanvas(
   };
 
   const svgData = await addExternalLayersBackToCanvas(externalLayers);
-
-  // temp
-  // console.log("DONE");
-  // return;
 
   const getDropShadowValue = (element) => {
     if (!element) return null;
@@ -219,12 +227,8 @@ export async function saveCanvas(
     externalLayerElements: JSON.stringify(externalLayerElements),
     externalTextElements: JSON.stringify(externalTextElements),
     images: JSON.stringify(externalImages),
-    // thumbnail: localStorage?.getItem("thumbnail"),
     api_check: apiCheck,
   };
-
-  // console.log(postData.icon);
-  // return;
 
   try {
     if (canvas.get("backgroundColor") !== null)
