@@ -521,7 +521,7 @@ export class EditorScreen {
     querySelect(".font-weight-selector").addEventListener(
       "change",
       async function () {
-        const weight = this.getAttribute("data-value");
+        let weight = this.getAttribute("data-value");
         const obj = self.canvas.getActiveObject();
         if (!obj) return false;
 
@@ -2831,159 +2831,158 @@ export class EditorScreen {
     //     console.error("Error fetching CANVAS:", error);
     //   });
 
+    fetchCanvasData(this.canvas).then((data) => {
+      this.logoFile = data.svgData.AllData.svg_data;
+      const logoPosition = data.svgData.AllData.logo_position;
+      let parser = new DOMParser();
+      let svgDoc = parser.parseFromString(this.logoFile, "image/svg+xml");
 
-      fetchCanvasData(this.canvas).then((data) => {
-        this.logoFile = data.svgData.AllData.svg_data;
-        const logoPosition = data.svgData.AllData.logo_position;
-        let parser = new DOMParser();
-        let svgDoc = parser.parseFromString(this.logoFile, "image/svg+xml");
+      let imageTag = svgDoc.querySelector("image");
+      if (imageTag) {
+        imageTag.remove();
+      }
+      let serializer = new XMLSerializer();
+      let updatedLogo = serializer.serializeToString(svgDoc);
+      localStorage.setItem("logo-file", updatedLogo);
 
-        let imageTag = svgDoc.querySelector("image");
-        if (imageTag) {
-          imageTag.remove();
-        }
-        let serializer = new XMLSerializer();
-        let updatedLogo = serializer.serializeToString(svgDoc);
-        localStorage.setItem("logo-file", updatedLogo);
+      renderCanvas({
+        SVG: updatedLogo,
+        fabric: fabric,
+        canvas: this.canvas,
+        logoNameElement,
+        sloganNameElement,
+        layers: this.layers,
+        initialRotation: this.initialRotation,
+        isFlipY: this.isFlipY,
+        isFlipX: this.isFlipX,
+        colorPicker,
+        refreshLayerNames,
+      });
 
-        renderCanvas({
-          SVG: updatedLogo,
-          fabric: fabric,
-          canvas: this.canvas,
-          logoNameElement,
-          sloganNameElement,
-          layers: this.layers,
-          initialRotation: this.initialRotation,
-          isFlipY: this.isFlipY,
-          isFlipX: this.isFlipX,
-          colorPicker,
-          refreshLayerNames,
+      updateColorPickers(this.canvas, colorPicker);
+      const brandCase = data?.brandCase;
+      const sloganCase = data?.sloganCase;
+
+      if (!sessionStorage.getItem("reloaded")) {
+        sessionStorage.setItem("reloaded", "true");
+        location.reload();
+      }
+      if (data?.bg?.includes(",")) {
+        const colorGrad = data.bg.split(",");
+        let color = new fabric.Gradient({
+          type: "linear",
+          coords: {
+            x1: 0,
+            y1: 0,
+            x2: this.canvas.width,
+            y2: this.canvas.height,
+          },
+          colorStops: [
+            { offset: 0, color: colorGrad[0] },
+            { offset: 1, color: colorGrad[1] },
+          ],
         });
+        this.canvas.setBackgroundColor(color);
+      } else {
+        data.bg === "transparent"
+          ? this.canvas.setBackgroundColor("#ffffff")
+          : this.canvas.setBackgroundColor(data.bg);
+      }
 
-        updateColorPickers(this.canvas, colorPicker);
-        const brandCase = data?.brandCase;
-        const sloganCase = data?.sloganCase;
+      this.canvas.renderAll();
+      this.alignId = +data.logoPosition;
+      updatePreview();
 
-        if (!sessionStorage.getItem("reloaded")) {
-          sessionStorage.setItem("reloaded", "true");
-          location.reload();
-        }
-        if (data?.bg?.includes(",")) {
-          const colorGrad = data.bg.split(",");
-          let color = new fabric.Gradient({
-            type: "linear",
-            coords: {
-              x1: 0,
-              y1: 0,
-              x2: this.canvas.width,
-              y2: this.canvas.height,
-            },
-            colorStops: [
-              { offset: 0, color: colorGrad[0] },
-              { offset: 1, color: colorGrad[1] },
-            ],
-          });
-          this.canvas.setBackgroundColor(color);
-        } else {
-          data.bg === "transparent"
-            ? this.canvas.setBackgroundColor("#ffffff")
-            : this.canvas.setBackgroundColor(data.bg);
-        }
+      setTimeout(async () => {
+        this.canvasHistory = new SaveHistory(this.canvas);
+        querySelect("#loader_main").style.display = "none";
+        const alignItem = document.querySelector(
+          `.svg__icon[data-align-id="${logoPosition}"]`,
+        );
 
-        this.canvas.renderAll();
-        this.alignId = +data.logoPosition;
-        updatePreview();
+        alignItem.click();
 
-        setTimeout(async () => {
-          this.canvasHistory = new SaveHistory(this.canvas);
-          querySelect("#loader_main").style.display = "none";
-          const alignItem = document.querySelector(
-            `.svg__icon[data-align-id="${logoPosition}"]`,
+        logoNameElement.set("fontSize", +data.brandSize);
+        sloganNameElement.set("fontSize", +data.sloganSize);
+
+        if (data.brandCurveDiameter)
+          addCurveText(
+            logoNameElement,
+            data.brandCurveDiameter,
+            data.brand_curve_percentage,
           );
 
-          alignItem.click();
+        if (data.sloganCurveDiameter)
+          addCurveText(
+            sloganNameElement,
+            data.sloganCurveDiameter,
+            data.slogan_curve_percentage,
+          );
 
-          logoNameElement.set("fontSize", +data.brandSize);
-          sloganNameElement.set("fontSize", +data.sloganSize);
+        const brandBlur = data?.brandNameDropShadow?.split(",")[0];
+        const brandOffsetX = data?.brandNameDropShadow?.split(",")[1];
+        const brandOffsetY = data?.brandNameDropShadow?.split(",")[2];
 
-          if (data.brandCurveDiameter)
-            addCurveText(
-              logoNameElement,
-              data.brandCurveDiameter,
-              data.brand_curve_percentage,
-            );
+        const sloganBlur = data?.sloganDropShadow?.split(",")[0];
+        const sloganOffsetX = data?.sloganDropShadow?.split(",")[1];
+        const sloganOffsetY = data?.sloganDropShadow?.split(",")[2];
 
-          if (data.sloganCurveDiameter)
-            addCurveText(
-              sloganNameElement,
-              data.sloganCurveDiameter,
-              data.slogan_curve_percentage,
-            );
+        logoNameElement.set("shadow", {
+          offsetX: +brandOffsetX,
+          offsetY: +brandOffsetY,
+          blur: +brandBlur,
+        });
 
-          const brandBlur = data?.brandNameDropShadow?.split(",")[0];
-          const brandOffsetX = data?.brandNameDropShadow?.split(",")[1];
-          const brandOffsetY = data?.brandNameDropShadow?.split(",")[2];
+        sloganNameElement.set("shadow", {
+          offsetX: +sloganOffsetX,
+          offsetY: +sloganOffsetY,
+          blur: +sloganBlur,
+        });
 
-          const sloganBlur = data?.sloganDropShadow?.split(",")[0];
-          const sloganOffsetX = data?.sloganDropShadow?.split(",")[1];
-          const sloganOffsetY = data?.sloganDropShadow?.split(",")[2];
+        logoNameElement.set("charSpacing", data.brandCharSpacing);
+        sloganNameElement.set("charSpacing", data.sloganCharSpacing);
 
-          logoNameElement.set("shadow", {
-            offsetX: +brandOffsetX,
-            offsetY: +brandOffsetY,
-            blur: +brandBlur,
-          });
+        if (brandCase === "Uppercase") {
+          logoNameElement.text = logoNameElement.text.toUpperCase();
+        } else if (brandCase === "Lowercase") {
+          logoNameElement.text = logoNameElement.text.toLowerCase();
+        } else if (brandCase === "Title Case") {
+          logoNameElement.text = toTitleCase(logoNameElement.text);
+        } else if (brandCase === "Sentence Case") {
+          logoNameElement.text = toSentenceCase(logoNameElement.text);
+        }
 
-          sloganNameElement.set("shadow", {
-            offsetX: +sloganOffsetX,
-            offsetY: +sloganOffsetY,
-            blur: +sloganBlur,
-          });
+        if (sloganCase === "Uppercase") {
+          sloganNameElement.text = sloganNameElement.text.toUpperCase();
+        } else if (sloganCase === "Lowercase") {
+          sloganNameElement.text = sloganNameElement.text.toLowerCase();
+        } else if (sloganCase === "Title Case") {
+          sloganNameElement.text = toTitleCase(sloganNameElement.text);
+        } else if (sloganCase === "Sentence Case") {
+          sloganNameElement.text = toSentenceCase(sloganNameElement.text);
+        }
 
-          logoNameElement.set("charSpacing", data.brandCharSpacing);
-          sloganNameElement.set("charSpacing", data.sloganCharSpacing);
+        if (data.brandStyle === "underline") {
+          logoNameElement.set("underline", true);
+        } else {
+          logoNameElement.set("underline", false);
+          logoNameElement.set("fontStyle", data.brandStyle);
+        }
 
-          if (brandCase === "Uppercase") {
-            logoNameElement.text = logoNameElement.text.toUpperCase();
-          } else if (brandCase === "Lowercase") {
-            logoNameElement.text = logoNameElement.text.toLowerCase();
-          } else if (brandCase === "Title Case") {
-            logoNameElement.text = toTitleCase(logoNameElement.text);
-          } else if (brandCase === "Sentence Case") {
-            logoNameElement.text = toSentenceCase(logoNameElement.text);
-          }
+        if (data.sloganStyle === "underline") {
+          sloganNameElement.set("underline", true);
+        } else {
+          sloganNameElement.set("underline", false);
+          sloganNameElement.set("fontStyle", data.sloganStyle);
+        }
 
-          if (sloganCase === "Uppercase") {
-            sloganNameElement.text = sloganNameElement.text.toUpperCase();
-          } else if (sloganCase === "Lowercase") {
-            sloganNameElement.text = sloganNameElement.text.toLowerCase();
-          } else if (sloganCase === "Title Case") {
-            sloganNameElement.text = toTitleCase(sloganNameElement.text);
-          } else if (sloganCase === "Sentence Case") {
-            sloganNameElement.text = toSentenceCase(sloganNameElement.text);
-          }
+        logoNameElement.centerH();
+        sloganNameElement.centerH();
 
-          if (data.brandStyle === "underline") {
-            logoNameElement.set("underline", true);
-          } else {
-            logoNameElement.set("underline", false);
-            logoNameElement.set("fontStyle", data.brandStyle);
-          }
-
-          if (data.sloganStyle === "underline") {
-            sloganNameElement.set("underline", true);
-          } else {
-            sloganNameElement.set("underline", false);
-            sloganNameElement.set("fontStyle", data.sloganStyle);
-          }
-
-          logoNameElement.centerH();
-          sloganNameElement.centerH();
-
-          this.canvas.save();
-          this.canvas.renderAll();
-        }, 1000);
-      });
+        this.canvas.save();
+        this.canvas.renderAll();
+      }, 1000);
+    });
 
     querySelect("#category_type_title").addEventListener("click", (e) => {
       querySelect("#clip-icons").innerHTML = null;
