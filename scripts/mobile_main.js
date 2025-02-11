@@ -30,7 +30,7 @@ function navViewOnClick() {
     category = "logo";
   }
   history.pushState({ category }, null, `#${category}`);
-  routeHandler(category);
+  routeHandler({ category });
 }
 
 canvas.on("selection:created", navViewOnClick);
@@ -123,7 +123,7 @@ navItems.forEach((item) => {
   });
 });
 
-function routeHandler(category = history?.state?.category) {
+function routeHandler({ category = history?.state?.category } = {}) {
   if (category && mainCategoryData[category]) {
     categoryContent.innerHTML = `
     <div id="content-container" style="z-index: 10; height: 70px; background: #ffffff; position: absolute; bottom: 0; display: flex;">
@@ -139,6 +139,6 @@ function routeHandler(category = history?.state?.category) {
   }
 }
 
-routeHandler(null);
+routeHandler({ category: null });
 
 window.addEventListener("popstate", routeHandler);
