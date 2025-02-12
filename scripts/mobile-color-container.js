@@ -1,5 +1,3 @@
-import { querySelect } from "./selectors.js";
-
 const paletteMarkup = /*html*/ `
 <div style="display: flex; flex-direction: column; height: 100%; align-items: center; gap: 10px;">
     <div id="color-mode" class="color-mode-selector" style="display: flex; flex-direction: row-reverse; height: 100%; justify-content: space-around; gap: 30px; align-items: center;">

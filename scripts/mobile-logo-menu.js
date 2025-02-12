@@ -1,4 +1,3 @@
-import { canvas } from "./main.js";
 import { mobileLogoColorsMenu } from "./mobile-logo-colors-menu.js";
 import { mobileLogoShadowMenu } from "./mobile-logo-shadow-menu.js";
 import { mobileLogoScaleMenu } from "./mobile-logo-scale-menu.js";
@@ -292,11 +291,15 @@ export function mobileLogoMenu(canvas) {
   });
 
   flipXBtn.addEventListener("click", () => {
+    const activeObject = canvas.getActiveObject();  
+    if (!activeObject) return;
     activeObject.set({ flipX: !activeObject.flipX });
     canvas.renderAll();
   });
 
   flipYBtn.addEventListener("click", () => {
+    const activeObject = canvas.getActiveObject();  
+    if (!activeObject) return;
     activeObject.set({ flipY: !activeObject.flipY });
     canvas.renderAll();
   });

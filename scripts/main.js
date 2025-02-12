@@ -838,7 +838,6 @@ export class EditorScreen {
         ? rgbToHex(element.get("fill").colorStops[0].color)
         : element.get("fill");
       colorPicker.color.set(color);
-      // captureCanvasState();
     };
 
     const updatePickerHandler = (element) => {
@@ -1256,7 +1255,6 @@ export class EditorScreen {
       .querySelector("#l_spacing_value")
       .addEventListener("change", function (e) {
         let value = e.target.value;
-        cl;
         querySelect("#letter-spacing-slider").value = Math.round(value * 10);
         querySelect("#letter-spacing-slider").dispatchEvent(new Event("input"));
       });

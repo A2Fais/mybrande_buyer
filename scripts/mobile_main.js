@@ -13,7 +13,7 @@ const categoryContent = document.querySelector("#mobile-category-content");
 
 let category = "add";
 
-function navViewOnClick() {
+function navView() {
   const activeObject = canvas.getActiveObject();
   if (!activeObject) return;
 
@@ -33,8 +33,8 @@ function navViewOnClick() {
   routeHandler({ category });
 }
 
-canvas.on("selection:created", navViewOnClick);
-canvas.on("selection:updated", navViewOnClick);
+canvas.on("selection:created", navView);
+canvas.on("selection:updated", navView);
 
 const mainCategoryData = {
   add: mobileAddView,

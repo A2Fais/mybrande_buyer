@@ -142,11 +142,12 @@ export function mobileLogoColorsMenu(canvas) {
     if (!activeObject) return;
 
     const hexColor = color.hexString;
+    const rgbaColor = color.rgbaString
 
     if (activeObject._objects) {
-      activeObject._objects.forEach((i) => i.set("fill", hexColor));
+      activeObject._objects.forEach((i) => i.set("fill", rgbaColor));
     } else {
-      activeObject.set("fill", hexColor);
+      activeObject.set("fill", rgbaColor);
     }
 
     canvas.renderAll();

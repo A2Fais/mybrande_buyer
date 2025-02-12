@@ -1,9 +1,8 @@
 import { fetchedFonts } from "./main.js";
 import { mobileLogoColorsMenu } from "./mobile-logo-colors-menu.js";
 import { mobileLogoShadowMenu } from "./mobile-logo-shadow-menu.js";
-import createSubmenu from "./mobile-sub-menu.js";
 import { mobileLogoScaleMenu } from "./mobile-logo-scale-menu.js";
-import iro from "@jaames/iro";
+import createSubmenu from "./mobile-sub-menu.js";
 
 export async function mobileTextMenu(canvas) {
   if (!canvas) return;
@@ -11,19 +10,25 @@ export async function mobileTextMenu(canvas) {
   const updateDisplay = () => {
     const activeObject = canvas.getActiveObject();
     if (!activeObject) return;
-    const fontSize = activeObject?.text ? activeObject?.get("fontSize") : 0;
 
+    const fontSize = activeObject?.text ? activeObject?.get("fontSize") : 0;
     const charSpacing = activeObject.get("charSpacing");
+
     const fontSizeValueElement = document.querySelector(
       "#mobile-font-size-value",
     );
+    const fontSizeSlider = document.querySelector("#mobile-font-size-slider")
     if (fontSizeValueElement) {
       fontSizeValueElement.innerText = `Font Size: ${fontSize} px`;
+      fontSizeSlider.value = fontSize;
     }
 
-    const spacingValueElement = document.querySelector("#mobile-spacing-value");
-    if (spacingValueElement) {
-      spacingValueElement.innerText = `Spacing: ${charSpacing} px`;
+    const spacingValue = document.querySelector("#mobile-spacing-value");
+    const spacingSlider = document.querySelector("#mobile-spacing-slider");
+    if (spacingValue) {
+      spacingValue.value = `Spacing: ${Math.round(charSpacing/10)}px`;
+      spacingSlider.value = Math.round(charSpacing);
+
     }
 
     const rotateValueElement = document.querySelector(
@@ -413,7 +418,7 @@ export async function mobileTextMenu(canvas) {
   });
 
   // BUTTON EVENTS
-  function triggerCurveSlider(value, obj) {
+  function triggerCurveSlider(value) {
     const slider = document.querySelector("#text-curve-range");
     slider.value = value;
     const event = new Event("input", { bubbles: true });
@@ -514,18 +519,21 @@ export async function mobileTextMenu(canvas) {
 
   mobileFontSizeBtn.addEventListener("click", () => {
     history.pushState({ category: "text/font-size" }, null, "#text/font-size");
+    canvas.discardActiveObject().renderAll();    
     menuMain.style.display = "none";
     fontSizeSubmenu.style.display = "block";
   });
 
   mobileTextRotateBtn.addEventListener("click", () => {
     history.pushState({ category: "text/rotate" }, null, "#text/rotate");
+    canvas.discardActiveObject().renderAll();    
     menuMain.style.display = "none";
     rotateSubmenu.style.display = "block";
   });
 
   mobileLetterCaseBtn.addEventListener("click", () => {
     history.pushState({ category: "text/letercase" }, null, "#text/lettercase");
+    canvas.discardActiveObject().renderAll();    
     menuMain.style.display = "none";
     letterCaseSubmenu.style.display = "block";
   });
@@ -553,12 +561,14 @@ export async function mobileTextMenu(canvas) {
 
   mobileFontCurveBtn.addEventListener("click", () => {
     history.pushState({ category: "text/fontcurve" }, null, "#text/fontcurve");
+    canvas.discardActiveObject().renderAll();    
     menuMain.style.display = "none";
     fontCurveSubmenu.style.display = "block";
   });
 
   mobileInputsbtn.addEventListener("click", () => {
     history.pushState({ category: "text/inputs" }, null, "#text/inputs");
+    canvas.discardActiveObject().renderAll();    
     menuMain.style.display = "none";
     textInputsSubmenu.style.display = "block";
   });
@@ -588,7 +598,7 @@ export async function mobileTextMenu(canvas) {
       const event = new Event("input");
       letterSpacingSlider.dispatchEvent(event);
       document.querySelector("#mobile-spacing-value").value =
-        `Spacing: ${value} px`;
+        `Spacing: ${Math.round(value/10)} px`;
     });
 
   document
