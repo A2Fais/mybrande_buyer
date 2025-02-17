@@ -3,12 +3,14 @@ export function mobileLogoRotateMenu(canvas) {
   if (!activeObject) return;
 
   const rotateSlider = document.querySelector("#mobile-rotate-slider");
-  const rotateValueElement = document.getElementById("mobile-rotate-value");
+  const rotateValue = document.querySelector("#mobile-rotate-value");
+  const rotateBar = document.querySelector("#rotate-bar");
 
-  rotateSlider?.addEventListener("input", (event) => {
-    const rotateValue = parseInt(event.target.value, 100);
-    activeObject.set("angle", rotateValue);
-    canvas.requestRenderAll();
-    rotateValueElement.innerText = `Rotate: ${rotateValue}°`;
+  rotateSlider.addEventListener("input", (e) => {
+    const value = parseInt(e.target.value, 10);
+    rotateBar.value = value;
+    const event = new Event("input", { bubbles: true });
+    rotateBar.dispatchEvent(event)
+    rotateValue.innerText = `Rotate: ${value}°`;
   });
 }

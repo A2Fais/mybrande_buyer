@@ -2004,8 +2004,7 @@ export class EditorScreen {
 
       return rangeValue;
     };
-
-    //#endregion Text Curve
+    
 
     querySelect("#font_size_title").addEventListener("change", (event) => {
       let text = event.target.value;
@@ -2088,15 +2087,15 @@ export class EditorScreen {
       this.canvas.requestRenderAll();
     });
 
-    querySelect("#copyElement").addEventListener("click", () => {
-      let active = this.canvas.getActiveObject(),
-        layerEl = null;
+    querySelect("#duplicate-element").addEventListener("click", () => {
+      let active = this.canvas.getActiveObject()
+      let layerElement = null;
       if (active.layerId)
-        layerEl = document.querySelector(
+        layerElement = document.querySelector(
           `.layer-container[data-id="${active.layerId}"]`,
         );
 
-      if (active.id.includes("external_layer_") && !active.text) {
+      if (active?.id.includes("external_layer_") && !active.text) {
         let cloned = active.toJSON([
           "itemId",
           "id",
@@ -2116,7 +2115,7 @@ export class EditorScreen {
             if (object.text) return true;
             object.duplicate = true;
             this.canvas.add(object);
-            layerEl = document.querySelector(
+            layerElement = document.querySelector(
               `.layer-container[data-id="${active._objects[i].layerId}"]`,
             );
 
@@ -2124,7 +2123,7 @@ export class EditorScreen {
             let idx = Array.from(this.layers.childNodes).filter(
               (i) => i.style.display !== "none",
             );
-            layerSection.create(object, idx.length, layerEl);
+            layerSection.create(object, idx.length, layerElement);
             refreshLayerNames();
           });
           this.canvas.centerObject(clonedGroup);
@@ -2139,7 +2138,7 @@ export class EditorScreen {
         active.clone((cloned) => {
           if (cloned.text) return true;
           // Add Layer
-          cloned.set("dublicate", true);
+          cloned.set("duplicate", true);
           this.canvas.add(cloned);
           cloned.top += 10;
           cloned.left += 10;
@@ -2148,7 +2147,7 @@ export class EditorScreen {
           let idx = Array.from(this.layers.childNodes).filter(
             (i) => i.style.display !== "none",
           );
-          layerSection.create(cloned, idx.length, layerEl);
+          layerSection.create(cloned, idx.length, layerElement);
           refreshLayerNames();
           this.canvas.save();
         });
@@ -2158,7 +2157,7 @@ export class EditorScreen {
 
     querySelect("#eyeElement").addEventListener("click", () => {
       const activeObj = this.canvas.getActiveObject();
-      let visibilty = Boolean(activeObj.get("visible"));
+      let visibilty = Boolean(activeObj?.get("visible"));
       visibilty = !visibilty;
       activeObj.set("visible", visibilty);
       this.canvas.requestRenderAll();
@@ -2341,7 +2340,7 @@ export class EditorScreen {
       if (activeObj) this.canvas.save();
     });
 
-    querySelect("#copyElement-uploads").addEventListener("click", () => {
+    querySelect("#duplicate-element-uploads").addEventListener("click", () => {
       this.canvas.getActiveObject().clone((cloned) => {
         this.canvas.add(cloned);
         this.canvas.centerObject(cloned);

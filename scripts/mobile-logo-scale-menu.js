@@ -1,38 +1,34 @@
-function convertToZeroToTwo(value, minOriginal, maxOriginal) {
-  let rangeOriginal = maxOriginal - minOriginal;
-  let newValue = ((value - minOriginal) / rangeOriginal) * 2;
-  const res = Math.min(newValue, 2);
-  return res.toFixed(3);
-}
-
 export function mobileLogoScaleMenu(canvas) {
   const activeObject = canvas.getActiveObject();
   if (!activeObject) return;
 
-  const scaleRange = document.getElementById("mobile-scale-slider");
-  const scaleValueElement = document.getElementById("mobile-scale-value");
+  const scaleRange = document.querySelector("#mobile-scale-slider");
+  const mobileScaleValue = document.querySelector("#mobile-scale-value");
+  const scaleRangeMain = document.querySelector("#scale-range")
 
   if (!scaleRange) return;
 
   let newMaxScaleValue;
+  const scaledWidth = activeObject.getScaledWidth();
 
   function setMaxScaleValue() {
-    const maxScaleValue = activeObject?.getScaledWidth();
+    const maxScaleValue = scaledWidth;
     newMaxScaleValue = (maxScaleValue - 1) * 2;
     scaleRange.max = newMaxScaleValue;
     scaleRange.min = 0;
     scaleRange.value = maxScaleValue - 1;
-    scaleRange.value = convertToZeroToTwo(maxScaleValue, 0, newMaxScaleValue);
+    // scaleRange.value = convertToZeroToTwo(maxScaleValue, 0, newMaxScaleValue);
   }
 
   canvas.on("selection:updated", setMaxScaleValue);
   canvas.on("selection:created", setMaxScaleValue);
 
-  if (!scaleRange) return;
   scaleRange.addEventListener("input", (e) => {
-    const scaleValue = e.target.value;
-    scaleValueElement.innerText = (scaleValue / 100) * 2;
-    activeObject.scale(scaleValue);
-    canvas.requestRenderAll();
+    const value = e.target.value;
+    scaleRangeMain.value = value * 2;
+    const event = new Event("input", { bubbles: true });
+    const displayValue = document.querySelector("#scale-value");
+    mobileScaleValue.innerText = displayValue.value;
+    scaleRangeMain.dispatchEvent(event);
   });
 }

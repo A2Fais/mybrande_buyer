@@ -161,8 +161,7 @@ export async function mobileTextMenu(canvas) {
     </div>
     </div>
   </div>
-`,
-  );
+`, canvas);
 
   const colorsSubmenu = createSubmenu(
     menuMain,
@@ -632,17 +631,19 @@ export async function mobileTextMenu(canvas) {
       canvas.renderAll();
     });
 
-  document
-    .querySelector("#mobile-rotate-slider")
-    .addEventListener("input", (e) => {
+    const mobileRotateTextValue = document.querySelector("#mobile-text-rotate-value")
+    const mobileRotateSlider = document.querySelector("#mobile-rotate-slider")
+
+  mobileRotateSlider.addEventListener("input", (e) => {
       const activeObject = canvas.getActiveObject();
       if (!activeObject) return;
-
       const value = parseInt(e.target.value, 10);
-      activeObject.set("angle", value);
-      document.querySelector("#mobile-text-rotate-value").innerText =
-        `Rotate: ${activeObject.get("angle")}°`;
-      canvas.renderAll();
+
+      const mainRotateBar = document.querySelector("#rotate-bar")
+      mainRotateBar.value = value;
+      const event = new Event("input", { bubbles: true });
+      mainRotateBar.dispatchEvent(event)
+      mobileRotateTextValue.innerText = `Rotate: ${value}°`;
     });
 
   document

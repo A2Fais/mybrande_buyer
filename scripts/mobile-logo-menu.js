@@ -32,6 +32,7 @@ export function mobileLogoMenu(canvas) {
         <input class="mobile-slider" type="range" id="mobile-rotate-slider" style="width: 90%;" min="0" max="360" value="0" />
       </div>
     </div>`,
+    canvas
   );
 
   const scaleSubmenu = createSubmenu(
@@ -44,6 +45,7 @@ export function mobileLogoMenu(canvas) {
       </div>
     </div>
 `,
+canvas
   );
 
   const shadowSubmenu = createSubmenu(
@@ -71,6 +73,7 @@ export function mobileLogoMenu(canvas) {
 
      </div>
     </div>`,
+    canvas
   );
 
   const actionSubmenu = createSubmenu(
@@ -99,8 +102,7 @@ export function mobileLogoMenu(canvas) {
     </div>
     </div>
   </div>
-`,
-  );
+`, canvas);
 
   const colorsSubmenu = createSubmenu(
     menuMain,
@@ -218,12 +220,13 @@ export function mobileLogoMenu(canvas) {
 <div id="mobile-logo-none-color-section" style="display: flex; gap: 5px; justify-content: flex-start; padding-right: 30px; overflow-x: scroll; display: none;">
   <h1>None</h1> </div>
 </div>`,
-  );
+  canvas);
 
-  const layersSubmenu = createSubmenu(
+  const layerSubmenu = createSubmenu(
     menuMain,
     `<div id="mobile-layers" class="mobile-category-container" style="gap: 0; padding: 0 10px 0 10px; gap: 10px;">
     </div>`,
+    canvas
   );
 
   mobileLogoShadowMenu(canvas);
@@ -231,32 +234,43 @@ export function mobileLogoMenu(canvas) {
   mobileLogoRotateMenu(canvas);
   mobileLogoColorsMenu(canvas);
 
-  const layers = document.getElementById("mobile-layers");
-  const SVG = localStorage.getItem("logo-file");
+  function layerGenerator() {
+    const layers = document.getElementById("mobile-layers");
+    const SVG = localStorage.getItem("logo-file");
 
-  fabric.loadSVGFromString(SVG, (objects) => {
-    objects.forEach((obj, idx) => {
-      const layerSection = new CreateLayerSection(layers, "mobile");
-      layerSection.create(obj, idx);
+    fabric.loadSVGFromString(SVG, (objects) => {
+      objects.forEach((obj, idx) => {
+        const layerSection = new CreateLayerSection(layers, "mobile");
+        layerSection.create(obj, idx);
+      });
     });
-  });
 
-  const layersContainers = document.querySelectorAll(".layer-container");
-  layersContainers.forEach((container) => {
-    const layerId = parseInt(container.getAttribute("data_layer"));
-    container.addEventListener("click", () => {
-      const obj = canvas._objects[layerId];
-      if (obj) {
-        canvas.setActiveObject(obj);
-        canvas.requestRenderAll();
-      }
+    const layersContainers = document.querySelectorAll(".layer-container");
+    layersContainers.forEach((container) => {
+      const layerId = parseInt(container.getAttribute("data_layer"));
+      container.addEventListener("click", () => {
+
+        canvas.getObjects().forEach((obj, idx) => {
+          if (layerId !== idx) return
+
+          const layerSpan = container.querySelector(".layer-span")
+          layerSpan.style.background = "var(--gold)";
+          layerSpan.style.color = "var(--white)";
+        });
+          console.log("Layer clicked:", layerId);
+          const obj = canvas._objects[layerId];
+          canvas.setActiveObject(obj);
+          canvas.requestRenderAll();
+        });
     });
-  });
+  }
+
+  layerGenerator();
 
   mobileLayersBtn.addEventListener("click", () => {
     history.pushState({ category: "logo/layers" }, null, "#logo/layers");
     menuMain.style.display = "none";
-    layersSubmenu.style.display = "block";
+    layerSubmenu.style.display = "block";
   });
 
   rotateBtn.addEventListener("click", () => {
@@ -291,14 +305,14 @@ export function mobileLogoMenu(canvas) {
   });
 
   flipXBtn.addEventListener("click", () => {
-    const activeObject = canvas.getActiveObject();  
+    const activeObject = canvas.getActiveObject();
     if (!activeObject) return;
     activeObject.set({ flipX: !activeObject.flipX });
     canvas.renderAll();
   });
 
   flipYBtn.addEventListener("click", () => {
-    const activeObject = canvas.getActiveObject();  
+    const activeObject = canvas.getActiveObject();
     if (!activeObject) return;
     activeObject.set({ flipY: !activeObject.flipY });
     canvas.renderAll();

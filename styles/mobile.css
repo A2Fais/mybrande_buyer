@@ -61,7 +61,7 @@ input[type="range"].mobile-slider::-ms-thumb {
 }
 
 .mobile-category .mobile-category-icon:hover {
-  background-color: var(--light);
+  background-color: var(--gold);
   border-radius: 70%;
 }
 
@@ -96,3 +96,7 @@ input[type="color"]::-webkit-color-swatch {
   font-size: 14px;
 }
 
+.touchwiz:hover {
+  background-color: var(--gold);
+  border-radius: 70%;
+}
