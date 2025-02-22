@@ -15,6 +15,10 @@ const categoryContent = document.querySelector("#mobile-category-content");
 let category = "add";
 
 function navView() {
+  const categoryContainer = document.querySelector("#mobile-category-content");
+  if (window.innerWidth >= 500 && categoryContainer) {
+    return categoryContainer.style.display = "none";
+  }
   const activeObject = canvas.getActiveObject();
   if (!activeObject) return;
 
