@@ -1,6 +1,6 @@
 import { canvas } from "./main.js";
 import { bgColorAction } from "./color_events.js";
-import { applyLinearGradient } from "./apply_linear_grad.js";
+import { ApplyLinearGradient } from "./apply_linear_grad.js";
 import iro from "@jaames/iro";
 
 export function mobileBackgroundMenu() {
@@ -101,7 +101,7 @@ export function mobileBackgroundMenu() {
   mobileBgPalleteComponent
     ?.querySelector(".color-palette-gradient")
     ?.addEventListener("click", () => {
-      const applyColor = new applyLinearGradient(
+      const applyColor = new ApplyLinearGradient(
         canvas,
         bgGrad1,
         bgGrad2,

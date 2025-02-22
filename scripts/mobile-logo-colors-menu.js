@@ -1,5 +1,5 @@
 import { applyColorActionMobile } from "./color_events.js";
-import { applyLinearGradient } from "./apply_linear_grad.js";
+import { ApplyLinearGradient } from "./apply_linear_grad.js";
 import { convertRGBtoHex } from "./color_converter.js";
 import iro from "@jaames/iro";
 
@@ -90,8 +90,8 @@ export function mobileLogoColorsMenu(canvas) {
   const mobileBgPalleteComponent = document.querySelector("#mobile-bg-pallete");
   mobileBgPalleteComponent?.addEventListener("colorChanged", ({ target }) => {
     [bgGrad1, bgGrad2] = [
-      target.querySeleor("#grad-1").value,
-      target.querySeleor("#grad-2").value,
+      target.querySelector("#grad-1").value,
+      target.querySelector("#grad-2").value,
     ];
   });
 
@@ -99,13 +99,13 @@ export function mobileLogoColorsMenu(canvas) {
   mobileBgPalleteComponent
     ?.querySelector(".color-palette-gradient")
     ?.addEventListener("click", () => {
-      const applyColor = new applyLinearGradient(
+      const applyColor = new ApplyLinearGradient(
         canvas,
         bgGrad1,
         bgGrad2,
         false,
       );
-      applyColor.setColor(false);
+      applyColor.setColor();
     });
 
   // None Background

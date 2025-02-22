@@ -1,6 +1,6 @@
 import { fabric } from "fabric";
 
-export class applyLinearGradient {
+export class ApplyLinearGradient {
   constructor(canvas, grad1, grad2) {
     console.log(grad1, grad2);
     this.canvas = canvas;

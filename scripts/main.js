@@ -11,7 +11,7 @@ import { rotateReset } from "./rotate_reset";
 import { saveCanvas } from "./save_canvas";
 import SaveHistory from "./save_history.js";
 import { curvedText } from "./curved_text.js";
-import { applyLinearGradient } from "./apply_linear_grad.js";
+import { ApplyLinearGradient } from "./apply_linear_grad.js";
 import {
   bgColorAction,
   solidColorAction,
@@ -2482,7 +2482,7 @@ export class EditorScreen {
       querySelect("#text-pallete .color-palette-gradient").addEventListener(
         "click",
         () => {
-          const applyColor = new applyLinearGradient(
+          const applyColor = new ApplyLinearGradient(
             this.canvas,
             tGrad1,
             tGrad2,
@@ -2493,7 +2493,7 @@ export class EditorScreen {
       querySelect("#logo-pallete .color-palette-gradient").addEventListener(
         "click",
         () => {
-          const applyColor = new applyLinearGradient(
+          const applyColor = new ApplyLinearGradient(
             this.canvas,
             lGrad1,
             lGrad2,
@@ -2504,7 +2504,7 @@ export class EditorScreen {
       querySelect("#bg-pallete .color-palette-gradient").addEventListener(
         "click",
         () => {
-          const applyColor = new applyLinearGradient(
+          const applyColor = new ApplyLinearGradient(
             this.canvas,
             bgGrad1,
             bgGrad2,
