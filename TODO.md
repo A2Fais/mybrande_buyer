@@ -16,7 +16,7 @@
 - [PENDING] 1. Logo is not being shown properly due to alignment issue
 - [x] 2. Clicking logo/text layer will show logo/text option
 - [x] 3. logo layers on top
-- [x] 4. New layers are not being added when a layer is duplicated
+- [*] 4. New layers are not being added when a layer is duplicated
 - [x] 5. linear color issue
 - [x] 6. Layer rotation origin should be center
-- [*] 7. Duplicated layer shows 3 duplicates
+- [x] 7. Duplicated layer shows 3 duplicates

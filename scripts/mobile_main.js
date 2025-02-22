@@ -188,11 +188,15 @@ function renderSaveModal() {
 
 renderTopBar();
 
+const layerBar = document.querySelector("#mobile-logo-layers-bar")
 navItems.forEach((item) => {
   item.addEventListener("click", (event) => {
     event.stopPropagation();
     category = item.getAttribute("data-name");
     history.pushState({ category }, null, `#${category}`);
+    if (category !== "logo") {
+      layerBar.style.display = "none"
+    }
     routeHandler();
   });
 });

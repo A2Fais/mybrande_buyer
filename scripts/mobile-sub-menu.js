@@ -49,7 +49,6 @@ function events(canvas) {
     layersContainers.forEach((container) => {
       const layerId = parseInt(container.getAttribute("data_layer"));
       container.addEventListener("click", () => {
-        console.log("clicked");
         const obj = canvas._objects[layerId];
         canvas.setActiveObject(obj);
         canvas.requestRenderAll();
