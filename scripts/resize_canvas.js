@@ -23,7 +23,6 @@ function resizeCanvas(self) {
     self.canvas.setZoom(SMALL_SCALE_FACTOR);
     document.querySelector("#mobile-top-bar").style.display = "flex";
     document.querySelector("#mobile-nav-bar").style.display = "flex";
-    // document.querySelector("#mobile-top-bar").innerText = window.innerWidth;
   } else {
     // DESKTOP VIEW
     document.querySelector("#mobile-top-bar").style.display = "none";
@@ -58,6 +57,7 @@ function resizeCanvas(self) {
       self.canvas.setWidth(window.innerWidth / DEFAULT_WIDTH_DIVISOR);
     }
   }
+
   self.canvas.renderAll();
 }
 

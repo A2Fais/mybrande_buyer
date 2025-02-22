@@ -72,7 +72,7 @@ function updateLayerSelection() {
   const activeObject = canvas.getActiveObject();
   if (!activeObject) return;
 
-  canvas._objects.forEach((object, index) => { 
+  canvas._objects.forEach((object, index) => {
     const layerSpan = layerContaier[index]?.querySelector("span");
     const layerImage = layerContaier[index]?.querySelector("img");
     if (!layerSpan || !layerImage) return;
@@ -86,26 +86,29 @@ function updateLayerSelection() {
     } else {
       layerImage.style.border = "2px solid var(--light)";
       layerSpan.style.background = "none";
-      layerSpan.style.color = "var(--gray)";      
+      layerSpan.style.color = "var(--gray)";
     }
   })
 }
 
 function canvasSelectionEvent() {
-    const layerBar = document.querySelector("#mobile-logo-layers-bar")
-    const category = navView();
+  const layerBar = document.querySelector("#mobile-logo-layers-bar")
+  const category = navView();
 
-    if (category !== "text") {
-      updateLayerSelection();
-      layerBar.style.display = "flex";
-    } else {
-      layerBar.style.display = "none";
-    }
+  if (window.innerWidth >= 500) {
+    return layerBar.style.display = "none";
+  }
+
+  if (category !== "text") {
+    updateLayerSelection();
+    layerBar.style.display = "flex";
+  } else {
+    layerBar.style.display = "none";
+  }
 }
 
 canvas.on("selection:created", canvasSelectionEvent);
 canvas.on("selection:updated", canvasSelectionEvent);
-
 
 const mainCategoryData = {
   add: mobileAddView,

@@ -2,7 +2,7 @@
 - [ ] 1. The Artboard's HEIGHT so that previews align with the feature perfectly
 - [PENDING] 2. Vertical and horizontal center guide lines should be provided.
 - [ ] 3. When clicking on the buttons at the bottom, our logo's designated Deep Blue color should be displayed, or touching it should show that color.
-- [*] 4. selected layer is not visible in the layer section
+- [x] 4. selected layer is not visible in the layer section
 - [x] 5. background solid color panel scroll not working
 - [x] 6. logo transparency doesnt work
 - [x] 7. Scaling issue
