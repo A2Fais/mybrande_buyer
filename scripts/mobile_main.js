@@ -99,7 +99,7 @@ function canvasSelectionEvent() {
     return layerBar.style.display = "none";
   }
 
-  if (category === "logo") {
+  if (category !== "text") {
     updateLayerSelection();
     layerBar.style.display = "flex";
   } else {

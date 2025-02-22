@@ -35,16 +35,16 @@ function events(canvas) {
 
   function layerGenerator() {
     const layers = document.getElementById("mobile-layers");
-    layers.innerHTML = "";  
-    // const SVG = localStorage.getItem("logo-file");
-  
+    layers.innerHTML = "";
+    const SVG = canvas.toSVG();
+
     fabric.loadSVGFromString(SVG, (objects) => {
       objects.forEach((obj, idx) => {
         const layerSection = new CreateLayerSection(layers, "mobile");
         layerSection.create(obj, idx);
       });
     });
-  
+
     const layersContainers = document.querySelectorAll(".layer-container");
     layersContainers.forEach((container) => {
       const layerId = parseInt(container.getAttribute("data_layer"));
@@ -61,20 +61,19 @@ function events(canvas) {
     const activeObject = canvas.getActiveObject();
     if (!activeObject) return;
 
-    if (activeObject.text) {
-      activeObject.clone((cloned) => {
-        cloned.set("duplicate", true);
-        canvas.add(cloned);
-        cloned.top += 10;
-        cloned.left += 10;
-        canvas.save();
-        layerGenerator();
+    activeObject.clone((cloned) => {
+      canvas._objects.forEach((obj) => {
+        if (obj.layerId === activeObject.layerId && obj !== activeObject) {
+          canvas.remove(obj);
+        }
       });
-    } else {
-      const duplicateElement = document.querySelector("#duplicate-element");
-      duplicateElement.click();
-      layerGenerator();
-    }
+
+      canvas.add(cloned);
+      cloned.layerId = activeObject.layerId;
+      cloned.top += 10;
+      cloned.left += 10;
+      canvas.renderAll();
+    });
   });
 
   visibleBtn.addEventListener("click", () => {
@@ -88,7 +87,9 @@ function events(canvas) {
     const specificLabels = document.querySelectorAll(".specific-setting-label");
     const firstSpecificLabel = specificLabels[1];
 
-    const eyeColor = activeObject.visible ? "var(--gray-lighter)" : "var(--gold)";
+    const eyeColor = activeObject.visible
+      ? "var(--gray-lighter)"
+      : "var(--gold)";
     const labelOpacity = activeObject.visible ? 0 : 1;
     const labelColor = eyeColor;
 
