@@ -234,38 +234,38 @@ canvas
   mobileLogoRotateMenu(canvas);
   mobileLogoColorsMenu(canvas);
 
-  function layerGenerator() {
-    const layers = document.getElementById("mobile-layers");
-    const SVG = localStorage.getItem("logo-file");
+  // function layerGenerator() {
+  //   const layers = document.getElementById("mobile-layers");
+  //   const SVG = localStorage.getItem("logo-file");
 
-    fabric.loadSVGFromString(SVG, (objects) => {
-      objects.forEach((obj, idx) => {
-        const layerSection = new CreateLayerSection(layers, "mobile");
-        layerSection.create(obj, idx);
-      });
-    });
+  //   fabric.loadSVGFromString(SVG, (objects) => {
+  //     objects.forEach((obj, idx) => {
+  //       const layerSection = new CreateLayerSection(layers, "mobile");
+  //       layerSection.create(obj, idx);
+  //     });
+  //   });
 
-    const layersContainers = document.querySelectorAll(".layer-container");
-    layersContainers.forEach((container) => {
-      const layerId = parseInt(container.getAttribute("data_layer"));
-      container.addEventListener("click", () => {
+  //   const layersContainers = document.querySelectorAll(".layer-container");
+  //   layersContainers.forEach((container) => {
+  //     const layerId = parseInt(container.getAttribute("data_layer"));
 
-        canvas.getObjects().forEach((obj, idx) => {
-          if (layerId !== idx) return
+  //     container.addEventListener("click", () => {
+  //       canvas.getObjects().forEach((obj, idx) => {
+  //         if (layerId !== idx) return
 
-          const layerSpan = container.querySelector(".layer-span")
-          layerSpan.style.background = "var(--gold)";
-          layerSpan.style.color = "var(--white)";
-        });
-          console.log("Layer clicked:", layerId);
-          const obj = canvas._objects[layerId];
-          canvas.setActiveObject(obj);
-          canvas.requestRenderAll();
-        });
-    });
-  }
+  //         const layerSpan = container.querySelector(".layer-span")
+  //         layerSpan.style.background = "var(--gold)";
+  //         layerSpan.style.color = "var(--white)";
+  //       });
+  //         console.log("Layer clicked:", layerId);
+  //         const obj = canvas._objects[layerId];
+  //         canvas.setActiveObject(obj);
+  //         canvas.requestRenderAll();
+  //       });
+  //   });
+  // }
 
-  layerGenerator();
+  // layerGenerator();
 
   mobileLayersBtn.addEventListener("click", () => {
     history.pushState({ category: "logo/layers" }, null, "#logo/layers");

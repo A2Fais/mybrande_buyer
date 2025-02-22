@@ -30,6 +30,7 @@ export class CreateLayerSection {
     const layerContainer = document.createElement("div");
     layerContainer.setAttribute("tabindex", "0");
     layerContainer.className = "layer-container";
+
     if (this.deviceType === "mobile") {
       imgElem.style.width = "15px";
       imgElem.style.height = "15px";
@@ -42,12 +43,16 @@ export class CreateLayerSection {
       layerSpan.style.marginInline = "7px";
       layerContainer.style.textAlign = "left";
     }
+
     layerContainer.setAttribute("data_layer", idx);
     layerContainer.setAttribute("data-id", id);
     layerContainer.append(imgElem, layerSpan);
+    
     if (after) {
       after.insertAdjacentHTML("afterend", layerContainer.outerHTML);
-    } else this.layers.append(layerContainer);
+    } else {
+      this.layers.append(layerContainer);
+    }
     return id;
   }
 }

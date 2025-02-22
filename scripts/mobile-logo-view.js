@@ -1,6 +1,6 @@
 export const mobileLogoView = `<div id="mobile-logo-view-settings" class="mobile-category-container">
     <!-- Layers Category -->
-    <div id="mobile-layers-category" class="mobile-category">
+    <div id="mobile-layers-category" class="mobile-category" style="display: none">
         <i class="fas fa-layer-group mobile-category-icon"></i>
         <p class="mobile-category-text">Layers</p>
     </div>

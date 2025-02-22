@@ -26,7 +26,7 @@ export async function mobileTextMenu(canvas) {
     const spacingValue = document.querySelector("#mobile-spacing-value");
     const spacingSlider = document.querySelector("#mobile-spacing-slider");
     if (spacingValue) {
-      spacingValue.value = `Spacing: ${Math.round(charSpacing/10)}px`;
+      spacingValue.value = `Spacing: ${Math.round(charSpacing / 10)}px`;
       spacingSlider.value = Math.round(charSpacing);
 
     }
@@ -63,6 +63,7 @@ export async function mobileTextMenu(canvas) {
         <input class="mobile-slider" type="range" id="mobile-rotate-slider" style="width: 90%;" min="0" max="360" value="0" />
       </div>
     </div>`,
+    canvas
   );
 
   const fontStyleSubmenu = createSubmenu(
@@ -72,6 +73,7 @@ export async function mobileTextMenu(canvas) {
           <div id="mobile-font-italic" class="mobile-list mobile-category" value="Italic" style="text-align: center;"><i class="fas fa-italic mobile-category-icon" style="font-size: 20px;"></i><br><span style="font-size: 12px;">Italic</san></div>
           <div id="mobile-font-underline" class="mobile-list mobile-category" value="Underline" style="text-align: center;"><i class="fas fa-underline mobile-category-icon" style="font-size: 20px;"></i><br><span style="font-size: 12px;">Underline</san></div>
     </div>`,
+    canvas
   );
 
   const letterCaseSubmenu = createSubmenu(
@@ -82,6 +84,7 @@ export async function mobileTextMenu(canvas) {
           <div id="mobile-font-titlecase" class="mobile-list mobile-category" value="Title Case" style="text-align: center;"><i class="fas fa-heading mobile-category-icon" style="font-size: 20px;"></i><br><span style="font-size: 12px;">Title</span></div>
           <div id="mobile-font-sentencecase" class="mobile-list mobile-category" value="Sentence Case" style="text-align: center;"><i class="fas fa-paragraph mobile-category-icon" style="font-size: 20px;"></i><br><span style="font-size: 12px;">Sentence</span></div>
     </div>`,
+    canvas
   );
 
   const fontCurveSubmenu = createSubmenu(
@@ -93,6 +96,7 @@ export async function mobileTextMenu(canvas) {
         <input class="mobile-slider" type="range" id="mobile-curve-slider" style="width: 90%;" min="0" max="5000" value="0" />
       </div>
     </div>`,
+    canvas
   );
 
   const fontSpacingSubmenu = createSubmenu(
@@ -104,6 +108,7 @@ export async function mobileTextMenu(canvas) {
         <input class="mobile-slider" type="range" id="mobile-spacing-slider" style="width: 90%;" min="-140" max="500" value="0" />
       </div>
     </div>`,
+    canvas
   );
 
   const fontWeightSubmenu = createSubmenu(
@@ -111,6 +116,7 @@ export async function mobileTextMenu(canvas) {
     `<div id="mobile-font-weight-category" class="mobile-category-container" style="padding: 0px;">
     <div id="mobile-font-weight-list"  style="display: flex; align-items: center; height: 100%; padding: 10px; overflow-x: scroll; gap: 30px;"></div>
     </div>`,
+    canvas
   );
 
   const textInputsSubmenu = createSubmenu(
@@ -122,6 +128,7 @@ export async function mobileTextMenu(canvas) {
       </div>
     </div>
     `,
+    canvas
   );
 
   const fontSizeSubmenu = createSubmenu(
@@ -133,6 +140,7 @@ export async function mobileTextMenu(canvas) {
         <input class="mobile-slider" type="range" id="mobile-font-size-slider" style="width: 90%;" min="0" max="130" value="0" />
       </div>
     </div>`,
+    canvas
   );
 
   const actionSubmenu = createSubmenu(
@@ -280,6 +288,7 @@ export async function mobileTextMenu(canvas) {
 <div id="mobile-logo-none-color-section" style="display: flex; gap: 5px; justify-content: flex-start; padding-right: 30px; overflow-x: scroll; display: none;">
   <h1>None</h1> </div>
 </div>`,
+    canvas
   );
 
   const txtShadowSubmenu = createSubmenu(
@@ -518,21 +527,21 @@ export async function mobileTextMenu(canvas) {
 
   mobileFontSizeBtn.addEventListener("click", () => {
     history.pushState({ category: "text/font-size" }, null, "#text/font-size");
-    canvas.discardActiveObject().renderAll();    
+    canvas.discardActiveObject().renderAll();
     menuMain.style.display = "none";
     fontSizeSubmenu.style.display = "block";
   });
 
   mobileTextRotateBtn.addEventListener("click", () => {
     history.pushState({ category: "text/rotate" }, null, "#text/rotate");
-    canvas.discardActiveObject().renderAll();    
+    canvas.discardActiveObject().renderAll();
     menuMain.style.display = "none";
     rotateSubmenu.style.display = "block";
   });
 
   mobileLetterCaseBtn.addEventListener("click", () => {
     history.pushState({ category: "text/letercase" }, null, "#text/lettercase");
-    canvas.discardActiveObject().renderAll();    
+    canvas.discardActiveObject().renderAll();
     menuMain.style.display = "none";
     letterCaseSubmenu.style.display = "block";
   });
@@ -560,14 +569,14 @@ export async function mobileTextMenu(canvas) {
 
   mobileFontCurveBtn.addEventListener("click", () => {
     history.pushState({ category: "text/fontcurve" }, null, "#text/fontcurve");
-    canvas.discardActiveObject().renderAll();    
+    canvas.discardActiveObject().renderAll();
     menuMain.style.display = "none";
     fontCurveSubmenu.style.display = "block";
   });
 
   mobileInputsbtn.addEventListener("click", () => {
     history.pushState({ category: "text/inputs" }, null, "#text/inputs");
-    canvas.discardActiveObject().renderAll();    
+    canvas.discardActiveObject().renderAll();
     menuMain.style.display = "none";
     textInputsSubmenu.style.display = "block";
   });
@@ -597,7 +606,7 @@ export async function mobileTextMenu(canvas) {
       const event = new Event("input");
       letterSpacingSlider.dispatchEvent(event);
       document.querySelector("#mobile-spacing-value").value =
-        `Spacing: ${Math.round(value/10)} px`;
+        `Spacing: ${Math.round(value / 10)} px`;
     });
 
   document
@@ -631,20 +640,20 @@ export async function mobileTextMenu(canvas) {
       canvas.renderAll();
     });
 
-    const mobileRotateTextValue = document.querySelector("#mobile-text-rotate-value")
-    const mobileRotateSlider = document.querySelector("#mobile-rotate-slider")
+  const mobileRotateTextValue = document.querySelector("#mobile-text-rotate-value")
+  const mobileRotateSlider = document.querySelector("#mobile-rotate-slider")
 
   mobileRotateSlider.addEventListener("input", (e) => {
-      const activeObject = canvas.getActiveObject();
-      if (!activeObject) return;
-      const value = parseInt(e.target.value, 10);
+    const activeObject = canvas.getActiveObject();
+    if (!activeObject) return;
+    const value = parseInt(e.target.value, 10);
 
-      const mainRotateBar = document.querySelector("#rotate-bar")
-      mainRotateBar.value = value;
-      const event = new Event("input", { bubbles: true });
-      mainRotateBar.dispatchEvent(event)
-      mobileRotateTextValue.innerText = `Rotate: ${value}°`;
-    });
+    const mainRotateBar = document.querySelector("#rotate-bar")
+    mainRotateBar.value = value;
+    const event = new Event("input", { bubbles: true });
+    mainRotateBar.dispatchEvent(event)
+    mobileRotateTextValue.innerText = `Rotate: ${value}°`;
+  });
 
   document
     .querySelector("#mobile-sloganNameField")

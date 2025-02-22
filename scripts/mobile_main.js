@@ -7,6 +7,7 @@ import { mobileTextView } from "./mobile-text-view.js";
 import { mobileBackgroundMenu } from "./mobile-background-menu.js";
 import { mobileLogoMenu } from "./mobile-logo-menu.js";
 import { mobileTextMenu } from "./mobile-text-menu.js";
+import { CreateLayerSection } from "./create_layer.js";
 
 const navItems = document.querySelectorAll("#mobile-nav-bar [data-name]");
 const categoryContent = document.querySelector("#mobile-category-content");
@@ -31,10 +32,80 @@ function navView() {
   }
   history.pushState({ category }, null, `#${category}`);
   routeHandler({ category });
+  return category;
 }
 
-canvas.on("selection:created", navView);
-canvas.on("selection:updated", navView);
+function generateLayersOnTopNav() {
+  const layers = document.querySelector("#mobile-logo-layers-bar");
+  const SVG = localStorage.getItem("logo-file");
+
+  fabric.loadSVGFromString(SVG, (objects) => {
+    objects.forEach((obj, idx) => {
+      const layerSection = new CreateLayerSection(layers, "mobile");
+      const id = layerSection.create(obj, idx);
+      obj.layerId = id
+    });
+  });
+}
+
+(() => {
+  if (!window.layersGenerated) {
+    generateLayersOnTopNav();
+    window.layersGenerated = true;
+  }
+})();
+
+const layerContaier = document.querySelectorAll(".layer-container");
+
+layerContaier.forEach((layer, layerIdx) => {
+  layer.addEventListener("click", () => {
+    const layerId = +layer.getAttribute("data_layer");
+    canvas._objects.forEach((object, index) => {
+      if (index === layerId) {
+        canvas.setActiveObject(object)
+      }
+    });
+  })
+});
+
+function updateLayerSelection() {
+  const activeObject = canvas.getActiveObject();
+  if (!activeObject) return;
+
+  canvas._objects.forEach((object, index) => { 
+    const layerSpan = layerContaier[index]?.querySelector("span");
+    const layerImage = layerContaier[index]?.querySelector("img");
+    if (!layerSpan || !layerImage) return;
+
+    if (object === activeObject) {
+      layerImage.style.border = "2px solid var(--gold)";
+      layerSpan.style.background = "var(--gold)";
+      layerSpan.style.padding = "7px";
+      layerSpan.style.borderRadius = "3px";
+      layerSpan.style.color = "var(--lighter)";
+    } else {
+      layerImage.style.border = "2px solid var(--light)";
+      layerSpan.style.background = "none";
+      layerSpan.style.color = "var(--gray)";      
+    }
+  })
+}
+
+function canvasSelectionEvent() {
+    const layerBar = document.querySelector("#mobile-logo-layers-bar")
+    const category = navView();
+    
+    if (category === "logo") {
+      updateLayerSelection();
+      layerBar.style.display = "flex";
+    } else {
+      layerBar.style.display = "none";
+    }
+}
+
+canvas.on("selection:created", canvasSelectionEvent);
+canvas.on("selection:updated", canvasSelectionEvent);
+
 
 const mainCategoryData = {
   add: mobileAddView,
@@ -133,7 +204,6 @@ function routeHandler({ category = history?.state?.category } = {}) {
   } else {
     categoryContent.style.display = "none";
   }
-
   if (menuCategoryData[category]) {
     menuCategoryData[category](canvas);
   }
@@ -142,3 +212,7 @@ function routeHandler({ category = history?.state?.category } = {}) {
 routeHandler({ category: null });
 
 window.addEventListener("popstate", routeHandler);
+
+
+
+
