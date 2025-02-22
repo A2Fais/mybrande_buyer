@@ -37,7 +37,6 @@ function events(canvas) {
     const layers = document.getElementById("mobile-layers");
     layers.innerHTML = "";  
     // const SVG = localStorage.getItem("logo-file");
-    // generate from canvas getOvvb
   
     fabric.loadSVGFromString(SVG, (objects) => {
       objects.forEach((obj, idx) => {

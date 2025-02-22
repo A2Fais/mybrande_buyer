@@ -1,11 +1,5 @@
 import { canvas } from "./main.js";
-import {
-  solidColorAction,
-  solidColorTextAction,
-  updateColorPickers,
-  updateColorTextPickers,
-  bgColorAction,
-} from "./color_events.js";
+import { bgColorAction } from "./color_events.js";
 import { applyLinearGradient } from "./apply_linear_grad.js";
 import iro from "@jaames/iro";
 
