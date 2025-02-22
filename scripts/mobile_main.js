@@ -94,8 +94,8 @@ function updateLayerSelection() {
 function canvasSelectionEvent() {
     const layerBar = document.querySelector("#mobile-logo-layers-bar")
     const category = navView();
-    
-    if (category === "logo") {
+
+    if (category !== "text") {
       updateLayerSelection();
       layerBar.style.display = "flex";
     } else {
