@@ -14,7 +14,7 @@ const categoryContent = document.querySelector("#mobile-category-content");
 
 let category = "add";
 
-function navView() {
+function selectedLayerNavigation() {
   const activeObject = canvas.getActiveObject();
   if (!activeObject) return;
 
@@ -93,7 +93,7 @@ function updateLayerSelection() {
 
 function canvasSelectionEvent() {
   const layerBar = document.querySelector("#mobile-logo-layers-bar")
-  const category = navView();
+  const category = selectedLayerNavigation();
 
   if (window.innerWidth >= 500) {
     return layerBar.style.display = "none";
