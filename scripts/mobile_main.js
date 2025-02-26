@@ -15,7 +15,7 @@ const categoryContent = document.querySelector("#mobile-category-content");
 let category = "add";
 
 function pushToRoute(category) {
-  let url;
+  let url = "";
 
   if (!category) {
     url = "/";
@@ -23,7 +23,7 @@ function pushToRoute(category) {
     url = `#${category}`
   }
 
-  history.pushState({ category }, null, url);
+  history.pushState({ category }, "", url);
   routeHandler({ category });
   return category;
 }
