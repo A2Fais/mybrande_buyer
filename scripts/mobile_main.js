@@ -14,9 +14,27 @@ const categoryContent = document.querySelector("#mobile-category-content");
 
 let category = "add";
 
+function pushToRoute(category) {
+  if (!category) {
+    const layers = document.querySelector("#mobile-logo-layers-bar");
+    if (!layers) return;
+    
+    layers.style.display = "none";
+    history.pushState({ category }, null, "/");
+  } else {
+    history.pushState({ category }, null, `#${category}`);
+  }
+  routeHandler({ category });
+  return category;
+}
+
 function selectedLayerNavigation() {
   const activeObject = canvas.getActiveObject();
-  if (!activeObject) return;
+
+  if (!activeObject) {
+    category = null;
+    pushToRoute(category)
+  };
 
   const location = window.location.href;
   const isTextNav = location?.includes("#text");
@@ -30,9 +48,7 @@ function selectedLayerNavigation() {
     if (isLogoNav) return;
     category = "logo";
   }
-  history.pushState({ category }, null, `#${category}`);
-  routeHandler({ category });
-  return category;
+  pushToRoute(category)
 }
 
 function generateLayersOnTopNav() {
@@ -91,9 +107,12 @@ function updateLayerSelection() {
   })
 }
 
-function canvasSelectionEvent() {
-  const layerBar = document.querySelector("#mobile-logo-layers-bar")
+function canvasSelectionEvent(target) {
   const category = selectedLayerNavigation();
+  if (!target) {
+    pushToRoute(category)
+  }
+  const layerBar = document.querySelector("#mobile-logo-layers-bar")
 
   if (window.innerWidth >= 500) {
     return layerBar.style.display = "none";
@@ -109,6 +128,7 @@ function canvasSelectionEvent() {
 
 canvas.on("selection:created", canvasSelectionEvent);
 canvas.on("selection:updated", canvasSelectionEvent);
+canvas.on("mouse:down", (event) => canvasSelectionEvent(event.target))
 
 const mainCategoryData = {
   add: mobileAddView,
