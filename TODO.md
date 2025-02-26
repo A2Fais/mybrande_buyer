@@ -24,4 +24,4 @@
 
 # Other issues 
  - [PROGRESS] clicking on no layer in canvas should change it to default route
- - [PROGRESS] menus conflicts with other submenus
+ - [PROGRESS] layer menu conflicts with other submenus
