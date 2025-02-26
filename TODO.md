@@ -23,5 +23,5 @@
 - [x] 7. Duplicated layer shows 3 duplicates
 
 # Other issues 
- - [PROGRESS] clicking on no layer in canvas should change it to default route
+ - [x] clicking on no layer in canvas should change it to default route
  - [PROGRESS] layer menu conflicts with other submenus

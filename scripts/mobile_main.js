@@ -15,11 +15,15 @@ const categoryContent = document.querySelector("#mobile-category-content");
 let category = "add";
 
 function pushToRoute(category) {
+  let url;
+
   if (!category) {
-    history.pushState({ category }, null, "/");
+    url = "/";
   } else {
-    history.pushState({ category }, null, `#${category}`);
+    url = `#${category}`
   }
+
+  history.pushState({ category }, null, url);
   routeHandler({ category });
   return category;
 }
@@ -30,6 +34,7 @@ function selectedLayerNavigation() {
   if (!activeObject) {
     category = null;
     pushToRoute(category)
+    return category
   };
 
   const location = window.location.href;
@@ -45,6 +50,28 @@ function selectedLayerNavigation() {
     category = "logo";
   }
   pushToRoute(category)
+  return category
+}
+
+function canvasSelectionEvent(target = true) {
+  selectedLayerNavigation();
+  const layerBar = document.querySelector("#mobile-logo-layers-bar");
+
+  if (!target) {
+    pushToRoute(category)
+    return layerBar.style.display = "none";
+  }
+
+  if (window.innerWidth >= 500) {
+    return layerBar.style.display = "none";
+  }
+
+  if (category !== "text") {
+    updateLayerSelection();
+    layerBar.style.display = "flex";
+  } else {
+    layerBar.style.display = "none";
+  }
 }
 
 function generateLayersOnTopNav() {
@@ -103,30 +130,12 @@ function updateLayerSelection() {
   })
 }
 
-function canvasSelectionEvent(target) {
-  const layerBar = document.querySelector("#mobile-logo-layers-bar")
-  const category = selectedLayerNavigation();
-
-  if (!target) {
-    pushToRoute(category)
-    return layerBar.style.display = "none";
-  }
-
-  if (window.innerWidth >= 500) {
-    return layerBar.style.display = "none";
-  }
-
-  if (category !== "text") {
-    updateLayerSelection();
-    layerBar.style.display = "flex";
-  } else {
-    layerBar.style.display = "none";
-  }
-}
-
 canvas.on("selection:created", canvasSelectionEvent);
 canvas.on("selection:updated", canvasSelectionEvent);
-canvas.on("mouse:down", (event) => canvasSelectionEvent(event.target))
+canvas.on("mouse:down", (event) => {
+  const target = event.target
+  canvasSelectionEvent(target)
+})
 
 const mainCategoryData = {
   add: mobileAddView,
