@@ -16,10 +16,6 @@ let category = "add";
 
 function pushToRoute(category) {
   if (!category) {
-    const layers = document.querySelector("#mobile-logo-layers-bar");
-    if (!layers) return;
-    
-    layers.style.display = "none";
     history.pushState({ category }, null, "/");
   } else {
     history.pushState({ category }, null, `#${category}`);
@@ -108,11 +104,13 @@ function updateLayerSelection() {
 }
 
 function canvasSelectionEvent(target) {
+  const layerBar = document.querySelector("#mobile-logo-layers-bar")
   const category = selectedLayerNavigation();
+
   if (!target) {
     pushToRoute(category)
+    return layerBar.style.display = "none";
   }
-  const layerBar = document.querySelector("#mobile-logo-layers-bar")
 
   if (window.innerWidth >= 500) {
     return layerBar.style.display = "none";
