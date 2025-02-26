@@ -34,7 +34,7 @@ function selectedLayerNavigation() {
   if (!activeObject) {
     category = null;
     pushToRoute(category)
-    return category
+    return;
   };
 
   const location = window.location.href;
@@ -49,8 +49,7 @@ function selectedLayerNavigation() {
     if (isLogoNav) return;
     category = "logo";
   }
-  pushToRoute(category)
-  return category
+  pushToRoute(category);
 }
 
 function canvasSelectionEvent(target = true) {
@@ -96,7 +95,7 @@ function generateLayersOnTopNav() {
 
 const layerContaier = document.querySelectorAll(".layer-container");
 
-layerContaier.forEach((layer, layerIdx) => {
+layerContaier.forEach((layer) => {
   layer.addEventListener("click", () => {
     const layerId = +layer.getAttribute("data_layer");
     canvas._objects.forEach((object, index) => {
