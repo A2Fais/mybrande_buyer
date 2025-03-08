@@ -34,6 +34,9 @@ export function mobileLogoColorsMenu(canvas) {
     solidSection.style.gridTemplateColumns = "repeat(4, 1fr)";
     solidSection.style.padding = "15px";
     document.querySelector("#content-container").style.height = "100px";
+
+    const layerBar = document.querySelector("#mobile-logo-layers-bar");
+    layerBar.style.bottom = "100px"
     linearSection.style.display = "none";
     noneSection.style.display = "none";
   });
@@ -75,6 +78,8 @@ export function mobileLogoColorsMenu(canvas) {
     solidSection.style.display = "none";
     linearSection.style.display = "none";
     noneSection.style.display = "none";
+    const layerBar = document.querySelector("#mobile-logo-layers-bar");
+    layerBar.style.bottom = "160px"
   });
 
   // Linear event listeners

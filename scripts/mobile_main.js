@@ -54,8 +54,9 @@ function selectedLayerNavigation() {
 
 function canvasSelectionEvent(target = true) {
   selectedLayerNavigation();
+  const mobileNavBar = document.getElementById("mobile-nav-bar")
+  const layerBarTop = mobileNavBar.style.height
   const layerBar = document.querySelector("#mobile-logo-layers-bar");
-  const mobileNavBar = document.getElementById("mobile-nav-bar") 
 
   if (!target) {
     pushToRoute(category)
@@ -69,6 +70,8 @@ function canvasSelectionEvent(target = true) {
   if (category !== "text") {
     updateLayerSelection();
     layerBar.style.display = "flex";
+    layerBar.style.bottom = layerBarTop
+    layerBar.style.zIndex = "60"
   } else {
     layerBar.style.display = "none";
   }
@@ -229,6 +232,9 @@ navItems.forEach((item) => {
 });
 
 function routeHandler({ category = history?.state?.category } = {}) {
+  const mobileNavBar = document.getElementById("mobile-nav-bar");
+  const layerBarTop = mobileNavBar.style.height;
+  layerBar.style.bottom = layerBarTop;
   if (category && mainCategoryData[category]) {
     categoryContent.innerHTML = `
     <div id="content-container" style="z-index: 10; height: 70px; background: #ffffff; position: fixed; bottom: 0; display: flex;">
