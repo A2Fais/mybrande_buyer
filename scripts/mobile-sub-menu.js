@@ -34,21 +34,23 @@ function events(canvas) {
   }
 
   function layerGenerator() {
-    const layers = document.getElementById("mobile-layers");
-    layers.innerHTML = "";
-    const SVG = canvas.toSVG();
+    const layerViewMobile = document.getElementById("mobile-logo-layers-bar");
+    layerViewMobile.innerHTML = "";
+    const logoFileSVG = canvas.toSVG();
 
-    fabric.loadSVGFromString(SVG, (objects) => {
+    fabric.loadSVGFromString(logoFileSVG, (objects) => {
       objects.forEach((obj, idx) => {
-        const layerSection = new CreateLayerSection(layers, "mobile");
+        const layerSection = new CreateLayerSection(layerViewMobile, "mobile");
         layerSection.create(obj, idx);
       });
     });
 
-    const layersContainers = document.querySelectorAll(".layer-container");
-    layersContainers.forEach((container) => {
-      const layerId = parseInt(container.getAttribute("data_layer"));
-      container.addEventListener("click", () => {
+    const layers = layerViewMobile.querySelectorAll(".layer-container");
+    layers.forEach((layer, index) => {
+      console.log(layer, index);
+      const layerId = parseInt(layer.getAttribute("data_layer"));
+      console.log(layerId);
+      layer.addEventListener("click", () => {
         const obj = canvas._objects[layerId];
         canvas.setActiveObject(obj);
         canvas.requestRenderAll();
@@ -68,11 +70,12 @@ function events(canvas) {
       });
 
       canvas.add(cloned);
-      cloned.layerId = activeObject.layerId;
       cloned.top += 10;
       cloned.left += 10;
       canvas.renderAll();
     });
+
+    layerGenerator()
   });
 
   visibleBtn.addEventListener("click", () => {

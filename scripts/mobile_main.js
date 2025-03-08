@@ -230,7 +230,7 @@ navItems.forEach((item) => {
 function routeHandler({ category = history?.state?.category } = {}) {
   if (category && mainCategoryData[category]) {
     categoryContent.innerHTML = `
-    <div id="content-container" style="z-index: 10; height: 70px; background: #ffffff; position: absolute; bottom: 0; display: flex;">
+    <div id="content-container" style="z-index: 10; height: 70px; background: #ffffff; position: fixed; bottom: 0; display: flex;">
       ${mainCategoryData[category]}
     </div>`;
     categoryContent.style.display = "block";

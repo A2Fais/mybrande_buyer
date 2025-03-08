@@ -12,13 +12,17 @@ function resizeCanvas(self) {
   const DEFAULT_HEIGHT_DIVISOR = 1.3;
   const DEFAULT_WIDTH_DIVISOR = 2;
 
-  const SMALL_SCALE_FACTOR = 0.6;
+  const SMALL_SCALE_FACTOR = 0.4;
   const SCALE_FACTOR = 0.8;
 
   const isMobileUser = navigator?.userAgent?.includes("Mobile");
 
   if (isMobileUser) {
-    self.canvas.setHeight(window.innerHeight);
+    console.log("MOBILE VIEW USER");
+    const canvasContainer = document.getElementById("canvas-container")
+    canvasContainer.style.position = "absolute";
+    canvasContainer.style.top = "100px";
+    self.canvas.setHeight(window.innerHeight / 1.6);
     self.canvas.setWidth(window.innerWidth);
     self.canvas.setZoom(SMALL_SCALE_FACTOR);
     document.querySelector("#mobile-top-bar").style.display = "flex";
