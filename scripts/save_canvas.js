@@ -185,16 +185,16 @@ export async function saveCanvas(
   ).map((child) => rgbToHex(child.style.backgroundColor));
 
   const getBackgroundColor = () => {
-    if (typeof bgColor === "object") {
-      const linearColor = bgColor.colorStops.map(color => color.color).join(",");  
-      return linearColor
-    }
+    let resultantColor = null; 
 
-    if (bgColor === "#efefef") {
-      return "#transparent";
+    if (typeof bgColor === "object") {
+      resultantColor = bgColor.colorStops.map(color => color.color).join(",");  
+    } else if (typeof bgColor === "string" && bgColor === "#efefef") {
+      resultantColor = "transparent";
     } else {
-      return rgbToHex(bgColor);
+      resultantColor = bgColor;
     }
+    return resultantColor;
   }
 
   const logoBackgroundColor = getBackgroundColor();
