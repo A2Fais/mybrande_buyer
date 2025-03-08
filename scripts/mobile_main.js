@@ -55,6 +55,7 @@ function selectedLayerNavigation() {
 function canvasSelectionEvent(target = true) {
   selectedLayerNavigation();
   const layerBar = document.querySelector("#mobile-logo-layers-bar");
+  const mobileNavBar = document.getElementById("mobile-nav-bar") 
 
   if (!target) {
     pushToRoute(category)

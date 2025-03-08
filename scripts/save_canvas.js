@@ -148,7 +148,7 @@ export async function saveCanvas(
   });
   canvas.renderAll();
 
-  document.querySelector("#top_bottom_1").click();
+  // document.querySelector("#top_bottom_1").click();
 
   const addExternalLayersBackToCanvas = (externalLayers) => {
     return new Promise((resolve) => {
@@ -229,6 +229,10 @@ export async function saveCanvas(
     images: JSON.stringify(externalImages),
     api_check: apiCheck,
   };
+
+  console.log(bgColor)
+
+  return
 
   try {
     if (canvas.get("backgroundColor") !== null)
