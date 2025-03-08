@@ -127,7 +127,6 @@ export async function saveCanvas(
     const svgElement = doc.querySelector("svg");
 
     svgElementIcon = centerSVGElements(svgElement);
-    console.log(svgElementIcon);
     return svgElementIcon;
   };
   getSvgIcon();
@@ -185,6 +184,21 @@ export async function saveCanvas(
     querySelect("#logo_colors_pallete").children,
   ).map((child) => rgbToHex(child.style.backgroundColor));
 
+  const getBackgroundColor = () => {
+    if (typeof bgColor === "object") {
+      const linearColor = bgColor.colorStops.map(color => color.color).join(",");  
+      return linearColor
+    }
+
+    if (bgColor === "#efefef") {
+      return "#transparent";
+    } else {
+      return rgbToHex(bgColor);
+    }
+  }
+
+  const logoBackgroundColor = getBackgroundColor();
+
   const postData = {
     buyer_logo_id: querySelect("#buyer_logo_id")?.value, // from response hidden input field
     buyer_id: querySelect("#buyer_Id")?.value, // hidden input field
@@ -195,7 +209,7 @@ export async function saveCanvas(
     logo_position: alignId,
     icon: svgElementIcon && svgElementIcon,
     layer_colors: layerColors.join(","),
-    logo_backgroundcolor: bgColor === "#efefef" ? "transparent" : bgColor,
+    logo_backgroundcolor: logoBackgroundColor,
 
     brandName_color: !brandColor.includes("#")
       ? rgbToHex(brandColor)
@@ -230,7 +244,7 @@ export async function saveCanvas(
     api_check: apiCheck,
   };
 
-  console.log(bgColor)
+  console.log(logoBackgroundColor)
 
   return
 

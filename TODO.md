@@ -25,5 +25,5 @@
 # Other issues 
  - [x] clicking on no layer in canvas should change it to default route
  - [PROGRESS] layer menu conflicts with other sub-menus
- - [PROGRESS] logo is not saved when linear background is added in the background
+ - [x] logo is not saved when linear background is added in the background
  - [x] when saved logo alignment changes

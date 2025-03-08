@@ -7,6 +7,7 @@ export const convertRGBtoHex = (red, green, blue) => {
 };
 
 export const rgbToHex = (rgbString) => {
+  if (!rgbString) return;
   let parts = rgbString.replace('rgb(', '').replace(')', '').split(',');
 
   let r = parseInt(parts[0], 10);
