@@ -5,7 +5,6 @@ function resizeCanvas(self) {
   const LARGE_SCREEN_MAX_WIDTH = 2560;
 
   const SMALL_HEIGHT_DIVISOR = 1;
-  const SMALL_WIDTH_DIVISOR = 1;
   const MEDIUM_HEIGHT_DIVISOR = 1.8;
   const MEDIUM_WIDTH_DIVISOR = 2;
   const LARGE_HEIGHT_DIVISOR = 2;
@@ -18,7 +17,6 @@ function resizeCanvas(self) {
   const isMobileUser = navigator?.userAgent?.includes("Mobile");
 
   if (isMobileUser) {
-    console.log("MOBILE VIEW USER");
     const canvasContainer = document.getElementById("canvas-container")
     canvasContainer.style.position = "absolute";
     canvasContainer.style.top = "100px";
