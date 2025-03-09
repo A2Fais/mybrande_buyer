@@ -244,10 +244,6 @@ export async function saveCanvas(
     api_check: apiCheck,
   };
 
-  console.log(logoBackgroundColor)
-
-  return
-
   try {
     if (canvas.get("backgroundColor") !== null)
       return toastNotification("backgroundColor issue while saving api");
