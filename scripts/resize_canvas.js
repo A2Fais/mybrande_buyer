@@ -33,7 +33,7 @@ function resizeCanvas(self) {
     if (window.innerWidth <= MEDIUM_SCREEN_WIDTH) {
       if (window.innerWidth <= SMALL_SCREEN_WIDTH) {
         self.canvas.setHeight(window.innerHeight / SMALL_HEIGHT_DIVISOR);
-        self.canvas.setWidth(window.innerWidth);
+        self.canvas.setWidth(window.innerWidth + 100);
         self.canvas.setZoom(SMALL_SCALE_FACTOR);
       } else {
         self.canvas.setHeight(window.innerHeight / MEDIUM_HEIGHT_DIVISOR);

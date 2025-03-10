@@ -196,7 +196,12 @@ export const centerAndResizeElements = (
           sloganNameElement.set("top", canvas.height / 1.8);
 
           if (logoNameElement.text.length <= 40) {
+          if (window.innerWidth <= 500) {
+            logoNameElement.set("left", canvas.width / 1.2);
+          } else {
             logoNameElement.set("left", canvas.width / 1.6);
+          }
+   
             sloganNameElement.set("left", logoNameElement.left);
           } else {
             logoNameElement.set("left", canvas.width / 2.4);
