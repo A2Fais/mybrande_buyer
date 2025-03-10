@@ -13,7 +13,7 @@
 - [x] 14. logo solid color panel scroll not working
 
 # PDF-2
-- [PENDING] 1. Logo is not being shown properly due to alignment issue
+- [x] 1. Logo is not being shown properly due to alignment issue
 - [x] 2. Clicking logo/text layer will show logo/text option
 - [x] 3. logo-layers on top
 - [PROGRESS] 4. New layers are not being added when a layer is duplicated
