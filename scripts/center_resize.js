@@ -6,7 +6,7 @@ export const centerAndResizeElements = (
   logoSize,
   sloganSize,
   textPosition,
-  sloganTop,
+  sloganNameTop,
   logoNameTop,
   letterSpaced = false,
   canvas,
@@ -26,6 +26,9 @@ export const centerAndResizeElements = (
       (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(),
     );
   };
+
+  const windowWidth = window.innerWidth
+  const isMobileUser = navigator?.userAgent?.includes("Mobile") && windowWidth < 600
 
   function triggerSliderEvent(value, obj) {
     obj && canvas.setActiveObject(obj);
@@ -70,6 +73,11 @@ export const centerAndResizeElements = (
 
   switch (type) {
     case "topBottom":
+
+    if (isMobileUser) {
+      logoNameTop = 1.2
+    }
+
       if (logo.type === "curved-text") {
         const { diameter, _percentage, ...options } = logo;
 
@@ -95,7 +103,7 @@ export const centerAndResizeElements = (
       canvas.renderAll();
 
       const logoTopPosition = canvas.height / logoNameTop;
-      const sloganTopPosition = canvas.height / sloganTop;
+      const sloganTopPosition = canvas.height / sloganNameTop;
 
       logo.set("top", logoTopPosition);
       slogan.set("top", sloganTopPosition);
@@ -157,7 +165,7 @@ export const centerAndResizeElements = (
       centerHorizontally(logo, slogan);
 
       const logoTopPos = canvas.height / logoNameTop;
-      const sloganTopPos = canvas.height / sloganTop;
+      const sloganTopPos = canvas.height / sloganNameTop;
       logo.set("top", logoTopPos);
       slogan.set("top", sloganTopPos);
       canvas.requestRenderAll();
@@ -422,7 +430,7 @@ export const centerAndResizeElements = (
         centerHorizontally(slogan);
 
         const logoTopPosition = canvas.height / logoNameTop;
-        const sloganTopPosition = canvas.height / sloganTop;
+        const sloganTopPosition = canvas.height / sloganNameTop;
         logo.set("top", logoTopPosition);
         slogan.set("top", sloganTopPosition);
 
@@ -451,7 +459,7 @@ export const centerAndResizeElements = (
         canvas.renderAll();
 
         const logoTopPosition = canvas.height / logoNameTop;
-        const sloganTopPosition = canvas.height / sloganTop;
+        const sloganTopPosition = canvas.height / sloganNameTop;
         logo.set("top", logoTopPosition);
         slogan.set("top", sloganTopPosition);
 
@@ -477,7 +485,7 @@ export const centerAndResizeElements = (
         centerHorizontally(logo, slogan);
 
         const logoTopPosition = canvas.height / logoNameTop;
-        const sloganTopPosition = canvas.height / sloganTop;
+        const sloganTopPosition = canvas.height / sloganNameTop;
         logo.set("top", logoTopPosition);
         slogan.set("top", sloganTopPosition);
 

@@ -22,7 +22,7 @@ function layoutManager() {
     });
 
     editorContainer.style.top = "-1px";
-    editorContainer.style.left = "-1px";
+    editorContainer.style.left = "-2px";
   }
 }
 
