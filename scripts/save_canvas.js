@@ -1,7 +1,7 @@
 import axios from "axios";
 import { fabric } from "fabric";
 import { toastNotification } from "./toast_notification";
-import { rgbToHex } from "./color_converter";
+import { rgbaToHex, rgbToHex } from "./color_converter";
 import { querySelect } from "./selectors";
 
 export function getTextCase(text) {
@@ -17,6 +17,16 @@ export function getTextCase(text) {
   } else {
     return "Title Case";
   }
+}
+
+function getBGColor(bgColor) {
+  if (isLinearColor(bgColor)) {
+    const color = bgColor.includes("rgba") ? rgbaToHex(bgColor) : bgColor;
+    return getLinearColor(color);
+  } else if (typeof bgColor === "string") {
+    return bgColor === "rgba(255, 255, 255, 1)" ? "transparent" : rgbaToHex(bgColor);
+  }
+  return bgColor;
 }
 
 export function putAngleDownIcon(className, additionalFunction) {
@@ -184,21 +194,6 @@ export async function saveCanvas(
     querySelect("#logo_colors_pallete").children,
   ).map((child) => rgbToHex(child.style.backgroundColor));
 
-  const getBackgroundColor = () => {
-    let resultantColor = null; 
-
-    if (typeof bgColor === "object") {
-      resultantColor = bgColor.colorStops.map(color => color.color).join(",");  
-    } else if (typeof bgColor === "string" && bgColor === "#efefef") {
-      resultantColor = "transparent";
-    } else {
-      resultantColor = bgColor;
-    }
-    return resultantColor;
-  }
-
-  const logoBackgroundColor = getBackgroundColor();
-
   const postData = {
     buyer_logo_id: querySelect("#buyer_logo_id")?.value, // from response hidden input field
     buyer_id: querySelect("#buyer_Id")?.value, // hidden input field
@@ -209,7 +204,7 @@ export async function saveCanvas(
     logo_position: alignId,
     icon: svgElementIcon && svgElementIcon,
     layer_colors: layerColors.join(","),
-    logo_backgroundcolor: logoBackgroundColor,
+    logo_backgroundcolor: getBGColor(bgColor),
 
     brandName_color: !brandColor.includes("#")
       ? rgbToHex(brandColor)
