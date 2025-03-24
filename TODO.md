@@ -1,3 +1,6 @@
+# New issues
+- [PROGRESS] when the logo is 40 char++ the mobile alignment for the logo doesn't work poroperly
+
 # PDF-1
 - [x] 1. The artboard's HEIGHT so that previews align with the feature perfectly
 - [PENDING] 2. Vertical and horizontal center guide lines should be provided.
