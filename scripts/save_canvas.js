@@ -195,18 +195,17 @@ export async function saveCanvas(
   };
   
   function getBGColor(bgColor) {
-    if (!bgColor) return
-
+    console.log(bgColor)
     if (isLinearColor(bgColor)) {
       console.log("Is linear color", bgColor)
       // const color = bgColor?.includes("rgba") ? rgbaToHex(bgColor) : bgColor;
       return getLinearColor(bgColor);
     } else if (typeof bgColor === "string") {
-      return bgColor === "rgba(255, 255, 255, 1)" ? "transparent" : rgbaToHex(bgColor);
+      return bgColor === "rgba(255, 255, 255, 1)" ? "transparent" : bgColor;
     }
     return bgColor;
   }
-
+  
   const postData = {
     buyer_logo_id: querySelect("#buyer_logo_id")?.value, // from response hidden input field
     buyer_id: querySelect("#buyer_Id")?.value, // hidden input field
