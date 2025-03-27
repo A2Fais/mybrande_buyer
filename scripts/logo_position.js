@@ -18,84 +18,131 @@ function setlogoPosition(
     "active",
   );
 
+  const isMobileUser = navigator?.userAgent?.includes("Mobile") && window.innerWidth < 600
+
   switch (position) {
     case "1":
-      centerAndResizeElements(
-        "topBottom",
-        46,
-        22,
-        "center",
-        1.5,
-        1.7,
-        false,
-        canvas,
-        logoNameElement,
-        sloganNameElement,
-      );
-      centerAndResizeElements(
-        "topBottom",
-        46,
-        22,
-        "center",
-        1.3,
-        1.5,
-        false,
-        canvas,
-        logoNameElement,
-        sloganNameElement,
-      );
+      if (isMobileUser) {
+        centerAndResizeElements(
+          "topBottom",
+          46,
+          22,
+          "center",
+          1.1,
+          1.3,
+          false,
+          canvas,
+          logoNameElement,
+          sloganNameElement,
+        );
+      } else {
+        centerAndResizeElements(
+          "topBottom",
+          46,
+          22,
+          "center",
+          1.5,
+          1.7,
+          false,
+          canvas,
+          logoNameElement,
+          sloganNameElement,
+        );
+        centerAndResizeElements(
+          "topBottom",
+          46,
+          22,
+          "center",
+          1.3,
+          1.5,
+          false,
+          canvas,
+          logoNameElement,
+          sloganNameElement,
+        );
+      }
       break;
     case "2":
-      // centerAndResizeElements(
-      //   "topBottom",
-      //   40,
-      //   20,
-      //   "center",
-      //   1.3,
-      //   1.5,
-      //   false,
-      //   canvas,
-      //   logoNameElement,
-      //   sloganNameElement,
-      // );
-      centerAndResizeElements(
-        "topBottom",
-        40,
-        20,
-        "center",
-        1.3,
-        1.5,
-        false,
-        canvas,
-        logoNameElement,
-        sloganNameElement,
-      );
+      if (isMobileUser) {
+        centerAndResizeElements(
+          "topBottom",
+          40,
+          20,
+          "center",
+          1.1,
+          1.3,
+          false,
+          canvas,
+          logoNameElement,
+          sloganNameElement,
+        );
+      } else {
+        centerAndResizeElements(
+          "topBottom",
+          40,
+          20,
+          "center",
+          1.3,
+          1.5,
+          false,
+          canvas,
+          logoNameElement,
+          sloganNameElement,
+        );
+        centerAndResizeElements(
+          "topBottom",
+          40,
+          20,
+          "center",
+          1.3,
+          1.5,
+          false,
+          canvas,
+          logoNameElement,
+          sloganNameElement,
+        );
+      }
       break;
     case "3":
-      centerAndResizeElements(
-        "topBottom",
-        46,
-        22,
-        "center",
-        1.3,
-        1.5,
-        false,
-        canvas,
-        logoNameElement,
-        sloganNameElement,
-      );
-      centerAndResizeElements(
-        "topBottom",
-        46,
-        22,
-        "center",
-        1.3,
-        1.5,
-        false,
-        canvas,
-        logoNameElement,
-        sloganNameElement,
-      );
+      if (isMobileUser) {
+        centerAndResizeElements(
+          "topBottom",
+          46,
+          22,
+          "center",
+          1.1,
+          1.3,
+          false,
+          canvas,
+          logoNameElement,
+          sloganNameElement,
+        );
+      } else {
+        centerAndResizeElements(
+          "topBottom",
+          46,
+          22,
+          "center",
+          1.3,
+          1.5,
+          false,
+          canvas,
+          logoNameElement,
+          sloganNameElement,
+        );
+        centerAndResizeElements(
+          "topBottom",
+          46,
+          22,
+          "center",
+          1.3,
+          1.5,
+          false,
+          canvas,
+          logoNameElement,
+          sloganNameElement,
+        );
+      }
       break;
     case "4":
       centerAndResizeElements(
@@ -301,6 +348,7 @@ function setlogoPosition(
         sloganNameElement,
       );
       break;
+
 
     case "16":
       scaleLogo(200);

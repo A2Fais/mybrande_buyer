@@ -4153,7 +4153,7 @@ export class EditorScreen {
         fontFamilies.push(sloganFamily);
       }
 
-      WebFont.load({
+      WebFont?.load({
         fontDisplay: "swap",
         google: {
           families: fontFamilies,

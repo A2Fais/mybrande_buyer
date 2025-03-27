@@ -8,6 +8,8 @@ import { mobileBackgroundMenu } from "./mobile-background-menu.js";
 import { mobileLogoMenu } from "./mobile-logo-menu.js";
 import { mobileTextMenu } from "./mobile-text-menu.js";
 import { CreateLayerSection } from "./create_layer.js";
+import { mobileAlignView } from "./mobile-align-view.js";
+import { mobileAlignMenu } from "./mobile-align-menu.js";
 
 const navItems = document.querySelectorAll("#mobile-nav-bar [data-name]");
 const categoryContent = document.querySelector("#mobile-category-content");
@@ -145,6 +147,7 @@ const mainCategoryData = {
   logo: mobileLogoView,
   text: mobileTextView,
   background: mobileBackgroundView,
+  align: mobileAlignView
 };
 
 const menuCategoryData = {
@@ -152,6 +155,7 @@ const menuCategoryData = {
   logo: mobileLogoMenu,
   text: mobileTextMenu,
   background: mobileBackgroundMenu,
+  align: mobileAlignMenu
 };
 
 const saveModal = `

@@ -19,6 +19,25 @@ export function getTextCase(text) {
   }
 }
 
+const getLinearColor = (fillColor) => {
+  const color1 = fillColor.colorStops[0].color;
+  const color2 = fillColor.colorStops[1].color;
+  return `${color1},${color2}`;
+};
+
+const isLinearColor = (fillColor) => {
+  return typeof fillColor === "object" && fillColor?.colorStops;
+};
+
+export function getBGColor(bgColor) {
+  if (isLinearColor(bgColor)) {
+    return getLinearColor(bgColor);
+  } else if (typeof bgColor === "string") {
+    return bgColor === "rgba(255, 255, 255, 1)" ? "transparent" : bgColor;
+  }
+  return bgColor;
+}
+
 export function putAngleDownIcon(className, additionalFunction) {
   const icon = document.createElement("i");
   icon.className = "fa-solid fa-angle-down";
@@ -184,28 +203,6 @@ export async function saveCanvas(
     querySelect("#logo_colors_pallete").children,
   ).map((child) => rgbToHex(child.style.backgroundColor));
 
-  const getLinearColor = (fillColor) => {
-    const color1 = fillColor.colorStops[0].color;
-    const color2 = fillColor.colorStops[1].color;
-    return `${color1},${color2}`;
-  };
-
-  const isLinearColor = (fillColor) => {
-    return typeof fillColor === "object" && fillColor?.colorStops;
-  };
-  
-  function getBGColor(bgColor) {
-    console.log(bgColor)
-    if (isLinearColor(bgColor)) {
-      console.log("Is linear color", bgColor)
-      // const color = bgColor?.includes("rgba") ? rgbaToHex(bgColor) : bgColor;
-      return getLinearColor(bgColor);
-    } else if (typeof bgColor === "string") {
-      return bgColor === "rgba(255, 255, 255, 1)" ? "transparent" : bgColor;
-    }
-    return bgColor;
-  }
-  
   const postData = {
     buyer_logo_id: querySelect("#buyer_logo_id")?.value, // from response hidden input field
     buyer_id: querySelect("#buyer_Id")?.value, // hidden input field

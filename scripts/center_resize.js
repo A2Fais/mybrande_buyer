@@ -27,9 +27,6 @@ export const centerAndResizeElements = (
     );
   };
 
-  const windowWidth = window.innerWidth
-  const isMobileUser = navigator?.userAgent?.includes("Mobile") && windowWidth < 600
-
   function triggerSliderEvent(value, obj) {
     obj && canvas.setActiveObject(obj);
     const slider = querySelect("#text-curve-range");
@@ -73,10 +70,6 @@ export const centerAndResizeElements = (
 
   switch (type) {
     case "topBottom":
-
-    if (isMobileUser) {
-      logoNameTop = 1.2
-    }
 
       if (logo.type === "curved-text") {
         const { diameter, _percentage, ...options } = logo;
