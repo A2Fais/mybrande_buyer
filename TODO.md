@@ -1,5 +1,5 @@
 # New issues
-- [PROGRESS] when the logo is 40 char++ the mobile alignment for the logo doesn't work poroperly
+- [PROGRESS] when the logo is 40 char++ the mobile alignment for the logo doesn't work properly
 
 # PDF-1
 - [x] 1. The artboard's HEIGHT so that previews align with the feature perfectly
@@ -30,3 +30,7 @@
  - [x] layer menu conflicts with other sub-menus
  - [x] logo is not saved when linear background is added in the background
  - [x] when saved logo alignment changes
+
+# New Issues
+ - [] alignment menu closes after choosing a logo orientation
+ - [] 

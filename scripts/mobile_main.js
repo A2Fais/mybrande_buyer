@@ -235,14 +235,14 @@ navItems.forEach((item) => {
   });
 });
 
-function routeHandler({ category = history?.state?.category } = {}) {
+export function routeHandler({ category = history?.state?.category } = {}) {
   const mobileNavBar = document.getElementById("mobile-nav-bar");
   const layerBarTop = mobileNavBar.style.height;
   layerBar.style.bottom = layerBarTop;
   if (category && mainCategoryData[category]) {
     categoryContent.innerHTML = `
     <div id="content-container" style="z-index: 10; height: 70px; background: #ffffff; position: fixed; bottom: 0; display: flex;">
-      ${mainCategoryData[category]}
+    ${mainCategoryData[category]}
     </div>`;
     categoryContent.style.display = "block";
   } else {
