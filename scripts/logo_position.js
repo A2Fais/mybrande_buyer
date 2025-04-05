@@ -637,59 +637,88 @@ function setlogoPosition(
       }
       break;
 
-
     case "16":
       scaleLogo(200);
-      centerAndResizeElements(
-        "curve_2",
-        46,
-        32,
-        "center",
-        1.3,
-        8,
-        false,
-        canvas,
-        logoNameElement,
-        sloganNameElement,
-      );
-      centerAndResizeElements(
-        "curve_1",
-        46,
-        32,
-        "center",
-        1.3,
-        8,
-        false,
-        canvas,
-        logoNameElement,
-        sloganNameElement,
-      );
+      if (isMobileUser) {
+        centerAndResizeElements(
+          "mobile_curve_1",
+          46,
+          32,
+          "center",
+          1.1,
+          1.3,
+          false,
+          canvas,
+          logoNameElement,
+          sloganNameElement,
+        );
+      } else {
+        centerAndResizeElements(
+          "curve_2",
+          46,
+          32,
+          "center",
+          1.3,
+          8,
+          false,
+          canvas,
+          logoNameElement,
+          sloganNameElement,
+        );
+        centerAndResizeElements(
+          "curve_1",
+          46,
+          32,
+          "center",
+          1.3,
+          8,
+          false,
+          canvas,
+          logoNameElement,
+          sloganNameElement,
+        );
+      }
       break;
     case "17":
-      centerAndResizeElements(
-        "curve_1",
-        46,
-        32,
-        "center",
-        5,
-        2,
-        false,
-        canvas,
-        logoNameElement,
-        sloganNameElement,
-      );
-      centerAndResizeElements(
-        "curve_2",
-        46,
-        32,
-        "center",
-        5,
-        2,
-        false,
-        canvas,
-        logoNameElement,
-        sloganNameElement,
-      );
+      if (isMobileUser) {
+        centerAndResizeElements(
+          "curve_2",
+          46,
+          32,
+          "center",
+          5,
+          2,
+          false,
+          canvas,
+          logoNameElement,
+          sloganNameElement,
+        );
+      } else {
+        centerAndResizeElements(
+          "curve_1",
+          46,
+          32,
+          "center",
+          5,
+          2,
+          false,
+          canvas,
+          logoNameElement,
+          sloganNameElement,
+        );
+        centerAndResizeElements(
+          "curve_2",
+          46,
+          32,
+          "center",
+          5,
+          2,
+          false,
+          canvas,
+          logoNameElement,
+          sloganNameElement,
+        );
+      }
       break;
     case "18":
       centerAndResizeElements(

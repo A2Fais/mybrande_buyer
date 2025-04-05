@@ -1,4 +1,4 @@
-@import url('./style.css');
+@import url("./style.css");
 
 * {
   font-family: Poppins;
@@ -38,7 +38,6 @@ body {
 .chevron:hover {
   transform: scale(1.2);
 }
-
 
 .slide {
   animation: slideMenuAnimation 0.2s ease-out forwards;
@@ -129,7 +128,7 @@ body {
 
 .switch-slider:before {
   position: absolute;
-  content: '';
+  content: "";
   height: 14px;
   width: 14px;
   left: 4px;
@@ -147,15 +146,15 @@ body {
   border-radius: 50%;
 }
 
-input:checked+.switch-slider {
+input:checked + .switch-slider {
   background-color: var(--gold);
 }
 
-input:focus+.switch-slider {
+input:focus + .switch-slider {
   box-shadow: 0 0 1px var(--gold);
 }
 
-input:checked+.switch-slider:before {
+input:checked + .switch-slider:before {
   -webkit-transform: translateX(18px);
   -ms-transform: translateX(18px);
   transform: translateX(18px);
@@ -503,7 +502,7 @@ input:checked+.switch-slider:before {
   /* box-shadow: 0px 0px 4px #c1a34796; */
 }
 
-.color-picker-container>span {
+.color-picker-container > span {
   color: var(--gray);
   cursor: context-menu;
   border-radius: 5px;
@@ -849,9 +848,7 @@ input:checked+.switch-slider:before {
   }
 }
 
-
-
-.color-mode-list>li {
+.color-mode-list > li {
   padding: 5px 10px;
   list-style: none;
   font-size: 14px;
@@ -861,7 +858,7 @@ input:checked+.switch-slider:before {
   cursor: pointer;
 }
 
-.setting-list-items-li>li {
+.setting-list-items-li > li {
   padding: 5px 10px;
   list-style: none;
   font-size: 14px;
@@ -871,7 +868,7 @@ input:checked+.switch-slider:before {
   color: var(--gray-dark);
 }
 
-.font_size-list-items-li>li {
+.font_size-list-items-li > li {
   padding: 5px 10px;
   list-style: none;
   font-size: 14px;
@@ -881,7 +878,7 @@ input:checked+.switch-slider:before {
   color: var(--gray-dark);
 }
 
-.case-list-items-li>li {
+.case-list-items-li > li {
   padding: 5px 10px;
   list-style: none;
   font-size: 14px;
@@ -891,8 +888,8 @@ input:checked+.switch-slider:before {
   color: var(--gray-dark);
 }
 
-.font-weight-selector-list>li,
-.font_style-list-items-li>li {
+.font-weight-selector-list > li,
+.font_style-list-items-li > li {
   padding: 5px 10px;
   list-style: none;
   font-size: 14px;
@@ -902,28 +899,28 @@ input:checked+.switch-slider:before {
   color: var(--gray-dark);
 }
 
-.font_size-list-items-li>li:hover {
+.font_size-list-items-li > li:hover {
   background-color: var(--light);
 }
 
-.color-mode-list>li:hover {
+.color-mode-list > li:hover {
   background-color: var(--light);
 }
 
-.setting-list-items-li>li:hover {
+.setting-list-items-li > li:hover {
   background-color: var(--light);
 }
 
-.case-list-items-li>li:hover {
+.case-list-items-li > li:hover {
   background-color: var(--light);
 }
 
-.font-weight-selector-list>li:hover,
-.font_style-list-items-li>li:hover {
+.font-weight-selector-list > li:hover,
+.font_style-list-items-li > li:hover {
   background-color: var(--light);
 }
 
-.font-selector-list>li {
+.font-selector-list > li {
   padding: 5px 10px;
   list-style: none;
   font-size: 14px;
@@ -933,7 +930,7 @@ input:checked+.switch-slider:before {
   color: var(--gray-dark);
 }
 
-.font-selector-list>li:hover {
+.font-selector-list > li:hover {
   background-color: var(--light);
 }
 
@@ -1001,13 +998,13 @@ input:checked+.switch-slider:before {
   background-color: var(--lighter);
 }
 
-.setting-item>span {
+.setting-item > span {
   color: #62646a;
   font-size: 14px;
   font-weight: 500;
 }
 
-.setting-switch>span {
+.setting-switch > span {
   color: #62646a;
   font-size: 14px;
   font-weight: 500;
@@ -1230,6 +1227,7 @@ input:checked+.switch-slider:before {
   border-radius: 6px;
   transition: 0.2s all ease-out;
   user-select: none;
+  flex-shrink: 0;
 }
 
 .svg__icon.active,
@@ -1332,7 +1330,7 @@ input:checked+.switch-slider:before {
 }
 
 .preview_image_wrapper {
-  background-image: url('/static/wall.png');
+  background-image: url("/static/wall.png");
   width: 1000px;
   height: 700px;
   object-fit: cover;
@@ -1431,7 +1429,6 @@ body {
 }
 
 @keyframes SpinClockWise {
-
   0% {
     transform: rotate(0deg);
   }
@@ -1439,11 +1436,9 @@ body {
   100% {
     transform: rotate(360deg);
   }
-
 }
 
 @keyframes SpinAntiClockWise {
-
   0% {
     transform: rotate(0deg);
   }
@@ -1451,7 +1446,6 @@ body {
   100% {
     transform: rotate(-360deg);
   }
-
 }
 
 .fa-undo.spin {
@@ -1538,17 +1532,23 @@ body {
   background-color: var(--light);
 }
 
-.ms-select-list.show .ms-select-list-menu.collection-available .collection::-webkit-scrollbar,
+.ms-select-list.show
+  .ms-select-list-menu.collection-available
+  .collection::-webkit-scrollbar,
 .ms-select-list .ms-select-list-menu::-webkit-scrollbar {
   width: 8px;
 }
 
-.ms-select-list.show .ms-select-list-menu.collection-available .collection::-webkit-scrollbar-track,
+.ms-select-list.show
+  .ms-select-list-menu.collection-available
+  .collection::-webkit-scrollbar-track,
 .ms-select-list .ms-select-list-menu::-webkit-scrollbar-track {
   background: var(--lighter);
 }
 
-.ms-select-list.show .ms-select-list-menu.collection-available .collection::-webkit-scrollbar-thumb,
+.ms-select-list.show
+  .ms-select-list-menu.collection-available
+  .collection::-webkit-scrollbar-thumb,
 .ms-select-list .ms-select-list-menu::-webkit-scrollbar-thumb {
   border-radius: 5px;
   background: var(--light);
