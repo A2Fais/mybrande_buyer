@@ -37,7 +37,7 @@
 }
 
 .link:hover {
-  color: var(--gold-darker);
+  color: var(--mybrande-blue);
   text-decoration: underline;
 }
 
@@ -97,7 +97,7 @@ input:focus {
 }
 
 .btn-main:hover {
-  background-color: var(--gold-darker);
+  background-color: var(--mybrande-blue);
 }
 
 .icon-container {

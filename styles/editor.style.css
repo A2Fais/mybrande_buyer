@@ -193,11 +193,11 @@ input:checked + .switch-slider:before {
 }
 
 .nav-item:hover {
-  background-color: var(--gold-darker);
+  background-color: var(--mybrande-blue);
 }
 
 .nav-item:focus {
-  background-color: var(--gold-darker);
+  background-color: var(--mybrande-blue);
 }
 
 .search-icon-category-text {
@@ -273,7 +273,7 @@ input:checked + .switch-slider:before {
 }
 
 .btn-main:hover {
-  background-color: var(--gold-darker);
+  background-color: var(--mybrande-blue);
 }
 
 .btn_outlined {
@@ -390,19 +390,19 @@ input:checked + .switch-slider:before {
 }
 
 .layer-container:hover .layer-img {
-  border: 2px solid var(--gold);
+  border: 2px solid var(--mybrande-blue);
 }
 
 .layer-container:hover .layer-span {
   color: var(--lighter);
-  background: var(--gold-light);
+  background: var(--mybrande-blue);
   padding: 7px;
   border-radius: 3px;
 }
 
 .layer-span.selected {
   color: var(--lighter);
-  background: var(--gold);
+  background: var(--mybrande-blue);
   padding: 7px;
   border-radius: 3px;
 }
@@ -875,7 +875,7 @@ input:checked + .switch-slider:before {
   font-weight: 500;
   width: 175px;
   margin: 2px 0;
-  color: var(--gray-dark);
+  color: var (--gray-dark);
 }
 
 .case-list-items-li > li {
@@ -1040,12 +1040,12 @@ input:checked + .switch-slider:before {
 }
 
 .specific-setting:hover {
-  color: var(--gold);
+  color: var(--mybrande-blue);
   margin-top: -5px;
 }
 
 .specific-setting:hover .specific-setting-label {
-  color: var(--gold);
+  color: var(--mybrande-blue);
   opacity: 1;
 }
 
@@ -1282,7 +1282,7 @@ input:checked + .switch-slider:before {
 }
 
 #back-main:hover {
-  color: var(--gold);
+  color: var(--mybrande-blue);
 }
 
 .solid_color_section {
@@ -1316,9 +1316,9 @@ input:checked + .switch-slider:before {
 }
 
 .category_selected {
-  color: var(--gold);
+  color: var(--mybrande-blue);
   padding-bottom: 9px;
-  border-bottom: 2.5px solid var(--gold);
+  border-bottom: 2.5px solid var(--mybrande-blue);
 }
 
 .hslPalette {
@@ -1376,9 +1376,9 @@ body {
 
 .color_mode_title.active,
 .color_mode_title:hover {
-  color: var(--gold);
+  color: var(--mybrande-blue);
   cursor: pointer;
-  border-bottom: 2px solid var(--gold);
+  border-bottom: 2px solid var(--mybrande-blue);
 }
 
 .font-family-search {

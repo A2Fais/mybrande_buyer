@@ -317,4 +317,46 @@ canvas
     activeObject.set({ flipY: !activeObject.flipY });
     canvas.renderAll();
   });
+
+  document.querySelectorAll('.touchwiz').forEach(element => {
+    const handleTouchStart = () => {
+      const icon = element.querySelector('.mobile-category-icon, .touch-view');
+      const text = element.querySelector('.mobile-category-text, div');
+      
+      if (icon) {
+        icon.style.transition = 'all 0.2s ease';
+        icon.style.transform = 'scale(1.2)';
+        icon.style.color = 'var(--mybrande-blue)';
+      }
+      if (text) {
+        text.style.transition = 'all 0.2s ease';
+        text.style.transform = 'scale(1.1)';
+        text.style.color = 'var(--mybrande-blue)';
+      }
+    };
+
+    const handleTouchEnd = () => {
+      const icon = element.querySelector('.mobile-category-icon, .touch-view');
+      const text = element.querySelector('.mobile-category-text, div');
+      
+      if (icon) {
+        icon.style.transform = '';
+        icon.style.color = '';
+        icon.style.transition = '';
+      }
+      if (text) {
+        text.style.transform = '';
+        text.style.color = '';
+        text.style.transition = '';
+      }
+      element.blur();
+    };
+
+    element.removeEventListener('touchstart', handleTouchStart);
+    element.removeEventListener('touchend', handleTouchEnd);
+    
+    element.addEventListener('touchstart', handleTouchStart);
+    element.addEventListener('touchend', handleTouchEnd);
+    element.addEventListener('touchcancel', handleTouchEnd);
+  });
 }

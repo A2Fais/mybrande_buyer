@@ -223,6 +223,7 @@ function renderSaveModal() {
 renderTopBar();
 
 const layerBar = document.querySelector("#mobile-logo-layers-bar")
+
 navItems.forEach((item) => {
   item.addEventListener("click", (event) => {
     event.stopPropagation();
@@ -239,6 +240,7 @@ export function routeHandler({ category = history?.state?.category } = {}) {
   const mobileNavBar = document.getElementById("mobile-nav-bar");
   const layerBarTop = mobileNavBar.style.height;
   layerBar.style.bottom = layerBarTop;
+  
   if (category && mainCategoryData[category]) {
     categoryContent.innerHTML = `
     <div id="content-container" style="z-index: 10; height: 70px; background: #ffffff; position: fixed; bottom: 0; display: flex;">
@@ -257,6 +259,77 @@ routeHandler({ category: null });
 
 window.addEventListener("popstate", routeHandler);
 
+document.addEventListener("mouseenter", (event) => {
+  if (event.target.classList.contains("nav-icon")) {
+    console.log("Mouse entered icon");
+    event.target.style.color = "blue";
+  }
+}, true);
 
+document.addEventListener("mouseleave", (event) => {
+  if (event.target.classList.contains("nav-icon")) {
+    event.target.style.color = ""; 
+  }
+}, true);
 
+// Add hover effect handlers for touchwiz navigation
+const touchWizElements = document.querySelectorAll('.touchwiz');
+touchWizElements.forEach(element => {
+  element.addEventListener('mouseenter', () => {
+    const icon = element.querySelector('.nav-icon-elem, .nav-icon-elem-first');
+    const text = element.querySelector('div');
+    if (icon) {
+      icon.style.transform = 'scale(1.1)';
+      icon.style.color = 'var(--mybrande-blue)';
+    }
+    if (text) {
+      text.style.transform = 'scale(1.1)';
+      text.style.color = 'var(--mybrande-blue)';
+    }
+  });
 
+  element.addEventListener('mouseleave', () => {
+    const icon = element.querySelector('.nav-icon-elem, .nav-icon-elem-first');
+    const text = element.querySelector('div');
+    if (icon) {
+      icon.style.transform = '';
+      icon.style.color = icon.classList.contains('nav-icon-elem-first') ? 'var(--gold-light)' : 'var(--gray-light)';
+    }
+    if (text) {
+      text.style.transform = '';
+      text.style.color = 'var(--gray-light)';
+    }
+  });
+});
+
+document.querySelectorAll('.touchwiz').forEach(element => {
+  element.addEventListener('touchstart', () => {
+    const icon = element.querySelector('.nav-icon-elem, .nav-icon-elem-first');
+    const text = element.querySelector('div');
+    
+    if (icon) {
+      icon.style.transform = 'scale(1.2)';
+      icon.style.color = 'var(--mybrande-blue)';
+    }
+    if (text) {
+      text.style.transform = 'scale(1.1)';
+      text.style.color = 'var(--mybrande-blue)';
+    }
+  });
+
+  element.addEventListener('touchend', () => {
+    const icon = element.querySelector('.nav-icon-elem, .nav-icon-elem-first');
+    const text = element.querySelector('div');
+    
+    if (icon) {
+      icon.style.transform = '';
+      icon.style.color = icon.classList.contains('nav-icon-elem-first') ? 'var(--gold-light)' : 'var(--gray-light)';
+    }
+    if (text) {
+      text.style.transform = '';
+      text.style.color = 'var(--gray-light)';
+    }
+
+    element.blur();
+  });
+});

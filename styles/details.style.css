@@ -26,7 +26,7 @@
 }
 
 .link:hover {
-  color: var(--gold-darker);
+  color: var(--mybrande-blue);
   text-decoration: underline;
 }
 
@@ -86,7 +86,7 @@ input:focus {
 }
 
 .btn-main:hover {
-  background-color: var(--gold-darker);
+  background-color: var(--mybrande-blue);
 }
 
 .btn-bordered {
@@ -96,7 +96,7 @@ input:focus {
 }
 
 .btn-bordered:hover {
-  background-color: var(--gold);
+  background-color: var(--mybrande-blue);
   color: var(--white);
 }
 
@@ -347,10 +347,10 @@ input:focus {
 }
 
 .round__chip:hover {
-  background-color: var(--gold);
+  background-color: var(--mybrande-blue);
   border-radius: 10px;
   font-size: 14px;
-  color: var(--white);
+  color: var (--white);
 }
 
 #img-view {
@@ -380,5 +380,5 @@ input:focus {
 }
 
 .mlist:hover {
-  background-color: var(--gold);
+  background-color: var(--mybrande-blue);
 }

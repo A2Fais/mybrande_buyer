@@ -766,4 +766,47 @@ export async function mobileTextMenu(canvas) {
     .addEventListener("click", () => {
       updateLetterCase("Sentence Case");
     });
+
+  // Add touch effect to all menu categories
+  document.querySelectorAll('.mobile-category, .mobile-list').forEach(element => {
+    const handleTouchStart = () => {
+      const icon = element.querySelector('.mobile-category-icon');
+      const text = element.querySelector('.mobile-category-text, span');
+      
+      if (icon) {
+        icon.style.transition = 'all 0.2s ease';
+        icon.style.transform = 'scale(1.2)';
+        icon.style.color = 'var(--mybrande-blue)';
+      }
+      if (text) {
+        text.style.transition = 'all 0.2s ease';
+        text.style.transform = 'scale(1.1)';
+        text.style.color = 'var(--mybrande-blue)';
+      }
+    };
+
+    const handleTouchEnd = () => {
+      const icon = element.querySelector('.mobile-category-icon');
+      const text = element.querySelector('.mobile-category-text, span');
+      
+      if (icon) {
+        icon.style.transform = '';
+        icon.style.color = '';
+        icon.style.transition = '';
+      }
+      if (text) {
+        text.style.transform = '';
+        text.style.color = '';
+        text.style.transition = '';
+      }
+      element.blur();
+    };
+
+    element.removeEventListener('touchstart', handleTouchStart);
+    element.removeEventListener('touchend', handleTouchEnd);
+    
+    element.addEventListener('touchstart', handleTouchStart);
+    element.addEventListener('touchend', handleTouchEnd);
+    element.addEventListener('touchcancel', handleTouchEnd);
+  });
 }
