@@ -126,8 +126,9 @@ export function mobileBackgroundMenu() {
   });
 
   colorPicker.on("color:change", (color) => {
-    const hexColor = color.hexString;
-    canvas.setBackgroundColor(hexColor, canvas.renderAll.bind(canvas));
+    const rgba = color.rgba;
+    const backgroundColor = `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`;
+    canvas.setBackgroundColor(backgroundColor, canvas.renderAll.bind(canvas));
   });
 
   // Linear Colors Actions
