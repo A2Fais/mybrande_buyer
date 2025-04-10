@@ -950,7 +950,7 @@ input:checked + .switch-slider:before {
 }
 
 .magnifier-container {
-  position: absolute;
+  position: fixed;
   left: 380px;
   bottom: 10px;
   outline: 1.5px solid var(--light);

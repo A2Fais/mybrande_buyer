@@ -32,5 +32,4 @@
  - [x] when saved logo alignment changes
 
 # New Issues
- - [] alignment menu closes after choosing a logo orientation
- - [] 
+ - [x] alignment menu closes after choosing a logo orientation
