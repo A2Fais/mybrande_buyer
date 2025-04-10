@@ -567,21 +567,18 @@ export async function mobileTextMenu(canvas) {
 
   mobileFontSizeBtn.addEventListener("click", () => {
     history.pushState({ category: "text/font-size" }, null, "#text/font-size");
-    canvas.discardActiveObject().renderAll();
     menuMain.style.display = "none";
     fontSizeSubmenu.style.display = "block";
   });
 
   mobileTextRotateBtn.addEventListener("click", () => {
     history.pushState({ category: "text/rotate" }, null, "#text/rotate");
-    canvas.discardActiveObject().renderAll();
     menuMain.style.display = "none";
     rotateSubmenu.style.display = "block";
   });
 
   mobileLetterCaseBtn.addEventListener("click", () => {
     history.pushState({ category: "text/letercase" }, null, "#text/lettercase");
-    canvas.discardActiveObject().renderAll();
     menuMain.style.display = "none";
     letterCaseSubmenu.style.display = "block";
   });
@@ -609,14 +606,12 @@ export async function mobileTextMenu(canvas) {
 
   mobileFontCurveBtn.addEventListener("click", () => {
     history.pushState({ category: "text/fontcurve" }, null, "#text/fontcurve");
-    canvas.discardActiveObject().renderAll();
     menuMain.style.display = "none";
     fontCurveSubmenu.style.display = "block";
   });
 
   mobileInputsbtn.addEventListener("click", () => {
     history.pushState({ category: "text/inputs" }, null, "#text/inputs");
-    canvas.discardActiveObject().renderAll();
     menuMain.style.display = "none";
     textInputsSubmenu.style.display = "block";
   });
