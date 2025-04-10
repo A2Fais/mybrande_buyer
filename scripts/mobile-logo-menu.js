@@ -45,7 +45,7 @@ export function mobileLogoMenu(canvas) {
       </div>
     </div>
 `,
-canvas
+    canvas
   );
 
   const shadowSubmenu = createSubmenu(
@@ -80,25 +80,25 @@ canvas
     menuMain,
     `<div class="mobile-category-container" style="padding: 5px 0;">
   <div style="display: flex; justify-content: space-around; width: 100%;">
-    <div style="text-align: center;" id="mobile-duplicate-layer">
-        <i class="fa-solid fa-copy" style="font-size: 20px; color: var(--gray-light);"></i>
-        <div style="font-size: 12px; color: var(--gray-light);">Duplicate</div>
+    <div style="text-align: center;" id="mobile-duplicate-layer" class="action-item">
+        <i class="fa-solid fa-copy action-icon" style="font-size: 20px; color: var(--gray-light);"></i>
+        <div class="action-text" style="font-size: 12px; color: var(--gray-light);">Duplicate</div>
     </div>
-    <div style="text-align: center;" id="mobile-visible-layer">
-        <i class="fa-solid fa-eye" style="font-size: 20px; color: var(--gray-light);"></i>
-        <div style="font-size: 12px; color: var(--gray-light);">Visible</div>
+    <div style="text-align: center;" id="mobile-visible-layer" class="action-item">
+        <i class="fa-solid fa-eye action-icon" style="font-size: 20px; color: var(--gray-light);"></i>
+        <div class="action-text" style="font-size: 12px; color: var(--gray-light);">Visible</div>
     </div>
-    <div style="text-align: center;" id="mobile-forward-layer">
-        <i class="fa-solid fa-arrow-up" style="font-size: 20px; color: var(--gray-light);"></i>
-        <div style="font-size: 12px; color: var(--gray-light);">Forward</div>
+    <div style="text-align: center;" id="mobile-forward-layer" class="action-item">
+        <i class="fa-solid fa-arrow-up action-icon" style="font-size: 20px; color: var(--gray-light);"></i>
+        <div class="action-text" style="font-size: 12px; color: var(--gray-light);">Forward</div>
     </div>
-    <div style="text-align: center;" id="mobile-backward-layer">
-        <i class="fa-solid fa-arrow-down" style="font-size: 20px; color: var(--gray-light);"></i>
-        <div style="font-size: 12px; color: var(--gray-light);">Backward</div>
+    <div style="text-align: center;" id="mobile-backward-layer" class="action-item">
+        <i class="fa-solid fa-arrow-down action-icon" style="font-size: 20px; color: var(--gray-light);"></i>
+        <div class="action-text" style="font-size: 12px; color: var(--gray-light);">Backward</div>
     </div>
-    <div style="text-align: center;" id="mobile-remove-layer">
-        <i class="fa-solid fa-trash" style="font-size: 20px; color: var(--gray-light);"></i>
-        <div style="font-size: 12px; color: var(--gray-light);">Remove</div>
+    <div style="text-align: center;" id="mobile-remove-layer" class="action-item">
+        <i class="fa-solid fa-trash action-icon" style="font-size: 20px; color: var(--gray-light);"></i>
+        <div class="action-text" style="font-size: 12px; color: var(--gray-light);">Remove</div>
     </div>
     </div>
   </div>
@@ -220,7 +220,7 @@ canvas
 <div id="mobile-logo-none-color-section" style="display: flex; gap: 5px; justify-content: flex-start; padding-right: 30px; overflow-x: scroll; display: none;">
   <h1>None</h1> </div>
 </div>`,
-  canvas);
+    canvas);
 
   const layerSubmenu = createSubmenu(
     menuMain,
@@ -322,7 +322,7 @@ canvas
     const handleTouchStart = () => {
       const icon = element.querySelector('.mobile-category-icon, .touch-view');
       const text = element.querySelector('.mobile-category-text, div');
-      
+
       if (icon) {
         icon.style.transition = 'all 0.2s ease';
         icon.style.transform = 'scale(1.2)';
@@ -338,7 +338,7 @@ canvas
     const handleTouchEnd = () => {
       const icon = element.querySelector('.mobile-category-icon, .touch-view');
       const text = element.querySelector('.mobile-category-text, div');
-      
+
       if (icon) {
         icon.style.transform = '';
         icon.style.color = '';
@@ -354,7 +354,88 @@ canvas
 
     element.removeEventListener('touchstart', handleTouchStart);
     element.removeEventListener('touchend', handleTouchEnd);
-    
+
+    element.addEventListener('touchstart', handleTouchStart);
+    element.addEventListener('touchend', handleTouchEnd);
+    element.addEventListener('touchcancel', handleTouchEnd);
+  });
+
+  document.querySelectorAll('.action-item').forEach(element => {
+    const handleTouchStart = () => {
+      const icon = element.querySelector('.action-icon');
+      const text = element.querySelector('.action-text');
+
+      if (icon) {
+        icon.style.transition = 'all 0.2s ease';
+        icon.style.transform = 'scale(1.2)';
+        icon.style.color = 'var(--mybrande-blue)';
+      }
+      if (text) {
+        text.style.transition = 'all 0.2s ease';
+        text.style.transform = 'scale(1.1)';
+        text.style.color = 'var(--mybrande-blue)';
+      }
+    };
+
+    const handleTouchEnd = () => {
+      const icon = element.querySelector('.action-icon');
+      const text = element.querySelector('.action-text');
+
+      if (icon) {
+        icon.style.transform = '';
+        icon.style.color = '';
+        icon.style.transition = '';
+      }
+      if (text) {
+        text.style.transform = '';
+        text.style.color = '';
+        text.style.transition = '';
+      }
+      element.blur();
+    };
+
+    element.addEventListener('touchstart', handleTouchStart);
+    element.addEventListener('touchend', handleTouchEnd);
+    element.addEventListener('touchcancel', handleTouchEnd);
+  });
+
+  // Add touch effect to all menu categories
+  document.querySelectorAll('.mobile-category, .mobile-list').forEach(element => {
+    if (!element) return;
+
+    const handleTouchStart = () => {
+      const icon = element.querySelector('.mobile-category-icon');
+      const text = element.querySelector('.mobile-category-text, span');
+
+      if (icon) {
+        icon.style.transition = 'all 0.2s ease';
+        icon.style.transform = 'scale(1.2)';
+        icon.style.color = 'var(--mybrande-blue)';
+      }
+      if (text) {
+        text.style.transition = 'all 0.2s ease';
+        text.style.transform = 'scale(1.1)';
+        text.style.color = 'var(--mybrande-blue)';
+      }
+    };
+
+    const handleTouchEnd = () => {
+      const icon = element.querySelector('.mobile-category-icon');
+      const text = element.querySelector('.mobile-category-text, span');
+
+      if (icon) {
+        icon.style.transform = '';
+        icon.style.color = '';
+        icon.style.transition = '';
+      }
+      if (text) {
+        text.style.transform = '';
+        text.style.color = '';
+        text.style.transition = '';
+      }
+      element.blur();
+    };
+
     element.addEventListener('touchstart', handleTouchStart);
     element.addEventListener('touchend', handleTouchEnd);
     element.addEventListener('touchcancel', handleTouchEnd);
