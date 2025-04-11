@@ -56,6 +56,22 @@ export async function mobileTextMenu(canvas) {
     canvas
   );
 
+  const fontSearchInput = fontFamilySubmenu.querySelector("#mobile-font-search");
+  fontSearchInput.addEventListener("input", (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+    const filteredFonts = fonts.filter((font) =>
+      font.family.toLowerCase().startsWith(searchTerm)
+    );
+
+    const mobileFontsContainer = fontFamilySubmenu.querySelector("#mobile-fonts");
+    mobileFontsContainer.innerHTML = "";
+
+    filteredFonts.forEach((font) => {
+      const fontElement = createFontElement(font);
+      mobileFontsContainer.appendChild(fontElement);
+    });
+  });
+
   const fonts = await fetchedFonts();
   const mobileFontsContainer = document.querySelector("#mobile-fonts");
 
