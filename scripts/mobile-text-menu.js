@@ -49,6 +49,7 @@ export async function mobileTextMenu(canvas) {
   const fontFamilySubmenu = createSubmenu(
     menuMain,
     `<div id="mobile-fonts" style="display: flex; padding-right: 30px; gap: 30px; overflow-x: scroll; width: 90vw; align-items: center;"></div>`,
+    canvas
   );
   const fonts = await fetchedFonts();
 
@@ -502,7 +503,7 @@ export async function mobileTextMenu(canvas) {
           const [text, number] = value.split(/(\d+)/).filter(Boolean);
           let str = "";
           if (number) {
-            str += `${number}\u00A0`; // Non-breaking space
+            str += `${number}\u00A0`; 
           }
           str += text;
           textElement.append(str);
@@ -546,21 +547,13 @@ export async function mobileTextMenu(canvas) {
     });
 
   mobileFontFamilyBtn.addEventListener("click", () => {
+    history.pushState({ category: "text/fontFamily" }, null, "#text/fontFamily");
     menuMain.style.display = "none";
-    history.pushState(
-      { category: "text/fontFamily" },
-      null,
-      "#text/fontFamily",
-    );
     fontFamilySubmenu.style.display = "flex";
   });
 
   mobileFontStyleBtn.addEventListener("click", () => {
-    history.pushState(
-      { category: "logo/font-style" },
-      null,
-      "#logo/font-style",
-    );
+    history.pushState({ category: "logo/font-style" }, null, "#logo/font-style");
     menuMain.style.display = "none";
     fontStyleSubmenu.style.display = "block";
   });
