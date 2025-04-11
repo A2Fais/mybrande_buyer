@@ -972,7 +972,9 @@ export class EditorScreen {
       };
       for (const key in selectBoxes) {
         let el = querySelect(`.${key}`);
-        el.setAttribute("data-value", obj[selectBoxes[key]]);
+
+        const value = obj[selectBoxes[key]] || obj.get(selectBoxes[key]);
+        el.setAttribute("data-value", value);
         el.dispatchEvent(new Event("valueChange"));
       }
 
@@ -986,39 +988,41 @@ export class EditorScreen {
 
         fontList.querySelector(".ms-list-value").innerText = family;
 
+        // Keep the existing font weight instead of resetting it
         let fontWeightSelector = querySelect(".font-weight-selector");
-        fontWeightSelector.setAttribute(
-        "data-value",
-        obj.orgFontWeight ? obj.orgFontWeight : "normal",
-        );
+        const currentWeight = obj.get("fontWeight") || "normal";
+        fontWeightSelector.setAttribute("data-value", currentWeight);
         fontWeightSelector.dispatchEvent(new Event("valueChange"));
-        fontWeightSelector.dispatchEvent(new Event("change"));
       };
 
-/*       let family = obj.get("fontFamily"),
-        familyData = this.allFonts[family] */;
+      let family = obj.get("fontFamily");
+      let familyData = this.allFonts[family];
 
-/*       if (familyData) {
-        let { loaded } = familyData;
+      if (familyData) {
+        let { loaded, variants } = familyData;
 
         if (!loaded) {
-        WebFont.load({
-          google: {
-          families: [family],
-          },
-          active: function () {
+          const familyWithVariants = `${family}:${variants.join(",")}`;
+
+          WebFont.load({
+        google: {
+          families: [familyWithVariants],
+        },
+        active: function () {
           familyData.loaded = true;
           self.loadedFonts[family] = familyData;
 
           obj.set("fontFamily", family);
+          obj.set("fontWeight", obj.get("orgFontWeight") || obj.get("fontWeight") || "normal");
           setFontFamily(family);
           self.canvas.renderAll();
-          },
-        });
+        },
+          });
         } else {
-        setFontFamily(family);
+          obj.set("fontWeight", obj.get("orgFontWeight") || obj.get("fontWeight") || "normal");
+          setFontFamily(family);
         }
-      } */
+      }
 
       querySelect("#letter-spacing-slider").value = Math.round(
         obj.charSpacing,

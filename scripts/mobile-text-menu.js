@@ -446,8 +446,8 @@ export async function mobileTextMenu(canvas) {
       
       activeObject.set({
         fontFamily: font.family,
-        // fontWeight: 'normal', 
-        // fontStyle: 'normal' 
+        fontWeight: activeObject.get('fontWeight'), 
+        fontStyle: activeObject.get('fontStyle')    
       });
       
       canvas.requestRenderAll();
