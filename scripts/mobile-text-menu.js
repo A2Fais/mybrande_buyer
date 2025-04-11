@@ -443,13 +443,18 @@ export async function mobileTextMenu(canvas) {
     fontContainer.addEventListener('click', () => {
       const activeObject = canvas.getActiveObject();
       if (!activeObject) return;
-      
+
+      const currentLeft = activeObject.left;
+      const currentTop = activeObject.top;
+
       activeObject.set({
         fontFamily: font.family,
-        fontWeight: activeObject.get('fontWeight'), 
-        fontStyle: activeObject.get('fontStyle')    
+        fontWeight: activeObject.get('fontWeight'),
+        fontStyle: activeObject.get('fontStyle'),
+        left: currentLeft,
+        top: currentTop
       });
-      
+
       canvas.requestRenderAll();
       canvas.fire('object:modified');
     });
