@@ -30,6 +30,12 @@
  - [x] layer menu conflicts with other sub-menus
  - [x] logo is not saved when linear background is added in the background
  - [x] when saved logo alignment changes
+ - [x] alignment menu closes after choosing a logo orientation
 
 # New Issues
- - [x] alignment menu closes after choosing a logo orientation
+- [x] Hover color for navbar
+- [x] Font family search bar
+- [x] Selected elements get deselected after changing certain property
+- [x] Background transparency
+- [x] Mobile navbar issue
+- [x] Bold text becomes regular when clicked
