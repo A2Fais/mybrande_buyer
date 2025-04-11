@@ -48,11 +48,15 @@ export async function mobileTextMenu(canvas) {
 
   const fontFamilySubmenu = createSubmenu(
     menuMain,
-    `<div id="mobile-fonts" style="display: flex; padding-right: 30px; gap: 30px; overflow-x: scroll; width: 90vw; align-items: center;"></div>`,
+    `<div style="display: flex; flex-direction: column; align-items: center;">
+        <input type="text" id="mobile-font-search" placeholder="Search Fonts..." 
+          style="width: 90%; padding: 8px; border: 1px solid #ccc; position: absolute; bottom: 80px; border-radius: 5px; font-size: 14px;" />
+      <div id="mobile-fonts" style="display: flex; padding-right: 30px; gap: 30px; overflow-x: scroll; width: 90vw; align-items: center;"></div>
+    </div>`,
     canvas
   );
-  const fonts = await fetchedFonts();
 
+  const fonts = await fetchedFonts();
   const mobileFontsContainer = document.querySelector("#mobile-fonts");
 
   const rotateSubmenu = createSubmenu(
