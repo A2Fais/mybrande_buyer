@@ -848,200 +848,197 @@ export class EditorScreen {
       this.hideCanvasGuides();
 
       const activeObject = this.canvas.getActiveObject(),
-        obj = activeObject;
+      obj = activeObject;
       this.activeLayerIndex = this.canvas.getObjects().indexOf(activeObject);
 
       !activeObject.text &&
-        activeObject.on("mousedown", updatePickerHandler(activeObject));
+      activeObject.on("mousedown", updatePickerHandler(activeObject));
 
       if (activeObject) {
-        if (activeObject.text) {
-          querySelect('.nav-item[data-name="text"]').dispatchEvent(
-            new Event("click"),
-          );
-          this.activeSection = "text";
-          const hasShadow = !!activeObject?.shadow?.blur;
+      if (activeObject.text) {
+        querySelect('.nav-item[data-name="text"]').dispatchEvent(new Event("click"));
 
-          querySelect("#drop-shadow").checked = hasShadow;
+        this.activeSection = "text";
+        const hasShadow = !!activeObject?.shadow?.blur;
 
-          if (!hasShadow) {
-            querySelect("#shadow-adjust").style.display = "none";
-            querySelect("#shadow-blur").style.display = "none";
-            querySelect("#shadow-offsetX").style.display = "none";
-            querySelect("#shadow-offsetY").style.display = "none";
-          } else {
-            querySelect("#shadow-adjust").style.display = "block";
-            querySelect("#shadow-blur").style.display = "block";
-            querySelect("#shadow-offsetX").style.display = "block";
-            querySelect("#shadow-offsetY").style.display = "block";
-          }
+        querySelect("#drop-shadow").checked = hasShadow;
 
-          if (hasShadow) {
-            let { offsetX, offsetY, blur } = activeObject.shadow;
-            querySelect("#shadow-blur-slider").value = blur;
-            querySelect("#shadow-offsetX-slider").value = offsetX;
-            querySelect("#shadow-offsetY-slider").value = offsetY;
-            this.shadowBlur = blur;
-            this.shadowOffsetX = offsetX;
-            this.shadowOffsetY = offsetY;
-          }
+        if (!hasShadow) {
+        querySelect("#shadow-adjust").style.display = "none";
+        querySelect("#shadow-blur").style.display = "none";
+        querySelect("#shadow-offsetX").style.display = "none";
+        querySelect("#shadow-offsetY").style.display = "none";
         } else {
-          this.activeSection = "text";
-
-          querySelect('.nav-item[data-name="logo"]').dispatchEvent(
-            new Event("click"),
-          );
-
-          // set shadow values
-          if (activeObject.shadow) {
-            let { offsetX, offsetY, blur } = activeObject.shadow;
-            querySelect("#logo-shadow-blur-slider").value = blur;
-            querySelect("#logo-shadow-offsetX-slider").value = offsetX;
-            querySelect("#logo-shadow-offsetY-slider").value = offsetY;
-            this.logoShadowOffsetX = offsetX;
-            this.logoShadowOffsetY = offsetY;
-            this.logoShadowBlur = blur;
-          }
+        querySelect("#shadow-adjust").style.display = "block";
+        querySelect("#shadow-blur").style.display = "block";
+        querySelect("#shadow-offsetX").style.display = "block";
+        querySelect("#shadow-offsetY").style.display = "block";
         }
 
-        if (activeObject.type === "curved-text") {
-          let percentage = activeObject.percentage;
+        if (hasShadow) {
+        let { offsetX, offsetY, blur } = activeObject.shadow;
+        querySelect("#shadow-blur-slider").value = blur;
+        querySelect("#shadow-offsetX-slider").value = offsetX;
+        querySelect("#shadow-offsetY-slider").value = offsetY;
+        this.shadowBlur = blur;
+        this.shadowOffsetX = offsetX;
+        this.shadowOffsetY = offsetY;
+        }
+      } else {
 
-          if (percentage >= 90) percentage = 100;
-          if (percentage <= -90) percentage = 0;
+        this.activeSection = "text";
 
-          querySelect("#curve-text").value = (percentage * 3.6).toFixed(0);
-          querySelect("#text-curve-range").value =
-            getRangeFromPercentage(percentage);
+        querySelect('.nav-item[data-name="logo"]').dispatchEvent(new Event("click"));
+
+        if (activeObject.shadow) {
+        let { offsetX, offsetY, blur } = activeObject.shadow;
+        querySelect("#logo-shadow-blur-slider").value = blur;
+        querySelect("#logo-shadow-offsetX-slider").value = offsetX;
+        querySelect("#logo-shadow-offsetY-slider").value = offsetY;
+        this.logoShadowOffsetX = offsetX;
+        this.logoShadowOffsetY = offsetY;
+        this.logoShadowBlur = blur;
+        }
+      }
+
+      if (activeObject.type === "curved-text") {
+        let percentage = activeObject.percentage;
+
+        if (percentage >= 90) percentage = 100;
+        if (percentage <= -90) percentage = 0;
+
+        querySelect("#curve-text").value = (percentage * 3.6).toFixed(0);
+        querySelect("#text-curve-range").value =
+        getRangeFromPercentage(percentage);
+      } else {
+        querySelect("#curve-text").value = 0;
+        querySelect("#text-curve-range").value = 2500;
+      }
+
+      const layers = querySelectAll(".layer-container");
+      layers.forEach((layer, idx) => {
+        const layerImg = layer.querySelector(".layer-img");
+        const layerSpan = layer.querySelector(".layer-span");
+
+        let fillColor;
+        const color = activeObject.get("fill");
+        if (typeof color === "object") {
+        fillColor = color.colorStops[0].color;
+        } else if (color && color.includes("#")) {
+        fillColor = color;
         } else {
-          querySelect("#curve-text").value = 0;
-          querySelect("#text-curve-range").value = 2500;
+        const newColor = rgbaToHex(color);
+        fillColor = newColor;
         }
 
-        const layers = querySelectAll(".layer-container");
-        layers.forEach((layer, idx) => {
-          const layerImg = layer.querySelector(".layer-img");
-          const layerSpan = layer.querySelector(".layer-span");
+        colorPicker.color.set(fillColor);
+        querySelect("#HEX").value = fillColor;
 
-          let fillColor;
-          const color = activeObject.get("fill");
-          if (typeof color === "object") {
-            fillColor = color.colorStops[0].color;
-          } else if (color && color.includes("#")) {
-            fillColor = color;
-          } else {
-            const newColor = rgbaToHex(color);
-            fillColor = newColor;
-          }
+        let rgbValue = hexToRgb(fillColor);
+        let rgbValues = rgbValue.match(/\d+/g);
 
-          colorPicker.color.set(fillColor);
-          querySelect("#HEX").value = fillColor;
-
-          let rgbValue = hexToRgb(fillColor);
-          let rgbValues = rgbValue.match(/\d+/g);
-
-          if (rgbValues && rgbValues.length === 3) {
-            querySelect("#R").value = rgbValues[0];
-            querySelect("#G").value = rgbValues[1];
-            querySelect("#B").value = rgbValues[2];
-          }
-
-          let hslValue = hexToHsl(fillColor);
-          let hslValues = hslValue.match(/\d+/g);
-
-          if (hslValues && hslValues.length === 3) {
-            querySelect("#H").value = hslValues[0];
-            querySelect("#S").value = hslValues[1];
-            querySelect("#L").value = hslValues[2];
-          }
-          let layerId = layer.getAttribute("data-id");
-
-          if (layerId && obj.layerId) {
-            if (layerId == obj.layerId) {
-              layerSpan.scrollIntoView({ block: "center", behavior: "smooth" });
-              layerImg.classList.add("selected");
-              layerSpan.classList.add("selected");
-            } else {
-              layerImg.classList.remove("selected");
-              layerSpan.classList.remove("selected");
-            }
-          }
-        });
-
-        let selectBoxes = {
-          "font-weight-selector": "fontWeight",
-          "font-style-selector": "fontStyle_",
-          "text-case-select-box": "letterCase",
-        };
-        for (const key in selectBoxes) {
-          let el = querySelect(`.${key}`);
-          el.setAttribute("data-value", obj[selectBoxes[key]]);
-          el.dispatchEvent(new Event("valueChange"));
+        if (rgbValues && rgbValues.length === 3) {
+        querySelect("#R").value = rgbValues[0];
+        querySelect("#G").value = rgbValues[1];
+        querySelect("#B").value = rgbValues[2];
         }
 
-        let fontList = querySelect(".font-family-selectbox");
-        const setFontFamily = (family) => {
-          fontList.setAttribute("data-value", family);
-          self.changeFontWeight = false;
-          fontList.dispatchEvent(new Event("valueChange"));
-          fontList.dispatchEvent(new Event("change"));
-          self.changeFontWeight = true;
+        let hslValue = hexToHsl(fillColor);
+        let hslValues = hslValue.match(/\d+/g);
 
-          fontList.querySelector(".ms-list-value").innerText = family;
-
-          let fontWeightSelector = querySelect(".font-weight-selector");
-          fontWeightSelector.setAttribute(
-            "data-value",
-            obj.orgFontWeight ? obj.orgFontWeight : "normal",
-          );
-          fontWeightSelector.dispatchEvent(new Event("valueChange"));
-          fontWeightSelector.dispatchEvent(new Event("change"));
-        };
-
-        let family = obj.get("fontFamily"),
-          familyData = this.allFonts[family];
-
-        if (familyData) {
-          let { loaded } = familyData;
-
-          if (!loaded) {
-            WebFont.load({
-              google: {
-                families: [family],
-              },
-              active: function () {
-                familyData.loaded = true;
-                self.loadedFonts[family] = familyData;
-
-                obj.set("fontFamily", family);
-                setFontFamily(family);
-                self.canvas.renderAll();
-              },
-            });
-          } else {
-            setFontFamily(family);
-          }
+        if (hslValues && hslValues.length === 3) {
+        querySelect("#H").value = hslValues[0];
+        querySelect("#S").value = hslValues[1];
+        querySelect("#L").value = hslValues[2];
         }
+        let layerId = layer.getAttribute("data-id");
 
-        querySelect("#letter-spacing-slider").value = Math.round(
-          obj.charSpacing,
+        if (layerId && obj.layerId) {
+        if (layerId == obj.layerId) {
+          layerSpan.scrollIntoView({ block: "center", behavior: "smooth" });
+          layerImg.classList.add("selected");
+          layerSpan.classList.add("selected");
+        } else {
+          layerImg.classList.remove("selected");
+          layerSpan.classList.remove("selected");
+        }
+        }
+      });
+
+      let selectBoxes = {
+        "font-weight-selector": "fontWeight",
+        "font-style-selector": "fontStyle_",
+        "text-case-select-box": "letterCase",
+      };
+      for (const key in selectBoxes) {
+        let el = querySelect(`.${key}`);
+        el.setAttribute("data-value", obj[selectBoxes[key]]);
+        el.dispatchEvent(new Event("valueChange"));
+      }
+
+      let fontList = querySelect(".font-family-selectbox");
+      const setFontFamily = (family) => {
+        fontList.setAttribute("data-value", family);
+        self.changeFontWeight = false;
+        fontList.dispatchEvent(new Event("valueChange"));
+        fontList.dispatchEvent(new Event("change"));
+        self.changeFontWeight = true;
+
+        fontList.querySelector(".ms-list-value").innerText = family;
+
+        let fontWeightSelector = querySelect(".font-weight-selector");
+        fontWeightSelector.setAttribute(
+        "data-value",
+        obj.orgFontWeight ? obj.orgFontWeight : "normal",
         );
-        querySelect("#l_spacing_value").value =
-          Math.round(obj.charSpacing) || 0;
+        fontWeightSelector.dispatchEvent(new Event("valueChange"));
+        fontWeightSelector.dispatchEvent(new Event("change"));
+      };
 
-        if (obj.fontSize) {
-          querySelect("#font_size_title").value =
-            Math.round(obj.fontSize) + "px";
-          querySelect("#font_size_range").value = Math.round(obj.fontSize);
+/*       let family = obj.get("fontFamily"),
+        familyData = this.allFonts[family] */;
+
+/*       if (familyData) {
+        let { loaded } = familyData;
+
+        if (!loaded) {
+        WebFont.load({
+          google: {
+          families: [family],
+          },
+          active: function () {
+          familyData.loaded = true;
+          self.loadedFonts[family] = familyData;
+
+          obj.set("fontFamily", family);
+          setFontFamily(family);
+          self.canvas.renderAll();
+          },
+        });
+        } else {
+        setFontFamily(family);
         }
+      } */
+
+      querySelect("#letter-spacing-slider").value = Math.round(
+        obj.charSpacing,
+      );
+      querySelect("#l_spacing_value").value =
+        Math.round(obj.charSpacing) || 0;
+
+      if (obj.fontSize) {
+        querySelect("#font_size_title").value =
+        Math.round(obj.fontSize) + "px";
+        querySelect("#font_size_range").value = Math.round(obj.fontSize);
+      }
       }
       this.canvas.requestRenderAll();
     };
 
     this.canvas.on("selection:created", onSelect);
     this.canvas.on("selection:updated", onSelect);
-    var logoLayerGroup;
 
+    let logoLayerGroup;
     const textMain = ({
       text,
       fontFamily = "ABeeZee",
