@@ -439,6 +439,21 @@ export async function mobileTextMenu(canvas) {
     fontContainer.style.textAlign = "center";
     const fontText = font.family.split(",")[0].replace(/ /g, "\u00A0");
     fontContainer.append(fontText);
+
+    fontContainer.addEventListener('click', () => {
+      const activeObject = canvas.getActiveObject();
+      if (!activeObject) return;
+      
+      activeObject.set({
+        fontFamily: font.family,
+        fontWeight: 'normal', 
+        fontStyle: 'normal' 
+      });
+      
+      canvas.requestRenderAll();
+      canvas.fire('object:modified');
+    });
+
     return fontContainer;
   }
 
