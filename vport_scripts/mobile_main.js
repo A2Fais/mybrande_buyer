@@ -1,15 +1,15 @@
 import { canvas } from "./main.js";
-import { mobileBackgroundView } from "./mobile-background-view.js";
-import { mobileLogoView } from "./mobile-logo-view.js";
-import { mobileAddView } from "./mobile-add-view.js";
-import { mobileAddMenu } from "./mobile-add-menu.js";
-import { mobileTextView } from "./mobile-text-view.js";
-import { mobileBackgroundMenu } from "./mobile-background-menu.js";
-import { mobileLogoMenu } from "./mobile-logo-menu.js";
-import { mobileTextMenu } from "./mobile-text-menu.js";
+import { mobile_background_view } from "./mobile_background_view.js";
+import { mobile_logo_view } from "./mobile_logo_view.js";
+import { mobile_add_view } from "./mobile_add_view.js";
+import { mobile_add_menu } from "./mobile_add_menu.js";
+import { mobile_text_view } from "./mobile_text_view.js";
+import { mobile_background_menu } from "./mobile_background_menu.js";
+import { mobile_logo_menu } from "./mobile_logo_menu.js";
+import { mobile_text_menu } from "./mobile_text_menu.js";
 import { CreateLayerSection } from "./create_layer.js";
-import { mobileAlignView } from "./mobile-align-view.js";
-import { mobileAlignMenu } from "./mobile-align-menu.js";
+import { mobile_align_view } from "./mobile_align_view.js";
+import { mobile_align_menu } from "./mobile_align_menu.js";
 
 const navItems = document.querySelectorAll("#mobile-nav-bar [data-name]");
 const categoryContent = document.querySelector("#mobile-category-content");

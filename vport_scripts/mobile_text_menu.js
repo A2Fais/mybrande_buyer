@@ -1,8 +1,8 @@
 import { fetchedFonts } from "./main.js";
-import { mobileLogoColorsMenu } from "./mobile-logo-colors-menu.js";
-import { mobileLogoShadowMenu } from "./mobile-logo-shadow-menu.js";
-import { mobileLogoScaleMenu } from "./mobile-logo-scale-menu.js";
-import createSubmenu from "./mobile-sub-menu.js";
+import { mobile_logo_colors_menu } from "./mobile_logo_colors_menu.js";
+import { mobile_logo_shadow_menu } from "./mobile_logo_shadow_menu.js";
+import { mobile_logo_scale_menu } from "./mobile_logo_scale_menu.js";
+import createSubmenu from "./mobile_sub_menu.js";
 
 export async function mobileTextMenu(canvas) {
   if (!canvas) return;
