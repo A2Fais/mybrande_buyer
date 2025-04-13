@@ -797,8 +797,8 @@ export async function mobileTextMenu(canvas) {
     return fontWeightBtn.addEventListener("click", (event) => {
       const newActiveObject = canvas.getActiveObject();
       const weight = event.target.getAttribute("data-value");
-      activeObject.set("fontWeight", weight || "normal");
-      activeObject.set("orgFontWeight", weight || "normal");
+      newActiveObject.set("fontWeight", weight || "normal");
+      newActiveObject.set("orgFontWeight", weight || "normal");
       canvas.renderAll();
       canvas.save();
     });
