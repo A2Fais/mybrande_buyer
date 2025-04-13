@@ -272,13 +272,10 @@ export class EditorScreen {
     });
   }
 
-  // Hide all positioning line
   hideCanvasGuides() {
-    // Get positionlines objects ids in array
     let positionlines = this.canvas._objects.filter(
       (obj) => obj.isPositioningLine,
     );
-    // Hide all positionlines
     for (let i = 0; i < positionlines.length; i++) {
       this.canvas.remove(positionlines[i]);
     }
@@ -309,24 +306,6 @@ export class EditorScreen {
       });
     };
     this.canvas.refreshLayerNames = refreshLayerNames;
-
-    // const setCanvasBackground = () => {
-    //   this.canvas.setBackgroundImage(
-    //     "/static/pattern.png",
-    //     this.canvas.renderAll.bind(this.canvas),
-    //     {
-    //       opacity: 0.6,
-    //       originX: "left",
-    //       originY: "top",
-    //       top: 0,
-    //       left: 0,
-    //       scaleX: 0.3,
-    //       scaleY: 0.3,
-    //     },
-    //   );
-    // };
-    //
-    // setCanvasBackground();
 
     updatePreview();
 
@@ -988,7 +967,6 @@ export class EditorScreen {
 
         fontList.querySelector(".ms-list-value").innerText = family;
 
-        // Keep the existing font weight instead of resetting it
         let fontWeightSelector = querySelect(".font-weight-selector");
         const currentWeight = obj.get("fontWeight") || "normal";
         fontWeightSelector.setAttribute("data-value", currentWeight);
@@ -1082,10 +1060,6 @@ export class EditorScreen {
       slogan.set("text", value);
       this.canvas.renderAll();
     });
-
-    // if (this.logoFile) {
-    //   renderCanvas(this.logoFile);
-    // }
 
     const getTextCase = (text) => {
       if (text === text.toUpperCase()) {
@@ -1202,10 +1176,6 @@ export class EditorScreen {
             this.canvas.renderAll.bind(this.canvas),
           );
         }
-        // this.canvas.setBackgroundImage(
-        //   null,
-        //   this.canvas.renderAll.bind(this.canvas),
-        // );
 
         querySelect(".preview-modal-bg").style.display = "block";
         const logo = this.canvas.toDataURL({
@@ -1738,12 +1708,6 @@ export class EditorScreen {
     };
     applyEventListners();
 
-    // let captureTimeout = null;
-
-    // const captureCanvasState = () => {
-    //   clearTimeout(captureTimeout);
-    // };
-
     document.addEventListener("keydown", async (e) => {
       let isCtrlZ = e.ctrlKey && e.key === "z",
         isCtrlY = e.ctrlKey && e.key === "y";
@@ -1789,25 +1753,9 @@ export class EditorScreen {
         value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
       let angle = (percentage_ * 3.6).toFixed(0);
 
-      console.log("TEXT CURVE", value, percentage_, angle);
-
       querySelect("#curve-text").value = angle;
       this.canvas.requestRenderAll();
     });
-
-    // querySelect("#text-curve-range").addEventListener("change", () => {
-    //
-    //   const obj = this.canvas.getActiveObject();
-    //   if (!obj) return false;
-    //   if (obj.type !== "curved-text") return false;
-    //
-    //   obj._updateObj("scaleX", obj.scaleX);
-    //   obj._updateObj("scaleY", obj.scaleY);
-    //
-    //   updatePreview();
-    //   this.canvas.save();
-    //   this.canvas.requestRenderAll();
-    // });
 
     querySelect("#text-curve-up").addEventListener("click", () => {
       let input = querySelect("#curve-text"),
@@ -1827,33 +1775,6 @@ export class EditorScreen {
       querySelect("#curve-text").dispatchEvent(new Event("change"));
     });
 
-    // querySelect("#curve-text").addEventListener("change", function (e) {
-    //   let inp = e.target,
-    //     val = parseInt(inp.value);
-    //
-    //   if (val > 360) inp.value = 360;
-    //   else if (val < -360) inp.value = -360;
-    //
-    //   let value = (parseInt(inp.value) / 360) * 100;
-    //
-    //   if (value > 90) value = 90;
-    //   else if (value < -90) value = -90;
-    //
-    //   let rangeValue = getRangeFromPercentage(value),
-    //     orgVal = rangeValue;
-    //
-    //   let input = querySelect("#text-curve-range");
-    //
-    //   if (value >= 90) rangeValue = 5000;
-    //   else if (value <= -90) rangeValue = 0;
-    //   input.value = orgVal;
-    //
-    //   initCurveText();
-    //   input.value = rangeValue;
-    //
-    //   self.canvas.requestRenderAll();
-    // });
-
     querySelect("#curve-text").addEventListener("keydown", (e) => {
       if (e.key == "ArrowUp") {
         querySelect("#text-curve-up").dispatchEvent(new Event("click"));
@@ -1871,7 +1792,6 @@ export class EditorScreen {
     });
 
     const addCurveText = (obj, diameter, percentage = null) => {
-      // console.log("ADD CURVE TEXT", obj, diameter, percentage);
       const props = obj.__dimensionAffectingProps;
       const options = {
         ...props,
@@ -1924,7 +1844,6 @@ export class EditorScreen {
       if (!obj) return;
 
       let value = querySelect("#text-curve-range").value;
-      console.log("CURVE TEXT WORKING VALUE", value);
 
       let percentage =
         value >= 2500 ? (value - 2500) / 25 : -((2500 - value) / 25);
@@ -1950,11 +1869,8 @@ export class EditorScreen {
       const isCurvedText = obj.type === "curved-text";
 
       if (hasCurveApply && !isCurvedText) {
-        console.log("hasCurveApply && !isCurvedText");
-
         addCurveText(obj, value, percentage);
       } else if (!hasCurveApply) {
-        console.log("!hasCurveApply");
         let itext = true;
         if (obj.text == querySelect("#logoMainField").value) {
           itext = false;
@@ -1983,8 +1899,6 @@ export class EditorScreen {
         this.canvas.setActiveObject(text);
         this.canvas.save();
       } else if (hasCurveApply && isCurvedText) {
-        console.log("hasCurveApply && !isCurvedText");
-
         obj.set("_cachedCanvas", null);
         obj.set("diameter", value);
         obj.set("flipped", isFlipped);
@@ -2005,7 +1919,6 @@ export class EditorScreen {
 
       return rangeValue;
     };
-    
 
     querySelect("#font_size_title").addEventListener("change", (event) => {
       let text = event.target.value;
@@ -2114,7 +2027,6 @@ export class EditorScreen {
         active.clone((clonedGroup) => {
           clonedGroup._objects.forEach((object, i) => {
             if (object.text) return true;
-            object.duplicate = true;
             this.canvas.add(object);
             layerElement = document.querySelector(
               `.layer-container[data-id="${active._objects[i].layerId}"]`,
@@ -2138,7 +2050,6 @@ export class EditorScreen {
       } else {
         active.clone((cloned) => {
           if (cloned.text) return true;
-          // Add Layer
           cloned.set("duplicate", true);
           this.canvas.add(cloned);
           cloned.top += 10;
@@ -2302,7 +2213,7 @@ export class EditorScreen {
       const activeObj = this.canvas.getActiveObject(),
         self = this;
       if (activeObj) {
-        this.canvas.save(); // For Position
+        this.canvas.save();
         if (activeObj._objects && activeObj._objects.length) {
           activeObj._objects.forEach((obj) => {
             self.canvas.remove(obj);
@@ -2396,7 +2307,6 @@ export class EditorScreen {
           ],
         });
       } else if (colorMode === "None") {
-        setCanvasBackground();
         this.canvas.setBackgroundColor(
           "#eeeeee",
           this.canvas.renderAll.bind(this.canvas),
@@ -2439,8 +2349,6 @@ export class EditorScreen {
     logoPalleteComponent.addEventListener("colorChange", (e) => {
       const selectedObject = this.canvas.getActiveObject();
       const { colorMode, grad1Value, grad2Value, solidValue } = e.detail;
-      // console.log(selectedObject);
-      // let angleColor = `${colorAngle}deg`;
       let color = null;
       if (colorMode !== "Solid") {
         color = new fabric.Gradient({
@@ -2578,7 +2486,6 @@ export class EditorScreen {
     });
 
     querySelect("#close_modal").addEventListener("click", () => {
-      setCanvasBackground();
       this.canvas.setBackgroundColor(
         this.canvasBG,
         this.canvas.renderAll.bind(this.canvas),
@@ -2588,7 +2495,6 @@ export class EditorScreen {
 
     querySelect("#overlay").addEventListener("click", (e) => {
       if (e.target.classList.contains("overlay")) {
-        setCanvasBackground();
         this.canvas.setBackgroundColor(
           "#eee",
           this.canvas.renderAll.bind(this.canvas),
@@ -2641,193 +2547,6 @@ export class EditorScreen {
 
     let currIconIndex = 0;
     querySelect("#loader_main").style.display = "block";
-
-    // axios
-    //   .get(iconUrl)
-    //   .then((resp) => {
-    //     this.iconList = resp.data.CategoryWiseIcon;
-    //     this.iconList.forEach((icon, index) => {
-    //       let catslug = icon.category.iconcategory_slug;
-    //       this.loadedIcons[catslug] = {};
-    //       icon.Icons.forEach((i) => {
-    //         this.loadedIcons[catslug][i.id] = {
-    //           id: i.id,
-    //           svg: i.icon_svg,
-    //         };
-    //       });
-    //       if (!icon.Icons[currIconIndex]) return true;
-    //       let { icon_svg, id } = icon.Icons[currIconIndex];
-    //       const name = icon.category.iconcategory_name;
-    //       const categoryTitle = querySelect("#category_type_title");
-
-    //       const span = document.createElement("span");
-    //       span.setAttribute("index", index);
-    //       span.classList.add("search-icon-category-text");
-    //       span.innerText = name;
-    //       categoryTitle.append(span);
-
-    //       const svgImg = svgCreator(icon_svg, name);
-    //       svgImg.setAttribute("data-id", id);
-    //       svgImg.setAttribute("data-category", icon.category.iconcategory_slug);
-    //       querySelect("#clip-icons").appendChild(svgImg);
-    //     });
-
-    //     fetchCanvasData(this.canvas).then((data) => {
-    //       this.logoFile = data.svgData.AllData.svg_data;
-    //       const logoPosition = data.svgData.AllData.logo_position;
-    //       let parser = new DOMParser();
-    //       let svgDoc = parser.parseFromString(this.logoFile, "image/svg+xml");
-
-    //       let imageTag = svgDoc.querySelector("image");
-    //       if (imageTag) {
-    //         imageTag.remove();
-    //       }
-    //       let serializer = new XMLSerializer();
-    //       let updatedLogo = serializer.serializeToString(svgDoc);
-    //       localStorage.setItem("logo-file", updatedLogo);
-
-    //       renderCanvas({
-    //         SVG: updatedLogo,
-    //         fabric: fabric,
-    //         canvas: this.canvas,
-    //         logoNameElement,
-    //         sloganNameElement,
-    //         layers: this.layers,
-    //         initialRotation: this.initialRotation,
-    //         isFlipY: this.isFlipY,
-    //         isFlipX: this.isFlipX,
-    //         colorPicker,
-    //         refreshLayerNames,
-    //       });
-
-    //       updateColorPickers(this.canvas, colorPicker);
-    //       const brandCase = data?.brandCase;
-    //       const sloganCase = data?.sloganCase;
-
-    //       if (!sessionStorage.getItem("reloaded")) {
-    //         sessionStorage.setItem("reloaded", "true");
-    //         location.reload();
-    //       }
-    //       if (data?.bg?.includes(",")) {
-    //         const colorGrad = data.bg.split(",");
-    //         let color = new fabric.Gradient({
-    //           type: "linear",
-    //           coords: {
-    //             x1: 0,
-    //             y1: 0,
-    //             x2: this.canvas.width,
-    //             y2: this.canvas.height,
-    //           },
-    //           colorStops: [
-    //             { offset: 0, color: colorGrad[0] },
-    //             { offset: 1, color: colorGrad[1] },
-    //           ],
-    //         });
-    //         this.canvas.setBackgroundColor(color);
-    //       } else {
-    //         data.bg === "transparent"
-    //           ? this.canvas.setBackgroundColor("#ffffff")
-    //           : this.canvas.setBackgroundColor(data.bg);
-    //       }
-
-    //       this.canvas.renderAll();
-    //       this.alignId = +data.logoPosition;
-    //       updatePreview();
-
-    //       setTimeout(async () => {
-    //         this.canvasHistory = new SaveHistory(this.canvas);
-    //         querySelect("#loader_main").style.display = "none";
-    //         const alignItem = document.querySelector(
-    //           `.svg__icon[data-align-id="${logoPosition}"]`,
-    //         );
-
-    //         alignItem.click();
-
-    //         logoNameElement.set("fontSize", +data.brandSize);
-    //         sloganNameElement.set("fontSize", +data.sloganSize);
-
-    //         if (data.brandCurveDiameter)
-    //           addCurveText(
-    //             logoNameElement,
-    //             data.brandCurveDiameter,
-    //             data.brand_curve_percentage,
-    //           );
-
-    //         if (data.sloganCurveDiameter)
-    //           addCurveText(
-    //             sloganNameElement,
-    //             data.sloganCurveDiameter,
-    //             data.slogan_curve_percentage,
-    //           );
-
-    //         const brandBlur = data?.brandNameDropShadow?.split(",")[0];
-    //         const brandOffsetX = data?.brandNameDropShadow?.split(",")[1];
-    //         const brandOffsetY = data?.brandNameDropShadow?.split(",")[2];
-
-    //         const sloganBlur = data?.sloganDropShadow?.split(",")[0];
-    //         const sloganOffsetX = data?.sloganDropShadow?.split(",")[1];
-    //         const sloganOffsetY = data?.sloganDropShadow?.split(",")[2];
-
-    //         logoNameElement.set("shadow", {
-    //           offsetX: +brandOffsetX,
-    //           offsetY: +brandOffsetY,
-    //           blur: +brandBlur,
-    //         });
-
-    //         sloganNameElement.set("shadow", {
-    //           offsetX: +sloganOffsetX,
-    //           offsetY: +sloganOffsetY,
-    //           blur: +sloganBlur,
-    //         });
-
-    //         logoNameElement.set("charSpacing", data.brandCharSpacing);
-    //         sloganNameElement.set("charSpacing", data.sloganCharSpacing);
-
-    //         if (brandCase === "Uppercase") {
-    //           logoNameElement.text = logoNameElement.text.toUpperCase();
-    //         } else if (brandCase === "Lowercase") {
-    //           logoNameElement.text = logoNameElement.text.toLowerCase();
-    //         } else if (brandCase === "Title Case") {
-    //           logoNameElement.text = toTitleCase(logoNameElement.text);
-    //         } else if (brandCase === "Sentence Case") {
-    //           logoNameElement.text = toSentenceCase(logoNameElement.text);
-    //         }
-
-    //         if (sloganCase === "Uppercase") {
-    //           sloganNameElement.text = sloganNameElement.text.toUpperCase();
-    //         } else if (sloganCase === "Lowercase") {
-    //           sloganNameElement.text = sloganNameElement.text.toLowerCase();
-    //         } else if (sloganCase === "Title Case") {
-    //           sloganNameElement.text = toTitleCase(sloganNameElement.text);
-    //         } else if (sloganCase === "Sentence Case") {
-    //           sloganNameElement.text = toSentenceCase(sloganNameElement.text);
-    //         }
-
-    //         if (data.brandStyle === "underline") {
-    //           logoNameElement.set("underline", true);
-    //         } else {
-    //           logoNameElement.set("underline", false);
-    //           logoNameElement.set("fontStyle", data.brandStyle);
-    //         }
-
-    //         if (data.sloganStyle === "underline") {
-    //           sloganNameElement.set("underline", true);
-    //         } else {
-    //           sloganNameElement.set("underline", false);
-    //           sloganNameElement.set("fontStyle", data.sloganStyle);
-    //         }
-
-    //         logoNameElement.centerH();
-    //         sloganNameElement.centerH();
-
-    //         this.canvas.save();
-    //         this.canvas.renderAll();
-    //       }, 1000);
-    //     });
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error fetching CANVAS:", error);
-    //   });
 
     fetchCanvasData(this.canvas).then((data) => {
       this.logoFile = data.svgData.AllData.svg_data;
@@ -3589,7 +3308,6 @@ export class EditorScreen {
       querySelect("#bg_solid_color_items_text").style.display = "flex";
       querySelect("#bg_picker_color_items_text").style.display = "none";
       querySelect("#bg_linear_color_items_text").style.display = "none";
-      // querySelect(".tp-btn-applyBG").style.display = "none";
       openPickerViewBG = "none";
     };
 
@@ -3597,7 +3315,6 @@ export class EditorScreen {
       querySelect("#bg_solid_color_items_text").style.display = "none";
       querySelect("#bg_picker_color_items_text").style.display = "flex";
       querySelect("#bg_linear_color_items_text").style.display = "none";
-      // querySelect(".tp-btn-applyBG").style.display = "none";
 
       querySelect("#solid_color_text_modeBG").classList.remove(
         "category_selected",
@@ -3617,7 +3334,6 @@ export class EditorScreen {
       querySelect("#bg_solid_color_items_text").style.display = "none";
       querySelect("#bg_picker_color_items_text").style.display = "none";
       querySelect("#bg_linear_color_items_text").style.display = "flex";
-      // querySelect(".tp-btn-applyBG").style.display = "block";
 
       querySelect("#solid_color_text_modeBG").classList.remove(
         "category_selected",
