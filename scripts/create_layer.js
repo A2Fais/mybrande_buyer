@@ -1,8 +1,9 @@
 export class CreateLayerSection {
-  constructor(layers, deviceType = "desktop") {
-    this.layers = layers;
-    this.deviceType = deviceType;
+  constructor(layer) {
+    this.layer = layer;
+    this.deviceType = window.innerWidth <= 800 ? "mobile" : "desktop";
   }
+
   create(obj, idx, after = null) {
     if (obj?.text) return;
 
@@ -19,7 +20,6 @@ export class CreateLayerSection {
     }
 
     const id = getUniqueId();
-
     obj.set("layerId", id);
     const imgElem = document.createElement("img");
     imgElem.className = "layer-img";
@@ -39,20 +39,16 @@ export class CreateLayerSection {
       layerContainer.style.textAlign = "center";
       layerContainer.style.gap = "0px";
       layerContainer.style.margin = 0;
-      layerSpan.style.width = "60px";
-      layerSpan.style.marginInline = "7px";
-      layerContainer.style.textAlign = "left";
     }
 
-    layerContainer.setAttribute("data_layer", idx);
-    layerContainer.setAttribute("data-id", id);
-    layerContainer.append(imgElem, layerSpan);
-    
+    layerContainer.setAttribute("layer-id", id);
+    layerContainer.appendChild(imgElem);
+    layerContainer.appendChild(layerSpan);
+
     if (after) {
-      after.insertAdjacentHTML("afterend", layerContainer.outerHTML);
+      after.insertAdjacentElement("afterend", layerContainer);
     } else {
-      this.layers.append(layerContainer);
+      this.layer.insertBefore(layerContainer, this.layer.firstChild);
     }
-    return id;
   }
 }

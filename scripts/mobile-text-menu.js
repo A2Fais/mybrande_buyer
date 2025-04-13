@@ -14,9 +14,7 @@ export async function mobileTextMenu(canvas) {
     const fontSize = activeObject?.text ? activeObject?.get("fontSize") : 0;
     const charSpacing = activeObject.get("charSpacing");
 
-    const fontSizeValueElement = document.querySelector(
-      "#mobile-font-size-value",
-    );
+    const fontSizeValueElement = document.querySelector("#mobile-font-size-value");
     const fontSizeSlider = document.querySelector("#mobile-font-size-slider")
     if (fontSizeValueElement) {
       fontSizeValueElement.innerText = `Font Size: ${fontSize} px`;
@@ -28,23 +26,18 @@ export async function mobileTextMenu(canvas) {
     if (spacingValue) {
       spacingValue.value = `Spacing: ${Math.round(charSpacing / 10)}px`;
       spacingSlider.value = Math.round(charSpacing);
-
     }
 
-    const rotateValueElement = document.querySelector(
-      "#mobile-text-rotate-value",
-    );
+    const rotateValueElement = document.querySelector("#mobile-text-rotate-value");
     if (rotateValueElement) {
-      rotateValueElement.innerText = `Rotate: ${activeObject.get("angle")}°`;
+      rotateValueElement.innerText = `${Math.round(activeObject.angle)}°`;
     }
   };
 
   canvas.on("selection:created", updateDisplay);
   canvas.on("selection:updated", updateDisplay);
 
-  const menuMain = document.querySelector(
-    "#mobile-category-content #mobile-text-view",
-  );
+  const menuMain = document.querySelector("#mobile-category-content #mobile-text-view");
 
   const fontFamilySubmenu = createSubmenu(
     menuMain,
@@ -55,22 +48,6 @@ export async function mobileTextMenu(canvas) {
     </div>`,
     canvas
   );
-
-  const fontSearchInput = fontFamilySubmenu.querySelector("#mobile-font-search");
-  fontSearchInput.addEventListener("input", (event) => {
-    const searchTerm = event.target.value.toLowerCase();
-    const filteredFonts = fonts.filter((font) =>
-      font.family.toLowerCase().startsWith(searchTerm)
-    );
-
-    const mobileFontsContainer = fontFamilySubmenu.querySelector("#mobile-fonts");
-    mobileFontsContainer.innerHTML = "";
-
-    filteredFonts.forEach((font) => {
-      const fontElement = createFontElement(font);
-      mobileFontsContainer.appendChild(fontElement);
-    });
-  });
 
   const fonts = await fetchedFonts();
   const mobileFontsContainer = document.querySelector("#mobile-fonts");
@@ -192,7 +169,6 @@ export async function mobileTextMenu(canvas) {
   </div>
 `, canvas);
 
-  // Add touch effects for action menu items
   document.querySelectorAll('.action-item').forEach(element => {
     const handleTouchStart = () => {
       const icon = element.querySelector('.action-icon');
@@ -237,32 +213,27 @@ export async function mobileTextMenu(canvas) {
     `<div id="mobile-colors-view" >
 
 <div id="mobile-logo-color-categories" class="mobile-category-container" style="justify-content: center">
-    <!-- Solid Category -->
     <div id="mobile-logo-solid-category" class="mobile-category">
         <i class="fas fa-square mobile-category-icon"></i>
         <p class="mobile-category-text">Solid</p>
     </div>
 
-    <!-- Color Picker Category -->
     <div id="mobile-logo-color-picker-category" class="mobile-category">
         <i class="fas fa-palette mobile-category-icon"></i>
         <p class="mobile-category-text">C.Picker</p>
     </div>
 
-    <!-- Linear Category -->
     <div id="mobile-logo-linear-category" class="mobile-category">
         <i class="fas fa-arrows-alt-h mobile-category-icon"></i>
         <p class="mobile-category-text">Linear</p>
     </div>
 
-    <!-- None Category -->
     <div id="mobile-logo-none-category" class="mobile-category" style="display: none;">
         <i class="fas fa-ban mobile-category-icon" ></i>
         <p class="mobile-category-text">None</p>
     </div>
 </div>
 
-<!-- Solid Colors Section -->
 <div id="mobile-logo-solid-color-section" style="display: none; gap: 5px; justify-content: flex-start; padding-inline: 0 0 10px 0; 
   overflow-x: scroll; grid-template-colums: repeat(4, 1fr); width: 100svw; position: absolute; bottom: 0; left: 0; background: white;">
   <div style="display: flex;">
@@ -383,42 +354,20 @@ export async function mobileTextMenu(canvas) {
   mobileLogoColorsMenu(canvas);
   mobileLogoShadowMenu(canvas);
 
-  // NAVIGATION BUTTONS
-  const mobileFontFamilyBtn = menuMain.querySelector(
-    "#mobile-font-family-category",
-  );
+  const mobileFontFamilyBtn = menuMain.querySelector("#mobile-font-family-category");
   const mobileTextRotateBtn = menuMain.querySelector("#mobile-rotate-category");
 
-  const mobileFontStyleBtn = menuMain.querySelector(
-    "#mobile-font-style-category",
-  );
-  const mobileFontWeightBtn = document.querySelector(
-    "#mobile-font-weight-category",
-  );
-  const mobileFontCurveBtn = document.querySelector(
-    "#mobile-curve-text-category",
-  );
-  const mobileFontSpacingBtn = document.querySelector(
-    "#mobile-letter-spacing-category",
-  );
-  const mobileLetterCaseBtn = document.querySelector(
-    "#mobile-letter-case-category",
-  );
-  const mobileTextLayersBtn = document.querySelector(
-    "#mobile-text-layer-actions-category",
-  );
-  const mobileFontSizeBtn = document.querySelector(
-    "#mobile-font-size-category",
-  );
-  const mobileTextColorsBtn = document.querySelector(
-    "#mobile-text-layer-colors-category",
-  );
+  const mobileFontStyleBtn = menuMain.querySelector("#mobile-font-style-category");
+  const mobileFontWeightBtn = document.querySelector("#mobile-font-weight-category");
+  const mobileFontCurveBtn = document.querySelector("#mobile-curve-text-category");
+  const mobileFontSpacingBtn = document.querySelector("#mobile-letter-spacing-category");
+  const mobileLetterCaseBtn = document.querySelector("#mobile-letter-case-category");
+  const mobileTextLayersBtn = document.querySelector("#mobile-text-layer-actions-category");
+  const mobileFontSizeBtn = document.querySelector("#mobile-font-size-category");
+  const mobileTextColorsBtn = document.querySelector("#mobile-text-layer-colors-category");
   const mobileInputsbtn = document.querySelector("#mobile-input-category");
-  const mobileTextShadowBtn = document.querySelector(
-    "#mobile-text-drop-shadow-category",
-  );
+  const mobileTextShadowBtn = document.querySelector("#mobile-text-drop-shadow-category");
 
-  // FONT VIEW HORIZONTAL LIST VIRTUALIZATION
   function slicedFontView(start = 0, numberOfItems = 50) {
     const end = start + numberOfItems;
     const slicedFonts = fonts.slice(start, end);
@@ -430,7 +379,17 @@ export async function mobileTextMenu(canvas) {
     fontContainer.className = "mobile-font-family-item";
     fontContainer.style.width = "max-content";
     fontContainer.style.height = "max-content";
-    fontContainer.style.fontFamily = font.family;
+    
+    // Pre-load font to show preview
+    WebFont.load({
+      google: {
+        families: [`${font.family}:regular,bold`]
+      },
+      active: () => {
+        fontContainer.style.fontFamily = font.family;
+      }
+    });
+    
     fontContainer.style.padding = "14px";
     fontContainer.style.fontSize = "14px";
     fontContainer.style.fontWeight = "bold";
@@ -440,23 +399,61 @@ export async function mobileTextMenu(canvas) {
     const fontText = font.family.split(",")[0].replace(/ /g, "\u00A0");
     fontContainer.append(fontText);
 
-    fontContainer.addEventListener('click', () => {
+    fontContainer.addEventListener('click', async () => {
       const activeObject = canvas.getActiveObject();
       if (!activeObject) return;
 
-      const currentLeft = activeObject.left;
-      const currentTop = activeObject.top;
+      // Store current properties
+      const currentProps = {
+        left: activeObject.left,
+        top: activeObject.top,
+        width: activeObject.width,
+        height: activeObject.height,
+        scaleX: activeObject.scaleX,
+        scaleY: activeObject.scaleY,
+        fontWeight: activeObject.get('fontWeight') || 'normal',
+        fontStyle: activeObject.get('fontStyle') || 'normal'
+      };
 
-      activeObject.set({
-        fontFamily: font.family,
-        fontWeight: activeObject.get('fontWeight'),
-        fontStyle: activeObject.get('fontStyle'),
-        left: currentLeft,
-        top: currentTop
-      });
+      try {
+        // Show loading state
+        canvas.renderAll();
+        
+        // Load font with all variants
+        await new Promise((resolve, reject) => {
+          WebFont.load({
+            google: {
+              families: [`${font.family}:${font.variants.join(',')}`]
+            },
+            active: resolve,
+            inactive: reject,
+            timeout: 3000 // 3 second timeout
+          });
+        });
 
-      canvas.requestRenderAll();
-      canvas.fire('object:modified');
+        // Apply font while preserving properties
+        activeObject.set({
+          fontFamily: font.family,
+          left: currentProps.left,
+          top: currentProps.top,
+          width: currentProps.width,
+          height: currentProps.height,
+          scaleX: currentProps.scaleX,
+          scaleY: currentProps.scaleY,
+          fontWeight: currentProps.fontWeight,
+          fontStyle: currentProps.fontStyle
+        });
+
+        canvas.requestRenderAll();
+        canvas.fire('object:modified');
+        canvas.save();
+
+      } catch (err) {
+        console.error('Error loading font:', err);
+        // Revert to previous state if font fails to load
+        activeObject.set(currentProps);
+        canvas.requestRenderAll();
+      }
     });
 
     return fontContainer;
@@ -464,49 +461,92 @@ export async function mobileTextMenu(canvas) {
 
   function renderFontsList(fontData) {
     if (!mobileFontsContainer) return;
+    
+    // Clear existing fonts
+    mobileFontsContainer.innerHTML = '';
+    
     fontData.forEach((font) => {
       const container = createFontElement(font);
       mobileFontsContainer.appendChild(container);
     });
   }
 
+  // Initialize fonts view
   const fontsData = slicedFontView();
   renderFontsList(fontsData);
 
+  // Scroll handling for loading more fonts
   let scrollStartPos = 0;
-  let touchStartX = 1;
+  let isLoadingFonts = false;
 
+  const loadMoreFonts = (direction) => {
+    if (isLoadingFonts) return;
+    isLoadingFonts = true;
+
+    if (direction === 'next') {
+      scrollStartPos += 50;
+    } else if (direction === 'prev' && scrollStartPos > 0) {
+      scrollStartPos = Math.max(0, scrollStartPos - 50);
+    }
+
+    const newFontsData = slicedFontView(scrollStartPos);
+    renderFontsList(newFontsData);
+
+    setTimeout(() => {
+      isLoadingFonts = false;
+    }, 300);
+  };
+
+  // Handle mouse wheel scrolling
+  mobileFontsContainer?.addEventListener("wheel", (event) => {
+    const container = mobileFontsContainer;
+    const scrollLeft = container.scrollLeft;
+    const maxScroll = container.scrollWidth - container.clientWidth;
+
+    if (scrollLeft >= maxScroll - 50) {
+      loadMoreFonts('next');
+    } else if (scrollLeft <= 50 && scrollStartPos > 0) {
+      loadMoreFonts('prev');
+    }
+  });
+
+  // Handle touch scrolling
+  let touchStartX = 0;
+  
   mobileFontsContainer?.addEventListener("touchstart", (event) => {
     touchStartX = event.touches[0].clientX;
   });
 
-  mobileFontsContainer.addEventListener("touchmove", (event) => {
-    let fontsData = [];
+  mobileFontsContainer?.addEventListener("touchmove", (event) => {
     const touchCurrentX = event.touches[0].clientX;
-    const scrollLeft = mobileFontsContainer.scrollLeft;
-    const maxScrollLeft =
-      mobileFontsContainer.scrollWidth - mobileFontsContainer.clientWidth;
+    const container = mobileFontsContainer;
+    const scrollLeft = container.scrollLeft;
+    const maxScroll = container.scrollWidth - container.clientWidth;
 
-    if (touchCurrentX > touchStartX + 15 && scrollLeft === 0) {
-      // LEFT
-      if (scrollStartPos === 0) return;
-      mobileFontsContainer.innerHTML = "";
-      scrollStartPos = Math.max(scrollStartPos - 50, 0);
-      fontsData = slicedFontView(scrollStartPos);
-      mobileFontsContainer.scrollLeft = maxScrollLeft;
-    } else if (touchCurrentX < touchStartX && scrollLeft >= maxScrollLeft) {
-      // RIGHT
-      mobileFontsContainer.innerHTML = "";
-      scrollStartPos += 50;
-      fontsData = slicedFontView(scrollStartPos);
-      mobileFontsContainer.scrollLeft = scrollStartPos;
+    if (touchCurrentX < touchStartX && scrollLeft >= maxScroll - 50) {
+      loadMoreFonts('next');
+    } else if (touchCurrentX > touchStartX && scrollLeft <= 50 && scrollStartPos > 0) {
+      loadMoreFonts('prev');
     }
 
-    renderFontsList(fontsData);
     touchStartX = touchCurrentX;
   });
 
-  // BUTTON EVENTS
+  // Improve search functionality
+  const fontSearchInput = fontFamilySubmenu.querySelector("#mobile-font-search");
+  fontSearchInput?.addEventListener("input", (event) => {
+    const searchTerm = event.target.value.toLowerCase().trim();
+    
+    // Reset scroll position for search
+    scrollStartPos = 0;
+    
+    const filteredFonts = fonts.filter((font) =>
+      font.family.toLowerCase().startsWith(searchTerm)
+    );
+
+    renderFontsList(filteredFonts.slice(0, 50));
+  });
+
   function triggerCurveSlider(value) {
     const slider = document.querySelector("#text-curve-range");
     slider.value = value;
@@ -515,20 +555,16 @@ export async function mobileTextMenu(canvas) {
     canvas.renderAll();
   }
 
-  document
-    .querySelector("#mobile-curve-slider")
-    .addEventListener("input", (event) => {
-      const activeObject = canvas.getActiveObject();
-      if (!activeObject) return;
-      const value = event.target.value;
-      triggerCurveSlider(value, activeObject);
-    });
+  document.querySelector("#mobile-curve-slider").addEventListener("input", (event) => {
+    const activeObject = canvas.getActiveObject();
+    if (!activeObject) return;
+    const value = event.target.value;
+    triggerCurveSlider(value, activeObject);
+  });
 
   function setFontweightElement() {
     const activeObject = canvas.getActiveObject();
-    const fontWeightContainer = document.querySelector(
-      "#mobile-font-weight-list",
-    );
+    const fontWeightContainer = document.querySelector("#mobile-font-weight-list");
     fontWeightContainer.innerHTML = "";
 
     const currentActiveTextObject = activeObject
@@ -577,14 +613,12 @@ export async function mobileTextMenu(canvas) {
     });
   }
 
-  document
-    .querySelector("#mobile-text-layer-actions-category")
-    .addEventListener("click", () => {
-      history.pushState({ category: "text/actions" }, null, "#text/actions");
-      menuMain.style.display = "none";
-      actionSubmenu.style.display = "flex";
-      actionSubmenu.style.padding = "0";
-    });
+  document.querySelector("#mobile-text-layer-actions-category").addEventListener("click", () => {
+    history.pushState({ category: "text/actions" }, null, "#text/actions");
+    menuMain.style.display = "none";
+    actionSubmenu.style.display = "flex";
+    actionSubmenu.style.padding = "0";
+  });
 
   mobileFontFamilyBtn.addEventListener("click", () => {
     history.pushState({ category: "text/fontFamily" }, null, "#text/fontFamily");
@@ -617,22 +651,14 @@ export async function mobileTextMenu(canvas) {
   });
 
   mobileFontWeightBtn.addEventListener("click", () => {
-    history.pushState(
-      { category: "text/fontweight" },
-      null,
-      "#text/fontweight",
-    );
+    history.pushState({ category: "text/fontweight" }, null, "#text/fontweight");
     menuMain.style.display = "none";
     fontWeightSubmenu.style.display = "block";
     setFontweightElement();
   });
 
   mobileFontSpacingBtn.addEventListener("click", () => {
-    history.pushState(
-      { category: "text/fontspacing" },
-      null,
-      "#text/fontspacing",
-    );
+    history.pushState({ category: "text/fontspacing" }, null, "#text/fontspacing");
     menuMain.style.display = "none";
     fontSpacingSubmenu.style.display = "block";
   });
@@ -661,52 +687,41 @@ export async function mobileTextMenu(canvas) {
     txtShadowSubmenu.style.display = "block";
   });
 
-  // NESTED SUBMENU EVENTS
-  document
-    .querySelector("#mobile-spacing-slider")
-    .addEventListener("input", (e) => {
-      const value = e.target.value;
-      const letterSpacingSlider = document.querySelector(
-        "#letter-spacing-slider",
-      );
-      letterSpacingSlider.value = value;
+  document.querySelector("#mobile-spacing-slider").addEventListener("input", (e) => {
+    const value = e.target.value;
+    const letterSpacingSlider = document.querySelector("#letter-spacing-slider");
+    letterSpacingSlider.value = value;
 
-      const event = new Event("input");
-      letterSpacingSlider.dispatchEvent(event);
-      document.querySelector("#mobile-spacing-value").value =
-        `Spacing: ${Math.round(value / 10)} px`;
-    });
+    const event = new Event("input");
+    letterSpacingSlider.dispatchEvent(event);
+    document.querySelector("#mobile-spacing-value").value = `Spacing: ${Math.round(value / 10)} px`;
+  });
 
-  document
-    .querySelector("#mobile-font-size-slider")
-    .addEventListener("input", (event) => {
-      const textSize = event.target.value;
-      if (textSize > 0) {
-        document.querySelector("#mobile-font-size-value").value =
-          `Font Size: ${Math.round(textSize)}px`;
-        const active = canvas.getActiveObject();
+  document.querySelector("#mobile-font-size-slider").addEventListener("input", (event) => {
+    const textSize = event.target.value;
+    if (textSize > 0) {
+      document.querySelector("#mobile-font-size-value").value = `Font Size: ${Math.round(textSize)}px`;
+      const active = canvas.getActiveObject();
 
-        const fontSize = textSize;
-        if (active.type == "curved-text") {
-          active.set("_cachedCanvas", null);
-          if (fontSize < 5) return false;
-          active.set("fontSize", fontSize);
-        } else active.set("fontSize", fontSize);
+      const fontSize = textSize;
+      if (active.type == "curved-text") {
+        active.set("_cachedCanvas", null);
+        if (fontSize < 5) return false;
+        active.set("fontSize", fontSize);
+      } else active.set("fontSize", fontSize);
 
-        canvas.requestRenderAll();
-      }
-    });
+      canvas.requestRenderAll();
+    }
+  });
 
-  document
-    .querySelector("#mobile-logoMainField")
-    .addEventListener("input", (e) => {
-      const value = e.target.value;
-      const objects = canvas.getObjects().filter((i) => i.text);
-      const logoIdx = 0;
-      const logo = objects[logoIdx];
-      logo.set("text", value);
-      canvas.renderAll();
-    });
+  document.querySelector("#mobile-logoMainField").addEventListener("input", (e) => {
+    const value = e.target.value;
+    const objects = canvas.getObjects().filter((i) => i.text);
+    const logoIdx = 0;
+    const logo = objects[logoIdx];
+    logo.set("text", value);
+    canvas.renderAll();
+  });
 
   const mobileRotateTextValue = document.querySelector("#mobile-text-rotate-value")
   const mobileRotateSlider = document.querySelector("#mobile-rotate-slider")
@@ -723,16 +738,14 @@ export async function mobileTextMenu(canvas) {
     mobileRotateTextValue.innerText = `Rotate: ${value}°`;
   });
 
-  document
-    .querySelector("#mobile-sloganNameField")
-    .addEventListener("input", (e) => {
-      const value = e.target.value;
-      const objects = canvas.getObjects().filter((i) => i.text);
-      const sloganIdx = 1;
-      const slogan = objects[sloganIdx];
-      slogan.set("text", value);
-      canvas.renderAll();
-    });
+  document.querySelector("#mobile-sloganNameField").addEventListener("input", (e) => {
+    const value = e.target.value;
+    const objects = canvas.getObjects().filter((i) => i.text);
+    const sloganIdx = 1;
+    const slogan = objects[sloganIdx];
+    slogan.set("text", value);
+    canvas.renderAll();
+  });
 
   function updateFontStyle(style, underline = false) {
     const activeObject = canvas.getActiveObject();
@@ -783,8 +796,6 @@ export async function mobileTextMenu(canvas) {
   fontWeightBtns.forEach((fontWeightBtn, idx) => {
     return fontWeightBtn.addEventListener("click", (event) => {
       const newActiveObject = canvas.getActiveObject();
-      console.log("click");
-      console.log(newActiveObject);
       const weight = event.target.getAttribute("data-value");
       activeObject.set("fontWeight", weight || "normal");
       activeObject.set("orgFontWeight", weight || "normal");
@@ -793,49 +804,34 @@ export async function mobileTextMenu(canvas) {
     });
   });
 
-  document
-    .querySelector("#mobile-font-normal")
-    .addEventListener("click", () => {
-      updateFontStyle("normal");
-    });
+  document.querySelector("#mobile-font-normal").addEventListener("click", () => {
+    updateFontStyle("normal");
+  });
 
-  document
-    .querySelector("#mobile-font-italic")
-    .addEventListener("click", () => {
-      updateFontStyle("italic");
-    });
+  document.querySelector("#mobile-font-italic").addEventListener("click", () => {
+    updateFontStyle("italic");
+  });
 
-  document
-    .querySelector("#mobile-font-underline")
-    .addEventListener("click", () => {
-      updateFontStyle("underline", true);
-    });
+  document.querySelector("#mobile-font-underline").addEventListener("click", () => {
+    updateFontStyle("underline", true);
+  });
 
-  document
-    .querySelector("#mobile-font-uppercase")
-    .addEventListener("click", () => {
-      updateLetterCase("Uppercase");
-    });
+  document.querySelector("#mobile-font-uppercase").addEventListener("click", () => {
+    updateLetterCase("Uppercase");
+  });
 
-  document
-    .querySelector("#mobile-font-lowercase")
-    .addEventListener("click", () => {
-      updateLetterCase("Lowercase");
-    });
+  document.querySelector("#mobile-font-lowercase").addEventListener("click", () => {
+    updateLetterCase("Lowercase");
+  });
 
-  document
-    .querySelector("#mobile-font-titlecase")
-    .addEventListener("click", () => {
-      updateLetterCase("Title Case");
-    });
+  document.querySelector("#mobile-font-titlecase").addEventListener("click", () => {
+    updateLetterCase("Title Case");
+  });
 
-  document
-    .querySelector("#mobile-font-sentencecase")
-    .addEventListener("click", () => {
-      updateLetterCase("Sentence Case");
-    });
+  document.querySelector("#mobile-font-sentencecase").addEventListener("click", () => {
+    updateLetterCase("Sentence Case");
+  });
 
-  // Add touch effect to all menu categories
   document.querySelectorAll('.mobile-category, .mobile-list').forEach(element => {
     const handleTouchStart = () => {
       const icon = element.querySelector('.mobile-category-icon');

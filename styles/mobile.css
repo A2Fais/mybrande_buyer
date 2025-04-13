@@ -124,3 +124,20 @@ input[type="color"]::-webkit-color-swatch {
 .touchwiz:active {
     transform: scale(0.98);
 }
+
+@media (max-width: 768px) {
+  /* Hide desktop elements by default on mobile */
+  .nav,
+  .settings-view,
+  .right-bar,
+  #main_editor_view .header,
+  .canvas-actions,
+  .magnifier-container {
+    display: none !important;
+  }
+
+  .editor-container {
+    top: -1px !important;
+    left: -2px !important;
+  }
+}
