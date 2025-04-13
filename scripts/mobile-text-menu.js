@@ -49,22 +49,6 @@ export async function mobileTextMenu(canvas) {
     canvas
   );
 
-  const fontSearchInput = fontFamilySubmenu.querySelector("#mobile-font-search");
-  fontSearchInput.addEventListener("input", (event) => {
-    const searchTerm = event.target.value.toLowerCase();
-    const filteredFonts = fonts.filter((font) =>
-      font.family.toLowerCase().startsWith(searchTerm)
-    );
-
-    const mobileFontsContainer = fontFamilySubmenu.querySelector("#mobile-fonts");
-    mobileFontsContainer.innerHTML = "";
-
-    filteredFonts.forEach((font) => {
-      const fontElement = createFontElement(font);
-      mobileFontsContainer.appendChild(fontElement);
-    });
-  });
-
   const fonts = await fetchedFonts();
   const mobileFontsContainer = document.querySelector("#mobile-fonts");
 
@@ -395,7 +379,17 @@ export async function mobileTextMenu(canvas) {
     fontContainer.className = "mobile-font-family-item";
     fontContainer.style.width = "max-content";
     fontContainer.style.height = "max-content";
-    fontContainer.style.fontFamily = font.family;
+    
+    // Pre-load font to show preview
+    WebFont.load({
+      google: {
+        families: [`${font.family}:regular,bold`]
+      },
+      active: () => {
+        fontContainer.style.fontFamily = font.family;
+      }
+    });
+    
     fontContainer.style.padding = "14px";
     fontContainer.style.fontSize = "14px";
     fontContainer.style.fontWeight = "bold";
@@ -405,23 +399,61 @@ export async function mobileTextMenu(canvas) {
     const fontText = font.family.split(",")[0].replace(/ /g, "\u00A0");
     fontContainer.append(fontText);
 
-    fontContainer.addEventListener('click', () => {
+    fontContainer.addEventListener('click', async () => {
       const activeObject = canvas.getActiveObject();
       if (!activeObject) return;
 
-      const currentLeft = activeObject.left;
-      const currentTop = activeObject.top;
+      // Store current properties
+      const currentProps = {
+        left: activeObject.left,
+        top: activeObject.top,
+        width: activeObject.width,
+        height: activeObject.height,
+        scaleX: activeObject.scaleX,
+        scaleY: activeObject.scaleY,
+        fontWeight: activeObject.get('fontWeight') || 'normal',
+        fontStyle: activeObject.get('fontStyle') || 'normal'
+      };
 
-      activeObject.set({
-        fontFamily: font.family,
-        fontWeight: activeObject.get('fontWeight'),
-        fontStyle: activeObject.get('fontStyle'),
-        left: currentLeft,
-        top: currentTop
-      });
+      try {
+        // Show loading state
+        canvas.renderAll();
+        
+        // Load font with all variants
+        await new Promise((resolve, reject) => {
+          WebFont.load({
+            google: {
+              families: [`${font.family}:${font.variants.join(',')}`]
+            },
+            active: resolve,
+            inactive: reject,
+            timeout: 3000 // 3 second timeout
+          });
+        });
 
-      canvas.requestRenderAll();
-      canvas.fire('object:modified');
+        // Apply font while preserving properties
+        activeObject.set({
+          fontFamily: font.family,
+          left: currentProps.left,
+          top: currentProps.top,
+          width: currentProps.width,
+          height: currentProps.height,
+          scaleX: currentProps.scaleX,
+          scaleY: currentProps.scaleY,
+          fontWeight: currentProps.fontWeight,
+          fontStyle: currentProps.fontStyle
+        });
+
+        canvas.requestRenderAll();
+        canvas.fire('object:modified');
+        canvas.save();
+
+      } catch (err) {
+        console.error('Error loading font:', err);
+        // Revert to previous state if font fails to load
+        activeObject.set(currentProps);
+        canvas.requestRenderAll();
+      }
     });
 
     return fontContainer;
@@ -429,44 +461,90 @@ export async function mobileTextMenu(canvas) {
 
   function renderFontsList(fontData) {
     if (!mobileFontsContainer) return;
+    
+    // Clear existing fonts
+    mobileFontsContainer.innerHTML = '';
+    
     fontData.forEach((font) => {
       const container = createFontElement(font);
       mobileFontsContainer.appendChild(container);
     });
   }
 
+  // Initialize fonts view
   const fontsData = slicedFontView();
   renderFontsList(fontsData);
 
+  // Scroll handling for loading more fonts
   let scrollStartPos = 0;
-  let touchStartX = 1;
+  let isLoadingFonts = false;
 
+  const loadMoreFonts = (direction) => {
+    if (isLoadingFonts) return;
+    isLoadingFonts = true;
+
+    if (direction === 'next') {
+      scrollStartPos += 50;
+    } else if (direction === 'prev' && scrollStartPos > 0) {
+      scrollStartPos = Math.max(0, scrollStartPos - 50);
+    }
+
+    const newFontsData = slicedFontView(scrollStartPos);
+    renderFontsList(newFontsData);
+
+    setTimeout(() => {
+      isLoadingFonts = false;
+    }, 300);
+  };
+
+  // Handle mouse wheel scrolling
+  mobileFontsContainer?.addEventListener("wheel", (event) => {
+    const container = mobileFontsContainer;
+    const scrollLeft = container.scrollLeft;
+    const maxScroll = container.scrollWidth - container.clientWidth;
+
+    if (scrollLeft >= maxScroll - 50) {
+      loadMoreFonts('next');
+    } else if (scrollLeft <= 50 && scrollStartPos > 0) {
+      loadMoreFonts('prev');
+    }
+  });
+
+  // Handle touch scrolling
+  let touchStartX = 0;
+  
   mobileFontsContainer?.addEventListener("touchstart", (event) => {
     touchStartX = event.touches[0].clientX;
   });
 
-  mobileFontsContainer.addEventListener("touchmove", (event) => {
-    let fontsData = [];
+  mobileFontsContainer?.addEventListener("touchmove", (event) => {
     const touchCurrentX = event.touches[0].clientX;
-    const scrollLeft = mobileFontsContainer.scrollLeft;
-    const maxScrollLeft =
-      mobileFontsContainer.scrollWidth - mobileFontsContainer.clientWidth;
+    const container = mobileFontsContainer;
+    const scrollLeft = container.scrollLeft;
+    const maxScroll = container.scrollWidth - container.clientWidth;
 
-    if (touchCurrentX > touchStartX + 15 && scrollLeft === 0) {
-      if (scrollStartPos === 0) return;
-      mobileFontsContainer.innerHTML = "";
-      scrollStartPos = Math.max(scrollStartPos - 50, 0);
-      fontsData = slicedFontView(scrollStartPos);
-      mobileFontsContainer.scrollLeft = maxScrollLeft;
-    } else if (touchCurrentX < touchStartX && scrollLeft >= maxScrollLeft) {
-      mobileFontsContainer.innerHTML = "";
-      scrollStartPos += 50;
-      fontsData = slicedFontView(scrollStartPos);
-      mobileFontsContainer.scrollLeft = scrollStartPos;
+    if (touchCurrentX < touchStartX && scrollLeft >= maxScroll - 50) {
+      loadMoreFonts('next');
+    } else if (touchCurrentX > touchStartX && scrollLeft <= 50 && scrollStartPos > 0) {
+      loadMoreFonts('prev');
     }
 
-    renderFontsList(fontsData);
     touchStartX = touchCurrentX;
+  });
+
+  // Improve search functionality
+  const fontSearchInput = fontFamilySubmenu.querySelector("#mobile-font-search");
+  fontSearchInput?.addEventListener("input", (event) => {
+    const searchTerm = event.target.value.toLowerCase().trim();
+    
+    // Reset scroll position for search
+    scrollStartPos = 0;
+    
+    const filteredFonts = fonts.filter((font) =>
+      font.family.toLowerCase().startsWith(searchTerm)
+    );
+
+    renderFontsList(filteredFonts.slice(0, 50));
   });
 
   function triggerCurveSlider(value) {
