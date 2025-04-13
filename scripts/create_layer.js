@@ -8,15 +8,7 @@ export class CreateLayerSection {
     if (obj?.text) return;
 
     function getUniqueId(len = 30) {
-      let nums = "0123456789",
-        chars = "abcdefghijklmnopqrstuvwxyz",
-        str = "",
-        length = len;
-      for (let i = 0; i < length; i++) {
-        if (i % 2 == 0) str += nums[Math.floor(Math.random() * nums.length)];
-        else str += chars[Math.floor(Math.random() * chars.length)];
-      }
-      return str;
+      return Math.random().toString(36).substring(2, len + 2);
     }
 
     const id = getUniqueId();
@@ -41,14 +33,16 @@ export class CreateLayerSection {
       layerContainer.style.margin = 0;
     }
 
-    layerContainer.setAttribute("layer-id", id);
+    layerContainer.setAttribute("data-id", id);
     layerContainer.appendChild(imgElem);
     layerContainer.appendChild(layerSpan);
 
     if (after) {
       after.insertAdjacentElement("afterend", layerContainer);
     } else {
-      this.layer.insertBefore(layerContainer, this.layer.firstChild);
+      this.layer.appendChild(layerContainer);
     }
+
+    return id;
   }
 }

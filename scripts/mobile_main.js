@@ -102,38 +102,58 @@ function generateLayersOnTopNav() {
 
 const layerContaier = document.querySelectorAll(".layer-container");
 
-layerContaier.forEach((layer) => {
+layerContaier.forEach((layer, idx) => {
   layer.addEventListener("click", () => {
-    const layerId = +layer.getAttribute("data_layer");
-    canvas._objects.forEach((object, index) => {
-      if (index === layerId) {
-        canvas.setActiveObject(object)
-      }
-    });
-  })
+    // const layerId = layer.getAttribute("data-id");
+    const canvasObject = canvas._objects.find((_, index) => index === idx);
+    if (canvasObject) {
+      canvas.setActiveObject(canvasObject);
+      canvas.requestRenderAll();
+      
+      document.querySelectorAll(".layer-container").forEach((l) => {
+        const layerSpan = l.querySelector(".layer-span");
+        const layerImage = l.querySelector(".layer-img");
+        if (l === layer) {
+          layerImage.style.border = "2px solid var(--gold)";
+          layerSpan.style.background = "var(--gold)";
+          layerSpan.style.padding = "7px";
+          layerSpan.style.marginInline = "5px";
+          layerSpan.style.borderRadius = "3px";
+          layerSpan.style.color = "var(--lighter)";
+        } else {
+          layerImage.style.border = "2px solid var(--light)";
+          layerSpan.style.background = "none";
+          layerSpan.style.color = "var(--gray)";
+          layerSpan.style.marginLeft = "-15px"
+        }
+      });
+    }
+  });
 });
 
 function updateLayerSelection() {
   const activeObject = canvas.getActiveObject();
   if (!activeObject) return;
 
-  canvas._objects.forEach((object, index) => {
-    const layerSpan = layerContaier[index]?.querySelector("span");
-    const layerImage = layerContaier[index]?.querySelector("img");
+  document.querySelectorAll(".layer-container").forEach((layer) => {
+    const layerSpan = layer.querySelector(".layer-span");
+    const layerImage = layer.querySelector(".layer-img");
     if (!layerSpan || !layerImage) return;
 
-    if (object === activeObject) {
+    if (layer.getAttribute("data-id") === activeObject.layerId) {
       layerImage.style.border = "2px solid var(--gold)";
       layerSpan.style.background = "var(--gold)";
       layerSpan.style.padding = "7px";
+      layerSpan.style.marginInline = "5px";
       layerSpan.style.borderRadius = "3px";
       layerSpan.style.color = "var(--lighter)";
     } else {
       layerImage.style.border = "2px solid var(--light)";
       layerSpan.style.background = "none";
       layerSpan.style.color = "var(--gray)";
+      layerSpan.style.marginLeft = "-15px"
     }
-  })
+  });
 }
 
 canvas.on("selection:created", canvasSelectionEvent);

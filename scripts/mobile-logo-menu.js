@@ -234,38 +234,46 @@ export function mobileLogoMenu(canvas) {
   mobileLogoRotateMenu(canvas);
   mobileLogoColorsMenu(canvas);
 
-  // function layerGenerator() {
-  //   const layers = document.getElementById("mobile-layers");
-  //   const SVG = localStorage.getItem("logo-file");
+/*   function layerGenerator() {
+    const layers = document.getElementById("mobile-layers");
+    const SVG = localStorage.getItem("logo-file");
 
-  //   fabric.loadSVGFromString(SVG, (objects) => {
-  //     objects.forEach((obj, idx) => {
-  //       const layerSection = new CreateLayerSection(layers, "mobile");
-  //       layerSection.create(obj, idx);
-  //     });
-  //   });
+    fabric.loadSVGFromString(SVG, (objects) => {
+      objects.forEach((obj, idx) => {
+        if (obj?.text) return;
+        const layerSection = new CreateLayerSection(layers);
+        const id = layerSection.create(obj, idx);
+        obj.layerId = id;
+      });
 
-  //   const layersContainers = document.querySelectorAll(".layer-container");
-  //   layersContainers.forEach((container) => {
-  //     const layerId = parseInt(container.getAttribute("data_layer"));
+      const layersContainers = document.querySelectorAll(".layer-container");
+      layersContainers.forEach((container) => {
+        container.addEventListener("click", () => {
+          console.log("layer", container)
+          const layerId = container.getAttribute("data-id");
+          const canvasObject = canvas._objects.find(obj => obj.layerId === layerId);
+          
+          if (canvasObject) {
+            canvas.setActiveObject(canvasObject);
+            canvas.requestRenderAll();
 
-  //     container.addEventListener("click", () => {
-  //       canvas.getObjects().forEach((obj, idx) => {
-  //         if (layerId !== idx) return
+            layersContainers.forEach((l) => {
+              const layerSpan = l.querySelector(".layer-span");
+              if (l === container) {
+                layerSpan.style.background = "var(--gold)";
+                layerSpan.style.color = "var(--white)";
+              } else {
+                layerSpan.style.background = "none";
+                layerSpan.style.color = "var(--gray)";
+              }
+            });
+          }
+        });
+      });
+    });
+  }
 
-  //         const layerSpan = container.querySelector(".layer-span")
-  //         layerSpan.style.background = "var(--gold)";
-  //         layerSpan.style.color = "var(--white)";
-  //       });
-  //         console.log("Layer clicked:", layerId);
-  //         const obj = canvas._objects[layerId];
-  //         canvas.setActiveObject(obj);
-  //         canvas.requestRenderAll();
-  //       });
-  //   });
-  // }
-
-  // layerGenerator();
+  layerGenerator() */;
 
   mobileLayersBtn.addEventListener("click", () => {
     history.pushState({ category: "logo/layers" }, null, "#logo/layers");
