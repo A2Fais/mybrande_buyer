@@ -1,6 +1,6 @@
 import { fabric } from "fabric";
 import { CreateLayerSection } from "./create_layer";
-import { CanvasGuides } from "./editor-obj-dim";
+import { CanvasGuides } from "./snap_lines.js";
 import { toastNotification } from "./toast_notification.js";
 import "alwan/dist/css/alwan.min.css";
 import iro from "@jaames/iro";
