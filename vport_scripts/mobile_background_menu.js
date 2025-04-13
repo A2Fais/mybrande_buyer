@@ -1,6 +1,6 @@
-import { canvas } from "./main.js";
-import { bgColorAction } from "./color_events.js";
-import { ApplyLinearGradient } from "./apply_linear_grad.js";
+import { canvas } from "../scripts/main.js";
+import { bgColorAction } from "../scripts/color_events.js";
+import { ApplyLinearGradient } from "../scripts/apply_linear_grad.js";
 import iro from "@jaames/iro";
 
 export function mobileBackgroundMenu() {

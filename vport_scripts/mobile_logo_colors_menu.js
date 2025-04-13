@@ -1,6 +1,6 @@
-import { applyColorActionMobile } from "./color_events.js";
-import { ApplyLinearGradient } from "./apply_linear_grad.js";
-import { convertRGBtoHex } from "./color_converter.js";
+import { applyColorActionMobile } from "../scripts/color_events.js";
+import { ApplyLinearGradient } from "../scripts/apply_linear_grad.js";
+import { convertRGBtoHex } from "../scripts/color_converter.js";
 import iro from "@jaames/iro";
 
 export function mobileLogoColorsMenu(canvas) {

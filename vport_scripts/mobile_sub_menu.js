@@ -1,4 +1,4 @@
-import { CreateLayerSection } from "./create_layer";
+import { CreateLayerSection } from "../commons/create_layer.js";
 
 export default function createSubmenu(parentMenu, submenuContent, ...params) {
   const canvas = params[0];

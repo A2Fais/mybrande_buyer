@@ -1,8 +1,7 @@
-import { mobile_logo_colors_menu } from "./mobile_logo_colors_menu.js";
-import { mobile_logo_shadow_menu } from "./mobile_logo_shadow_menu.js";
-import { mobile_logo_scale_menu } from "./mobile_logo_scale_menu.js";
-import { mobile_logo_rotate_menu } from "./mobile_logo_rotate_menu.js";
-import { CreateLayerSection } from "./create_layer";
+import { mobileLogoColorsMenu } from "./mobile_logo_colors_menu.js";
+import { mobileLogoShadowMenu } from "./mobile_logo_shadow_menu.js";
+import { mobileLogoScaleMenu } from "./mobile_logo_scale_menu.js";
+import { mobileLogoRotateMenu } from "./mobile_logo_rotate_menu.js";
 import createSubmenu from "./mobile_sub_menu.js";
 
 export function mobileLogoMenu(canvas) {

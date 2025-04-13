@@ -1,4 +1,4 @@
-import { CreateLayerSection } from "./create_layer";
+import { CreateLayerSection } from "../commons/create_layer.js";
 import { querySelect } from "./selectors";
 import { rgbaToHex, hexToRgb, hexToHsl } from "./color_converter";
 
