@@ -1,5 +1,10 @@
 function CanvasGuides(canvas) {
   const l = console.log.bind(this);
+  
+  // Check if device is mobile
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const guideStrokeWidth = isMobile ? 2 : 0.5;
+
   // Create new id
   function createNewId() {
     return Math.random().toString(36).substr(2, 9);
@@ -40,7 +45,7 @@ function CanvasGuides(canvas) {
 
     line = new fabric.Line(coords, {
       stroke: "red",
-      strokeWidth: 0.5,
+      strokeWidth: guideStrokeWidth,
       selectable: false,
       opacity: 1,
       id: createNewId(),
