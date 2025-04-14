@@ -274,34 +274,41 @@ export function mobileLogoMenu(canvas) {
 
   layerGenerator() */;
 
+  const logoLayersBar = document.querySelector("#mobile-logo-layers-bar")
+
   mobileLayersBtn.addEventListener("click", () => {
     history.pushState({ category: "logo/layers" }, null, "#logo/layers");
     menuMain.style.display = "none";
     layerSubmenu.style.display = "block";
+    logoLayersBar.style.display = "none";
   });
 
   rotateBtn.addEventListener("click", () => {
     history.pushState({ category: "logo/rotate" }, null, "#logo/rotate");
     menuMain.style.display = "none";
     rotateSubmenu.style.display = "block";
+    logoLayersBar.style.display = "none";
   });
 
   scaleBtn.addEventListener("click", () => {
     history.pushState({ category: "logo/scale" }, null, "#logo/scale");
     menuMain.style.display = "none";
     scaleSubmenu.style.display = "block";
+    logoLayersBar.style.display = "none";
   });
 
   shadowBtn.addEventListener("click", () => {
     history.pushState({ category: "logo/shadow" }, null, "#logo/shadow");
     menuMain.style.display = "none";
     shadowSubmenu.style.display = "flex";
+    logoLayersBar.style.display = "none";
   });
 
   colorsBtn.addEventListener("click", () => {
     history.pushState({ category: "logo/colors" }, null, "#logo/colors");
     menuMain.style.display = "none";
     colorsSubmenu.style.display = "block";
+    logoLayersBar.style.display = "none";
   });
 
   layerActionBtn.addEventListener("click", () => {
@@ -309,6 +316,7 @@ export function mobileLogoMenu(canvas) {
     menuMain.style.display = "none";
     actionSubmenu.style.display = "flex";
     actionSubmenu.style.padding = "0";
+    logoLayersBar.style.display = "none";
   });
 
   flipXBtn.addEventListener("click", () => {

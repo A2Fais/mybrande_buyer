@@ -1,4 +1,7 @@
 import { fetchedFonts } from "../scripts/main.js";
+import { mobileLogoColorsMenu } from "./mobile_logo_colors_menu.js";
+import { mobileLogoScaleMenu } from "./mobile_logo_scale_menu.js";
+import { mobileLogoShadowMenu } from "./mobile_logo_shadow_menu.js";
 import createSubmenu from "./mobile_sub_menu.js";
 
 export async function mobileTextMenu(canvas) {
@@ -345,6 +348,7 @@ export async function mobileTextMenu(canvas) {
 
      </div>
     </div>`,
+    canvas
   );
 
   mobileLogoScaleMenu(canvas);
@@ -377,7 +381,6 @@ export async function mobileTextMenu(canvas) {
     fontContainer.style.width = "max-content";
     fontContainer.style.height = "max-content";
     
-    // Pre-load font to show preview
     WebFont.load({
       google: {
         families: [`${font.family}:regular,bold`]
@@ -400,7 +403,6 @@ export async function mobileTextMenu(canvas) {
       const activeObject = canvas.getActiveObject();
       if (!activeObject) return;
 
-      // Store current properties
       const currentProps = {
         left: activeObject.left,
         top: activeObject.top,
@@ -413,10 +415,8 @@ export async function mobileTextMenu(canvas) {
       };
 
       try {
-        // Show loading state
         canvas.renderAll();
         
-        // Load font with all variants
         await new Promise((resolve, reject) => {
           WebFont.load({
             google: {
@@ -424,11 +424,10 @@ export async function mobileTextMenu(canvas) {
             },
             active: resolve,
             inactive: reject,
-            timeout: 3000 // 3 second timeout
+            timeout: 3000 
           });
         });
 
-        // Apply font while preserving properties
         activeObject.set({
           fontFamily: font.family,
           left: currentProps.left,
@@ -447,7 +446,6 @@ export async function mobileTextMenu(canvas) {
 
       } catch (err) {
         console.error('Error loading font:', err);
-        // Revert to previous state if font fails to load
         activeObject.set(currentProps);
         canvas.requestRenderAll();
       }
@@ -459,7 +457,6 @@ export async function mobileTextMenu(canvas) {
   function renderFontsList(fontData) {
     if (!mobileFontsContainer) return;
     
-    // Clear existing fonts
     mobileFontsContainer.innerHTML = '';
     
     fontData.forEach((font) => {
@@ -468,11 +465,9 @@ export async function mobileTextMenu(canvas) {
     });
   }
 
-  // Initialize fonts view
   const fontsData = slicedFontView();
   renderFontsList(fontsData);
 
-  // Scroll handling for loading more fonts
   let scrollStartPos = 0;
   let isLoadingFonts = false;
 
@@ -494,7 +489,6 @@ export async function mobileTextMenu(canvas) {
     }, 300);
   };
 
-  // Handle mouse wheel scrolling
   mobileFontsContainer?.addEventListener("wheel", (event) => {
     const container = mobileFontsContainer;
     const scrollLeft = container.scrollLeft;
@@ -507,7 +501,6 @@ export async function mobileTextMenu(canvas) {
     }
   });
 
-  // Handle touch scrolling
   let touchStartX = 0;
   
   mobileFontsContainer?.addEventListener("touchstart", (event) => {
@@ -529,12 +522,10 @@ export async function mobileTextMenu(canvas) {
     touchStartX = touchCurrentX;
   });
 
-  // Improve search functionality
   const fontSearchInput = fontFamilySubmenu.querySelector("#mobile-font-search");
   fontSearchInput?.addEventListener("input", (event) => {
     const searchTerm = event.target.value.toLowerCase().trim();
     
-    // Reset scroll position for search
     scrollStartPos = 0;
     
     const filteredFonts = fonts.filter((font) =>
