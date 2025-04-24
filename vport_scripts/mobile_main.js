@@ -281,14 +281,14 @@ routeHandler({ category: null });
 window.addEventListener("popstate", routeHandler);
 
 document.addEventListener("mouseenter", (event) => {
-  if (event.target.classList.contains("nav-icon")) {
+  if (event.target.classList?.contains("nav-icon")) {
     console.log("Mouse entered icon");
     event.target.style.color = "blue";
   }
 }, true);
 
 document.addEventListener("mouseleave", (event) => {
-  if (event.target.classList.contains("nav-icon")) {
+  if (event.target.classList?.contains("nav-icon")) {
     event.target.style.color = ""; 
   }
 }, true);
