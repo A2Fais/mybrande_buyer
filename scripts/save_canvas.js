@@ -1,7 +1,7 @@
 import axios from "axios";
 import { fabric } from "fabric";
 import { toastNotification } from "./toast_notification";
-import { rgbaToHex, rgbToHex } from "./color_converter";
+import { rgbToHex } from "./color_converter";
 import { querySelect } from "./selectors";
 
 export function getTextCase(text) {
@@ -73,7 +73,6 @@ export async function saveCanvas(
       throw new Error('Could not find logo or slogan text elements');
     }
 
-    // Store original font families
     const logoNameFontFamily = logoNameObj.get("fontFamily");
     const sloganNameFontFamily = sloganNameObj.get("fontFamily");
 
@@ -268,8 +267,6 @@ export async function saveCanvas(
       images: JSON.stringify(externalImages),
       api_check: apiCheck,
     };
-
-    console.log("Saving with font families:", { logoNameFontFamily, sloganNameFontFamily });
 
     if (canvas.get("backgroundColor") !== null) {
       isSaving = false;
