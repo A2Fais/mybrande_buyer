@@ -590,7 +590,7 @@ export class EditorScreen {
       this.rotateObject();
     });
 
-    this.saveBtn.addEventListener("click", async () => {
+    this.saveBtn.addEventListener("click", () => {
       if (
         !this.canvasBG ||
         !logoNameElement ||
@@ -599,8 +599,9 @@ export class EditorScreen {
       ) {
         return toastNotification("Data Error");
       }
-
+      
       const logoId = querySelect("#logo_id")?.value;
+      
       saveCanvas(
         logoId,
         this.canvas,
