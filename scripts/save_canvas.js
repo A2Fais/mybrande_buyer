@@ -68,13 +68,16 @@ export async function saveCanvas(
   try {
     const logoNameObj = canvas.getObjects().find(obj => obj.text === querySelect("#logoMainField").value);
     const sloganNameObj = canvas.getObjects().find(obj => obj.text === querySelect("#sloganNameField").value);
-    
+
     if (!logoNameObj || !sloganNameObj) {
       throw new Error('Could not find logo or slogan text elements');
     }
 
     const logoNameFontFamily = logoNameObj.get("fontFamily");
     const sloganNameFontFamily = sloganNameObj.get("fontFamily");
+
+    const logoNameFontWeight = logoNameObj.get("fontWeight");
+    const sloganNameFontWeight = sloganNameObj.get("fontWeight");
 
     let externalLayers = canvas._objects.filter((obj) => {
       return obj.id && obj.id.includes("external_layer_");
@@ -240,6 +243,7 @@ export async function saveCanvas(
         : brandColor,
       brandName_fontFamely: logoNameFontFamily,
       brandName_fontSize: logoNameElement.get("fontSize"),
+      brandName_fontWeight: logoNameFontWeight,      
 
       brandName_curve_diameter: logoNameElement.diameter,
       brand_curve_percentage: logoNameElement.get("percentage"),
@@ -254,6 +258,7 @@ export async function saveCanvas(
         : sloganColor,
       slogan_fontFamely: sloganNameFontFamily,
       slogan_fontSize: sloganNameElement.get("fontSize"),
+      slogan_fontWeight: sloganNameFontWeight,
 
       slogan_curve_diameter: sloganNameElement.get("diameter"),
       slogan_curve_percentage: sloganNameElement.get("percentage"),
