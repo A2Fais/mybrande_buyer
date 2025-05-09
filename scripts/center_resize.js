@@ -1,6 +1,7 @@
 import { fabric } from "fabric";
 import { querySelect } from "./selectors";
 
+let prevAlignState;
 export const centerAndResizeElements = (
   type,
   logoSize,
@@ -27,7 +28,7 @@ export const centerAndResizeElements = (
     );
   };
 
-  function triggerSliderEvent(value, obj) {
+  function triggerCurveSliderEvent(value, obj) {
     obj && canvas.setActiveObject(obj);
     const slider = querySelect("#text-curve-range");
     slider.value = value;
@@ -56,7 +57,7 @@ export const centerAndResizeElements = (
     (obj) =>
       (obj.type === "text" || obj.type === "curved-text") &&
       obj.text.toLowerCase() ===
-      querySelect("#logoMainField").value.toLowerCase(),
+      querySelect("#logoNameField").value.toLowerCase(),
   );
 
   let slogan = objects.find(
@@ -93,8 +94,16 @@ export const centerAndResizeElements = (
       slogan.set("fontSize", sloganSize);
       canvas.renderAll();
 
-      const logoTopPosition = canvas.height / logoNameTop;
-      const sloganTopPosition = canvas.height / sloganNameTop;
+      let logoTopPosition = canvas.height / logoNameTop;
+      let sloganTopPosition = canvas.height / sloganNameTop;
+
+      if (prevAlignState === "isCurve") {
+        logoTopPosition += 60
+        sloganTopPosition += 60
+      } else if (prevAlignState === "curve_3") {
+        logoTopPosition += 43
+        sloganTopPosition += 43
+      }
 
       logo.set("top", logoTopPosition);
       slogan.set("top", sloganTopPosition);
@@ -128,6 +137,10 @@ export const centerAndResizeElements = (
       canvas.viewportCenterObject(newGrp);
       newGrp.ungroupOnCanvas();
       canvas.renderAll();
+
+      setTimeout(() => {
+        prevAlignState = "notCurved"
+      }, 100);
       break;
 
     case "bottomTop":
@@ -149,6 +162,15 @@ export const centerAndResizeElements = (
         canvas.requestRenderAll();
       }
 
+      console.log(prevAlignState);
+      if (prevAlignState === "isCurve") {
+        logoTopPosition += 60
+        sloganTopPosition += 60
+      } else if (prevAlignState === "curve_3") {
+        logoTopPosition += 20
+        sloganTopPosition += 20
+      }
+
       logo.set("fontSize", logoSize);
       slogan.set("fontSize", sloganSize);
       canvas.renderAll();
@@ -167,6 +189,9 @@ export const centerAndResizeElements = (
       objGrp.top -= 40;
       objGrp.ungroupOnCanvas();
       canvas.renderAll();
+      setTimeout(() => {
+        prevAlignState = "notCurved"
+      }, 100);
       break;
 
     case "leftRight":
@@ -411,6 +436,7 @@ export const centerAndResizeElements = (
       break;
 
     case "curve_1":
+      prevAlignState = "isCurve"
       function setCurve() {
         logo.set("fontSize", logoSize);
         slogan.set("fontSize", sloganSize);
@@ -424,11 +450,11 @@ export const centerAndResizeElements = (
         slogan.set("top", sloganTopPosition);
 
         canvas.setActiveObject(logo);
-        triggerSliderEvent(4500);
+        triggerCurveSliderEvent(4500);
         centerHorizontally(logo);
 
         canvas.setActiveObject(slogan);
-        triggerSliderEvent(2500);
+        triggerCurveSliderEvent(2500);
 
         canvas.discardActiveObject();
         const newGrp = new fabric.Group(objects);
@@ -440,7 +466,7 @@ export const centerAndResizeElements = (
       break;
 
     case "curve_2":
-      console.log("CURVE_2");
+      prevAlignState = "isCurve"
 
       function setCurveTwo() {
         logo.set("fontSize", logoSize);
@@ -453,18 +479,20 @@ export const centerAndResizeElements = (
         slogan.set("top", sloganTopPosition);
 
         canvas.setActiveObject(logo);
-        triggerSliderEvent(500);
+        triggerCurveSliderEvent(500);
 
         canvas.setActiveObject(slogan);
-        triggerSliderEvent(2500);
+        triggerCurveSliderEvent(2500);
 
         centerHorizontally(logo, slogan);
+        setTimeout(() => {
+          prevAlignState = "curve_3"
+        }, 100);
       }
       setCurveTwo();
       break;
 
     case "curve_3":
-      console.log("CURVE_3");
 
       function setBothCurve() {
         logo.set("fontSize", logoSize);
@@ -479,16 +507,20 @@ export const centerAndResizeElements = (
         slogan.set("top", sloganTopPosition);
 
         canvas.setActiveObject(slogan);
-        triggerSliderEvent(500);
+        triggerCurveSliderEvent(500);
 
         canvas.setActiveObject(logo);
-        triggerSliderEvent(4500);
+        triggerCurveSliderEvent(4500);
 
         canvas.discardActiveObject();
         const newGrp = new fabric.Group(objects);
         canvas.viewportCenterObject(newGrp);
         newGrp.ungroupOnCanvas();
         canvas.renderAll();
+
+        setTimeout(() => {
+          prevAlignState = "curve_3"
+        }, 100);
       }
       setBothCurve();
       break;

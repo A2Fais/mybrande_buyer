@@ -12,21 +12,19 @@ function CanvasGuides(canvas) {
     let name = point + type;
     let line = canvas._objects.find((obj) => obj.name === name),
       properties = {};
-    if (type === "X") properties.top = point - 0.25;
-    if (type === "Y") properties.left = point - 0.25;
-    // Line coords
-    let coords = [0, 0, 0, 0],
-      obj = canvas.getActiveObject(),
-      { p2 } = props;
+    
+    // Adjust the positioning to be centered on the point
+    if (type === "X") properties.top = point;
+    if (type === "Y") properties.left = point;
+    
+    // Line coords - always extend full width/height
+    let coords;
     if (type === "X") {
-      let x2 = obj.left + obj.getScaledWidth() / 2;
-      if (props.pointType == "canvas") x2 = canvas.getWidth();
-      coords = [p2, 0, x2, 0];
+      coords = [-canvas.getWidth(), point, canvas.getWidth() * 2, point];  // Extend beyond canvas bounds
     } else if (type === "Y") {
-      let y2 = obj.top + obj.getScaledHeight() / 2;
-      if (props.pointType == "canvas") y2 = canvas.getHeight();
-      coords = [0, p2, 0, y2];
+      coords = [point, -canvas.getHeight(), point, canvas.getHeight() * 2];  // Extend beyond canvas bounds
     }
+
     if (line) {
       line.set({
         opacity: 1,

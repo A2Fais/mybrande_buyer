@@ -26,9 +26,19 @@ function resizeCanvas(self) {
   if (isMobileUser) {
     canvasContainer.style.position = "absolute";
     canvasContainer.style.top = "100px";
-    self.canvas.setHeight(windowHeight / 1.6);
-    self.canvas.setWidth(windowWidth);
+    
+    // Set canvas dimensions for mobile
+    const mobileHeight = windowHeight / 1.6;
+    const mobileWidth = windowWidth;
+    
+    self.canvas.setHeight(mobileHeight);
+    self.canvas.setWidth(mobileWidth);
     self.canvas.setZoom(SMALL_SCALE_FACTOR);
+    
+    // Remove existing snap lines before resizing
+    const existingLines = self.canvas.getObjects().filter(obj => obj.isPositioningLine);
+    existingLines.forEach(line => self.canvas.remove(line));
+    
     mobileTopBar.style.display = "flex";
     mobileNavBar.style.display = "flex";
   } else {
@@ -48,11 +58,13 @@ function resizeCanvas(self) {
       }
 
       self.canvas.getObjects().forEach(function (object) {
-        object.scaleX *= SCALE_FACTOR;
-        object.scaleY *= SCALE_FACTOR;
-        object.left *= SCALE_FACTOR;
-        object.top *= SCALE_FACTOR;
-        object.setCoords();
+        if (!object.isPositioningLine) {
+          object.scaleX *= SCALE_FACTOR;
+          object.scaleY *= SCALE_FACTOR;
+          object.left *= SCALE_FACTOR;
+          object.top *= SCALE_FACTOR;
+          object.setCoords();
+        }
       });
       self.canvas.renderAll();
     } else if (

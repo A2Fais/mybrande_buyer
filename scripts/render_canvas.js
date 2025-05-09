@@ -34,7 +34,7 @@ const renderCanvas = ({
         } else if (logoIdx === idx) {
           obj.scale(800);
           logoNameElement = obj;
-          obj.text = querySelect("#logoMainField").value;
+          obj.text = querySelect("#logoNameField").value;
         }
 
         canvas.add(obj);

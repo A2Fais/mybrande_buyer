@@ -66,7 +66,7 @@ export async function saveCanvas(
   isSaving = true;
 
   try {
-    const logoNameObj = canvas.getObjects().find(obj => obj.text === querySelect("#logoMainField").value);
+    const logoNameObj = canvas.getObjects().find(obj => obj.text === querySelect("#logoNameField").value);
     const sloganNameObj = canvas.getObjects().find(obj => obj.text === querySelect("#sloganNameField").value);
 
     if (!logoNameObj || !sloganNameObj) {
@@ -230,7 +230,7 @@ export async function saveCanvas(
       buyer_logo_id: querySelect("#buyer_logo_id")?.value, // from response hidden input field
       buyer_id: querySelect("#buyer_Id")?.value, // hidden input field
       logo_id: logoId, // svg data id
-      brand_name: querySelect("#logoMainField").value,
+      brand_name: querySelect("#logoNameField").value,
       slogan: querySelect("#sloganNameField").value,
       svg_data: svgData && svgData,
       logo_position: alignId,

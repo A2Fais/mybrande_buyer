@@ -121,7 +121,7 @@ export async function mobileTextMenu(canvas) {
     menuMain,
     `<div id="mobile-text-input-category" class="mobile-category-container" style="justify-content: center; height: 80px; background: #ffffff; padding: 8px; position: absolute; bottom: 0">
       <div style="display: flex; flex-direction: column; gap: 8px;">
-      <input type="text" id="mobile-logoMainField" placeholder="Logo Name" style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;" />
+      <input type="text" id="mobile-logoNameField" placeholder="Logo Name" style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;" />
       <input type="text" id="mobile-sloganNameField" placeholder="Slogan Name" style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;" />
       </div>
     </div>
@@ -702,7 +702,7 @@ export async function mobileTextMenu(canvas) {
     }
   });
 
-  document.querySelector("#mobile-logoMainField").addEventListener("input", (e) => {
+  document.querySelector("#mobile-logoNameField").addEventListener("input", (e) => {
     const value = e.target.value;
     const objects = canvas.getObjects().filter((i) => i.text);
     const logoIdx = 0;

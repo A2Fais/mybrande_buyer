@@ -167,7 +167,7 @@ export class EditorScreen {
       initMultiSelectList();
     });
 
-    querySelect("#logoMainField").addEventListener("change", () => {
+    querySelect("#logoNameField").addEventListener("change", () => {
       this.canvasHistory.saveHistory();
     });
 
@@ -633,6 +633,33 @@ export class EditorScreen {
       );
     });
 
+    function triggerCurveSliderEvent(value, obj) {
+      obj && canvas.setActiveObject(obj);
+      const slider = querySelect("#text-curve-range");
+      slider.value = value;
+      const event = new Event("input", { bubbles: true });
+      slider.dispatchEvent(event);
+      canvas.discardActiveObject();
+      canvas.renderAll();
+    }
+
+    const okBtn = querySelect("#okkkk")
+    okBtn.addEventListener("click", () => {
+
+      const objects = this.canvas.getObjects();
+      const logoElement = objects.find(obj => {
+        return obj.text && obj?.text?.toString().toLowerCase() === querySelect("#logoNameField").value.toLowerCase();
+      });
+
+      const sloganElement = objects.find(obj => {
+        return obj.text && obj?.text?.toString().toLowerCase() === querySelect("#sloganNameField").value.toLowerCase();
+      });
+
+      if (!logoElement || !sloganElement) return
+      triggerCurveSliderEvent(4500, logoElement);      
+      triggerCurveSliderEvent(4500, sloganElement);
+    });
+
     querySelect("#third_page_btn").addEventListener("click", () => {
       const saveSettings = {
         format: "jpg",
@@ -1043,7 +1070,7 @@ export class EditorScreen {
     var logoNameElement = textMain({ text: this.logoName });
     var sloganNameElement = textMain({ text: this.sloganName });
 
-    querySelect("#logoMainField").addEventListener("input", (e) => {
+    querySelect("#logoNameField").addEventListener("input", (e) => {
       const value = e.target.value;
       const objects = this.canvas.getObjects().filter((i) => i.text);
       const logoIdx = 0;
@@ -1077,7 +1104,7 @@ export class EditorScreen {
     };
 
     logoNameElement.on("mousedblclick", () => {
-      const logoNameInput = querySelect("#logoMainField");
+      const logoNameInput = querySelect("#logoNameField");
       if (logoNameInput) {
         logoNameInput.focus();
         logoNameInput.select();
@@ -1603,7 +1630,7 @@ export class EditorScreen {
         this.updateActiveNavbar();
 
         logoNameElement.on("mousedblclick", () => {
-          const logoNameInput = document.getElementById("logoMainField");
+          const logoNameInput = document.getElementById("logoNameField");
           if (logoNameInput) {
             logoNameInput.focus();
           }
@@ -1821,7 +1848,7 @@ export class EditorScreen {
       if (
         curvedText.text
           .toLowerCase()
-          .includes(querySelect("#logoMainField").value.toLowerCase())
+          .includes(querySelect("#logoNameField").value.toLowerCase())
       ) {
         logoNameElement = curvedText;
       } else if (
@@ -1872,7 +1899,7 @@ export class EditorScreen {
         addCurveText(obj, value, percentage);
       } else if (!hasCurveApply) {
         let itext = true;
-        if (obj.text == querySelect("#logoMainField").value) {
+        if (obj.text == querySelect("#logoNameField").value) {
           itext = false;
         } else if (obj.text == querySelect("#sloganNameField").value) {
           itext = false;
@@ -1888,7 +1915,7 @@ export class EditorScreen {
         this.canvas.remove(obj);
         this.canvas.add(text);
 
-        if (text.text == querySelect("#logoMainField").value) {
+        if (text.text == querySelect("#logoNameField").value) {
           logoNameElement = text;
         } else if (text.text == querySelect("#sloganNameField").value) {
           sloganNameElement = text;
@@ -2150,7 +2177,7 @@ export class EditorScreen {
             let text = obj.text;
 
             if (!obj.id?.includes("external_layer_")) {
-              if (text == querySelect("#logoMainField").value) {
+              if (text == querySelect("#logoNameField").value) {
                 save = false;
                 return toastNotification(
                   "Logo Name or Slogan can not be duplicated",
@@ -2175,7 +2202,7 @@ export class EditorScreen {
           let text = cloned.text;
 
           if (!cloned.id?.includes("external_layer_")) {
-            if (text == querySelect("#logoMainField").value) {
+            if (text == querySelect("#logoNameField").value) {
               save = false;
               return toastNotification(
                 "Logo Name or Slogan can not be duplicated",
@@ -4018,6 +4045,7 @@ export class EditorScreen {
         150,
       );
     })();
+
 
     const debounce = (callback, wait) => {
       let timeout = null;
