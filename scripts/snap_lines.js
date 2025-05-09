@@ -13,16 +13,14 @@ function CanvasGuides(canvas) {
     let line = canvas._objects.find((obj) => obj.name === name),
       properties = {};
     
-    // Adjust the positioning to be centered on the point
     if (type === "X") properties.top = point;
     if (type === "Y") properties.left = point;
     
-    // Line coords - always extend full width/height
     let coords;
     if (type === "X") {
-      coords = [-canvas.getWidth(), point, canvas.getWidth() * 2, point];  // Extend beyond canvas bounds
+      coords = [-canvas.getWidth() * 2, point, canvas.getWidth() * 3, point];
     } else if (type === "Y") {
-      coords = [point, -canvas.getHeight(), point, canvas.getHeight() * 2];  // Extend beyond canvas bounds
+      coords = [point, -canvas.getHeight() * 2, point, canvas.getHeight() * 3];
     }
 
     if (line) {
