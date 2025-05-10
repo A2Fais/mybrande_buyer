@@ -97,12 +97,16 @@ export const centerAndResizeElements = (
       let logoTopPosition = canvas.height / logoNameTop;
       let sloganTopPosition = canvas.height / sloganNameTop;
 
-      if (prevAlignState === "isCurve") {
+      console.log(prevAlignState);
+      if (prevAlignState === "curve_1") {
         logoTopPosition += 60
         sloganTopPosition += 60
+      } else if (prevAlignState === "curve_2") {
+        logoTopPosition -= 30
+        sloganTopPosition -= 30
       } else if (prevAlignState === "curve_3") {
-        logoTopPosition += 43
-        sloganTopPosition += 43
+        logoTopPosition += 40
+        sloganTopPosition += 40
       }
 
       logo.set("top", logoTopPosition);
@@ -163,7 +167,7 @@ export const centerAndResizeElements = (
       }
 
       console.log(prevAlignState);
-      if (prevAlignState === "isCurve") {
+      if (prevAlignState === "curve_1") {
         logoTopPosition += 60
         sloganTopPosition += 60
       } else if (prevAlignState === "curve_3") {
@@ -436,7 +440,7 @@ export const centerAndResizeElements = (
       break;
 
     case "curve_1":
-      prevAlignState = "isCurve"
+      prevAlignState = "curve_1"
       function setCurve() {
         logo.set("fontSize", logoSize);
         slogan.set("fontSize", sloganSize);
@@ -461,12 +465,15 @@ export const centerAndResizeElements = (
         canvas.viewportCenterObject(newGrp);
         newGrp.ungroupOnCanvas();
         canvas.renderAll();
+        setTimeout(() => {
+          prevAlignState = "curve_1"
+        }, 100);
       }
       setCurve();
       break;
 
     case "curve_2":
-      prevAlignState = "isCurve"
+      prevAlignState = "curve_2"
 
       function setCurveTwo() {
         logo.set("fontSize", logoSize);
@@ -485,15 +492,12 @@ export const centerAndResizeElements = (
         triggerCurveSliderEvent(2500);
 
         centerHorizontally(logo, slogan);
-        setTimeout(() => {
-          prevAlignState = "curve_3"
-        }, 100);
       }
       setCurveTwo();
       break;
 
     case "curve_3":
-
+      prevAlignState = "curve_3"
       function setBothCurve() {
         logo.set("fontSize", logoSize);
         slogan.set("fontSize", sloganSize);
@@ -518,9 +522,9 @@ export const centerAndResizeElements = (
         newGrp.ungroupOnCanvas();
         canvas.renderAll();
 
-        setTimeout(() => {
-          prevAlignState = "curve_3"
-        }, 100);
+        // setTimeout(() => {
+        //   prevAlignState = "curve_3"
+        // }, 100);
       }
       setBothCurve();
       break;
