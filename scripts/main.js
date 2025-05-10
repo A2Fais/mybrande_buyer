@@ -2548,9 +2548,23 @@ export class EditorScreen {
     let currIconIndex = 0;
     querySelect("#loader_main").style.display = "block";
 
+    function triggerCurveEvent(value, obj) {
+      if (!obj) return;
+
+      canvas.setActiveObject(obj);
+      const slider = querySelect("#text-curve-range");
+      slider.value = value;
+      const event = new Event("input", { bubbles: true });
+      slider.dispatchEvent(event);
+      canvas.discardActiveObject();
+      canvas.renderAll();
+    }
+
     fetchCanvasData(this.canvas).then((data) => {
-      this.logoFile = data.svgData.AllData.svg_data;
-      const logoPosition = data.svgData.AllData.logo_position;
+      const allData = data?.svgData?.AllData;
+      const logoNameCurve = parseInt(allData?.brandName_curve);
+      this.logoFile = allData.svg_data;
+      const logoPosition = allData.logo_position;
       let parser = new DOMParser();
       let svgDoc = parser.parseFromString(this.logoFile, "image/svg+xml");
 
@@ -2698,7 +2712,19 @@ export class EditorScreen {
 
         this.canvas.save();
         this.canvas.renderAll();
+
       }, 1000);
+
+      setTimeout(() => {
+        const objects = this.canvas.getObjects();
+        const logoElement = objects.find(obj => {
+          return obj.text && obj?.text?.toString().toLowerCase() === querySelect("#logoMainField").value.toLowerCase();
+        });
+        logoElement.top -= 80;
+        logoElement.left += 20;
+        triggerCurveEvent(logoNameCurve, logoElement)        
+      }, 2000);
+
     });
 
     querySelect("#category_type_title").addEventListener("click", (e) => {
